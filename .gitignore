@@ -19,3 +19,7 @@ target
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# Libraries are consumed as dependencies where the final `Cargo.lock` is determined
+# by the application crate, so shipping one provides no reproducibility benefit and can mislead contributors.
+cargo.lock
