@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+heapless = "0.9.3"
+tokio = { version =  "1.52.3", features = ["time"] }
+tokio-modbus = { version = "*", default-features = false, features = ["tcp-server"] }
