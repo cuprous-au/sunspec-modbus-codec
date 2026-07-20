@@ -13,14 +13,14 @@ use crate::{
     },
 };
 
-pub struct SunspecServiceAdapters {
-    pub model_1_adapter: Option<&'static dyn model_1::ModelAdapter>,
-    pub model_103_adapter: Option<&'static dyn model_103::ModelAdapter>,
+pub struct SunspecModelAdapters<'a> {
+    pub model_1_adapter: Option<&'a dyn model_1::ModelAdapter>,
+    pub model_103_adapter: Option<&'a dyn model_103::ModelAdapter>,
 }
 
-pub struct SunspecService {
+pub struct SunspecService<'a> {
     points: Vec<(u16, &'static [ReadablePoint]), 114>,
-    adapters: SunspecServiceAdapters,
+    adapters: SunspecModelAdapters<'a>,
 }
 
 pub enum ModbusRequest {
@@ -55,8 +55,8 @@ const HEADER_POINTS: [ReadablePoint; 2] = [
     },
 ];
 
-impl SunspecService {
-    pub fn new(adapters: SunspecServiceAdapters) -> Self {
+impl<'a> SunspecService<'a> {
+    pub fn new(adapters: SunspecModelAdapters<'a>) -> Self {
         let mut points: Vec<(u16, &'static [ReadablePoint]), 114> = Vec::new();
 
         points.push((2, &HEADER_POINTS)).unwrap();

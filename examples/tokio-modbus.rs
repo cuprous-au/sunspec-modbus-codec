@@ -7,7 +7,8 @@ use std::{
 use tokio::net::TcpListener;
 
 use sunspec_modbus_codec::{
-    ModbusRequest, SunspecService, SunspecServiceAdapters, sunspec::{model_1, model_103},
+    ModbusRequest, SunspecService, SunspecModelAdapters,
+    sunspec::{model_1, model_103},
 };
 use tokio_modbus::{
     prelude::*,
@@ -115,18 +116,20 @@ impl model_103::ModelAdapter for MyInverter {
     }
 }
 
-struct ExampleService {}
+struct ExampleService<'a> {
+    inverter: &'a MyInverter,
+}
 
-impl tokio_modbus::server::Service for ExampleService {
-    type Request = Request<'static>;
+impl<'a> tokio_modbus::server::Service for ExampleService<'a> {
+    type Request = Request<'a>;
     type Response = Response;
     type Exception = ExceptionCode;
     type Future = future::Ready<Result<Self::Response, Self::Exception>>;
 
     fn call(&self, req: Self::Request) -> Self::Future {
-        let sunspec_service = SunspecService::new(SunspecServiceAdapters {
-            model_1_adapter: Some(&INVERTER_ADAPTER),
-            model_103_adapter: Some(&INVERTER_ADAPTER),
+        let sunspec_service = SunspecService::new(SunspecModelAdapters {
+            model_1_adapter: Some(self.inverter),
+            model_103_adapter: Some(self.inverter),
         });
         let res = match req {
             Request::ReadHoldingRegisters(addr, cnt) => {
@@ -135,9 +138,7 @@ impl tokio_modbus::server::Service for ExampleService {
                     .handle_request(ModbusRequest::ReadRegister(addr, cnt), &mut response_buffer);
 
                 match res {
-                    Ok(_) => Ok(Response::ReadHoldingRegisters(
-                        response_buffer.into()
-                    )),
+                    Ok(_) => Ok(Response::ReadHoldingRegisters(response_buffer.into())),
                     _ => Err(ExceptionCode::IllegalFunction),
                 }
             }
@@ -159,14 +160,18 @@ async fn main() -> Result<(), std::io::Error> {
     server_context(socket_addr).await
 }
 
-static INVERTER_ADAPTER: MyInverter = MyInverter {};
-
 async fn server_context(socket_addr: SocketAddr) -> io::Result<()> {
     println!("Starting up server on {socket_addr}");
     let listener = TcpListener::bind(socket_addr).await?;
     let server = Server::new(listener);
 
-    let new_service = |_socket_addr| Ok(Some(ExampleService {}));
+    let inverter = &MyInverter {};
+
+    let new_service = |_socket_addr| {
+        Ok(Some(ExampleService {
+            inverter: inverter,
+        }))
+    };
     let on_connected = |stream, socket_addr| async move {
         accept_tcp_connection(stream, socket_addr, new_service)
     };
