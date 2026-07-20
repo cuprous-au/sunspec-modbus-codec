@@ -3,14 +3,24 @@
 pub mod sunspec;
 pub mod util;
 
+use heapless::Vec;
+
 use crate::{
     ModbusRequest::{ReadRegister, Unknown},
-    sunspec::{model_1, model_103},
+    sunspec::{
+        core::{PointReference, PointType, ReadablePoint},
+        model_1, model_103,
+    },
 };
 
-pub struct SunspecService {
+pub struct SunspecServiceAdapters {
     pub model_1_adapter: Option<&'static dyn model_1::ModelAdapter>,
     pub model_103_adapter: Option<&'static dyn model_103::ModelAdapter>,
+}
+
+pub struct SunspecService {
+    points: Vec<(u16, &'static [ReadablePoint]), 114>,
+    adapters: SunspecServiceAdapters,
 }
 
 pub enum ModbusRequest {
@@ -30,100 +40,88 @@ pub enum ModbusException {
     GatewayTargetDevice = 0x0B,
 }
 
+const HEADER_POINTS: [ReadablePoint; 2] = [
+    ReadablePoint {
+        reference: PointReference::Static { value: 0x5375 },
+        size: 1,
+        data_type: PointType::Uint16,
+        writeable: false,
+    },
+    ReadablePoint {
+        reference: PointReference::Static { value: 0x6E53 },
+        size: 1,
+        data_type: PointType::Uint16,
+        writeable: false,
+    },
+];
+
 impl SunspecService {
+    pub fn new(adapters: SunspecServiceAdapters) -> Self {
+        let mut points: Vec<(u16, &'static [ReadablePoint]), 114> = Vec::new();
+
+        points.push((2, &HEADER_POINTS)).unwrap();
+
+        if adapters.model_1_adapter.is_some() {
+            points.push((model_1::SIZE, &model_1::POINTS)).unwrap();
+        }
+
+        Self {
+            points: points,
+            adapters: adapters,
+        }
+    }
+
     pub fn handle_request<R: Into<ModbusRequest>>(
         &self,
         request: R,
-        response_buffer: &mut [u8],
+        response_buffer: &mut [u16],
     ) -> Result<(), ModbusException> {
         match request.into() {
             ReadRegister(address, count) => {
                 if address >= 40000 {
-                    let mut offset: usize = (address - 40000) as usize * 2;
-                    let buffer_bytes = (count as usize) * 2;
-                    let mut bytes_written: usize = 0;
-                    if offset == 0 {
-                        response_buffer[..4].copy_from_slice("SunS".as_bytes());
-                        bytes_written += 4;
-                    } else {
-                        offset -= 4;
-                    }
-
-                    if bytes_written >= buffer_bytes {
-                        return Ok(());
-                    }
-
-                    if let Some(model_1_adapter) = self.model_1_adapter {
-                        let size_bytes = (model_1::size() as usize) * 2;
-                        if offset > size_bytes {
-                            offset -= size_bytes;
+                    let mut offset: u16 = address - 40000;
+                    let mut words_written: u16 = 0;
+                    for (size, points) in &self.points {
+                        if offset > *size {
+                            offset -= *size;
                         } else {
-                            for (len, writer) in model_1::register_readers() {
-                                let available_bytes = len * 2;
-                                if offset < available_bytes {
+                            for point in points.iter() {
+                                if offset < point.size {
                                     //write
-                                    let bytes_to_write = core::cmp::min(
-                                        available_bytes,
-                                        buffer_bytes - bytes_written,
-                                    );
+                                    let bytes_to_write =
+                                        core::cmp::min(point.size, count - words_written);
 
-                                    writer(
-                                        model_1_adapter,
-                                        &mut response_buffer
-                                            [bytes_written..bytes_written + bytes_to_write],
-                                        offset,
-                                        bytes_to_write,
-                                    );
-                                    bytes_written += available_bytes;
+                                    match &point.reference {
+                                        PointReference::Static { value } => {
+                                            response_buffer[words_written as usize] = *value;
+                                        }
+                                        PointReference::Model1 { point } => {
+                                            model_1::write_point(
+                                                self.adapters.model_1_adapter.unwrap(),
+                                                point,
+                                                &mut response_buffer[words_written as usize
+                                                    ..(words_written + bytes_to_write) as usize],
+                                                offset,
+                                                bytes_to_write,
+                                            );
+                                        }
+                                        _ => (),
+                                    }
+                                    words_written += point.size;
                                     offset = 0;
                                 } else {
-                                    offset -= available_bytes;
+                                    offset -= point.size;
                                 }
 
-                                if bytes_written >= buffer_bytes {
+                                if words_written >= count {
                                     return Ok(());
                                 }
                             }
-                        }
-                    };
+                        };
+                    }
 
-                    if let Some(model_103_adapter) = self.model_103_adapter {
-                        let size_bytes = (model_103::size() as usize) * 2;
-                        if offset > size_bytes {
-                            offset -= size_bytes;
-                        } else {
-                            for (len, writer) in model_103::register_readers() {
-                                let available_bytes = len * 2;
-                                if offset < available_bytes {
-                                    //write
-                                    let bytes_to_write = core::cmp::min(
-                                        available_bytes,
-                                        buffer_bytes - bytes_written,
-                                    );
-
-                                    writer(
-                                        model_103_adapter,
-                                        &mut response_buffer
-                                            [bytes_written..bytes_written + bytes_to_write],
-                                        offset,
-                                        bytes_to_write,
-                                    );
-                                    bytes_written += available_bytes;
-                                    offset = 0;
-                                } else {
-                                    offset -= available_bytes;
-                                }
-
-                                if bytes_written >= buffer_bytes {
-                                    return Ok(());
-                                }
-                            }
-                        }
-                    };
-
-                    if bytes_written < buffer_bytes {
-                        response_buffer[bytes_written] = 0xff;
-                        response_buffer[bytes_written + 1] = 0xff;
+                    if words_written < count {
+                        response_buffer[words_written as usize] = 0xffff;
                     };
 
                     Ok(())

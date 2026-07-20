@@ -1,8 +1,23 @@
-use heapless::{String, Vec};
+use heapless::String;
 
-use crate::util::{RegisterReader, write_string, write_u16};
+use crate::{
+    sunspec::core::{PointReference, PointType, ReadablePoint},
+    util::{write_string, write_u16},
+};
 
 pub type Model1 = Common;
+
+#[derive(Debug)]
+pub enum Point {
+    Id,
+    L,
+    Mn,
+    Md,
+    Opt,
+    Vr,
+    Sn,
+    Da,
+}
 
 /// All SunSpec compliant devices must include this as the first model
 pub struct Common {
@@ -44,53 +59,104 @@ pub struct Common {
 
 // BELOW HAS BEEN MANUALLY EDITED TO ESTABLISH THE PATTERN
 // CODEGEN YET TO BE UPDATED
-pub fn register_readers() -> Vec<(usize, RegisterReader<dyn ModelAdapter>), 9> {
-    let mut vec: Vec<(usize, RegisterReader<dyn ModelAdapter>), 9> = Vec::new();
-    vec.extend_from_slice(&[
-        // Model id
-        (1, |_, buf, _, _| write_u16(1_u16, buf)),
-        // Model length
-        (1, |_, buf, _, _| write_u16(66_u16, buf)),
-        // Manufacturer
-        (16, |model, buf, offset, len| {
-            write_string(model.mn(), buf, offset, len)
-        }),
-        // Model
-        (16, |model, buf, offset, len| {
-            write_string(model.md(), buf, offset, len)
-        }),
-        // Options
-        (8, |model, buf, offset, len| {
+pub static POINTS: [ReadablePoint; 9] = [
+    // Model id
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Id },
+        size: 1,
+        data_type: PointType::Uint16,
+        writeable: false,
+    },
+    // Model length
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::L },
+        size: 1,
+        data_type: PointType::Uint16,
+        writeable: false,
+    },
+    // Manufacturer
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Mn },
+        size: 16,
+        data_type: PointType::String,
+        writeable: false,
+    },
+    // Model
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Md },
+        size: 16,
+        data_type: PointType::String,
+        writeable: false,
+    },
+    // Options
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Opt },
+        size: 8,
+        data_type: PointType::String,
+        writeable: false,
+    },
+    // Version
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Vr },
+        size: 8,
+        data_type: PointType::String,
+        writeable: false,
+    },
+    // Serial Number
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Sn },
+        size: 16,
+        data_type: PointType::String,
+        writeable: false,
+    },
+    // Device Address
+    ReadablePoint {
+        reference: PointReference::Model1 { point: Point::Da },
+        size: 1,
+        data_type: PointType::Uint16,
+        writeable: false,
+    },
+    // Padding
+    ReadablePoint {
+        reference: PointReference::Static { value: 0 },
+        size: 1,
+        data_type: PointType::Uint16,
+        writeable: false,
+    },
+];
+
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) -> () {
+    match point {
+        Point::Id => write_u16(1_u16, buffer),
+        Point::L => write_u16(66_u16, buffer),
+        Point::Mn => write_string(model.mn(), buffer, offset, limit),
+        Point::Md => write_string(model.md(), buffer, offset, limit),
+        Point::Opt => {
             if let Some(str) = model.opt() {
-                write_string(str, buf, offset, len)
+                write_string(str, buffer, offset, limit)
             }
-        }),
-        // Version
-        (8, |model, buf, offset, len| {
+        }
+        Point::Vr => {
             if let Some(str) = model.vr() {
-                write_string(str, buf, offset, len)
+                write_string(str, buffer, offset, limit)
             }
-        }),
-        // Serial Number
-        (16, |model, buf, offset, len| {
-            write_string(model.sn(), buf, offset, len)
-        }),
-        // Device Address
-        (1, |model, buf, _, _| {
+        }
+        Point::Sn => write_string(model.sn(), buffer, offset, limit),
+        Point::Da => {
             if let Some(value) = model.da() {
-                write_u16(value, buf);
-            };
-        }),
-        // Pad
-        (1, |_, _, _, _| ()),
-    ])
-    .unwrap();
-    vec
+                write_u16(value, buffer);
+            }
+        }
+    }
 }
 
-pub fn size() -> u16 {
-    68
-}
+pub const SIZE: u16 = 68;
 
 pub trait ModelAdapter {
     /// Model ID

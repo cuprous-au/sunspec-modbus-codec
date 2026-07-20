@@ -7,8 +7,7 @@ use std::{
 use tokio::net::TcpListener;
 
 use sunspec_modbus_codec::{
-    ModbusRequest, SunspecService,
-    sunspec::{model_1, model_103},
+    ModbusRequest, SunspecService, SunspecServiceAdapters, sunspec::{model_1, model_103},
 };
 use tokio_modbus::{
     prelude::*,
@@ -125,25 +124,19 @@ impl tokio_modbus::server::Service for ExampleService {
     type Future = future::Ready<Result<Self::Response, Self::Exception>>;
 
     fn call(&self, req: Self::Request) -> Self::Future {
-        let sunspec_service = SunspecService {
+        let sunspec_service = SunspecService::new(SunspecServiceAdapters {
             model_1_adapter: Some(&INVERTER_ADAPTER),
             model_103_adapter: Some(&INVERTER_ADAPTER),
-        };
+        });
         let res = match req {
             Request::ReadHoldingRegisters(addr, cnt) => {
-                let mut response_buffer = vec![0_u8; (cnt * 2).into()].into_boxed_slice();
+                let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
                 let res = sunspec_service
                     .handle_request(ModbusRequest::ReadRegister(addr, cnt), &mut response_buffer);
 
                 match res {
                     Ok(_) => Ok(Response::ReadHoldingRegisters(
-                        response_buffer
-                            .chunks_exact(2)
-                            .map(|chunk| {
-                                let array: [u8; 2] = chunk.try_into().unwrap();
-                                u16::from_be_bytes(array)
-                            })
-                            .collect(),
+                        response_buffer.into()
                     )),
                     _ => Err(ExceptionCode::IllegalFunction),
                 }
