@@ -1,15 +1,16 @@
 #![doc = include_str!("../README.md")]
 #![no_std]
+pub mod serialisation;
 pub mod sunspec;
-pub mod util;
 
 use heapless::Vec;
 
 use crate::{
     ModbusRequest::{ReadRegister, Unknown},
     sunspec::{
-        core::{PointReference, PointType, ReadablePoint},
-        model_1, model_103,
+        PointType, ReadablePoint,
+        models::{model_1, model_103},
+        points::PointReference,
     },
 };
 
@@ -65,6 +66,10 @@ impl<'a> SunspecService<'a> {
             points.push((model_1::SIZE, &model_1::POINTS)).unwrap();
         }
 
+        if adapters.model_103_adapter.is_some() {
+            points.push((model_103::SIZE, &model_103::POINTS)).unwrap();
+        }
+
         Self {
             points: points,
             adapters: adapters,
@@ -91,6 +96,9 @@ impl<'a> SunspecService<'a> {
                                     let bytes_to_write =
                                         core::cmp::min(point.size, count - words_written);
 
+                                    let buffer_slice = &mut response_buffer[words_written as usize
+                                        ..(words_written + bytes_to_write) as usize];
+
                                     match &point.reference {
                                         PointReference::Static { value } => {
                                             response_buffer[words_written as usize] = *value;
@@ -99,8 +107,16 @@ impl<'a> SunspecService<'a> {
                                             model_1::write_point(
                                                 self.adapters.model_1_adapter.unwrap(),
                                                 point,
-                                                &mut response_buffer[words_written as usize
-                                                    ..(words_written + bytes_to_write) as usize],
+                                                buffer_slice,
+                                                offset,
+                                                bytes_to_write,
+                                            );
+                                        }
+                                        PointReference::Model103 { point } => {
+                                            model_103::write_point(
+                                                self.adapters.model_103_adapter.unwrap(),
+                                                point,
+                                                buffer_slice,
                                                 offset,
                                                 bytes_to_write,
                                             );

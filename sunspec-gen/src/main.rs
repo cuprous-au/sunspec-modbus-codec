@@ -1,7 +1,7 @@
-use codegen::{Enum, Field, Function, Scope, Type};
+use codegen::{Block, Enum, Field, Function, Scope, Type};
 use glob::glob;
 use heck::{ToPascalCase, ToSnakeCase};
-use std::{collections::HashSet, ffi::OsStr, fs};
+use std::{collections::HashSet, ffi::OsStr, fmt::write, fs};
 use typify::import_types;
 
 // TODO: I've edited this schema file to add `"title": "SunspecModel"`
@@ -111,8 +111,8 @@ fn generate_field(point: &Point, field_type: &Type) -> Field {
     field
 }
 
-fn generate_getter(point: &Point, field_type: &Type) -> Function {
-    let mut func = Function::new(point.name.to_snake_case());
+fn generate_getter(point: &Point, field_type: &Type, name: &String) -> Function {
+    let mut func = Function::new(name.to_snake_case());
 
     if point.mandatory == PointMandatory::O {
         func.line("None");
@@ -120,26 +120,28 @@ fn generate_getter(point: &Point, field_type: &Type) -> Function {
         func.body = None;
     };
 
-    func.ret(option_unless_mandatory(point, field_type)).arg_ref_self().doc(
-        vec![
-            point.label.clone(),
-            point.desc.clone(),
-            point.detail.clone(),
-        ]
-        .iter()
-        .flatten()
-        .map(String::as_str)
-        .collect::<Vec<&str>>()
-        .join("\n\n"),
-    );
+    func.ret(option_unless_mandatory(point, field_type))
+        .arg_ref_self()
+        .doc(
+            vec![
+                point.label.clone(),
+                point.desc.clone(),
+                point.detail.clone(),
+            ]
+            .iter()
+            .flatten()
+            .map(String::as_str)
+            .collect::<Vec<&str>>()
+            .join("\n\n"),
+        );
     func
 }
 
-fn generate_setter(point: &Point, field_type: &Type) -> Option<Function> {
+fn generate_setter(point: &Point, field_type: &Type, name: &String) -> Option<Function> {
     match point.access {
         PointAccess::R => None,
         PointAccess::Rw => {
-            let mut func = Function::new(format!("set_{}", point.name.to_snake_case()));
+            let mut func = Function::new(format!("set_{}", name.to_snake_case()));
 
             if point.mandatory == PointMandatory::M {
                 func.body = None;
@@ -162,16 +164,81 @@ fn generate_setter(point: &Point, field_type: &Type) -> Option<Function> {
     }
 }
 
+fn generate_point_array(model: &SunspecModel, model_name: String, model_size: u16) -> String {
+    let lines: Vec<String> = [format!(
+        "pub static POINTS: [ReadablePoint; {}] = [",
+        model.group.points.len()
+    )]
+    .into_iter()
+    .chain(model.group.points.iter().map(|point| {
+        let point_reference = if point.type_ == PointType::Pad {
+            "PointReference::Static { value: 0 }".to_string()
+        } else if let Some(value) = &point.value {
+            format!("PointReference::Static {{ value: {} }}", value)
+        } else if point.name == "L" {
+            format!("PointReference::Static {{ value: {} }}", model_size - 2)
+        } else {
+            format!(
+                "PointReference::{} {{ point: Point::{} }}",
+                model_name,
+                point.label.as_ref().unwrap_or(&point.name).to_pascal_case()
+            )
+        };
+
+        format!(
+            "    ReadablePoint {{
+        reference: {point_reference},
+        size: {point_size},
+        data_type: PointType::{point_type},
+        writeable: {writeable},
+    }},",
+            point_size = point.size,
+            point_type = point.type_.to_string().to_pascal_case(),
+            writeable = point.access == PointAccess::Rw
+        )
+    }))
+    .chain(["];".to_string()])
+    .collect();
+
+    lines.join("\n")
+}
+
+fn generate_point_types(models: &Vec<String>) -> String {
+    let mut scope = Scope::new();
+
+    for model in models {
+        scope.import("crate::sunspec::models", model.to_snake_case());
+    }
+
+    let point_reference_enum = scope.new_enum("PointReference").vis("pub").derive("Debug");
+
+    for model in models {
+        point_reference_enum
+            .new_variant(model.to_pascal_case())
+            .named("point", format!("{}::Point", model.to_snake_case()));
+    }
+
+    point_reference_enum
+        .new_variant("Static")
+        .named("value", "u16");
+
+    scope.to_string()
+}
+
 fn generate_model(model: SunspecModel, name: String) -> String {
     let mut scope = Scope::new();
     let mut features: HashSet<CodegenFeature> = HashSet::new();
-    let model_name = model.group.name.to_pascal_case();
 
-    let point_types: Vec<(Type, &Point)> = model
+    let model_name = name.to_pascal_case();
+
+    let point_types: Vec<(Type, &Point, &String)> = model
         .group
         .points
         .iter()
-        .flat_map(|point| generate_type(point, &mut features).map(|t| (t, point)))
+        .flat_map(|point| {
+            generate_type(point, &mut features)
+                .map(|t| (t, point, point.label.as_ref().unwrap_or(&point.name)))
+        })
         .collect();
 
     let enums: Vec<Enum> = model
@@ -183,14 +250,16 @@ fn generate_model(model: SunspecModel, name: String) -> String {
 
     let fields: Vec<Field> = point_types
         .iter()
-        .map(|(field_type, point)| generate_field(point, &field_type))
+        .map(|(field_type, point, _)| generate_field(point, &field_type))
         .collect();
 
     let funcs: Vec<Function> = point_types
         .iter()
-        .flat_map(|(field_type, point)| {
-            let getter = generate_getter(point, &field_type);
-            let setter = generate_setter(point, &field_type);
+        // TODO: These fields (id and model length) are static and don't need an adapter method, but we should make this data driven
+        .skip(2)
+        .flat_map(|(field_type, point, name)| {
+            let getter = generate_getter(point, &field_type, name);
+            let setter = generate_setter(point, &field_type, name);
 
             let funcs: Vec<Function> = vec![Some(getter), setter]
                 .iter()
@@ -208,27 +277,98 @@ fn generate_model(model: SunspecModel, name: String) -> String {
         };
     }
 
-    if name != model_name {
-        scope.new_type_alias(&name, &model_name).vis("pub");
+    scope.import("crate", "serialisation");
+    scope.import("crate::sunspec", "{PointType, ReadablePoint}");
+    scope.import("crate::sunspec::points", "PointReference");
+
+    let size: u16 = model
+        .group
+        .points
+        .iter()
+        .map(|point| point.size as u16)
+        .sum();
+
+    scope.raw(format!("pub const SIZE: u16 = {};", size));
+
+    scope.raw(generate_point_array(&model, model_name, size));
+
+    let point_enum = scope.new_enum("Point").vis("pub").derive("Debug");
+
+    for (_, _, name) in point_types.iter().skip(2) {
+        point_enum.new_variant(name.to_pascal_case());
     }
 
-    let root_struct = scope.new_struct(&model_name).vis("pub");
+    let mut writer_block = Block::new("match point");
 
-    if let Some(desc) = model.group.desc {
-        root_struct.doc(desc);
-    };
+    for (_, point, name) in point_types.iter().skip(2) {
+        if let Some((writer, allow_offset)) = match point.type_ {
+            PointType::Int16 => Some(("write_i16", false)),
+            PointType::Int32 => Some(("write_i32", true)),
+            PointType::Int64 => Some(("write_i64", true)),
+            PointType::Uint16
+            | PointType::Raw16
+            | PointType::Acc16
+            | PointType::Bitfield16
+            | PointType::Enum16
+            | PointType::Sunssf
+            | PointType::Count => Some(("write_u16", false)),
+            PointType::Uint32 | PointType::Acc32 | PointType::Bitfield32 | PointType::Enum32 => {
+                Some(("write_u32", true))
+            }
+            PointType::Uint64 | PointType::Acc64 | PointType::Bitfield64 => {
+                Some(("write_u64", true))
+            }
+            PointType::Float32 => Some(("write_f32", true)),
+            PointType::Float64 => Some(("write_f64", true)),
+            PointType::String => Some(("write_string", true)),
+            PointType::Ipaddr => Some(("write_ipaddr", true)),
+            PointType::Ipv6addr => Some(("write_ipv6addr", true)),
+            PointType::Eui48 => Some(("write_eui48", true)),
+            PointType::Pad => None,
+        } {
+            let value_reader = format!("model.{}()", name.to_snake_case());
+            let match_arm = format!("Point::{} =>", name.to_pascal_case());
+            let rest_args = if allow_offset {
+                ", buffer, offset, limit"
+            } else {
+                ", buffer"
+            };
 
-    for field in fields {
-        root_struct.push_field(field);
+            let value_cast = match point.type_ {
+                PointType::Enum16 => " as u16",
+                PointType::Enum32 => " as u32",
+                _ => "",
+            };
+
+            let line = if point.mandatory == PointMandatory::M {
+                format!(
+                    "{match_arm} serialisation::{writer}({value_reader}{value_cast}{rest_args}),"
+                )
+            } else {
+                format!(
+                    "{match_arm} if let Some(value) = {value_reader} {{ serialisation::{writer}(value{value_cast}{rest_args}); }},"
+                )
+            };
+
+            writer_block.line(line);
+        }
     }
 
-    let root_trait = scope.new_trait("ModelCallbacks");
+    let writer_func = scope
+        .new_fn("write_point")
+        .vis("pub")
+        .arg("model", "&dyn ModelAdapter")
+        .arg("point", "&Point")
+        .arg("buffer", "&mut [u16]")
+        .arg("offset", "u16")
+        .arg("limit", "u16")
+        .push_block(writer_block);
+
+    let root_trait = scope.new_trait("ModelAdapter").vis("pub");
 
     for func in funcs {
         root_trait.push_fn(func);
     }
-
-    let register_readers_func = scope.new_fn(&model.group.name.to_snake_case())
 
     for enum_type in enums {
         scope.push_enum(enum_type);
@@ -242,9 +382,25 @@ fn main() -> () {
     let model_glob = "./models/json/model_*.json";
 
     fs::remove_dir_all(GENERATED_SRC_DIR).unwrap();
-    fs::create_dir_all(GENERATED_SRC_DIR).unwrap();
+    fs::create_dir_all(format!("{}/models", GENERATED_SRC_DIR)).unwrap();
+
     let models: Vec<String> = glob(model_glob)
         .unwrap()
+        .filter(|entry| match entry {
+            Ok(path) => {
+                let model_name = path.file_prefix().map(OsStr::to_str).flatten().unwrap();
+                println!("{model_name}");
+                model_name != "model_9"
+                    && model_name != "model_14"
+                    && model_name != "model_302"
+                    && model_name != "model_303"
+                    && model_name != "model_304"
+                    && model_name != "model_601"
+                    && model_name != "model_702"
+                    && model_name != "model_63002"
+            }
+            _ => true,
+        })
         .flat_map(|entry| match entry {
             Ok(path) => {
                 let json = fs::read_to_string(&path).unwrap();
@@ -252,7 +408,11 @@ fn main() -> () {
                 let model_name = path.file_prefix().map(OsStr::to_str).flatten().unwrap();
 
                 fs::write(
-                    format!("{}/{}.rs", GENERATED_SRC_DIR, model_name.to_snake_case()),
+                    format!(
+                        "{}/models/{}.rs",
+                        GENERATED_SRC_DIR,
+                        model_name.to_snake_case()
+                    ),
                     generate_model(model, model_name.to_pascal_case()),
                 )
                 .unwrap();
@@ -267,12 +427,20 @@ fn main() -> () {
         .collect();
 
     fs::write(
-        format!("{}.rs", GENERATED_SRC_DIR),
-        models
-            .into_iter()
-            .map(|n| format!("pub mod {};", n))
-            .collect::<Vec<String>>()
-            .join("\n\n"),
+        format!("{}/points.rs", GENERATED_SRC_DIR),
+        generate_point_types(&models),
+    )
+    .unwrap();
+
+    let mut mod_scope = Scope::new();
+
+    models.into_iter().for_each(|n| {
+        mod_scope.raw(format!("pub mod {};", n));
+    });
+
+    fs::write(
+        format!("{}/models.rs", GENERATED_SRC_DIR),
+        mod_scope.to_string(),
     )
     .unwrap()
 }

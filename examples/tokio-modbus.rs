@@ -7,8 +7,8 @@ use std::{
 use tokio::net::TcpListener;
 
 use sunspec_modbus_codec::{
-    ModbusRequest, SunspecService, SunspecModelAdapters,
-    sunspec::{model_1, model_103},
+    ModbusRequest, SunspecModelAdapters, SunspecService,
+    sunspec::models::{model_1, model_103},
 };
 use tokio_modbus::{
     prelude::*,
@@ -17,101 +17,101 @@ use tokio_modbus::{
 
 struct MyInverter {}
 impl model_1::ModelAdapter for MyInverter {
-    fn mn(&self) -> String<32> {
+    fn manufacturer(&self) -> String<32> {
         String::try_from("Cuprous").unwrap()
     }
 
-    fn md(&self) -> String<32> {
+    fn model(&self) -> String<32> {
         String::try_from("Inverter 1").unwrap()
     }
 
-    fn sn(&self) -> String<32> {
+    fn serial_number(&self) -> String<32> {
         String::try_from("I-1").unwrap()
     }
 
-    fn opt(&self) -> Option<String<16>> {
+    fn options(&self) -> Option<String<16>> {
         Some(String::try_from("opt_a_b_c").unwrap())
     }
 }
 
 impl model_103::ModelAdapter for MyInverter {
-    fn a(&self) -> u16 {
+    fn amps(&self) -> u16 {
+        102
+    }
+    
+    fn amps_phase_a(&self) -> u16 {
         1
     }
-
-    fn aph_a(&self) -> u16 {
+    
+    fn amps_phase_b(&self) -> u16 {
         1
     }
-
-    fn aph_b(&self) -> u16 {
+    
+    fn amps_phase_c(&self) -> u16 {
         1
     }
-
-    fn aph_c(&self) -> u16 {
-        1
-    }
-
+    
     fn a_sf(&self) -> u16 {
         1
     }
-
-    fn ph_vph_a(&self) -> u16 {
+    
+    fn phase_voltage_an(&self) -> u16 {
         1
     }
-
-    fn ph_vph_b(&self) -> u16 {
+    
+    fn phase_voltage_bn(&self) -> u16 {
         1
     }
-
-    fn ph_vph_c(&self) -> u16 {
+    
+    fn phase_voltage_cn(&self) -> u16 {
         1
     }
-
+    
     fn v_sf(&self) -> u16 {
         1
     }
-
-    fn w(&self) -> i16 {
+    
+    fn watts(&self) -> i16 {
         1
     }
-
+    
     fn w_sf(&self) -> u16 {
         1
     }
-
+    
     fn hz(&self) -> u16 {
         1
     }
-
+    
     fn hz_sf(&self) -> u16 {
         1
     }
-
-    fn wh(&self) -> u32 {
+    
+    fn watt_hours(&self) -> u32 {
         1
     }
-
+    
     fn wh_sf(&self) -> u16 {
         1
     }
-
-    fn tmp_cab(&self) -> i16 {
+    
+    fn cabinet_temperature(&self) -> i16 {
         1
     }
-
+    
     fn tmp_sf(&self) -> u16 {
         1
     }
-
-    fn st(&self) -> model_103::St {
+    
+    fn operating_state(&self) -> model_103::St {
         model_103::St::Standby
     }
-
-    fn evt1(&self) -> u32 {
+    
+    fn event1(&self) -> u32 {
         1
     }
-
-    fn evt2(&self) -> u32 {
+    
+    fn event_bitfield_2(&self) -> u32 {
         1
     }
 }
@@ -167,11 +167,7 @@ async fn server_context(socket_addr: SocketAddr) -> io::Result<()> {
 
     let inverter = &MyInverter {};
 
-    let new_service = |_socket_addr| {
-        Ok(Some(ExampleService {
-            inverter: inverter,
-        }))
-    };
+    let new_service = |_socket_addr| Ok(Some(ExampleService { inverter: inverter }));
     let on_connected = |stream, socket_addr| async move {
         accept_tcp_connection(stream, socket_addr, new_service)
     };
