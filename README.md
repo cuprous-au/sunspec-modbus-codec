@@ -21,3 +21,20 @@ As MODBUS itself is be delivered independently of its transport, this library re
 a developer can choose to use the C-based libmodbus, or Rust-based MODBUS library, for use with an operating system such as Linux or Windows.
 However, many devices have no operating system and quite often in support of serial comms over RS485 only.
 In this instance, the library could be used along with implementations of Rust's embedded-hal IO library.
+
+## C bindings generation
+
+This crate auto-generates a C header during build using `cbindgen`.
+
+- Config file: `cbindgen.toml`
+- Generated header: `sunspec_modbus_codec.h`
+- Trigger: any change under `src/` or `cbindgen.toml`
+
+To regenerate manually without building:
+
+```bash
+cbindgen --config cbindgen.toml --crate sunspec-modbus-codec --output sunspec_modbus_codec.h
+```
+
+The current work configures deterministic C header generation with a no_std-friendly dependency surface.
+It does not by itself make all exported Rust types fully C ABI-safe.

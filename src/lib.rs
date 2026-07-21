@@ -2,6 +2,7 @@
 #![no_std]
 pub mod serialisation;
 pub mod sunspec;
+pub mod model_1_builder;
 
 use heapless::Vec;
 
@@ -29,6 +30,7 @@ pub enum ModbusRequest {
     Unknown,
 }
 
+#[derive(Debug)]
 pub enum ModbusException {
     IllegalFunction = 0x01,
     IllegalDataAddress = 0x02,
