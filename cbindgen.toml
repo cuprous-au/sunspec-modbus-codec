@@ -12,7 +12,7 @@ usize_is_size_t = true
 no_includes = true
 
 [parse]
-parse_deps = false
+parse_deps = true
 clean = true
 include = ["sunspec-modbus-codec"]
 

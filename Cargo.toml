@@ -3,8 +3,24 @@ name = "sunspec-modbus-codec"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+crate-type = ["staticlib"]
+
+[profile.dev]
+panic = "abort"
+lto = true
+debug = true
+strip = false
+
+[profile.release]
+panic = "abort"
+lto = true
+debug = true
+strip = false
+
 [dependencies]
 heapless = "0.9.3"
+log = "0.4.33"
 
 [dev-dependencies]
 tokio = { version = "1.52.3", features = ["time"] }

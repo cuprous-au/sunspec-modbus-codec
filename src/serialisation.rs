@@ -1,9 +1,13 @@
 use core::net::{Ipv4Addr, Ipv6Addr};
 
-use heapless::String;
+use heapless::{String, c_string};
+
+unsafe extern "C" {
+    fn printf(format: *const core::ffi::c_char, ...) -> i32;
+}
 
 pub fn write_u16(value: u16, buf: &mut [u16]) -> () {
-    buf[0] = value;
+    buf[0] = value.to_be();
 }
 
 pub fn write_u32(value: u32, buf: &mut [u16], offset: u16, limit: u16) -> () {
@@ -15,7 +19,7 @@ pub fn write_u64(value: u64, buf: &mut [u16], offset: u16, limit: u16) -> () {
 }
 
 pub fn write_i16(value: i16, buf: &mut [u16]) -> () {
-    buf[0] = value as u16;
+    buf[0] = (value.to_be()) as u16;
 }
 
 pub fn write_i32(value: i32, buf: &mut [u16], offset: u16, limit: u16) -> () {
@@ -52,7 +56,11 @@ pub fn write_string<const N: usize>(
     offset: u16,
     limit: u16,
 ) -> () {
-    write_bytes(&str.into_bytes(), buf, offset, limit)
+    let bytes = &str.into_bytes();
+    unsafe {
+        printf(c"String value: '%s'\n".as_ptr(), heapless::CString::<32>::from_bytes_truncating_at_nul(bytes).unwrap().as_ptr());
+    }
+    // write_bytes(bytes, buf, offset, limit)
 }
 
 pub fn write_bytes(bytes: &[u8], buf: &mut [u16], offset: u16, limit: u16) {

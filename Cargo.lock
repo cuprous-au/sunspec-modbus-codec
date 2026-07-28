@@ -440,6 +440,7 @@ version = "0.1.0"
 dependencies = [
  "cbindgen",
  "heapless",
+ "log",
  "tokio",
  "tokio-modbus",
 ]

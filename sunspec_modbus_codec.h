@@ -15,17 +15,32 @@ typedef struct Model1Adapter {
   void (*set_device_address_callback)(uint16_t value);
 } Model1Adapter;
 
+typedef struct SunspecModelAdapters {
+  const struct Model1Adapter *model_1_adapter;
+} SunspecModelAdapters;
+
+typedef struct SunspecService {
+  struct SunspecModelAdapters adapters;
+} SunspecService;
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
-int32_t sunspec_service_handle_request(const struct SunspecService *service,
-                                       uint16_t register_,
-                                       uint16_t length,
-                                       uint16_t *response_buffer,
-                                       size_t buffer_len);
+extern int32_t printf(const char *format, ...);
 
-struct SunspecService sunspec_service_init(const struct Model1Adapter *adapter);
+extern int32_t printf(const char *format, ...);
+
+extern int32_t printf(const char *format, ...);
+
+extern int32_t printf(const char *format, ...);
+
+int32_t sunspec_service_handle_request(const struct SunspecService *service,
+                                       uint16_t address,
+                                       uint16_t length,
+                                       uint16_t *response_buffer);
+
+void sunspec_service_init(struct SunspecService *service, const struct Model1Adapter *adapter);
 
 #ifdef __cplusplus
 }  // extern "C"

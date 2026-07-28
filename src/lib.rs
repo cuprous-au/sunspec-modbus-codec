@@ -1,10 +1,17 @@
 #![doc = include_str!("../README.md")]
 #![no_std]
+pub mod model_1_builder;
 pub mod serialisation;
 pub mod sunspec;
-pub mod model_1_builder;
+
+use core::ffi::{c_char, c_uint};
 
 use heapless::Vec;
+
+#[panic_handler]
+fn panic(_info: &core::panic::PanicInfo) -> ! {
+    loop {}
+}
 
 use crate::{
     ModbusRequest::{ReadRegister, Unknown},
@@ -15,14 +22,15 @@ use crate::{
     },
 };
 
-pub struct SunspecModelAdapters<'a> {
-    pub model_1_adapter: Option<&'a dyn model_1::ModelAdapter>,
-    pub model_103_adapter: Option<&'a dyn model_103::ModelAdapter>,
+#[repr(C)]
+pub struct SunspecModelAdapters {
+    pub model_1_adapter: Option<&'static model_1_builder::Model1Adapter>,
+    // pub model_103_adapter: Option<&'static dyn model_103::ModelAdapter>,
 }
 
-pub struct SunspecService<'a> {
-    points: Vec<(u16, &'static [ReadablePoint]), 114>,
-    adapters: SunspecModelAdapters<'a>,
+#[repr(C)]
+pub struct SunspecService {
+    adapters: SunspecModelAdapters,
 }
 
 pub enum ModbusRequest {
@@ -58,24 +66,13 @@ const HEADER_POINTS: [ReadablePoint; 2] = [
     },
 ];
 
-impl<'a> SunspecService<'a> {
-    pub fn new(adapters: SunspecModelAdapters<'a>) -> Self {
-        let mut points: Vec<(u16, &'static [ReadablePoint]), 114> = Vec::new();
+unsafe extern "C" {
+    fn printf(format: *const c_char, ...) -> i32;
+}
 
-        points.push((2, &HEADER_POINTS)).unwrap();
-
-        if adapters.model_1_adapter.is_some() {
-            points.push((model_1::SIZE, &model_1::POINTS)).unwrap();
-        }
-
-        if adapters.model_103_adapter.is_some() {
-            points.push((model_103::SIZE, &model_103::POINTS)).unwrap();
-        }
-
-        Self {
-            points: points,
-            adapters: adapters,
-        }
+impl SunspecService {
+    pub fn new(adapters: SunspecModelAdapters) -> Self {
+        Self { adapters: adapters }
     }
 
     pub fn handle_request<R: Into<ModbusRequest>>(
@@ -83,27 +80,70 @@ impl<'a> SunspecService<'a> {
         request: R,
         response_buffer: &mut [u16],
     ) -> Result<(), ModbusException> {
+        unsafe {
+            printf(c"handle_request\n".as_ptr());
+        }
+        let point_groups: Vec<(u16, &'static [ReadablePoint]), 3> =
+            [(2, &HEADER_POINTS as &'static [ReadablePoint])]
+                .into_iter()
+                .chain(
+                    [
+                        self.adapters
+                            .model_1_adapter
+                            .map(|_| (model_1::SIZE, &model_1::POINTS as &'static [ReadablePoint])),
+                        // self.adapters.model_103_adapter.map(|_| {
+                        //     (
+                        //         model_103::SIZE,
+                        //         &model_103::POINTS as &'static [ReadablePoint],
+                        //     )
+                        // }),
+                    ]
+                    .into_iter()
+                    .flatten(),
+                )
+                .collect();
+
         match request.into() {
             ReadRegister(address, count) => {
                 if address >= 40000 {
                     let mut offset: u16 = address - 40000;
                     let mut words_written: u16 = 0;
-                    for (size, points) in &self.points {
+
+                    for (size, points) in &point_groups {
                         if offset > *size {
                             offset -= *size;
                         } else {
                             for point in points.iter() {
+                                unsafe {
+                                    printf(
+                                        c"goin through points %d\n".as_ptr(),
+                                        words_written as c_uint,
+                                    );
+                                }
                                 if offset < point.size {
                                     //write
                                     let bytes_to_write =
-                                        core::cmp::min(point.size, count - words_written);
+                                        core::cmp::min(point.size - offset, count - words_written);
 
                                     let buffer_slice = &mut response_buffer[words_written as usize
                                         ..(words_written + bytes_to_write) as usize];
+                                    unsafe {
+                                        printf(
+                                            c"writing %d (offset %d)\n".as_ptr(),
+                                            bytes_to_write as c_uint,
+                                            offset as c_uint,
+                                        );
+                                        printf(
+                                            c"slicing from %d to %d of length %d\n".as_ptr(),
+                                            words_written as c_uint,
+                                            (words_written + bytes_to_write) as c_uint,
+                                            66 as c_uint,
+                                        );
+                                    }
 
                                     match &point.reference {
                                         PointReference::Static { value } => {
-                                            response_buffer[words_written as usize] = *value;
+                                            response_buffer[words_written as usize] = value.to_be();
                                         }
                                         PointReference::Model1 { point } => {
                                             model_1::write_point(
@@ -114,15 +154,15 @@ impl<'a> SunspecService<'a> {
                                                 bytes_to_write,
                                             );
                                         }
-                                        PointReference::Model103 { point } => {
-                                            model_103::write_point(
-                                                self.adapters.model_103_adapter.unwrap(),
-                                                point,
-                                                buffer_slice,
-                                                offset,
-                                                bytes_to_write,
-                                            );
-                                        }
+                                        // PointReference::Model103 { point } => {
+                                        //     model_103::write_point(
+                                        //         self.adapters.model_103_adapter.unwrap(),
+                                        //         point,
+                                        //         buffer_slice,
+                                        //         offset,
+                                        //         bytes_to_write,
+                                        //     );
+                                        // }
                                         _ => (),
                                     }
                                     words_written += point.size;

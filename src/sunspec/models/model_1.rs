@@ -1,7 +1,7 @@
-use heapless::String;
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
+use heapless::String;
 
 pub const SIZE: u16 = 68;
 
@@ -19,37 +19,49 @@ pub static POINTS: [ReadablePoint; 9] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model1 { point: Point::Manufacturer },
+        reference: PointReference::Model1 {
+            point: Point::Manufacturer,
+        },
         size: 16,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model1 { point: Point::Model },
+        reference: PointReference::Model1 {
+            point: Point::Model,
+        },
         size: 16,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model1 { point: Point::Options },
+        reference: PointReference::Model1 {
+            point: Point::Options,
+        },
         size: 8,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model1 { point: Point::Version },
+        reference: PointReference::Model1 {
+            point: Point::Version,
+        },
         size: 8,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model1 { point: Point::SerialNumber },
+        reference: PointReference::Model1 {
+            point: Point::SerialNumber,
+        },
         size: 16,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model1 { point: Point::DeviceAddress },
+        reference: PointReference::Model1 {
+            point: Point::DeviceAddress,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
@@ -72,14 +84,50 @@ pub enum Point {
     DeviceAddress,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+unsafe extern "C" {
+    fn printf(format: *const core::ffi::c_char, ...) -> i32;
+}
+
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
-        Point::Manufacturer => serialisation::write_string(model.manufacturer(), buffer, offset, limit),
+        Point::Manufacturer => {
+            serialisation::write_string(model.manufacturer(), buffer, offset, limit)
+        }
         Point::Model => serialisation::write_string(model.model(), buffer, offset, limit),
-        Point::Options => if let Some(value) = model.options() { serialisation::write_string(value, buffer, offset, limit); },
-        Point::Version => if let Some(value) = model.version() { serialisation::write_string(value, buffer, offset, limit); },
-        Point::SerialNumber => serialisation::write_string(model.serial_number(), buffer, offset, limit),
-        Point::DeviceAddress => if let Some(value) = model.device_address() { serialisation::write_u16(value, buffer); },
+        Point::Options => {
+            if let Some(value) = model.options() {
+                serialisation::write_string(value, buffer, offset, limit);
+            }
+        }
+        Point::Version => {
+            if let Some(value) = model.version() {
+                serialisation::write_string(value, buffer, offset, limit);
+            }
+        }
+        Point::SerialNumber => {
+            unsafe {
+                printf(c"writing serial number".as_ptr());
+            }
+            let value = model.serial_number();
+            if (value.as_ptr().is_null()) {
+                unsafe {
+                    printf(c"writing serial number".as_ptr());
+                }
+            } else {
+                serialisation::write_string(value, buffer, offset, limit);
+            }
+        }
+        Point::DeviceAddress => {
+            if let Some(value) = model.device_address() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
     }
 }
 
@@ -127,6 +175,5 @@ pub trait ModelAdapter {
     /// Modbus device address
     ///
     /// This point is mandatory for all SunSpec RTU devices and, for those devices, they must support values from 1-247.
-    fn set_device_address(&mut self, value: u16) {
-    }
+    fn set_device_address(&mut self, value: u16) {}
 }
