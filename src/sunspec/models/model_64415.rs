@@ -167,6 +167,7 @@ pub trait ModelAdapter {
     fn set_subscribtion_enable(&mut self, value: SubscriptionEna) {}
 }
 
+#[repr(u16)]
 pub enum LogEventEna {
     /// Disabled
     ///
@@ -178,6 +179,7 @@ pub enum LogEventEna {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum HttpMsg {
     /// Disabled
     ///
@@ -189,6 +191,7 @@ pub enum HttpMsg {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum Comm004Cert {
     /// DEFAULT
     ///
@@ -224,6 +227,7 @@ pub enum Comm004Cert {
     Comm004g = 7,
 }
 
+#[repr(u16)]
 pub enum SubscriptionEna {
     /// Disabled
     ///

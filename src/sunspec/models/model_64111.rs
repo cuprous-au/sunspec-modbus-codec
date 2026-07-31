@@ -330,6 +330,7 @@ pub trait ModelAdapter {
     fn lifetime_maximum_voc_voltage(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum ChargerSt {
     Off = 0,
     Float = 1,

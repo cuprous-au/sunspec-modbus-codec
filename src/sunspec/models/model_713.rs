@@ -185,6 +185,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum Sta {
     /// OK
     ///

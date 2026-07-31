@@ -912,17 +912,20 @@ pub trait ModelAdapter {
     fn data_log_clear_complement(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum CcConfigMpptMode {
     Auto = 0,
     UPick = 1,
     Wind = 2,
 }
 
+#[repr(u16)]
 pub enum CcConfigSweepWidth {
     Half = 0,
     Full = 1,
 }
 
+#[repr(u16)]
 pub enum CcConfigSweepMax {
     EightyPercent = 0,
     EightyFivePercent = 1,
@@ -930,22 +933,26 @@ pub enum CcConfigSweepMax {
     NintyNinePercent = 3,
 }
 
+#[repr(u16)]
 pub enum CcConfigGridTie {
     Disabled = 0,
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum CcConfigTempComp {
     Wide = 0,
     Limited = 1,
 }
 
+#[repr(u16)]
 pub enum CcConfigAutoRestart {
     Off = 0,
     Every90Minutes = 1,
     Every90MinutesIfAbsorbOrFloat = 2,
 }
 
+#[repr(u16)]
 pub enum CcConfigAuxMode {
     Float = 0,
     DiversionRelay = 1,
@@ -958,17 +965,20 @@ pub enum CcConfigAuxMode {
     NightLight = 8,
 }
 
+#[repr(u16)]
 pub enum CcConfigAuxControl {
     Off = 0,
     Auto = 1,
     On = 2,
 }
 
+#[repr(u16)]
 pub enum CcConfigAuxState {
     Disabled = 0,
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum CcConfigAuxPolarity {
     Low = 0,
     High = 1,

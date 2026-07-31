@@ -236,6 +236,7 @@ pub trait ModelAdapter {
     fn open_loop_scale_factor(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum Ena {
     /// Disabled
     ///
@@ -247,6 +248,7 @@ pub enum Ena {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum AdptCtlRslt {
     /// Update In Progress
     ///

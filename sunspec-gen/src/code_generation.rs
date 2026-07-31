@@ -12,7 +12,7 @@ fn doc_text(parts: &DocLines) -> String {
 fn generate_enum(resolved_enum: &ResolvedEnum) -> Enum {
     let mut enum_def = Enum::new(&resolved_enum.name_pascal_case);
 
-    enum_def.vis("pub");
+    enum_def.vis("pub").repr(&resolved_enum.discriminant_type);
 
     for value in &resolved_enum.values {
         enum_def
@@ -25,7 +25,7 @@ fn generate_enum(resolved_enum: &ResolvedEnum) -> Enum {
 }
 
 fn option_unless_mandatory(point: &ResolvedPoint) -> Type {
-    let inner_type: Type = (&point.rust_type).into();
+    let inner_type: Type = (&point.point_type.rust_type).into();
     match point.mandatory {
         PointMandatory::O => Type::new("Option").generic(inner_type).to_owned(),
         PointMandatory::M => inner_type,
@@ -57,7 +57,7 @@ fn generate_setter(point: &ResolvedPoint) -> Option<Function> {
                 func.body = None;
             };
 
-            func.arg("value", &point.rust_type)
+            func.arg("value", &point.point_type.rust_type)
                 .arg_mut_self()
                 .doc(doc_text(&point.doc));
             Some(func)
@@ -88,8 +88,8 @@ fn generate_point_array(model: &ResolvedModel) -> String {
         data_type: PointType::{point_type},
         writeable: {writeable},
     }},",
-            point_size = point.size,
-            point_type = point.raw_type,
+            point_size = point.point_type.size,
+            point_type = point.point_type.raw_type,
             writeable = point.access == PointAccess::Rw
         )
     }))
@@ -131,10 +131,12 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     let trait_struct = scope.new_struct("SunspecAdapters").vis("pub").generic("'a");
 
     for model in models {
-        trait_struct.field(
-            format!("{}_adapter", model.name_snake_case),
-            format!("Option<&'a dyn {}::ModelAdapter>", model.name_snake_case),
-        );
+        trait_struct
+            .field(
+                format!("pub {}_adapter", model.name_snake_case),
+                format!("Option<&'a dyn {}::ModelAdapter>", model.name_snake_case),
+            )
+            .vis("pub");
     }
 
     let c_struct = scope
@@ -144,13 +146,15 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         .generic("'a");
 
     for model in models {
-        c_struct.field(
-            format!("{}_adapter", model.name_snake_case),
-            format!(
-                "Option<&'a dyn {}::{}CallbackAdapter>",
-                model.name_snake_case, model.name_pascal_case
-            ),
-        );
+        c_struct
+            .field(
+                format!("pub {}_adapter", model.name_snake_case),
+                format!(
+                    "Option<&'a {}::{}CallbackAdapter>",
+                    model.name_snake_case, model.name_pascal_case
+                ),
+            )
+            .vis("pub");
     }
 
     scope
@@ -158,6 +162,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
 
 pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     let mut scope = Scope::new();
+    scope.raw("#![allow(unused_variables)]");
 
     models.iter().for_each(|model| {
         scope.raw(format!("pub mod {};", model.name_snake_case));
@@ -168,6 +173,7 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
 
 pub fn generate_model(model: &ResolvedModel) -> Scope {
     let mut scope = Scope::new();
+    // scope.raw("#![allow(unused_variables)]");
 
     let funcs: Vec<Function> = model
         .points
@@ -200,7 +206,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope.import("crate::sunspec", "{PointType, ReadablePoint}");
     scope.import("crate::sunspec::points", "PointReference");
 
-    let size: u16 = model.points.iter().map(|point| point.size as u16).sum();
+    let size: u16 = model.points.iter().map(|point| point.point_type.size).sum();
 
     scope.raw(format!("pub const SIZE: u16 = {};", size));
 
@@ -223,26 +229,30 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .iter()
         .filter(|point| point.static_value.is_none())
     {
-        if let Some(writer) = point.writer {
+        if point.static_value.is_none() {
             let value_reader = format!("model.{}()", point.name_snake_case);
             let match_arm = format!("Point::{} =>", point.name_pascal_case);
-            let rest_args = if writer.allow_offset {
+            let rest_args = if point.point_type.writer_allow_offset {
                 ", buffer, offset, limit"
             } else {
                 ", buffer"
             };
 
-            let value_cast = writer.enum_value_cast.unwrap_or_default();
+            let value_cast = point
+                .point_type
+                .writer_value_cast
+                .clone()
+                .unwrap_or_default();
 
             let line = if point.mandatory == PointMandatory::M {
                 format!(
                     "{match_arm} serialisation::{}({value_reader}{value_cast}{rest_args}),",
-                    writer.function_name
+                    point.point_type.writer_function_name
                 )
             } else {
                 format!(
                     "{match_arm} if let Some(value) = {value_reader} {{ serialisation::{}(value{value_cast}{rest_args}); }},",
-                    writer.function_name
+                    point.point_type.writer_function_name
                 )
             };
 
@@ -280,7 +290,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .iter()
         .filter(|point| point.static_value.is_none())
     {
-        let c_type = &point.c_type;
+        let c_type = &point.point_type.c_type;
         let fn_ptr = format!("extern \"C\" fn() -> {c_type}");
         callback_struct.field(
             format!("{}_callback", point.name_snake_case),
@@ -325,10 +335,12 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
             "callback".to_string()
         };
 
-        getter.line(if point.raw_type == "String" {
-            format!("unsafe {{ CStr::from_ptr(({})()) }}", callback_ref)
+        let value = format!("({})()", callback_ref);
+
+        getter.line(if let Some(cast) = point.point_type.cast_from_c {
+            cast(&value)
         } else {
-            format!("({})()", callback_ref)
+            value
         });
         if point.mandatory == PointMandatory::O {
             getter.line("})");
@@ -346,7 +358,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
                 format!("self.set_{}_callback", point.name_snake_case)
             };
 
-            setter.line(if point.raw_type == "String" {
+            setter.line(if point.point_type.cast_from_c.is_some() {
                 format!("({})(value.as_ptr());", callback_ref)
             } else {
                 format!("({})(value);", callback_ref)

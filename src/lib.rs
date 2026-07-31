@@ -14,23 +14,20 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
 }
 
 use crate::{
-    ModbusRequest::{ReadRegister, Unknown},
-    sunspec::{
-        PointType, ReadablePoint,
-        models::{model_1, model_103},
-        points::PointReference,
+    ModbusRequest::{ReadRegister, Unknown}, sunspec::{
+        PointType, ReadablePoint, adapters::SunspecCallbackAdapters, models::{model_1, model_103}, points::PointReference,
     },
 };
 
 #[repr(C)]
-pub struct SunspecModelAdapters {
-    pub model_1_adapter: Option<&'static model_1_builder::Model1Adapter>,
-    // pub model_103_adapter: Option<&'static dyn model_103::ModelAdapter>,
+pub struct SunspecModelAdapters<'a> {
+    pub model_1_adapter: Option<&'a model_1::Model1CallbackAdapter>,
+    pub model_103_adapter: Option<&'a model_103::Model103CallbackAdapter>,
 }
 
 #[repr(C)]
-pub struct SunspecService {
-    adapters: SunspecModelAdapters,
+pub struct SunspecService<'a> {
+    adapters: SunspecCallbackAdapters<'a>,
 }
 
 pub enum ModbusRequest {
@@ -70,8 +67,8 @@ unsafe extern "C" {
     fn printf(format: *const c_char, ...) -> i32;
 }
 
-impl SunspecService {
-    pub fn new(adapters: SunspecModelAdapters) -> Self {
+impl<'a> SunspecService<'a> {
+    pub fn new(adapters: SunspecCallbackAdapters<'a>) -> Self {
         Self { adapters: adapters }
     }
 

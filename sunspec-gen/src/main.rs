@@ -1,6 +1,5 @@
 use codegen::Scope;
 use glob::glob;
-use heck::ToSnakeCase;
 use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
@@ -55,6 +54,7 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
 }
 
 fn format_and_write(path: String, scope: &Scope) -> std::io::Result<()> {
+    // let text = scope.to_string();
     let text = rustfmt_wrapper::rustfmt(scope.to_string()).unwrap();
     fs::write(format!("{}/{}", GENERATED_SRC_DIR, path), text)
 }

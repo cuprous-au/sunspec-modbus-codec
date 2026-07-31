@@ -233,7 +233,7 @@ pub fn write_point(
         Point::Status => serialisation::write_u16(model.status() as u16, buffer),
         Point::VendorStatus => {
             if let Some(value) = model.vendor_status() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Events => serialisation::write_u32(model.events(), buffer, offset, limit),
@@ -244,12 +244,12 @@ pub fn write_point(
         }
         Point::Control => {
             if let Some(value) = model.control() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::VendorControl => {
             if let Some(value) = model.vendor_control() {
-                serialisation::write_u32(value as u32, buffer, offset, limit);
+                serialisation::write_u32(value, buffer, offset, limit);
             }
         }
         Point::ControlValue => {
@@ -339,7 +339,7 @@ pub trait ModelAdapter {
     /// Vendor Status
     ///
     /// Module Vendor Status Code
-    fn vendor_status(&self) -> Option<StatVend> {
+    fn vendor_status(&self) -> Option<u16> {
         None
     }
 
@@ -358,26 +358,26 @@ pub trait ModelAdapter {
     /// Control
     ///
     /// Module Control
-    fn control(&self) -> Option<Ctl> {
+    fn control(&self) -> Option<u16> {
         None
     }
 
     /// Control
     ///
     /// Module Control
-    fn set_control(&mut self, value: Ctl) {}
+    fn set_control(&mut self, value: u16) {}
 
     /// Vendor Control
     ///
     /// Vendor Module Control
-    fn vendor_control(&self) -> Option<CtlVend> {
+    fn vendor_control(&self) -> Option<u32> {
         None
     }
 
     /// Vendor Control
     ///
     /// Vendor Module Control
-    fn set_vendor_control(&mut self, value: CtlVend) {}
+    fn set_vendor_control(&mut self, value: u32) {}
 
     /// Control Value
     ///
@@ -462,6 +462,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum Stat {
     Off = 1,
     Sleeping = 2,
@@ -475,12 +476,6 @@ pub enum Stat {
     Other = 10,
 }
 
-pub enum StatVend {}
-
-pub enum Ctl {}
-
-pub enum CtlVend {}
-
 #[repr(C)]
 pub struct Model502CallbackAdapter {
     a_sf_callback: Option<extern "C" fn() -> u16>,
@@ -488,13 +483,13 @@ pub struct Model502CallbackAdapter {
     w_sf_callback: Option<extern "C" fn() -> u16>,
     wh_sf_callback: Option<extern "C" fn() -> u16>,
     status_callback: extern "C" fn() -> Stat,
-    vendor_status_callback: Option<extern "C" fn() -> StatVend>,
+    vendor_status_callback: Option<extern "C" fn() -> u16>,
     events_callback: extern "C" fn() -> u32,
     vendor_module_event_flags_callback: Option<extern "C" fn() -> u32>,
-    control_callback: Option<extern "C" fn() -> Ctl>,
-    set_control_callback: Option<extern "C" fn(Ctl)>,
-    vendor_control_callback: Option<extern "C" fn() -> CtlVend>,
-    set_vendor_control_callback: Option<extern "C" fn(CtlVend)>,
+    control_callback: Option<extern "C" fn() -> u16>,
+    set_control_callback: Option<extern "C" fn(u16)>,
+    vendor_control_callback: Option<extern "C" fn() -> u32>,
+    set_vendor_control_callback: Option<extern "C" fn(u32)>,
     control_value_callback: Option<extern "C" fn() -> i32>,
     set_control_value_callback: Option<extern "C" fn(i32)>,
     timestamp_callback: Option<extern "C" fn() -> u32>,
@@ -540,7 +535,7 @@ impl ModelAdapter for Model502CallbackAdapter {
     /// Vendor Status
     ///
     /// Module Vendor Status Code
-    fn vendor_status(&self) -> Option<StatVend> {
+    fn vendor_status(&self) -> Option<u16> {
         self.vendor_status_callback.map(|callback| (callback)())
     }
 
@@ -562,14 +557,14 @@ impl ModelAdapter for Model502CallbackAdapter {
     /// Control
     ///
     /// Module Control
-    fn control(&self) -> Option<Ctl> {
+    fn control(&self) -> Option<u16> {
         self.control_callback.map(|callback| (callback)())
     }
 
     /// Control
     ///
     /// Module Control
-    fn set_control(&mut self, value: Ctl) {
+    fn set_control(&mut self, value: u16) {
         if let Some(callback) = self.set_control_callback {
             (callback)(value);
         };
@@ -578,14 +573,14 @@ impl ModelAdapter for Model502CallbackAdapter {
     /// Vendor Control
     ///
     /// Vendor Module Control
-    fn vendor_control(&self) -> Option<CtlVend> {
+    fn vendor_control(&self) -> Option<u32> {
         self.vendor_control_callback.map(|callback| (callback)())
     }
 
     /// Vendor Control
     ///
     /// Vendor Module Control
-    fn set_vendor_control(&mut self, value: CtlVend) {
+    fn set_vendor_control(&mut self, value: u32) {
         if let Some(callback) = self.set_vendor_control_callback {
             (callback)(value);
         };

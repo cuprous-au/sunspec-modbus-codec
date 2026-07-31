@@ -1290,6 +1290,7 @@ pub trait ModelAdapter {
     fn set_n(&mut self, value: u16);
 }
 
+#[repr(u16)]
 pub enum Alg {
     /// For test purposes only
     None = 0,

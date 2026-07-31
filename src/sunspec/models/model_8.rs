@@ -64,6 +64,7 @@ pub trait ModelAdapter {
     fn n(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum Fmt {
     None = 0,
     X509Pem = 1,

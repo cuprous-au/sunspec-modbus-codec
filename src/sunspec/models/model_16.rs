@@ -244,7 +244,7 @@ pub trait ModelAdapter {
     /// MAC
     ///
     /// IEEE MAC address of this interface
-    fn mac(&self) -> Option<[u8; 6]> {
+    fn mac(&self) -> Option<&[u8; 6]> {
         None
     }
 
@@ -261,6 +261,7 @@ pub trait ModelAdapter {
     fn set_link_control(&mut self, value: u16) {}
 }
 
+#[repr(u16)]
 pub enum Cfg {
     Static = 0,
     Dhcp = 1,
@@ -283,7 +284,7 @@ pub struct Model16CallbackAdapter {
     set_dns1_callback: Option<extern "C" fn(*const c_char)>,
     dns2_callback: Option<extern "C" fn() -> *const c_char>,
     set_dns2_callback: Option<extern "C" fn(*const c_char)>,
-    mac_callback: Option<extern "C" fn() -> [u8; 6]>,
+    mac_callback: Option<extern "C" fn() -> *const u8>,
     link_control_callback: Option<extern "C" fn() -> u16>,
     set_link_control_callback: Option<extern "C" fn(u16)>,
 }
@@ -409,8 +410,9 @@ impl ModelAdapter for Model16CallbackAdapter {
     /// MAC
     ///
     /// IEEE MAC address of this interface
-    fn mac(&self) -> Option<[u8; 6]> {
-        self.mac_callback.map(|callback| (callback)())
+    fn mac(&self) -> Option<&[u8; 6]> {
+        self.mac_callback
+            .map(|callback| unsafe { &*((callback)() as *const [u8; 6]) })
     }
 
     /// Link Control

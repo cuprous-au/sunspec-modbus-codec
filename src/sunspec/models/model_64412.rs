@@ -1154,6 +1154,7 @@ pub trait ModelAdapter {
     fn set_change_common_model_length(&mut self, value: ChangeCommonModelLength) {}
 }
 
+#[repr(u16)]
 pub enum DaManipulation {
     /// Data Unaffected
     ///
@@ -1165,6 +1166,7 @@ pub enum DaManipulation {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum FalsifyDeviceIdentity {
     /// Data Unaffected
     ///
@@ -1176,6 +1178,7 @@ pub enum FalsifyDeviceIdentity {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasPAlwaysNameplate {
     /// Data Unaffected
     ///
@@ -1187,6 +1190,7 @@ pub enum MeasPAlwaysNameplate {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasQAlwaysMinimum {
     /// Data Unaffected
     ///
@@ -1198,6 +1202,7 @@ pub enum MeasQAlwaysMinimum {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasQAlwaysMaximum {
     /// Data Unaffected
     ///
@@ -1209,6 +1214,7 @@ pub enum MeasQAlwaysMaximum {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasQAlwaysZero {
     /// Data Unaffected
     ///
@@ -1220,6 +1226,7 @@ pub enum MeasQAlwaysZero {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasZeroP {
     /// Data Unaffected
     ///
@@ -1231,6 +1238,7 @@ pub enum MeasZeroP {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasInvertQ {
     /// Data Unaffected
     ///
@@ -1242,6 +1250,7 @@ pub enum MeasInvertQ {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowV {
     /// Data Unaffected
     ///
@@ -1253,6 +1262,7 @@ pub enum MeasLowV {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasHighV {
     /// Data Unaffected
     ///
@@ -1264,6 +1274,7 @@ pub enum MeasHighV {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowL1v {
     /// Data Unaffected
     ///
@@ -1275,6 +1286,7 @@ pub enum MeasLowL1v {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasHighL1v {
     /// Data Unaffected
     ///
@@ -1286,6 +1298,7 @@ pub enum MeasHighL1v {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowF {
     /// Data Unaffected
     ///
@@ -1297,6 +1310,7 @@ pub enum MeasLowF {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasHighF {
     /// Data Unaffected
     ///
@@ -1308,6 +1322,7 @@ pub enum MeasHighF {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowAmps {
     /// Data Unaffected
     ///
@@ -1319,6 +1334,7 @@ pub enum MeasLowAmps {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasHighAmps {
     /// Data Unaffected
     ///
@@ -1330,6 +1346,7 @@ pub enum MeasHighAmps {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasHighS {
     /// Data Unaffected
     ///
@@ -1341,6 +1358,7 @@ pub enum MeasHighS {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowS {
     /// Data Unaffected
     ///
@@ -1352,6 +1370,7 @@ pub enum MeasLowS {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasHighQ {
     /// Data Unaffected
     ///
@@ -1363,6 +1382,7 @@ pub enum MeasHighQ {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowQ {
     /// Data Unaffected
     ///
@@ -1374,6 +1394,7 @@ pub enum MeasLowQ {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowPf {
     /// Data Unaffected
     ///
@@ -1385,6 +1406,7 @@ pub enum MeasLowPf {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum MeasLowReversedPf {
     /// Data Unaffected
     ///
@@ -1396,6 +1418,7 @@ pub enum MeasLowReversedPf {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateHighP {
     /// Data Unaffected
     ///
@@ -1407,6 +1430,7 @@ pub enum NameplateHighP {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowP {
     /// Data Unaffected
     ///
@@ -1418,6 +1442,7 @@ pub enum NameplateLowP {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateHighS {
     /// Data Unaffected
     ///
@@ -1429,6 +1454,7 @@ pub enum NameplateHighS {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowS {
     /// Data Unaffected
     ///
@@ -1440,6 +1466,7 @@ pub enum NameplateLowS {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateHighQ {
     /// Data Unaffected
     ///
@@ -1451,6 +1478,7 @@ pub enum NameplateHighQ {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowQ {
     /// Data Unaffected
     ///
@@ -1462,6 +1490,7 @@ pub enum NameplateLowQ {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateHighNomV {
     /// Data Unaffected
     ///
@@ -1473,6 +1502,7 @@ pub enum NameplateHighNomV {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowNomV {
     /// Data Unaffected
     ///
@@ -1484,6 +1514,7 @@ pub enum NameplateLowNomV {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowAmps {
     /// Data Unaffected
     ///
@@ -1495,6 +1526,7 @@ pub enum NameplateLowAmps {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowVarmaxinj {
     /// Data Unaffected
     ///
@@ -1506,6 +1538,7 @@ pub enum NameplateLowVarmaxinj {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowVarmaxabs {
     /// Data Unaffected
     ///
@@ -1517,6 +1550,7 @@ pub enum NameplateLowVarmaxabs {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum NameplateLowPf {
     /// Data Unaffected
     ///
@@ -1528,6 +1562,7 @@ pub enum NameplateLowPf {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsHighNomV {
     /// Data Unaffected
     ///
@@ -1539,6 +1574,7 @@ pub enum SettingsHighNomV {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsLowAmps {
     /// Data Unaffected
     ///
@@ -1550,6 +1586,7 @@ pub enum SettingsLowAmps {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsHighP {
     /// Data Unaffected
     ///
@@ -1561,6 +1598,7 @@ pub enum SettingsHighP {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsLowP {
     /// Data Unaffected
     ///
@@ -1572,6 +1610,7 @@ pub enum SettingsLowP {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsHighVaMax {
     /// Data Unaffected
     ///
@@ -1583,6 +1622,7 @@ pub enum SettingsHighVaMax {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsHighVarmaxinj {
     /// Data Unaffected
     ///
@@ -1594,6 +1634,7 @@ pub enum SettingsHighVarmaxinj {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum SettingsHighVarmaxabs {
     /// Data Unaffected
     ///
@@ -1605,6 +1646,7 @@ pub enum SettingsHighVarmaxabs {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum ChangeCommonModelId {
     /// Data Unaffected
     ///
@@ -1616,6 +1658,7 @@ pub enum ChangeCommonModelId {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum ChangeCommonModelLength {
     /// Data Unaffected
     ///

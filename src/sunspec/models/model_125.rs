@@ -199,6 +199,7 @@ pub trait ModelAdapter {
     fn sig_sf(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum SigType {
     Unknown = 0,
     Absolute = 1,

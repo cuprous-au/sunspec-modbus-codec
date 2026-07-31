@@ -20,9 +20,9 @@ const char *model_callback()
 
 const char *serial_number_callback()
 {
-    static char static_content[32] = "ABC-123";
-    printf("Getting serial number");
-    return static_content;
+    static char static_content2[32] = "ABC-123";
+    printf("Getting serial number\n");
+    return static_content2;
 };
 
 int main(void)
@@ -38,10 +38,10 @@ int main(void)
         modbus_free(ctx);
         return 1;
     }
-    struct Model1Adapter sunspec_common_adapter = {
-        manufacturer_callback,
-        model_callback,
-        serial_number_callback,
+    struct Model1CallbackAdapter sunspec_common_adapter = {
+        .manufacturer_callback = manufacturer_callback,
+        .model_callback = model_callback,
+        .serial_number_callback = serial_number_callback,
     };
     struct SunspecService sunspec_service;
     sunspec_service_init(&sunspec_service, &sunspec_common_adapter);

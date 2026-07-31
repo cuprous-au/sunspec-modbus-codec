@@ -764,6 +764,7 @@ pub trait ModelAdapter {
     fn n(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum Sts {
     Success = 0,
     Ds = 1,
@@ -773,12 +774,14 @@ pub enum Sts {
     Off = 3,
 }
 
+#[repr(u16)]
 pub enum Alm {
     None = 0,
     /// Tampered
     Alm = 1,
 }
 
+#[repr(u16)]
 pub enum Alg {
     /// For test purposes only
     None = 0,

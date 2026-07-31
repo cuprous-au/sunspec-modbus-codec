@@ -626,12 +626,12 @@ pub fn write_point(
         }
         Point::Enum16 => {
             if let Some(value) = model.enum16() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Enum16U => {
             if let Some(value) = model.enum16_u() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Bitfield16 => {
@@ -716,12 +716,12 @@ pub fn write_point(
         }
         Point::Enum32 => {
             if let Some(value) = model.enum32() {
-                serialisation::write_u32(value as u32, buffer, offset, limit);
+                serialisation::write_u32(value, buffer, offset, limit);
             }
         }
         Point::Enum32U => {
             if let Some(value) = model.enum32_u() {
-                serialisation::write_u32(value as u32, buffer, offset, limit);
+                serialisation::write_u32(value, buffer, offset, limit);
             }
         }
         Point::Bitfield32 => {
@@ -736,12 +736,12 @@ pub fn write_point(
         }
         Point::Ipaddr => {
             if let Some(value) = model.ipaddr() {
-                serialisation::write_ipaddr(value, buffer, offset, limit);
+                serialisation::write_ipv4_addr(value, buffer, offset, limit);
             }
         }
         Point::IpaddrU => {
             if let Some(value) = model.ipaddr_u() {
-                serialisation::write_ipaddr(value, buffer, offset, limit);
+                serialisation::write_ipv4_addr(value, buffer, offset, limit);
             }
         }
         Point::Int64 => {
@@ -766,12 +766,12 @@ pub fn write_point(
         }
         Point::Ipv6addr => {
             if let Some(value) = model.ipv6addr() {
-                serialisation::write_ipv6addr(value, buffer, offset, limit);
+                serialisation::write_ipv6_addr(value, buffer, offset, limit);
             }
         }
         Point::Ipv6addrU => {
             if let Some(value) = model.ipv6addr_u() {
-                serialisation::write_ipv6addr(value, buffer, offset, limit);
+                serialisation::write_ipv6_addr(value, buffer, offset, limit);
             }
         }
         Point::Float32 => {
@@ -889,11 +889,11 @@ pub trait ModelAdapter {
         None
     }
 
-    fn enum16(&self) -> Option<Enum16> {
+    fn enum16(&self) -> Option<u16> {
         None
     }
 
-    fn enum16_u(&self) -> Option<Enum16U> {
+    fn enum16_u(&self) -> Option<u16> {
         None
     }
 
@@ -965,11 +965,11 @@ pub trait ModelAdapter {
         None
     }
 
-    fn enum32(&self) -> Option<Enum32> {
+    fn enum32(&self) -> Option<u32> {
         None
     }
 
-    fn enum32_u(&self) -> Option<Enum32U> {
+    fn enum32_u(&self) -> Option<u32> {
         None
     }
 
@@ -1050,14 +1050,6 @@ pub trait ModelAdapter {
     }
 }
 
-pub enum Enum16 {}
-
-pub enum Enum16U {}
-
-pub enum Enum32 {}
-
-pub enum Enum32U {}
-
 #[repr(C)]
 pub struct Model63001CallbackAdapter {
     sunssf_1_callback: Option<extern "C" fn() -> u16>,
@@ -1080,8 +1072,8 @@ pub struct Model63001CallbackAdapter {
     uint16_u_callback: Option<extern "C" fn() -> u16>,
     acc16_callback: Option<extern "C" fn() -> u16>,
     acc16_u_callback: Option<extern "C" fn() -> u16>,
-    enum16_callback: Option<extern "C" fn() -> Enum16>,
-    enum16_u_callback: Option<extern "C" fn() -> Enum16U>,
+    enum16_callback: Option<extern "C" fn() -> u16>,
+    enum16_u_callback: Option<extern "C" fn() -> u16>,
     bitfield16_callback: Option<extern "C" fn() -> u16>,
     bitfield16_u_callback: Option<extern "C" fn() -> u16>,
     int32_1_callback: Option<extern "C" fn() -> i32>,
@@ -1100,8 +1092,8 @@ pub struct Model63001CallbackAdapter {
     uint32_u_callback: Option<extern "C" fn() -> u32>,
     acc32_callback: Option<extern "C" fn() -> u32>,
     acc32_u_callback: Option<extern "C" fn() -> u32>,
-    enum32_callback: Option<extern "C" fn() -> Enum32>,
-    enum32_u_callback: Option<extern "C" fn() -> Enum32U>,
+    enum32_callback: Option<extern "C" fn() -> u32>,
+    enum32_u_callback: Option<extern "C" fn() -> u32>,
     bitfield32_callback: Option<extern "C" fn() -> u32>,
     bitfield32_u_callback: Option<extern "C" fn() -> u32>,
     ipaddr_callback: Option<extern "C" fn() -> Ipv4Addr>,
@@ -1210,11 +1202,11 @@ impl ModelAdapter for Model63001CallbackAdapter {
         self.acc16_u_callback.map(|callback| (callback)())
     }
 
-    fn enum16(&self) -> Option<Enum16> {
+    fn enum16(&self) -> Option<u16> {
         self.enum16_callback.map(|callback| (callback)())
     }
 
-    fn enum16_u(&self) -> Option<Enum16U> {
+    fn enum16_u(&self) -> Option<u16> {
         self.enum16_u_callback.map(|callback| (callback)())
     }
 
@@ -1294,11 +1286,11 @@ impl ModelAdapter for Model63001CallbackAdapter {
         self.acc32_u_callback.map(|callback| (callback)())
     }
 
-    fn enum32(&self) -> Option<Enum32> {
+    fn enum32(&self) -> Option<u32> {
         self.enum32_callback.map(|callback| (callback)())
     }
 
-    fn enum32_u(&self) -> Option<Enum32U> {
+    fn enum32_u(&self) -> Option<u32> {
         self.enum32_u_callback.map(|callback| (callback)())
     }
 

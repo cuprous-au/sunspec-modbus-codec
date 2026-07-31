@@ -340,6 +340,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum ArGraMod {
     Edge = 0,
     Center = 1,

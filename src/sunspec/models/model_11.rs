@@ -138,7 +138,7 @@ pub trait ModelAdapter {
     /// MAC
     ///
     /// IEEE MAC address of this interface
-    fn mac(&self) -> Option<[u8; 6]> {
+    fn mac(&self) -> Option<&[u8; 6]> {
         None
     }
 
@@ -179,6 +179,7 @@ pub trait ModelAdapter {
     fn set_forced_speed(&mut self, value: u16) {}
 }
 
+#[repr(u16)]
 pub enum St {
     Unknown = 0,
     Enabled = 1,
@@ -191,7 +192,7 @@ pub struct Model11CallbackAdapter {
     ethernet_link_speed_callback: extern "C" fn() -> u16,
     interface_status_flags_callback: extern "C" fn() -> u16,
     link_state_callback: extern "C" fn() -> St,
-    mac_callback: Option<extern "C" fn() -> [u8; 6]>,
+    mac_callback: Option<extern "C" fn() -> *const u8>,
     name_callback: Option<extern "C" fn() -> *const c_char>,
     set_name_callback: Option<extern "C" fn(*const c_char)>,
     control_callback: Option<extern "C" fn() -> u16>,
@@ -225,8 +226,9 @@ impl ModelAdapter for Model11CallbackAdapter {
     /// MAC
     ///
     /// IEEE MAC address of this interface
-    fn mac(&self) -> Option<[u8; 6]> {
-        self.mac_callback.map(|callback| (callback)())
+    fn mac(&self) -> Option<&[u8; 6]> {
+        self.mac_callback
+            .map(|callback| unsafe { &*((callback)() as *const [u8; 6]) })
     }
 
     /// Name

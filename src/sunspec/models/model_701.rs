@@ -1489,6 +1489,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum AcType {
     /// Single Phase
     SinglePhase = 0,
@@ -1498,6 +1499,7 @@ pub enum AcType {
     ThreePhase = 2,
 }
 
+#[repr(u16)]
 pub enum St {
     /// Off
     Off = 0,
@@ -1505,6 +1507,7 @@ pub enum St {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum InvSt {
     Off = 0,
     Sleeping = 1,
@@ -1516,6 +1519,7 @@ pub enum InvSt {
     Standby = 7,
 }
 
+#[repr(u16)]
 pub enum ConnSt {
     /// Disconnected
     ///

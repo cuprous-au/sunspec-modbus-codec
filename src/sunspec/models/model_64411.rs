@@ -1073,6 +1073,7 @@ pub trait ModelAdapter {
     fn thd_scale_factor(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum Output {
     /// Output Off
     Off = 0,
@@ -1080,6 +1081,7 @@ pub enum Output {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum Relay {
     /// Relay Open
     Open = 0,
@@ -1087,6 +1089,7 @@ pub enum Relay {
     Closed = 1,
 }
 
+#[repr(u16)]
 pub enum Regen {
     /// Regen Off
     Off = 0,
@@ -1094,6 +1097,7 @@ pub enum Regen {
     On = 1,
 }
 
+#[repr(u16)]
 pub enum EnaProf {
     /// Stop Profile
     Stop = 0,
@@ -1103,6 +1107,7 @@ pub enum EnaProf {
     Trigger = 2,
 }
 
+#[repr(u16)]
 pub enum ProfRslt {
     /// Profile update in progress.
     InProgress = 0,

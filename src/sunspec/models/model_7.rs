@@ -173,6 +173,7 @@ pub trait ModelAdapter {
     fn set_n(&mut self, value: u16);
 }
 
+#[repr(u16)]
 pub enum Sts {
     Success = 0,
     /// The signature was not valid
@@ -185,12 +186,14 @@ pub enum Sts {
     Val = 4,
 }
 
+#[repr(u16)]
 pub enum Alm {
     None = 0,
     /// Tampered
     Alm = 1,
 }
 
+#[repr(u16)]
 pub enum Alg {
     /// For test purposes only
     None = 0,

@@ -156,6 +156,7 @@ pub trait ModelAdapter {
     fn set_set_operation(&mut self, value: OpCtl) {}
 }
 
+#[repr(u16)]
 pub enum LocRemCtl {
     /// Remote Control
     Remote = 0,
@@ -165,6 +166,7 @@ pub enum LocRemCtl {
     Local = 1,
 }
 
+#[repr(u16)]
 pub enum OpCtl {
     /// Stop the DER
     Stop = 0,

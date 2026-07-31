@@ -232,6 +232,7 @@ pub trait ModelAdapter {
     fn crv_type(&self) -> CrvType;
 }
 
+#[repr(u16)]
 pub enum CrvType {
     CeaseToEnergize = 1,
 }

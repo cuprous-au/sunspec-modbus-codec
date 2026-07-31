@@ -394,7 +394,7 @@ pub fn write_point(
         Point::OperatingState => serialisation::write_u16(model.operating_state() as u16, buffer),
         Point::VendorOperatingState => {
             if let Some(value) = model.vendor_operating_state() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Event1 => serialisation::write_u32(model.event1(), buffer, offset, limit),
@@ -582,7 +582,7 @@ pub trait ModelAdapter {
     /// Vendor Operating State
     ///
     /// Vendor specific operating state code
-    fn vendor_operating_state(&self) -> Option<StVnd> {
+    fn vendor_operating_state(&self) -> Option<u16> {
         None
     }
 
@@ -625,6 +625,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum St {
     GgOff = 1,
     GgSleeping = 2,
@@ -635,8 +636,6 @@ pub enum St {
     GgFault = 7,
     GgStandby = 8,
 }
-
-pub enum StVnd {}
 
 #[repr(C)]
 pub struct Model111CallbackAdapter {
@@ -664,7 +663,7 @@ pub struct Model111CallbackAdapter {
     transformer_temperature_callback: Option<extern "C" fn() -> f32>,
     other_temperature_callback: Option<extern "C" fn() -> f32>,
     operating_state_callback: extern "C" fn() -> St,
-    vendor_operating_state_callback: Option<extern "C" fn() -> StVnd>,
+    vendor_operating_state_callback: Option<extern "C" fn() -> u16>,
     event1_callback: extern "C" fn() -> u32,
     event_bitfield_2_callback: extern "C" fn() -> u32,
     vendor_event_bitfield_1_callback: Option<extern "C" fn() -> u32>,
@@ -849,7 +848,7 @@ impl ModelAdapter for Model111CallbackAdapter {
     /// Vendor Operating State
     ///
     /// Vendor specific operating state code
-    fn vendor_operating_state(&self) -> Option<StVnd> {
+    fn vendor_operating_state(&self) -> Option<u16> {
         self.vendor_operating_state_callback
             .map(|callback| (callback)())
     }

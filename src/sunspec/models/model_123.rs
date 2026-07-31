@@ -595,21 +595,25 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum Conn {
     Disconnect = 0,
     Connect = 1,
 }
 
+#[repr(u16)]
 pub enum WMaxLimEna {
     Disabled = 0,
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum OutPfSetEna {
     Disabled = 0,
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum VArPctMod {
     None = 0,
     WMax = 1,
@@ -617,6 +621,7 @@ pub enum VArPctMod {
     VArAval = 3,
 }
 
+#[repr(u16)]
 pub enum VArPctEna {
     Disabled = 0,
     Enabled = 1,

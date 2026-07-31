@@ -307,6 +307,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum Es {
     Disabled = 0,
     Enabled = 1,

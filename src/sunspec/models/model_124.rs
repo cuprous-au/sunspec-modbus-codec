@@ -558,6 +558,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum ChaSt {
     Off = 1,
     Empty = 2,
@@ -568,6 +569,7 @@ pub enum ChaSt {
     Testing = 7,
 }
 
+#[repr(u16)]
 pub enum ChaGriSet {
     Pv = 0,
     Grid = 1,

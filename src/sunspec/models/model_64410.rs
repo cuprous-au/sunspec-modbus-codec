@@ -824,6 +824,7 @@ pub trait ModelAdapter {
     fn set_percent_scale_factor(&mut self, value: u16);
 }
 
+#[repr(u16)]
 pub enum Mode {
     /// CV Mode
     ///
@@ -835,6 +836,7 @@ pub enum Mode {
     Cc = 1,
 }
 
+#[repr(u16)]
 pub enum Ena {
     /// Power On
     ///
@@ -846,6 +848,7 @@ pub enum Ena {
     Off = 0,
 }
 
+#[repr(u16)]
 pub enum Reset {
     /// Reset Device
     ///
@@ -857,6 +860,7 @@ pub enum Reset {
     DoNotReset = 0,
 }
 
+#[repr(u16)]
 pub enum En50530 {
     /// EN50530 Mode
     ///
@@ -868,6 +872,7 @@ pub enum En50530 {
     DoNotEn50530 = 0,
 }
 
+#[repr(u16)]
 pub enum EnaProf {
     /// Start Profile
     ///
@@ -879,6 +884,7 @@ pub enum EnaProf {
     Stop = 0,
 }
 
+#[repr(u16)]
 pub enum AdptProfRslt {
     /// Update In Progress
     ///

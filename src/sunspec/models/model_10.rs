@@ -104,12 +104,14 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum St {
     Down = 0,
     Up = 1,
     Fault = 2,
 }
 
+#[repr(u16)]
 pub enum Typ {
     Unknown = 0,
     Internal = 1,

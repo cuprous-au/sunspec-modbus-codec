@@ -1,5 +1,5 @@
 pub mod points;
-
+pub mod adapters;
 pub mod models;
 
 #[derive(Debug)]

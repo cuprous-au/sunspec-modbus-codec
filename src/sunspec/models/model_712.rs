@@ -232,6 +232,7 @@ pub trait ModelAdapter {
     fn var_scale_factor(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum Ena {
     /// Disabled
     ///
@@ -243,6 +244,7 @@ pub enum Ena {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum AdptCrvRslt {
     /// Update In Progress
     ///

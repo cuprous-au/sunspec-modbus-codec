@@ -458,7 +458,7 @@ pub fn write_point(
         }
         Point::EnableDisableString => {
             if let Some(value) = model.enable_disable_string() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::ConnectDisconnectString => {
@@ -670,14 +670,14 @@ pub trait ModelAdapter {
     /// Enable/Disable String
     ///
     /// Enables and disables the string. Should reset to 0 upon completion.
-    fn enable_disable_string(&self) -> Option<SetEna> {
+    fn enable_disable_string(&self) -> Option<u16> {
         None
     }
 
     /// Enable/Disable String
     ///
     /// Enables and disables the string. Should reset to 0 upon completion.
-    fn set_enable_disable_string(&mut self, value: SetEna) {}
+    fn set_enable_disable_string(&mut self, value: u16) {}
 
     /// Connect/Disconnect String
     ///
@@ -723,6 +723,7 @@ pub trait ModelAdapter {
     fn mod_tmp_sf(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum ConFail {
     NoFailure = 0,
     ButtonPushed = 1,
@@ -736,8 +737,7 @@ pub enum ConFail {
     StringFault = 8,
 }
 
-pub enum SetEna {}
-
+#[repr(u16)]
 pub enum SetCon {
     ConnectString = 1,
     DisconnectString = 2,
@@ -771,8 +771,8 @@ pub struct Model804CallbackAdapter {
     string_event_2_callback: Option<extern "C" fn() -> u32>,
     vendor_event_bitfield_1_callback: Option<extern "C" fn() -> u32>,
     vendor_event_bitfield_2_callback: Option<extern "C" fn() -> u32>,
-    enable_disable_string_callback: Option<extern "C" fn() -> SetEna>,
-    set_enable_disable_string_callback: Option<extern "C" fn(SetEna)>,
+    enable_disable_string_callback: Option<extern "C" fn() -> u16>,
+    set_enable_disable_string_callback: Option<extern "C" fn(u16)>,
     connect_disconnect_string_callback: Option<extern "C" fn() -> SetCon>,
     set_connect_disconnect_string_callback: Option<extern "C" fn(SetCon)>,
     so_c_sf_callback: extern "C" fn() -> u16,
@@ -1003,7 +1003,7 @@ impl ModelAdapter for Model804CallbackAdapter {
     /// Enable/Disable String
     ///
     /// Enables and disables the string. Should reset to 0 upon completion.
-    fn enable_disable_string(&self) -> Option<SetEna> {
+    fn enable_disable_string(&self) -> Option<u16> {
         self.enable_disable_string_callback
             .map(|callback| (callback)())
     }
@@ -1011,7 +1011,7 @@ impl ModelAdapter for Model804CallbackAdapter {
     /// Enable/Disable String
     ///
     /// Enables and disables the string. Should reset to 0 upon completion.
-    fn set_enable_disable_string(&mut self, value: SetEna) {
+    fn set_enable_disable_string(&mut self, value: u16) {
         if let Some(callback) = self.set_enable_disable_string_callback {
             (callback)(value);
         };

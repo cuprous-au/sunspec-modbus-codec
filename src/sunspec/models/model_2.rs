@@ -121,7 +121,7 @@ pub fn write_point(
         Point::Status => serialisation::write_u16(model.status() as u16, buffer),
         Point::VendorStatus => {
             if let Some(value) = model.vendor_status() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::EventCode => serialisation::write_u32(model.event_code(), buffer, offset, limit),
@@ -137,12 +137,12 @@ pub fn write_point(
         }
         Point::VendorControl => {
             if let Some(value) = model.vendor_control() {
-                serialisation::write_u32(value as u32, buffer, offset, limit);
+                serialisation::write_u32(value, buffer, offset, limit);
             }
         }
         Point::ControlValue => {
             if let Some(value) = model.control_value() {
-                serialisation::write_u32(value as u32, buffer, offset, limit);
+                serialisation::write_u32(value, buffer, offset, limit);
             }
         }
     }
@@ -172,7 +172,7 @@ pub trait ModelAdapter {
     /// Vendor Status
     ///
     /// Vendor specific status code
-    fn vendor_status(&self) -> Option<StVnd> {
+    fn vendor_status(&self) -> Option<u16> {
         None
     }
 
@@ -198,18 +198,19 @@ pub trait ModelAdapter {
     /// Vendor Control
     ///
     /// Vendor control register for all aggregated devices
-    fn vendor_control(&self) -> Option<CtlVnd> {
+    fn vendor_control(&self) -> Option<u32> {
         None
     }
 
     /// Control Value
     ///
     /// Numerical value used as a parameter to the control
-    fn control_value(&self) -> Option<CtlVl> {
+    fn control_value(&self) -> Option<u32> {
         None
     }
 }
 
+#[repr(u16)]
 pub enum St {
     Off = 1,
     On = 2,
@@ -217,8 +218,7 @@ pub enum St {
     Fault = 4,
 }
 
-pub enum StVnd {}
-
+#[repr(u16)]
 pub enum Ctl {
     None = 0,
     Automatic = 1,
@@ -227,22 +227,18 @@ pub enum Ctl {
     Throttle = 4,
 }
 
-pub enum CtlVnd {}
-
-pub enum CtlVl {}
-
 #[repr(C)]
 pub struct Model2CallbackAdapter {
     aid_callback: extern "C" fn() -> u16,
     n_callback: extern "C" fn() -> u16,
     un_callback: extern "C" fn() -> u16,
     status_callback: extern "C" fn() -> St,
-    vendor_status_callback: Option<extern "C" fn() -> StVnd>,
+    vendor_status_callback: Option<extern "C" fn() -> u16>,
     event_code_callback: extern "C" fn() -> u32,
     vendor_event_code_callback: Option<extern "C" fn() -> u32>,
     control_callback: Option<extern "C" fn() -> Ctl>,
-    vendor_control_callback: Option<extern "C" fn() -> CtlVnd>,
-    control_value_callback: Option<extern "C" fn() -> CtlVl>,
+    vendor_control_callback: Option<extern "C" fn() -> u32>,
+    control_value_callback: Option<extern "C" fn() -> u32>,
 }
 
 impl ModelAdapter for Model2CallbackAdapter {
@@ -277,7 +273,7 @@ impl ModelAdapter for Model2CallbackAdapter {
     /// Vendor Status
     ///
     /// Vendor specific status code
-    fn vendor_status(&self) -> Option<StVnd> {
+    fn vendor_status(&self) -> Option<u16> {
         self.vendor_status_callback.map(|callback| (callback)())
     }
 
@@ -305,14 +301,14 @@ impl ModelAdapter for Model2CallbackAdapter {
     /// Vendor Control
     ///
     /// Vendor control register for all aggregated devices
-    fn vendor_control(&self) -> Option<CtlVnd> {
+    fn vendor_control(&self) -> Option<u32> {
         self.vendor_control_callback.map(|callback| (callback)())
     }
 
     /// Control Value
     ///
     /// Numerical value used as a parameter to the control
-    fn control_value(&self) -> Option<CtlVl> {
+    fn control_value(&self) -> Option<u32> {
         self.control_value_callback.map(|callback| (callback)())
     }
 }

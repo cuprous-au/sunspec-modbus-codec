@@ -364,12 +364,14 @@ pub trait ModelAdapter {
     fn set_host_name(&mut self, value: &CStr) {}
 }
 
+#[repr(u16)]
 pub enum CfgSt {
     NotConfigured = 0,
     ValidSetting = 1,
     ValidHw = 2,
 }
 
+#[repr(u16)]
 pub enum Cfg {
     Static = 0,
     Dhcp = 1,
@@ -377,6 +379,7 @@ pub enum Cfg {
     Zeroconf = 3,
 }
 
+#[repr(u16)]
 pub enum Ctl {
     EnableDns = 0,
     EnableNtp = 1,

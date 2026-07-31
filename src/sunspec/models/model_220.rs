@@ -569,6 +569,7 @@ pub trait ModelAdapter {
     fn n(&self) -> u16;
 }
 
+#[repr(u16)]
 pub enum Alg {
     /// For test purposes only
     None = 0,

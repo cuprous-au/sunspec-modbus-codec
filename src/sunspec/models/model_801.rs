@@ -40,7 +40,7 @@ pub fn write_point(
     limit: u16,
 ) {
     match point {
-        Point::DeprecatedModel => serialisation::write_u16(model.deprecated_model() as u16, buffer),
+        Point::DeprecatedModel => serialisation::write_u16(model.deprecated_model(), buffer),
     }
 }
 
@@ -48,21 +48,19 @@ pub trait ModelAdapter {
     /// Deprecated Model
     ///
     /// This model has been deprecated.
-    fn deprecated_model(&self) -> Deprecated;
+    fn deprecated_model(&self) -> u16;
 }
-
-pub enum Deprecated {}
 
 #[repr(C)]
 pub struct Model801CallbackAdapter {
-    deprecated_model_callback: extern "C" fn() -> Deprecated,
+    deprecated_model_callback: extern "C" fn() -> u16,
 }
 
 impl ModelAdapter for Model801CallbackAdapter {
     /// Deprecated Model
     ///
     /// This model has been deprecated.
-    fn deprecated_model(&self) -> Deprecated {
+    fn deprecated_model(&self) -> u16 {
         (self.deprecated_model_callback)()
     }
 }

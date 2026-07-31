@@ -349,7 +349,7 @@ pub fn write_point(
     match point {
         Point::CommandCode => {
             if let Some(value) = model.command_code() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::HardwareRevision => {
@@ -424,7 +424,7 @@ pub fn write_point(
         }
         Point::Sensor1UnitId => {
             if let Some(value) = model.sensor_1_unit_id() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Sensor1Address => {
@@ -449,7 +449,7 @@ pub fn write_point(
         }
         Point::Sensor2UnitId => {
             if let Some(value) = model.sensor_2_unit_id() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Sensor2Address => {
@@ -474,7 +474,7 @@ pub fn write_point(
         }
         Point::Sensor3UnitId => {
             if let Some(value) = model.sensor_3_unit_id() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Sensor3Address => {
@@ -499,7 +499,7 @@ pub fn write_point(
         }
         Point::Sensor4UnitId => {
             if let Some(value) = model.sensor_4_unit_id() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::Sensor4Address => {
@@ -527,12 +527,12 @@ pub fn write_point(
 
 pub trait ModelAdapter {
     /// Command Code
-    fn command_code(&self) -> Option<Cmd> {
+    fn command_code(&self) -> Option<u16> {
         None
     }
 
     /// Command Code
-    fn set_command_code(&mut self, value: Cmd) {}
+    fn set_command_code(&mut self, value: u16) {}
 
     /// Hardware Revision
     fn hardware_revision(&self) -> Option<u16> {
@@ -604,7 +604,7 @@ pub trait ModelAdapter {
     }
 
     /// Sensor 1 Unit ID
-    fn sensor_1_unit_id(&self) -> Option<S1id> {
+    fn sensor_1_unit_id(&self) -> Option<u16> {
         None
     }
 
@@ -629,7 +629,7 @@ pub trait ModelAdapter {
     }
 
     /// Sensor 2 Unit ID
-    fn sensor_2_unit_id(&self) -> Option<S2id> {
+    fn sensor_2_unit_id(&self) -> Option<u16> {
         None
     }
 
@@ -654,7 +654,7 @@ pub trait ModelAdapter {
     }
 
     /// Sensor 3 Unit ID
-    fn sensor_3_unit_id(&self) -> Option<S3id> {
+    fn sensor_3_unit_id(&self) -> Option<u16> {
         None
     }
 
@@ -679,7 +679,7 @@ pub trait ModelAdapter {
     }
 
     /// Sensor 4 Unit ID
-    fn sensor_4_unit_id(&self) -> Option<S4id> {
+    fn sensor_4_unit_id(&self) -> Option<u16> {
         None
     }
 
@@ -704,20 +704,10 @@ pub trait ModelAdapter {
     }
 }
 
-pub enum Cmd {}
-
-pub enum S1id {}
-
-pub enum S2id {}
-
-pub enum S3id {}
-
-pub enum S4id {}
-
 #[repr(C)]
 pub struct Model64001CallbackAdapter {
-    command_code_callback: Option<extern "C" fn() -> Cmd>,
-    set_command_code_callback: Option<extern "C" fn(Cmd)>,
+    command_code_callback: Option<extern "C" fn() -> u16>,
+    set_command_code_callback: Option<extern "C" fn(u16)>,
     hardware_revision_callback: Option<extern "C" fn() -> u16>,
     rs_fw_revision_callback: Option<extern "C" fn() -> u16>,
     os_fw_revision_callback: Option<extern "C" fn() -> u16>,
@@ -732,22 +722,22 @@ pub struct Model64001CallbackAdapter {
     led_on_threshold_callback: Option<extern "C" fn() -> u16>,
     reserved_callback: Option<extern "C" fn() -> u16>,
     location_string_callback: Option<extern "C" fn() -> *const c_char>,
-    sensor_1_unit_id_callback: Option<extern "C" fn() -> S1id>,
+    sensor_1_unit_id_callback: Option<extern "C" fn() -> u16>,
     sensor_1_address_callback: Option<extern "C" fn() -> u16>,
     sensor_1_os_version_callback: Option<extern "C" fn() -> u16>,
     sensor_1_product_version_callback: Option<extern "C" fn() -> *const c_char>,
     sensor_1_serial_num_callback: Option<extern "C" fn() -> *const c_char>,
-    sensor_2_unit_id_callback: Option<extern "C" fn() -> S2id>,
+    sensor_2_unit_id_callback: Option<extern "C" fn() -> u16>,
     sensor_2_address_callback: Option<extern "C" fn() -> u16>,
     sensor_2_os_version_callback: Option<extern "C" fn() -> u16>,
     sensor_2_product_version_callback: Option<extern "C" fn() -> *const c_char>,
     sensor_2_serial_num_callback: Option<extern "C" fn() -> *const c_char>,
-    sensor_3_unit_id_callback: Option<extern "C" fn() -> S3id>,
+    sensor_3_unit_id_callback: Option<extern "C" fn() -> u16>,
     sensor_3_address_callback: Option<extern "C" fn() -> u16>,
     sensor_3_os_version_callback: Option<extern "C" fn() -> u16>,
     sensor_3_product_version_callback: Option<extern "C" fn() -> *const c_char>,
     sensor_3_serial_num_callback: Option<extern "C" fn() -> *const c_char>,
-    sensor_4_unit_id_callback: Option<extern "C" fn() -> S4id>,
+    sensor_4_unit_id_callback: Option<extern "C" fn() -> u16>,
     sensor_4_address_callback: Option<extern "C" fn() -> u16>,
     sensor_4_os_version_callback: Option<extern "C" fn() -> u16>,
     sensor_4_product_version_callback: Option<extern "C" fn() -> *const c_char>,
@@ -756,12 +746,12 @@ pub struct Model64001CallbackAdapter {
 
 impl ModelAdapter for Model64001CallbackAdapter {
     /// Command Code
-    fn command_code(&self) -> Option<Cmd> {
+    fn command_code(&self) -> Option<u16> {
         self.command_code_callback.map(|callback| (callback)())
     }
 
     /// Command Code
-    fn set_command_code(&mut self, value: Cmd) {
+    fn set_command_code(&mut self, value: u16) {
         if let Some(callback) = self.set_command_code_callback {
             (callback)(value);
         };
@@ -843,7 +833,7 @@ impl ModelAdapter for Model64001CallbackAdapter {
     }
 
     /// Sensor 1 Unit ID
-    fn sensor_1_unit_id(&self) -> Option<S1id> {
+    fn sensor_1_unit_id(&self) -> Option<u16> {
         self.sensor_1_unit_id_callback.map(|callback| (callback)())
     }
 
@@ -871,7 +861,7 @@ impl ModelAdapter for Model64001CallbackAdapter {
     }
 
     /// Sensor 2 Unit ID
-    fn sensor_2_unit_id(&self) -> Option<S2id> {
+    fn sensor_2_unit_id(&self) -> Option<u16> {
         self.sensor_2_unit_id_callback.map(|callback| (callback)())
     }
 
@@ -899,7 +889,7 @@ impl ModelAdapter for Model64001CallbackAdapter {
     }
 
     /// Sensor 3 Unit ID
-    fn sensor_3_unit_id(&self) -> Option<S3id> {
+    fn sensor_3_unit_id(&self) -> Option<u16> {
         self.sensor_3_unit_id_callback.map(|callback| (callback)())
     }
 
@@ -927,7 +917,7 @@ impl ModelAdapter for Model64001CallbackAdapter {
     }
 
     /// Sensor 4 Unit ID
-    fn sensor_4_unit_id(&self) -> Option<S4id> {
+    fn sensor_4_unit_id(&self) -> Option<u16> {
         self.sensor_4_unit_id_callback.map(|callback| (callback)())
     }
 

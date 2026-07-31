@@ -1099,6 +1099,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum PfwInjEna {
     /// Disabled
     ///
@@ -1110,6 +1111,7 @@ pub enum PfwInjEna {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum PfwInjEnaRvrt {
     /// Disabled
     ///
@@ -1121,6 +1123,7 @@ pub enum PfwInjEnaRvrt {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum PfwAbsEna {
     /// Disabled
     ///
@@ -1132,6 +1135,7 @@ pub enum PfwAbsEna {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum PfwAbsEnaRvrt {
     /// Disabled
     ///
@@ -1143,6 +1147,7 @@ pub enum PfwAbsEnaRvrt {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum WMaxLimPctEna {
     /// Disabled
     ///
@@ -1154,6 +1159,7 @@ pub enum WMaxLimPctEna {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum WMaxLimPctEnaRvrt {
     /// Disabled
     ///
@@ -1165,6 +1171,7 @@ pub enum WMaxLimPctEnaRvrt {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum WSetEna {
     /// Disabled
     ///
@@ -1176,6 +1183,7 @@ pub enum WSetEna {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum WSetMod {
     /// Active Power As Max Percent
     ///
@@ -1187,6 +1195,7 @@ pub enum WSetMod {
     Watts = 1,
 }
 
+#[repr(u16)]
 pub enum WSetEnaRvrt {
     /// Disabled
     ///
@@ -1198,6 +1207,7 @@ pub enum WSetEnaRvrt {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum VarSetEna {
     /// Disabled
     ///
@@ -1209,6 +1219,7 @@ pub enum VarSetEna {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum VarSetMod {
     /// Reactive Power As Watt Max Pct
     ///
@@ -1232,6 +1243,7 @@ pub enum VarSetMod {
     Vars = 4,
 }
 
+#[repr(u16)]
 pub enum VarSetPri {
     /// Active Power Priority
     ///
@@ -1247,6 +1259,7 @@ pub enum VarSetPri {
     Vendor = 2,
 }
 
+#[repr(u16)]
 pub enum VarSetEnaRvrt {
     /// Disabled
     ///
@@ -1258,6 +1271,7 @@ pub enum VarSetEnaRvrt {
     Enabled = 1,
 }
 
+#[repr(u16)]
 pub enum WRmpRef {
     /// Max Current Ramp
     ///
@@ -1269,6 +1283,7 @@ pub enum WRmpRef {
     WMax = 1,
 }
 
+#[repr(u16)]
 pub enum AntiIslEna {
     /// Disabled
     ///

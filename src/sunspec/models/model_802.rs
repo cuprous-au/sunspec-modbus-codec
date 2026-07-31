@@ -605,7 +605,7 @@ pub fn write_point(
         }
         Point::VendorBatteryBankState => {
             if let Some(value) = model.vendor_battery_bank_state() {
-                serialisation::write_u16(value as u16, buffer);
+                serialisation::write_u16(value, buffer);
             }
         }
         Point::WarrantyDate => {
@@ -890,7 +890,7 @@ pub trait ModelAdapter {
     /// Vendor Battery Bank State
     ///
     /// Vendor specific battery bank state. Enumeration.
-    fn vendor_battery_bank_state(&self) -> Option<StateVnd> {
+    fn vendor_battery_bank_state(&self) -> Option<u16> {
         None
     }
 
@@ -1124,6 +1124,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum ChaSt {
     Off = 1,
     Empty = 2,
@@ -1134,6 +1135,7 @@ pub enum ChaSt {
     Testing = 7,
 }
 
+#[repr(u16)]
 pub enum LocRemCtl {
     /// Value of 0 matches LocRemCtl in IEC 61850.
     Remote = 0,
@@ -1141,6 +1143,7 @@ pub enum LocRemCtl {
     Local = 1,
 }
 
+#[repr(u16)]
 pub enum Typ {
     NotApplicableUnknown = 0,
     LeadAcid = 1,
@@ -1156,6 +1159,7 @@ pub enum Typ {
     Other = 99,
 }
 
+#[repr(u16)]
 pub enum State {
     Disconnected = 1,
     Initializing = 2,
@@ -1166,8 +1170,7 @@ pub enum State {
     Fault = 99,
 }
 
-pub enum StateVnd {}
-
+#[repr(u16)]
 pub enum ReqInvState {
     NoRequest = 0,
     /// Battery is notified of inverter state change through SetInvState.
@@ -1176,11 +1179,13 @@ pub enum ReqInvState {
     Stop = 2,
 }
 
+#[repr(u16)]
 pub enum SetOp {
     Connect = 1,
     Disconnect = 2,
 }
 
+#[repr(u16)]
 pub enum SetInvState {
     InverterStopped = 1,
     InverterStandby = 2,
@@ -1213,7 +1218,7 @@ pub struct Model802CallbackAdapter {
     set_alarm_reset_callback: extern "C" fn(u16),
     battery_type_callback: extern "C" fn() -> Typ,
     state_of_the_battery_bank_callback: extern "C" fn() -> State,
-    vendor_battery_bank_state_callback: Option<extern "C" fn() -> StateVnd>,
+    vendor_battery_bank_state_callback: Option<extern "C" fn() -> u16>,
     warranty_date_callback: Option<extern "C" fn() -> u32>,
     battery_event_1_bitfield_callback: extern "C" fn() -> u32,
     battery_event_2_bitfield_callback: extern "C" fn() -> u32,
@@ -1452,7 +1457,7 @@ impl ModelAdapter for Model802CallbackAdapter {
     /// Vendor Battery Bank State
     ///
     /// Vendor specific battery bank state. Enumeration.
-    fn vendor_battery_bank_state(&self) -> Option<StateVnd> {
+    fn vendor_battery_bank_state(&self) -> Option<u16> {
         self.vendor_battery_bank_state_callback
             .map(|callback| (callback)())
     }

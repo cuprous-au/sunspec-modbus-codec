@@ -736,16 +736,19 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum VArAct {
     Switch = 1,
     Maintain = 2,
 }
 
+#[repr(u16)]
 pub enum ClcTotVa {
     Vector = 1,
     Arithmetic = 2,
 }
 
+#[repr(u16)]
 pub enum ConnPh {
     A = 1,
     B = 2,

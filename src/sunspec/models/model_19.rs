@@ -238,23 +238,27 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum Pty {
     None = 0,
     Odd = 1,
     Even = 2,
 }
 
+#[repr(u16)]
 pub enum Dup {
     Full = 0,
     Half = 1,
 }
 
+#[repr(u16)]
 pub enum Flw {
     None = 0,
     Hw = 1,
     Xonxoff = 2,
 }
 
+#[repr(u16)]
 pub enum Auth {
     None = 0,
     Pap = 1,

@@ -471,6 +471,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[repr(u16)]
 pub enum DerTyp {
     Pv = 4,
     PvStor = 82,
