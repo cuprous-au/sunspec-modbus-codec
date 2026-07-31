@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 12;
 
@@ -18,31 +18,41 @@ pub static POINTS: [ReadablePoint; 12] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::ActCrv },
+        reference: PointReference::Model132 {
+            point: Point::ActCrv,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::ModEna },
+        reference: PointReference::Model132 {
+            point: Point::ModEna,
+        },
         size: 1,
         data_type: PointType::Bitfield16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::WinTms },
+        reference: PointReference::Model132 {
+            point: Point::WinTms,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::RvrtTms },
+        reference: PointReference::Model132 {
+            point: Point::RvrtTms,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::RmpTms },
+        reference: PointReference::Model132 {
+            point: Point::RmpTms,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
@@ -66,13 +76,17 @@ pub static POINTS: [ReadablePoint; 12] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::DeptRefSf },
+        reference: PointReference::Model132 {
+            point: Point::DeptRefSf,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model132 { point: Point::RmpIncDecSf },
+        reference: PointReference::Model132 {
+            point: Point::RmpIncDecSf,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -93,18 +107,40 @@ pub enum Point {
     RmpIncDecSf,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
         Point::ActCrv => serialisation::write_u16(model.act_crv(), buffer),
         Point::ModEna => serialisation::write_u16(model.mod_ena(), buffer),
-        Point::WinTms => if let Some(value) = model.win_tms() { serialisation::write_u16(value, buffer); },
-        Point::RvrtTms => if let Some(value) = model.rvrt_tms() { serialisation::write_u16(value, buffer); },
-        Point::RmpTms => if let Some(value) = model.rmp_tms() { serialisation::write_u16(value, buffer); },
+        Point::WinTms => {
+            if let Some(value) = model.win_tms() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::RvrtTms => {
+            if let Some(value) = model.rvrt_tms() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::RmpTms => {
+            if let Some(value) = model.rmp_tms() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
         Point::NCrv => serialisation::write_u16(model.n_crv(), buffer),
         Point::NPt => serialisation::write_u16(model.n_pt(), buffer),
         Point::VSf => serialisation::write_u16(model.v_sf(), buffer),
         Point::DeptRefSf => serialisation::write_u16(model.dept_ref_sf(), buffer),
-        Point::RmpIncDecSf => if let Some(value) = model.rmp_inc_dec_sf() { serialisation::write_u16(value, buffer); },
+        Point::RmpIncDecSf => {
+            if let Some(value) = model.rmp_inc_dec_sf() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
     }
 }
 
@@ -139,8 +175,7 @@ pub trait ModelAdapter {
     /// WinTms
     ///
     /// Time window for volt-watt change.
-    fn set_win_tms(&mut self, value: u16) {
-    }
+    fn set_win_tms(&mut self, value: u16) {}
 
     /// RvrtTms
     ///
@@ -152,8 +187,7 @@ pub trait ModelAdapter {
     /// RvrtTms
     ///
     /// Timeout period for volt-watt curve selection.
-    fn set_rvrt_tms(&mut self, value: u16) {
-    }
+    fn set_rvrt_tms(&mut self, value: u16) {}
 
     /// RmpTms
     ///
@@ -165,8 +199,7 @@ pub trait ModelAdapter {
     /// RmpTms
     ///
     /// Ramp time for moving from current mode to new mode.
-    fn set_rmp_tms(&mut self, value: u16) {
-    }
+    fn set_rmp_tms(&mut self, value: u16) {}
 
     /// NCrv
     ///
@@ -193,5 +226,137 @@ pub trait ModelAdapter {
     /// Scale factor for increment and decrement ramps.
     fn rmp_inc_dec_sf(&self) -> Option<u16> {
         None
+    }
+}
+
+#[repr(C)]
+pub struct Model132CallbackAdapter {
+    act_crv_callback: extern "C" fn() -> u16,
+    set_act_crv_callback: extern "C" fn(u16),
+    mod_ena_callback: extern "C" fn() -> u16,
+    set_mod_ena_callback: extern "C" fn(u16),
+    win_tms_callback: Option<extern "C" fn() -> u16>,
+    set_win_tms_callback: Option<extern "C" fn(u16)>,
+    rvrt_tms_callback: Option<extern "C" fn() -> u16>,
+    set_rvrt_tms_callback: Option<extern "C" fn(u16)>,
+    rmp_tms_callback: Option<extern "C" fn() -> u16>,
+    set_rmp_tms_callback: Option<extern "C" fn(u16)>,
+    n_crv_callback: extern "C" fn() -> u16,
+    n_pt_callback: extern "C" fn() -> u16,
+    v_sf_callback: extern "C" fn() -> u16,
+    dept_ref_sf_callback: extern "C" fn() -> u16,
+    rmp_inc_dec_sf_callback: Option<extern "C" fn() -> u16>,
+}
+
+impl ModelAdapter for Model132CallbackAdapter {
+    /// ActCrv
+    ///
+    /// Index of active curve. 0=no active curve.
+    fn act_crv(&self) -> u16 {
+        (self.act_crv_callback)()
+    }
+
+    /// ActCrv
+    ///
+    /// Index of active curve. 0=no active curve.
+    fn set_act_crv(&mut self, value: u16) {
+        (self.set_act_crv_callback)(value);
+    }
+
+    /// ModEna
+    ///
+    /// Is Volt-Watt control active.
+    fn mod_ena(&self) -> u16 {
+        (self.mod_ena_callback)()
+    }
+
+    /// ModEna
+    ///
+    /// Is Volt-Watt control active.
+    fn set_mod_ena(&mut self, value: u16) {
+        (self.set_mod_ena_callback)(value);
+    }
+
+    /// WinTms
+    ///
+    /// Time window for volt-watt change.
+    fn win_tms(&self) -> Option<u16> {
+        self.win_tms_callback.map(|callback| (callback)())
+    }
+
+    /// WinTms
+    ///
+    /// Time window for volt-watt change.
+    fn set_win_tms(&mut self, value: u16) {
+        if let Some(callback) = self.set_win_tms_callback {
+            (callback)(value);
+        };
+    }
+
+    /// RvrtTms
+    ///
+    /// Timeout period for volt-watt curve selection.
+    fn rvrt_tms(&self) -> Option<u16> {
+        self.rvrt_tms_callback.map(|callback| (callback)())
+    }
+
+    /// RvrtTms
+    ///
+    /// Timeout period for volt-watt curve selection.
+    fn set_rvrt_tms(&mut self, value: u16) {
+        if let Some(callback) = self.set_rvrt_tms_callback {
+            (callback)(value);
+        };
+    }
+
+    /// RmpTms
+    ///
+    /// Ramp time for moving from current mode to new mode.
+    fn rmp_tms(&self) -> Option<u16> {
+        self.rmp_tms_callback.map(|callback| (callback)())
+    }
+
+    /// RmpTms
+    ///
+    /// Ramp time for moving from current mode to new mode.
+    fn set_rmp_tms(&mut self, value: u16) {
+        if let Some(callback) = self.set_rmp_tms_callback {
+            (callback)(value);
+        };
+    }
+
+    /// NCrv
+    ///
+    /// Number of curves supported (recommend min. 4).
+    fn n_crv(&self) -> u16 {
+        (self.n_crv_callback)()
+    }
+
+    /// NPt
+    ///
+    /// Number of points in array (maximum 20).
+    fn n_pt(&self) -> u16 {
+        (self.n_pt_callback)()
+    }
+
+    /// V_SF
+    ///
+    /// Scale factor for percent VRef.
+    fn v_sf(&self) -> u16 {
+        (self.v_sf_callback)()
+    }
+
+    /// DeptRef_SF
+    ///
+    /// Scale Factor for % DeptRef
+    fn dept_ref_sf(&self) -> u16 {
+        (self.dept_ref_sf_callback)()
+    }
+
+    /// RmpIncDec_SF
+    ///
+    /// Scale factor for increment and decrement ramps.
+    fn rmp_inc_dec_sf(&self) -> Option<u16> {
+        self.rmp_inc_dec_sf_callback.map(|callback| (callback)())
     }
 }

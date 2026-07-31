@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 9;
 
@@ -18,43 +18,57 @@ pub static POINTS: [ReadablePoint; 9] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::DerTripLvModuleEnable },
+        reference: PointReference::Model707 {
+            point: Point::DerTripLvModuleEnable,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::AdoptCurveRequest },
+        reference: PointReference::Model707 {
+            point: Point::AdoptCurveRequest,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::AdoptCurveResult },
+        reference: PointReference::Model707 {
+            point: Point::AdoptCurveResult,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::NumberOfPoints },
+        reference: PointReference::Model707 {
+            point: Point::NumberOfPoints,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::StoredCurveCount },
+        reference: PointReference::Model707 {
+            point: Point::StoredCurveCount,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::VoltageScaleFactor },
+        reference: PointReference::Model707 {
+            point: Point::VoltageScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model707 { point: Point::TimePointScaleFactor },
+        reference: PointReference::Model707 {
+            point: Point::TimePointScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -72,15 +86,27 @@ pub enum Point {
     TimePointScaleFactor,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
-        Point::DerTripLvModuleEnable => serialisation::write_u16(model.der_trip_lv_module_enable() as u16, buffer),
+        Point::DerTripLvModuleEnable => {
+            serialisation::write_u16(model.der_trip_lv_module_enable() as u16, buffer)
+        }
         Point::AdoptCurveRequest => serialisation::write_u16(model.adopt_curve_request(), buffer),
-        Point::AdoptCurveResult => serialisation::write_u16(model.adopt_curve_result() as u16, buffer),
+        Point::AdoptCurveResult => {
+            serialisation::write_u16(model.adopt_curve_result() as u16, buffer)
+        }
         Point::NumberOfPoints => serialisation::write_u16(model.number_of_points(), buffer),
         Point::StoredCurveCount => serialisation::write_u16(model.stored_curve_count(), buffer),
         Point::VoltageScaleFactor => serialisation::write_u16(model.voltage_scale_factor(), buffer),
-        Point::TimePointScaleFactor => serialisation::write_u16(model.time_point_scale_factor(), buffer),
+        Point::TimePointScaleFactor => {
+            serialisation::write_u16(model.time_point_scale_factor(), buffer)
+        }
     }
 }
 
@@ -133,26 +159,104 @@ pub trait ModelAdapter {
 
 pub enum Ena {
     /// Disabled
-    /// 
+    ///
     /// Function is disabled.
     Disabled = 0,
     /// Enabled
-    /// 
+    ///
     /// Function is enabled.
     Enabled = 1,
 }
 
 pub enum AdptCrvRslt {
     /// Update In Progress
-    /// 
+    ///
     /// Curve update in progress.
     InProgress = 0,
     /// Update Complete
-    /// 
+    ///
     /// Curve update completed successfully.
     Completed = 1,
     /// Update Failed
-    /// 
+    ///
     /// Curve update failed.
     Failed = 2,
+}
+
+#[repr(C)]
+pub struct Model707CallbackAdapter {
+    der_trip_lv_module_enable_callback: extern "C" fn() -> Ena,
+    set_der_trip_lv_module_enable_callback: extern "C" fn(Ena),
+    adopt_curve_request_callback: extern "C" fn() -> u16,
+    set_adopt_curve_request_callback: extern "C" fn(u16),
+    adopt_curve_result_callback: extern "C" fn() -> AdptCrvRslt,
+    number_of_points_callback: extern "C" fn() -> u16,
+    stored_curve_count_callback: extern "C" fn() -> u16,
+    voltage_scale_factor_callback: extern "C" fn() -> u16,
+    time_point_scale_factor_callback: extern "C" fn() -> u16,
+}
+
+impl ModelAdapter for Model707CallbackAdapter {
+    /// DER Trip LV Module Enable
+    ///
+    /// DER low voltage trip control enable.
+    fn der_trip_lv_module_enable(&self) -> Ena {
+        (self.der_trip_lv_module_enable_callback)()
+    }
+
+    /// DER Trip LV Module Enable
+    ///
+    /// DER low voltage trip control enable.
+    fn set_der_trip_lv_module_enable(&mut self, value: Ena) {
+        (self.set_der_trip_lv_module_enable_callback)(value);
+    }
+
+    /// Adopt Curve Request
+    ///
+    /// Index of curve points to adopt. First curve index is 1.
+    fn adopt_curve_request(&self) -> u16 {
+        (self.adopt_curve_request_callback)()
+    }
+
+    /// Adopt Curve Request
+    ///
+    /// Index of curve points to adopt. First curve index is 1.
+    fn set_adopt_curve_request(&mut self, value: u16) {
+        (self.set_adopt_curve_request_callback)(value);
+    }
+
+    /// Adopt Curve Result
+    ///
+    /// Result of last adopt curve operation.
+    fn adopt_curve_result(&self) -> AdptCrvRslt {
+        (self.adopt_curve_result_callback)()
+    }
+
+    /// Number Of Points
+    ///
+    /// Number of curve points supported.
+    fn number_of_points(&self) -> u16 {
+        (self.number_of_points_callback)()
+    }
+
+    /// Stored Curve Count
+    ///
+    /// Number of stored curves supported.
+    fn stored_curve_count(&self) -> u16 {
+        (self.stored_curve_count_callback)()
+    }
+
+    /// Voltage Scale Factor
+    ///
+    /// Scale factor for curve voltage points.
+    fn voltage_scale_factor(&self) -> u16 {
+        (self.voltage_scale_factor_callback)()
+    }
+
+    /// Time Point Scale Factor
+    ///
+    /// Scale factor for curve time points.
+    fn time_point_scale_factor(&self) -> u16 {
+        (self.time_point_scale_factor_callback)()
+    }
 }

@@ -1,7 +1,7 @@
 use crate::serialisation;
 use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
-use heapless::String;
+use core::ffi::{c_char, CStr};
 
 pub const SIZE: u16 = 68;
 
@@ -84,10 +84,6 @@ pub enum Point {
     DeviceAddress,
 }
 
-unsafe extern "C" {
-    fn printf(format: *const core::ffi::c_char, ...) -> i32;
-}
-
 pub fn write_point(
     model: &dyn ModelAdapter,
     point: &Point,
@@ -111,17 +107,7 @@ pub fn write_point(
             }
         }
         Point::SerialNumber => {
-            unsafe {
-                printf(c"writing serial number".as_ptr());
-            }
-            let value = model.serial_number();
-            if (value.as_ptr().is_null()) {
-                unsafe {
-                    printf(c"writing serial number".as_ptr());
-                }
-            } else {
-                serialisation::write_string(value, buffer, offset, limit);
-            }
+            serialisation::write_string(model.serial_number(), buffer, offset, limit)
         }
         Point::DeviceAddress => {
             if let Some(value) = model.device_address() {
@@ -135,31 +121,31 @@ pub trait ModelAdapter {
     /// Manufacturer
     ///
     /// Well known value registered with SunSpec for compliance
-    fn manufacturer(&self) -> String<32>;
+    fn manufacturer(&self) -> &CStr;
 
     /// Model
     ///
     /// Manufacturer specific value (32 chars)
-    fn model(&self) -> String<32>;
+    fn model(&self) -> &CStr;
 
     /// Options
     ///
     /// Manufacturer specific value (16 chars)
-    fn options(&self) -> Option<String<16>> {
+    fn options(&self) -> Option<&CStr> {
         None
     }
 
     /// Version
     ///
     /// Manufacturer specific value (16 chars)
-    fn version(&self) -> Option<String<16>> {
+    fn version(&self) -> Option<&CStr> {
         None
     }
 
     /// Serial Number
     ///
     /// Manufacturer specific value (32 chars)
-    fn serial_number(&self) -> String<32>;
+    fn serial_number(&self) -> &CStr;
 
     /// Device Address
     ///
@@ -176,4 +162,74 @@ pub trait ModelAdapter {
     ///
     /// This point is mandatory for all SunSpec RTU devices and, for those devices, they must support values from 1-247.
     fn set_device_address(&mut self, value: u16) {}
+}
+
+#[repr(C)]
+pub struct Model1CallbackAdapter {
+    manufacturer_callback: extern "C" fn() -> *const c_char,
+    model_callback: extern "C" fn() -> *const c_char,
+    options_callback: Option<extern "C" fn() -> *const c_char>,
+    version_callback: Option<extern "C" fn() -> *const c_char>,
+    serial_number_callback: extern "C" fn() -> *const c_char,
+    device_address_callback: Option<extern "C" fn() -> u16>,
+    set_device_address_callback: Option<extern "C" fn(u16)>,
+}
+
+impl ModelAdapter for Model1CallbackAdapter {
+    /// Manufacturer
+    ///
+    /// Well known value registered with SunSpec for compliance
+    fn manufacturer(&self) -> &CStr {
+        unsafe { CStr::from_ptr((self.manufacturer_callback)()) }
+    }
+
+    /// Model
+    ///
+    /// Manufacturer specific value (32 chars)
+    fn model(&self) -> &CStr {
+        unsafe { CStr::from_ptr((self.model_callback)()) }
+    }
+
+    /// Options
+    ///
+    /// Manufacturer specific value (16 chars)
+    fn options(&self) -> Option<&CStr> {
+        self.options_callback
+            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+    }
+
+    /// Version
+    ///
+    /// Manufacturer specific value (16 chars)
+    fn version(&self) -> Option<&CStr> {
+        self.version_callback
+            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+    }
+
+    /// Serial Number
+    ///
+    /// Manufacturer specific value (32 chars)
+    fn serial_number(&self) -> &CStr {
+        unsafe { CStr::from_ptr((self.serial_number_callback)()) }
+    }
+
+    /// Device Address
+    ///
+    /// Modbus device address
+    ///
+    /// This point is mandatory for all SunSpec RTU devices and, for those devices, they must support values from 1-247.
+    fn device_address(&self) -> Option<u16> {
+        self.device_address_callback.map(|callback| (callback)())
+    }
+
+    /// Device Address
+    ///
+    /// Modbus device address
+    ///
+    /// This point is mandatory for all SunSpec RTU devices and, for those devices, they must support values from 1-247.
+    fn set_device_address(&mut self, value: u16) {
+        if let Some(callback) = self.set_device_address_callback {
+            (callback)(value);
+        };
+    }
 }

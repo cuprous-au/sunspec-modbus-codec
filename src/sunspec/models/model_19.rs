@@ -1,7 +1,7 @@
-use heapless::String;
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
+use core::ffi::{c_char, CStr};
 
 pub const SIZE: u16 = 32;
 
@@ -37,37 +37,49 @@ pub static POINTS: [ReadablePoint; 12] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Parity },
+        reference: PointReference::Model19 {
+            point: Point::Parity,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Duplex },
+        reference: PointReference::Model19 {
+            point: Point::Duplex,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model19 { point: Point::FlowControl },
+        reference: PointReference::Model19 {
+            point: Point::FlowControl,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Authentication },
+        reference: PointReference::Model19 {
+            point: Point::Authentication,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Username },
+        reference: PointReference::Model19 {
+            point: Point::Username,
+        },
         size: 12,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Password },
+        reference: PointReference::Model19 {
+            point: Point::Password,
+        },
         size: 6,
         data_type: PointType::String,
         writeable: false,
@@ -93,17 +105,47 @@ pub enum Point {
     Password,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
-        Point::Name => if let Some(value) = model.name() { serialisation::write_string(value, buffer, offset, limit); },
+        Point::Name => {
+            if let Some(value) = model.name() {
+                serialisation::write_string(value, buffer, offset, limit);
+            }
+        }
         Point::Rate => serialisation::write_u32(model.rate(), buffer, offset, limit),
         Point::Bits => serialisation::write_u16(model.bits(), buffer),
         Point::Parity => serialisation::write_u16(model.parity() as u16, buffer),
-        Point::Duplex => if let Some(value) = model.duplex() { serialisation::write_u16(value as u16, buffer); },
-        Point::FlowControl => if let Some(value) = model.flow_control() { serialisation::write_u16(value as u16, buffer); },
-        Point::Authentication => if let Some(value) = model.authentication() { serialisation::write_u16(value as u16, buffer); },
-        Point::Username => if let Some(value) = model.username() { serialisation::write_string(value, buffer, offset, limit); },
-        Point::Password => if let Some(value) = model.password() { serialisation::write_string(value, buffer, offset, limit); },
+        Point::Duplex => {
+            if let Some(value) = model.duplex() {
+                serialisation::write_u16(value as u16, buffer);
+            }
+        }
+        Point::FlowControl => {
+            if let Some(value) = model.flow_control() {
+                serialisation::write_u16(value as u16, buffer);
+            }
+        }
+        Point::Authentication => {
+            if let Some(value) = model.authentication() {
+                serialisation::write_u16(value as u16, buffer);
+            }
+        }
+        Point::Username => {
+            if let Some(value) = model.username() {
+                serialisation::write_string(value, buffer, offset, limit);
+            }
+        }
+        Point::Password => {
+            if let Some(value) = model.password() {
+                serialisation::write_string(value, buffer, offset, limit);
+            }
+        }
     }
 }
 
@@ -111,15 +153,14 @@ pub trait ModelAdapter {
     /// Name
     ///
     /// Interface name
-    fn name(&self) -> Option<String<8>> {
+    fn name(&self) -> Option<&CStr> {
         None
     }
 
     /// Name
     ///
     /// Interface name
-    fn set_name(&mut self, value: String<8>) {
-    }
+    fn set_name(&mut self, value: &CStr) {}
 
     /// Rate
     ///
@@ -161,8 +202,7 @@ pub trait ModelAdapter {
     /// Duplex
     ///
     /// Duplex mode
-    fn set_duplex(&mut self, value: Dup) {
-    }
+    fn set_duplex(&mut self, value: Dup) {}
 
     /// Flow Control
     ///
@@ -174,8 +214,7 @@ pub trait ModelAdapter {
     /// Flow Control
     ///
     /// Flow Control Method
-    fn set_flow_control(&mut self, value: Flw) {
-    }
+    fn set_flow_control(&mut self, value: Flw) {}
 
     /// Authentication
     ///
@@ -187,14 +226,14 @@ pub trait ModelAdapter {
     /// Username
     ///
     /// Username for authentication
-    fn username(&self) -> Option<String<24>> {
+    fn username(&self) -> Option<&CStr> {
         None
     }
 
     /// Password
     ///
     /// Password for authentication
-    fn password(&self) -> Option<String<12>> {
+    fn password(&self) -> Option<&CStr> {
         None
     }
 }
@@ -220,4 +259,139 @@ pub enum Auth {
     None = 0,
     Pap = 1,
     Chap = 2,
+}
+
+#[repr(C)]
+pub struct Model19CallbackAdapter {
+    name_callback: Option<extern "C" fn() -> *const c_char>,
+    set_name_callback: Option<extern "C" fn(*const c_char)>,
+    rate_callback: extern "C" fn() -> u32,
+    set_rate_callback: extern "C" fn(u32),
+    bits_callback: extern "C" fn() -> u16,
+    set_bits_callback: extern "C" fn(u16),
+    parity_callback: extern "C" fn() -> Pty,
+    set_parity_callback: extern "C" fn(Pty),
+    duplex_callback: Option<extern "C" fn() -> Dup>,
+    set_duplex_callback: Option<extern "C" fn(Dup)>,
+    flow_control_callback: Option<extern "C" fn() -> Flw>,
+    set_flow_control_callback: Option<extern "C" fn(Flw)>,
+    authentication_callback: Option<extern "C" fn() -> Auth>,
+    username_callback: Option<extern "C" fn() -> *const c_char>,
+    password_callback: Option<extern "C" fn() -> *const c_char>,
+}
+
+impl ModelAdapter for Model19CallbackAdapter {
+    /// Name
+    ///
+    /// Interface name
+    fn name(&self) -> Option<&CStr> {
+        self.name_callback
+            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+    }
+
+    /// Name
+    ///
+    /// Interface name
+    fn set_name(&mut self, value: &CStr) {
+        if let Some(callback) = self.set_name_callback {
+            (callback)(value.as_ptr());
+        };
+    }
+
+    /// Rate
+    ///
+    /// Interface baud rate in bits per second
+    fn rate(&self) -> u32 {
+        (self.rate_callback)()
+    }
+
+    /// Rate
+    ///
+    /// Interface baud rate in bits per second
+    fn set_rate(&mut self, value: u32) {
+        (self.set_rate_callback)(value);
+    }
+
+    /// Bits
+    ///
+    /// Number of data bits per character
+    fn bits(&self) -> u16 {
+        (self.bits_callback)()
+    }
+
+    /// Bits
+    ///
+    /// Number of data bits per character
+    fn set_bits(&mut self, value: u16) {
+        (self.set_bits_callback)(value);
+    }
+
+    /// Parity
+    ///
+    /// Parity setting
+    fn parity(&self) -> Pty {
+        (self.parity_callback)()
+    }
+
+    /// Parity
+    ///
+    /// Parity setting
+    fn set_parity(&mut self, value: Pty) {
+        (self.set_parity_callback)(value);
+    }
+
+    /// Duplex
+    ///
+    /// Duplex mode
+    fn duplex(&self) -> Option<Dup> {
+        self.duplex_callback.map(|callback| (callback)())
+    }
+
+    /// Duplex
+    ///
+    /// Duplex mode
+    fn set_duplex(&mut self, value: Dup) {
+        if let Some(callback) = self.set_duplex_callback {
+            (callback)(value);
+        };
+    }
+
+    /// Flow Control
+    ///
+    /// Flow Control Method
+    fn flow_control(&self) -> Option<Flw> {
+        self.flow_control_callback.map(|callback| (callback)())
+    }
+
+    /// Flow Control
+    ///
+    /// Flow Control Method
+    fn set_flow_control(&mut self, value: Flw) {
+        if let Some(callback) = self.set_flow_control_callback {
+            (callback)(value);
+        };
+    }
+
+    /// Authentication
+    ///
+    /// Authentication method
+    fn authentication(&self) -> Option<Auth> {
+        self.authentication_callback.map(|callback| (callback)())
+    }
+
+    /// Username
+    ///
+    /// Username for authentication
+    fn username(&self) -> Option<&CStr> {
+        self.username_callback
+            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+    }
+
+    /// Password
+    ///
+    /// Password for authentication
+    fn password(&self) -> Option<&CStr> {
+        self.password_callback
+            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+    }
 }

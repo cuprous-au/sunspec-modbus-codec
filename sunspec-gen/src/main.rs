@@ -2,18 +2,18 @@ use codegen::{Block, Enum, Field, Function, Scope, Type};
 use glob::glob;
 use heck::{ToPascalCase, ToSnakeCase};
 use std::{collections::HashSet, ffi::OsStr, fmt::write, fs};
-use typify::import_types;
 
-// TODO: I've edited this schema file to add `"title": "SunspecModel"`
-// This will need to be incorporated into code here or a scripted process
-import_types!(schema = "./models/json/schema.json");
+use crate::sunspec_schema::{Point, PointAccess, PointMandatory, PointType, SunspecModel};
+
+mod sunspec_schema;
 
 #[derive(PartialEq, Eq, Hash)]
 enum CodegenFeature {
-    HeaplessString,
+    String,
     Ipv4Addr,
     Ipv6Addr,
 }
+
 fn generate_enum(point: &Point) -> Option<Enum> {
     if point.type_ == PointType::Enum16 || point.type_ == PointType::Enum32 {
         let mut enum_def = Enum::new(point.name.to_pascal_case());
@@ -51,42 +51,41 @@ fn option_unless_mandatory(point: &Point, field_type: &Type) -> Type {
     }
 }
 
-fn generate_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> Option<Type> {
+fn generate_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> Option<String> {
     match point.r#type_ {
-        PointType::Uint16 => Some("u16".into()),
-        PointType::Int16 => Some("i16".into()),
-        PointType::Int32 => Some("i32".into()),
-        PointType::Int64 => Some("i64".into()),
-        PointType::Raw16 => Some("u32".into()),
-        PointType::Uint32 => Some("u32".into()),
-        PointType::Uint64 => Some("u64".into()),
-        PointType::Acc16 => Some("u16".into()),
-        PointType::Acc32 => Some("u32".into()),
-        PointType::Acc64 => Some("u64".into()),
-        PointType::Bitfield16 => Some("u16".into()),
-        PointType::Bitfield32 => Some("u32".into()),
-        PointType::Bitfield64 => Some("u64".into()),
-        PointType::Enum16 | PointType::Enum32 => Some(point.name.to_pascal_case().into()),
-        PointType::Float32 => Some("f32".into()),
-        PointType::Float64 => Some("f64".into()),
+        PointType::Uint16 => Some("u16".to_string()),
+        PointType::Int16 => Some("i16".to_string()),
+        PointType::Int32 => Some("i32".to_string()),
+        PointType::Int64 => Some("i64".to_string()),
+        PointType::Raw16 => Some("u32".to_string()),
+        PointType::Uint32 => Some("u32".to_string()),
+        PointType::Uint64 => Some("u64".to_string()),
+        PointType::Acc16 => Some("u16".to_string()),
+        PointType::Acc32 => Some("u32".to_string()),
+        PointType::Acc64 => Some("u64".to_string()),
+        PointType::Bitfield16 => Some("u16".to_string()),
+        PointType::Bitfield32 => Some("u32".to_string()),
+        PointType::Bitfield64 => Some("u64".to_string()),
+        PointType::Enum16 | PointType::Enum32 => Some(point.name.to_pascal_case()),
+        PointType::Float32 => Some("f32".to_string()),
+        PointType::Float64 => Some("f64".to_string()),
         PointType::String => {
-            features.insert(CodegenFeature::HeaplessString);
-            let str = format!("String<{}>", point.size * 2);
-            Some(str.into())
+            features.insert(CodegenFeature::String);
+            Some("&CStr".to_string())
         }
         PointType::Pad => None,
         PointType::Ipaddr => {
             features.insert(CodegenFeature::Ipv4Addr);
-            Some("Ipv4Addr".into())
+            Some("Ipv4Addr".to_string())
         }
         PointType::Ipv6addr => {
             features.insert(CodegenFeature::Ipv6Addr);
-            Some("Ipv6Addr".into())
+            Some("Ipv6Addr".to_string())
         }
-        PointType::Eui48 => Some("[u8; 6]".into()), // todo: consider a crate like mac-addr
-        PointType::Sunssf => Some("u16".into()),
+        PointType::Eui48 => Some("[u8; 6]".to_string()), // todo: consider a crate like mac-addr
+        PointType::Sunssf => Some("u16".to_string()),
         // this doesn't seem to be referenced outside the spec, but all map back to u16 in the documentation
-        PointType::Count => Some("u16".into()),
+        PointType::Count => Some("u16".to_string()),
     }
 }
 
@@ -203,7 +202,7 @@ fn generate_point_array(model: &SunspecModel, model_name: String, model_size: u1
     lines.join("\n")
 }
 
-fn generate_point_types(models: &Vec<String>) -> String {
+fn generate_point_types(models: &Vec<String>) -> Scope {
     let mut scope = Scope::new();
 
     for model in models {
@@ -222,16 +221,52 @@ fn generate_point_types(models: &Vec<String>) -> String {
         .new_variant("Static")
         .named("value", "u16");
 
-    scope.to_string()
+    scope
 }
 
-fn generate_model(model: SunspecModel, name: String) -> String {
+fn generate_adapter_structs(models: &Vec<String>) -> Scope {
+    let mut scope = Scope::new();
+
+    for model in models {
+        scope.import("crate::sunspec::models", model.to_snake_case());
+    }
+
+    let trait_struct = scope.new_struct("SunspecAdapters").vis("pub").generic("'a");
+
+    for model in models {
+        trait_struct.field(
+            format!("{}_adapter", model.to_snake_case()),
+            format!("Option<&'a dyn {}::ModelAdapter>", model.to_snake_case()),
+        );
+    }
+
+    let c_struct = scope
+        .new_struct("SunspecCallbackAdapters")
+        .vis("pub")
+        .repr("C")
+        .generic("'a");
+
+    for model in models {
+        c_struct.field(
+            format!("{}_adapter", model.to_snake_case()),
+            format!(
+                "Option<&'a dyn {}::{}CallbackAdapter>",
+                model.to_snake_case(),
+                model.to_pascal_case()
+            ),
+        );
+    }
+
+    scope
+}
+
+fn generate_model(model: SunspecModel, name: String) -> Scope {
     let mut scope = Scope::new();
     let mut features: HashSet<CodegenFeature> = HashSet::new();
 
     let model_name = name.to_pascal_case();
 
-    let point_types: Vec<(Type, &Point, &String)> = model
+    let point_types: Vec<(String, &Point, &String)> = model
         .group
         .points
         .iter()
@@ -250,7 +285,7 @@ fn generate_model(model: SunspecModel, name: String) -> String {
 
     let fields: Vec<Field> = point_types
         .iter()
-        .map(|(field_type, point, _)| generate_field(point, &field_type))
+        .map(|(field_type, point, _)| generate_field(point, &field_type.into()))
         .collect();
 
     let funcs: Vec<Function> = point_types
@@ -258,8 +293,8 @@ fn generate_model(model: SunspecModel, name: String) -> String {
         // TODO: These fields (id and model length) are static and don't need an adapter method, but we should make this data driven
         .skip(2)
         .flat_map(|(field_type, point, name)| {
-            let getter = generate_getter(point, &field_type, name);
-            let setter = generate_setter(point, &field_type, name);
+            let getter = generate_getter(point, &field_type.into(), name);
+            let setter = generate_setter(point, &field_type.into(), name);
 
             let funcs: Vec<Function> = vec![Some(getter), setter]
                 .iter()
@@ -271,7 +306,10 @@ fn generate_model(model: SunspecModel, name: String) -> String {
 
     for feature in &features {
         match feature {
-            CodegenFeature::HeaplessString => scope.import("heapless", "String"),
+            CodegenFeature::String => {
+                scope.import("core::ffi", "CStr");
+                scope.import("core::ffi", "c_char")
+            }
             CodegenFeature::Ipv4Addr => scope.import("core::net", "Ipv4Addr"),
             CodegenFeature::Ipv6Addr => scope.import("core::net", "Ipv6Addr"),
         };
@@ -354,7 +392,7 @@ fn generate_model(model: SunspecModel, name: String) -> String {
         }
     }
 
-    let writer_func = scope
+    scope
         .new_fn("write_point")
         .vis("pub")
         .arg("model", "&dyn ModelAdapter")
@@ -374,11 +412,100 @@ fn generate_model(model: SunspecModel, name: String) -> String {
         scope.push_enum(enum_type);
     }
 
-    scope.to_string()
+    let callback_struct = scope
+        .new_struct(format!("{}CallbackAdapter", name))
+        .vis("pub")
+        .repr("C");
+
+    for (point_type, point, name) in point_types.iter().skip(2) {
+        let c_type = match point.type_ {
+            PointType::String => "*const c_char",
+            _ => point_type,
+        };
+        let fn_ptr = format!("extern \"C\" fn() -> {c_type}");
+        callback_struct.field(
+            format!("{}_callback", name.to_snake_case()),
+            if point.mandatory == PointMandatory::M {
+                fn_ptr
+            } else {
+                format!("Option<{fn_ptr}>")
+            },
+        );
+
+        if point.access == PointAccess::Rw {
+            let set_fn_ptr = format!("extern \"C\" fn({c_type})");
+            callback_struct.field(
+                format!("set_{}_callback", name.to_snake_case()),
+                if point.mandatory == PointMandatory::M {
+                    set_fn_ptr
+                } else {
+                    format!("Option<{set_fn_ptr}>")
+                },
+            );
+        };
+    }
+
+    let callback_impl = scope
+        .new_impl(format!("{}CallbackAdapter", name))
+        .impl_trait("ModelAdapter");
+    for (field_type, point, name) in point_types.iter().skip(2) {
+        let mut getter = generate_getter(point, &field_type.into(), name);
+        getter.body = None;
+
+        let callback_ref = if point.mandatory == PointMandatory::M {
+            format!("self.{}_callback", name.to_snake_case())
+        } else {
+            getter.line(format!(
+                "self.{}_callback.map(|callback| {{",
+                name.to_snake_case()
+            ));
+            "callback".to_string()
+        };
+
+        getter.line(if point.type_ == PointType::String {
+            format!("unsafe {{ CStr::from_ptr(({})()) }}", callback_ref)
+        } else {
+            format!("({})()", callback_ref)
+        });
+        if point.mandatory == PointMandatory::O {
+            getter.line("})");
+        }
+        callback_impl.push_fn(getter);
+
+        if let Some(mut setter) = generate_setter(point, &field_type.into(), name) {
+            let callback_ref = if point.mandatory == PointMandatory::O {
+                setter.line(format!(
+                    "if let Some(callback) = self.set_{}_callback {{",
+                    name.to_snake_case(),
+                ));
+                "callback".to_string()
+            } else {
+                format!("self.set_{}_callback", name.to_snake_case())
+            };
+
+        setter.line(if point.type_ == PointType::String {
+            format!("({})(value.as_ptr());", callback_ref)
+        } else {
+            format!("({})(value);", callback_ref)
+        });
+
+            if point.mandatory == PointMandatory::O {
+                setter.line("};");
+            }
+            callback_impl.push_fn(setter);
+        }
+    }
+
+    scope
+}
+static GENERATED_SRC_DIR: &str = "../src/sunspec";
+
+fn format_and_write(path: String, scope: &Scope) -> std::io::Result<()> {
+    let text = rustfmt_wrapper::rustfmt(scope.to_string()).unwrap();
+    fs::write(format!("{}/{}", GENERATED_SRC_DIR, path), text)
 }
 
 fn main() -> () {
-    static GENERATED_SRC_DIR: &str = "../src/sunspec";
     let model_glob = "./models/json/model_*.json";
 
     fs::remove_dir_all(GENERATED_SRC_DIR).unwrap();
@@ -389,7 +516,6 @@ fn main() -> () {
         .filter(|entry| match entry {
             Ok(path) => {
                 let model_name = path.file_prefix().map(OsStr::to_str).flatten().unwrap();
-                println!("{model_name}");
                 model_name != "model_9"
                     && model_name != "model_14"
                     && model_name != "model_302"
@@ -407,13 +533,9 @@ fn main() -> () {
                 let model: SunspecModel = serde_json::from_str(&json).unwrap();
                 let model_name = path.file_prefix().map(OsStr::to_str).flatten().unwrap();
 
-                fs::write(
-                    format!(
-                        "{}/models/{}.rs",
-                        GENERATED_SRC_DIR,
-                        model_name.to_snake_case()
-                    ),
-                    generate_model(model, model_name.to_pascal_case()),
+                format_and_write(
+                    format!("models/{}.rs", model_name.to_snake_case()),
+                    &generate_model(model, model_name.to_pascal_case()),
                 )
                 .unwrap();
 
@@ -426,9 +548,10 @@ fn main() -> () {
         })
         .collect();
 
-    fs::write(
-        format!("{}/points.rs", GENERATED_SRC_DIR),
-        generate_point_types(&models),
+    format_and_write("points.rs".to_string(), &generate_point_types(&models)).unwrap();
+    format_and_write(
+        "adapters.rs".to_string(),
+        &generate_adapter_structs(&models),
     )
     .unwrap();
 
@@ -438,9 +561,5 @@ fn main() -> () {
         mod_scope.raw(format!("pub mod {};", n));
     });
 
-    fs::write(
-        format!("{}/models.rs", GENERATED_SRC_DIR),
-        mod_scope.to_string(),
-    )
-    .unwrap()
+    format_and_write("models.rs".to_string(), &mod_scope).unwrap();
 }

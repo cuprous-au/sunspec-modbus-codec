@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 92;
 
@@ -24,13 +24,17 @@ pub static POINTS: [ReadablePoint; 91] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Offset },
+        reference: PointReference::Model6 {
+            point: Point::Offset,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Value1 },
+        reference: PointReference::Model6 {
+            point: Point::Value1,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
@@ -84,445 +88,593 @@ pub static POINTS: [ReadablePoint; 91] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val10 },
+        reference: PointReference::Model6 {
+            point: Point::Val10,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val11 },
+        reference: PointReference::Model6 {
+            point: Point::Val11,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val12 },
+        reference: PointReference::Model6 {
+            point: Point::Val12,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val13 },
+        reference: PointReference::Model6 {
+            point: Point::Val13,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val14 },
+        reference: PointReference::Model6 {
+            point: Point::Val14,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val15 },
+        reference: PointReference::Model6 {
+            point: Point::Val15,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val16 },
+        reference: PointReference::Model6 {
+            point: Point::Val16,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val17 },
+        reference: PointReference::Model6 {
+            point: Point::Val17,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val18 },
+        reference: PointReference::Model6 {
+            point: Point::Val18,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val19 },
+        reference: PointReference::Model6 {
+            point: Point::Val19,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val20 },
+        reference: PointReference::Model6 {
+            point: Point::Val20,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val21 },
+        reference: PointReference::Model6 {
+            point: Point::Val21,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val22 },
+        reference: PointReference::Model6 {
+            point: Point::Val22,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val23 },
+        reference: PointReference::Model6 {
+            point: Point::Val23,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val24 },
+        reference: PointReference::Model6 {
+            point: Point::Val24,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val25 },
+        reference: PointReference::Model6 {
+            point: Point::Val25,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val26 },
+        reference: PointReference::Model6 {
+            point: Point::Val26,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val27 },
+        reference: PointReference::Model6 {
+            point: Point::Val27,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val28 },
+        reference: PointReference::Model6 {
+            point: Point::Val28,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val29 },
+        reference: PointReference::Model6 {
+            point: Point::Val29,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val30 },
+        reference: PointReference::Model6 {
+            point: Point::Val30,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val31 },
+        reference: PointReference::Model6 {
+            point: Point::Val31,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val32 },
+        reference: PointReference::Model6 {
+            point: Point::Val32,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val33 },
+        reference: PointReference::Model6 {
+            point: Point::Val33,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val34 },
+        reference: PointReference::Model6 {
+            point: Point::Val34,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val35 },
+        reference: PointReference::Model6 {
+            point: Point::Val35,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val36 },
+        reference: PointReference::Model6 {
+            point: Point::Val36,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val37 },
+        reference: PointReference::Model6 {
+            point: Point::Val37,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val38 },
+        reference: PointReference::Model6 {
+            point: Point::Val38,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val39 },
+        reference: PointReference::Model6 {
+            point: Point::Val39,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val40 },
+        reference: PointReference::Model6 {
+            point: Point::Val40,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val41 },
+        reference: PointReference::Model6 {
+            point: Point::Val41,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val42 },
+        reference: PointReference::Model6 {
+            point: Point::Val42,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val43 },
+        reference: PointReference::Model6 {
+            point: Point::Val43,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val44 },
+        reference: PointReference::Model6 {
+            point: Point::Val44,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val45 },
+        reference: PointReference::Model6 {
+            point: Point::Val45,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val46 },
+        reference: PointReference::Model6 {
+            point: Point::Val46,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val47 },
+        reference: PointReference::Model6 {
+            point: Point::Val47,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val48 },
+        reference: PointReference::Model6 {
+            point: Point::Val48,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val49 },
+        reference: PointReference::Model6 {
+            point: Point::Val49,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val50 },
+        reference: PointReference::Model6 {
+            point: Point::Val50,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val51 },
+        reference: PointReference::Model6 {
+            point: Point::Val51,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val52 },
+        reference: PointReference::Model6 {
+            point: Point::Val52,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val53 },
+        reference: PointReference::Model6 {
+            point: Point::Val53,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val54 },
+        reference: PointReference::Model6 {
+            point: Point::Val54,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val55 },
+        reference: PointReference::Model6 {
+            point: Point::Val55,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val56 },
+        reference: PointReference::Model6 {
+            point: Point::Val56,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val57 },
+        reference: PointReference::Model6 {
+            point: Point::Val57,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val58 },
+        reference: PointReference::Model6 {
+            point: Point::Val58,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val59 },
+        reference: PointReference::Model6 {
+            point: Point::Val59,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val60 },
+        reference: PointReference::Model6 {
+            point: Point::Val60,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val61 },
+        reference: PointReference::Model6 {
+            point: Point::Val61,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val62 },
+        reference: PointReference::Model6 {
+            point: Point::Val62,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val63 },
+        reference: PointReference::Model6 {
+            point: Point::Val63,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val64 },
+        reference: PointReference::Model6 {
+            point: Point::Val64,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val65 },
+        reference: PointReference::Model6 {
+            point: Point::Val65,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val66 },
+        reference: PointReference::Model6 {
+            point: Point::Val66,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val67 },
+        reference: PointReference::Model6 {
+            point: Point::Val67,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val68 },
+        reference: PointReference::Model6 {
+            point: Point::Val68,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val69 },
+        reference: PointReference::Model6 {
+            point: Point::Val69,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val70 },
+        reference: PointReference::Model6 {
+            point: Point::Val70,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val71 },
+        reference: PointReference::Model6 {
+            point: Point::Val71,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val72 },
+        reference: PointReference::Model6 {
+            point: Point::Val72,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val73 },
+        reference: PointReference::Model6 {
+            point: Point::Val73,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val74 },
+        reference: PointReference::Model6 {
+            point: Point::Val74,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val75 },
+        reference: PointReference::Model6 {
+            point: Point::Val75,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val76 },
+        reference: PointReference::Model6 {
+            point: Point::Val76,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val77 },
+        reference: PointReference::Model6 {
+            point: Point::Val77,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val78 },
+        reference: PointReference::Model6 {
+            point: Point::Val78,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val79 },
+        reference: PointReference::Model6 {
+            point: Point::Val79,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Val80 },
+        reference: PointReference::Model6 {
+            point: Point::Val80,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Timestamp },
+        reference: PointReference::Model6 {
+            point: Point::Timestamp,
+        },
         size: 2,
         data_type: PointType::Uint32,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Milliseconds },
+        reference: PointReference::Model6 {
+            point: Point::Milliseconds,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Sequence },
+        reference: PointReference::Model6 {
+            point: Point::Sequence,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
@@ -540,7 +692,9 @@ pub static POINTS: [ReadablePoint; 91] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model6 { point: Point::Algorithm },
+        reference: PointReference::Model6 {
+            point: Point::Algorithm,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
@@ -645,7 +799,13 @@ pub enum Point {
     N,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
         Point::X => serialisation::write_u16(model.x(), buffer),
         Point::Offset => serialisation::write_u16(model.offset(), buffer),
@@ -1175,4 +1335,968 @@ pub enum Alg {
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
+}
+
+#[repr(C)]
+pub struct Model6CallbackAdapter {
+    x_callback: extern "C" fn() -> u16,
+    set_x_callback: extern "C" fn(u16),
+    offset_callback: extern "C" fn() -> u16,
+    set_offset_callback: extern "C" fn(u16),
+    value1_callback: extern "C" fn() -> u16,
+    set_value1_callback: extern "C" fn(u16),
+    val2_callback: extern "C" fn() -> u16,
+    set_val2_callback: extern "C" fn(u16),
+    val3_callback: extern "C" fn() -> u16,
+    set_val3_callback: extern "C" fn(u16),
+    val4_callback: extern "C" fn() -> u16,
+    set_val4_callback: extern "C" fn(u16),
+    val5_callback: extern "C" fn() -> u16,
+    set_val5_callback: extern "C" fn(u16),
+    val6_callback: extern "C" fn() -> u16,
+    set_val6_callback: extern "C" fn(u16),
+    val7_callback: extern "C" fn() -> u16,
+    set_val7_callback: extern "C" fn(u16),
+    val8_callback: extern "C" fn() -> u16,
+    set_val8_callback: extern "C" fn(u16),
+    val9_callback: extern "C" fn() -> u16,
+    set_val9_callback: extern "C" fn(u16),
+    val10_callback: extern "C" fn() -> u16,
+    set_val10_callback: extern "C" fn(u16),
+    val11_callback: extern "C" fn() -> u16,
+    set_val11_callback: extern "C" fn(u16),
+    val12_callback: extern "C" fn() -> u16,
+    set_val12_callback: extern "C" fn(u16),
+    val13_callback: extern "C" fn() -> u16,
+    set_val13_callback: extern "C" fn(u16),
+    val14_callback: extern "C" fn() -> u16,
+    set_val14_callback: extern "C" fn(u16),
+    val15_callback: extern "C" fn() -> u16,
+    set_val15_callback: extern "C" fn(u16),
+    val16_callback: extern "C" fn() -> u16,
+    set_val16_callback: extern "C" fn(u16),
+    val17_callback: extern "C" fn() -> u16,
+    set_val17_callback: extern "C" fn(u16),
+    val18_callback: extern "C" fn() -> u16,
+    set_val18_callback: extern "C" fn(u16),
+    val19_callback: extern "C" fn() -> u16,
+    set_val19_callback: extern "C" fn(u16),
+    val20_callback: extern "C" fn() -> u16,
+    set_val20_callback: extern "C" fn(u16),
+    val21_callback: extern "C" fn() -> u16,
+    set_val21_callback: extern "C" fn(u16),
+    val22_callback: extern "C" fn() -> u16,
+    set_val22_callback: extern "C" fn(u16),
+    val23_callback: extern "C" fn() -> u16,
+    set_val23_callback: extern "C" fn(u16),
+    val24_callback: extern "C" fn() -> u16,
+    set_val24_callback: extern "C" fn(u16),
+    val25_callback: extern "C" fn() -> u16,
+    set_val25_callback: extern "C" fn(u16),
+    val26_callback: extern "C" fn() -> u16,
+    set_val26_callback: extern "C" fn(u16),
+    val27_callback: extern "C" fn() -> u16,
+    set_val27_callback: extern "C" fn(u16),
+    val28_callback: extern "C" fn() -> u16,
+    set_val28_callback: extern "C" fn(u16),
+    val29_callback: extern "C" fn() -> u16,
+    set_val29_callback: extern "C" fn(u16),
+    val30_callback: extern "C" fn() -> u16,
+    set_val30_callback: extern "C" fn(u16),
+    val31_callback: extern "C" fn() -> u16,
+    set_val31_callback: extern "C" fn(u16),
+    val32_callback: extern "C" fn() -> u16,
+    set_val32_callback: extern "C" fn(u16),
+    val33_callback: extern "C" fn() -> u16,
+    set_val33_callback: extern "C" fn(u16),
+    val34_callback: extern "C" fn() -> u16,
+    set_val34_callback: extern "C" fn(u16),
+    val35_callback: extern "C" fn() -> u16,
+    set_val35_callback: extern "C" fn(u16),
+    val36_callback: extern "C" fn() -> u16,
+    set_val36_callback: extern "C" fn(u16),
+    val37_callback: extern "C" fn() -> u16,
+    set_val37_callback: extern "C" fn(u16),
+    val38_callback: extern "C" fn() -> u16,
+    set_val38_callback: extern "C" fn(u16),
+    val39_callback: extern "C" fn() -> u16,
+    set_val39_callback: extern "C" fn(u16),
+    val40_callback: extern "C" fn() -> u16,
+    set_val40_callback: extern "C" fn(u16),
+    val41_callback: extern "C" fn() -> u16,
+    set_val41_callback: extern "C" fn(u16),
+    val42_callback: extern "C" fn() -> u16,
+    set_val42_callback: extern "C" fn(u16),
+    val43_callback: extern "C" fn() -> u16,
+    set_val43_callback: extern "C" fn(u16),
+    val44_callback: extern "C" fn() -> u16,
+    set_val44_callback: extern "C" fn(u16),
+    val45_callback: extern "C" fn() -> u16,
+    set_val45_callback: extern "C" fn(u16),
+    val46_callback: extern "C" fn() -> u16,
+    set_val46_callback: extern "C" fn(u16),
+    val47_callback: extern "C" fn() -> u16,
+    set_val47_callback: extern "C" fn(u16),
+    val48_callback: extern "C" fn() -> u16,
+    set_val48_callback: extern "C" fn(u16),
+    val49_callback: extern "C" fn() -> u16,
+    set_val49_callback: extern "C" fn(u16),
+    val50_callback: extern "C" fn() -> u16,
+    set_val50_callback: extern "C" fn(u16),
+    val51_callback: extern "C" fn() -> u16,
+    set_val51_callback: extern "C" fn(u16),
+    val52_callback: extern "C" fn() -> u16,
+    set_val52_callback: extern "C" fn(u16),
+    val53_callback: extern "C" fn() -> u16,
+    set_val53_callback: extern "C" fn(u16),
+    val54_callback: extern "C" fn() -> u16,
+    set_val54_callback: extern "C" fn(u16),
+    val55_callback: extern "C" fn() -> u16,
+    set_val55_callback: extern "C" fn(u16),
+    val56_callback: extern "C" fn() -> u16,
+    set_val56_callback: extern "C" fn(u16),
+    val57_callback: extern "C" fn() -> u16,
+    set_val57_callback: extern "C" fn(u16),
+    val58_callback: extern "C" fn() -> u16,
+    set_val58_callback: extern "C" fn(u16),
+    val59_callback: extern "C" fn() -> u16,
+    set_val59_callback: extern "C" fn(u16),
+    val60_callback: extern "C" fn() -> u16,
+    set_val60_callback: extern "C" fn(u16),
+    val61_callback: extern "C" fn() -> u16,
+    set_val61_callback: extern "C" fn(u16),
+    val62_callback: extern "C" fn() -> u16,
+    set_val62_callback: extern "C" fn(u16),
+    val63_callback: extern "C" fn() -> u16,
+    set_val63_callback: extern "C" fn(u16),
+    val64_callback: extern "C" fn() -> u16,
+    set_val64_callback: extern "C" fn(u16),
+    val65_callback: extern "C" fn() -> u16,
+    set_val65_callback: extern "C" fn(u16),
+    val66_callback: extern "C" fn() -> u16,
+    set_val66_callback: extern "C" fn(u16),
+    val67_callback: extern "C" fn() -> u16,
+    set_val67_callback: extern "C" fn(u16),
+    val68_callback: extern "C" fn() -> u16,
+    set_val68_callback: extern "C" fn(u16),
+    val69_callback: extern "C" fn() -> u16,
+    set_val69_callback: extern "C" fn(u16),
+    val70_callback: extern "C" fn() -> u16,
+    set_val70_callback: extern "C" fn(u16),
+    val71_callback: extern "C" fn() -> u16,
+    set_val71_callback: extern "C" fn(u16),
+    val72_callback: extern "C" fn() -> u16,
+    set_val72_callback: extern "C" fn(u16),
+    val73_callback: extern "C" fn() -> u16,
+    set_val73_callback: extern "C" fn(u16),
+    val74_callback: extern "C" fn() -> u16,
+    set_val74_callback: extern "C" fn(u16),
+    val75_callback: extern "C" fn() -> u16,
+    set_val75_callback: extern "C" fn(u16),
+    val76_callback: extern "C" fn() -> u16,
+    set_val76_callback: extern "C" fn(u16),
+    val77_callback: extern "C" fn() -> u16,
+    set_val77_callback: extern "C" fn(u16),
+    val78_callback: extern "C" fn() -> u16,
+    set_val78_callback: extern "C" fn(u16),
+    val79_callback: extern "C" fn() -> u16,
+    set_val79_callback: extern "C" fn(u16),
+    val80_callback: extern "C" fn() -> u16,
+    set_val80_callback: extern "C" fn(u16),
+    timestamp_callback: extern "C" fn() -> u32,
+    set_timestamp_callback: extern "C" fn(u32),
+    milliseconds_callback: extern "C" fn() -> u16,
+    set_milliseconds_callback: extern "C" fn(u16),
+    sequence_callback: extern "C" fn() -> u16,
+    set_sequence_callback: extern "C" fn(u16),
+    role_callback: extern "C" fn() -> u16,
+    set_role_callback: extern "C" fn(u16),
+    algorithm_callback: extern "C" fn() -> Alg,
+    set_algorithm_callback: extern "C" fn(Alg),
+    n_callback: extern "C" fn() -> u16,
+    set_n_callback: extern "C" fn(u16),
+}
+
+impl ModelAdapter for Model6CallbackAdapter {
+    /// X
+    ///
+    /// Number of (offset, value) pairs being written
+    ///
+    /// A max of 50 (offset, value) pairs are allocated
+    fn x(&self) -> u16 {
+        (self.x_callback)()
+    }
+
+    /// X
+    ///
+    /// Number of (offset, value) pairs being written
+    ///
+    /// A max of 50 (offset, value) pairs are allocated
+    fn set_x(&mut self, value: u16) {
+        (self.set_x_callback)(value);
+    }
+
+    /// Offset
+    ///
+    /// Starting offset for write operation
+    ///
+    /// X values to follow
+    fn offset(&self) -> u16 {
+        (self.offset_callback)()
+    }
+
+    /// Offset
+    ///
+    /// Starting offset for write operation
+    ///
+    /// X values to follow
+    fn set_offset(&mut self, value: u16) {
+        (self.set_offset_callback)(value);
+    }
+
+    /// Value1
+    ///
+    /// Value to write to control register at offset
+    fn value1(&self) -> u16 {
+        (self.value1_callback)()
+    }
+
+    /// Value1
+    ///
+    /// Value to write to control register at offset
+    fn set_value1(&mut self, value: u16) {
+        (self.set_value1_callback)(value);
+    }
+
+    fn val2(&self) -> u16 {
+        (self.val2_callback)()
+    }
+
+    fn set_val2(&mut self, value: u16) {
+        (self.set_val2_callback)(value);
+    }
+
+    fn val3(&self) -> u16 {
+        (self.val3_callback)()
+    }
+
+    fn set_val3(&mut self, value: u16) {
+        (self.set_val3_callback)(value);
+    }
+
+    fn val4(&self) -> u16 {
+        (self.val4_callback)()
+    }
+
+    fn set_val4(&mut self, value: u16) {
+        (self.set_val4_callback)(value);
+    }
+
+    fn val5(&self) -> u16 {
+        (self.val5_callback)()
+    }
+
+    fn set_val5(&mut self, value: u16) {
+        (self.set_val5_callback)(value);
+    }
+
+    fn val6(&self) -> u16 {
+        (self.val6_callback)()
+    }
+
+    fn set_val6(&mut self, value: u16) {
+        (self.set_val6_callback)(value);
+    }
+
+    fn val7(&self) -> u16 {
+        (self.val7_callback)()
+    }
+
+    fn set_val7(&mut self, value: u16) {
+        (self.set_val7_callback)(value);
+    }
+
+    fn val8(&self) -> u16 {
+        (self.val8_callback)()
+    }
+
+    fn set_val8(&mut self, value: u16) {
+        (self.set_val8_callback)(value);
+    }
+
+    fn val9(&self) -> u16 {
+        (self.val9_callback)()
+    }
+
+    fn set_val9(&mut self, value: u16) {
+        (self.set_val9_callback)(value);
+    }
+
+    fn val10(&self) -> u16 {
+        (self.val10_callback)()
+    }
+
+    fn set_val10(&mut self, value: u16) {
+        (self.set_val10_callback)(value);
+    }
+
+    fn val11(&self) -> u16 {
+        (self.val11_callback)()
+    }
+
+    fn set_val11(&mut self, value: u16) {
+        (self.set_val11_callback)(value);
+    }
+
+    fn val12(&self) -> u16 {
+        (self.val12_callback)()
+    }
+
+    fn set_val12(&mut self, value: u16) {
+        (self.set_val12_callback)(value);
+    }
+
+    fn val13(&self) -> u16 {
+        (self.val13_callback)()
+    }
+
+    fn set_val13(&mut self, value: u16) {
+        (self.set_val13_callback)(value);
+    }
+
+    fn val14(&self) -> u16 {
+        (self.val14_callback)()
+    }
+
+    fn set_val14(&mut self, value: u16) {
+        (self.set_val14_callback)(value);
+    }
+
+    fn val15(&self) -> u16 {
+        (self.val15_callback)()
+    }
+
+    fn set_val15(&mut self, value: u16) {
+        (self.set_val15_callback)(value);
+    }
+
+    fn val16(&self) -> u16 {
+        (self.val16_callback)()
+    }
+
+    fn set_val16(&mut self, value: u16) {
+        (self.set_val16_callback)(value);
+    }
+
+    fn val17(&self) -> u16 {
+        (self.val17_callback)()
+    }
+
+    fn set_val17(&mut self, value: u16) {
+        (self.set_val17_callback)(value);
+    }
+
+    fn val18(&self) -> u16 {
+        (self.val18_callback)()
+    }
+
+    fn set_val18(&mut self, value: u16) {
+        (self.set_val18_callback)(value);
+    }
+
+    fn val19(&self) -> u16 {
+        (self.val19_callback)()
+    }
+
+    fn set_val19(&mut self, value: u16) {
+        (self.set_val19_callback)(value);
+    }
+
+    fn val20(&self) -> u16 {
+        (self.val20_callback)()
+    }
+
+    fn set_val20(&mut self, value: u16) {
+        (self.set_val20_callback)(value);
+    }
+
+    fn val21(&self) -> u16 {
+        (self.val21_callback)()
+    }
+
+    fn set_val21(&mut self, value: u16) {
+        (self.set_val21_callback)(value);
+    }
+
+    fn val22(&self) -> u16 {
+        (self.val22_callback)()
+    }
+
+    fn set_val22(&mut self, value: u16) {
+        (self.set_val22_callback)(value);
+    }
+
+    fn val23(&self) -> u16 {
+        (self.val23_callback)()
+    }
+
+    fn set_val23(&mut self, value: u16) {
+        (self.set_val23_callback)(value);
+    }
+
+    fn val24(&self) -> u16 {
+        (self.val24_callback)()
+    }
+
+    fn set_val24(&mut self, value: u16) {
+        (self.set_val24_callback)(value);
+    }
+
+    fn val25(&self) -> u16 {
+        (self.val25_callback)()
+    }
+
+    fn set_val25(&mut self, value: u16) {
+        (self.set_val25_callback)(value);
+    }
+
+    fn val26(&self) -> u16 {
+        (self.val26_callback)()
+    }
+
+    fn set_val26(&mut self, value: u16) {
+        (self.set_val26_callback)(value);
+    }
+
+    fn val27(&self) -> u16 {
+        (self.val27_callback)()
+    }
+
+    fn set_val27(&mut self, value: u16) {
+        (self.set_val27_callback)(value);
+    }
+
+    fn val28(&self) -> u16 {
+        (self.val28_callback)()
+    }
+
+    fn set_val28(&mut self, value: u16) {
+        (self.set_val28_callback)(value);
+    }
+
+    fn val29(&self) -> u16 {
+        (self.val29_callback)()
+    }
+
+    fn set_val29(&mut self, value: u16) {
+        (self.set_val29_callback)(value);
+    }
+
+    fn val30(&self) -> u16 {
+        (self.val30_callback)()
+    }
+
+    fn set_val30(&mut self, value: u16) {
+        (self.set_val30_callback)(value);
+    }
+
+    fn val31(&self) -> u16 {
+        (self.val31_callback)()
+    }
+
+    fn set_val31(&mut self, value: u16) {
+        (self.set_val31_callback)(value);
+    }
+
+    fn val32(&self) -> u16 {
+        (self.val32_callback)()
+    }
+
+    fn set_val32(&mut self, value: u16) {
+        (self.set_val32_callback)(value);
+    }
+
+    fn val33(&self) -> u16 {
+        (self.val33_callback)()
+    }
+
+    fn set_val33(&mut self, value: u16) {
+        (self.set_val33_callback)(value);
+    }
+
+    fn val34(&self) -> u16 {
+        (self.val34_callback)()
+    }
+
+    fn set_val34(&mut self, value: u16) {
+        (self.set_val34_callback)(value);
+    }
+
+    fn val35(&self) -> u16 {
+        (self.val35_callback)()
+    }
+
+    fn set_val35(&mut self, value: u16) {
+        (self.set_val35_callback)(value);
+    }
+
+    fn val36(&self) -> u16 {
+        (self.val36_callback)()
+    }
+
+    fn set_val36(&mut self, value: u16) {
+        (self.set_val36_callback)(value);
+    }
+
+    fn val37(&self) -> u16 {
+        (self.val37_callback)()
+    }
+
+    fn set_val37(&mut self, value: u16) {
+        (self.set_val37_callback)(value);
+    }
+
+    fn val38(&self) -> u16 {
+        (self.val38_callback)()
+    }
+
+    fn set_val38(&mut self, value: u16) {
+        (self.set_val38_callback)(value);
+    }
+
+    fn val39(&self) -> u16 {
+        (self.val39_callback)()
+    }
+
+    fn set_val39(&mut self, value: u16) {
+        (self.set_val39_callback)(value);
+    }
+
+    fn val40(&self) -> u16 {
+        (self.val40_callback)()
+    }
+
+    fn set_val40(&mut self, value: u16) {
+        (self.set_val40_callback)(value);
+    }
+
+    fn val41(&self) -> u16 {
+        (self.val41_callback)()
+    }
+
+    fn set_val41(&mut self, value: u16) {
+        (self.set_val41_callback)(value);
+    }
+
+    fn val42(&self) -> u16 {
+        (self.val42_callback)()
+    }
+
+    fn set_val42(&mut self, value: u16) {
+        (self.set_val42_callback)(value);
+    }
+
+    fn val43(&self) -> u16 {
+        (self.val43_callback)()
+    }
+
+    fn set_val43(&mut self, value: u16) {
+        (self.set_val43_callback)(value);
+    }
+
+    fn val44(&self) -> u16 {
+        (self.val44_callback)()
+    }
+
+    fn set_val44(&mut self, value: u16) {
+        (self.set_val44_callback)(value);
+    }
+
+    fn val45(&self) -> u16 {
+        (self.val45_callback)()
+    }
+
+    fn set_val45(&mut self, value: u16) {
+        (self.set_val45_callback)(value);
+    }
+
+    fn val46(&self) -> u16 {
+        (self.val46_callback)()
+    }
+
+    fn set_val46(&mut self, value: u16) {
+        (self.set_val46_callback)(value);
+    }
+
+    fn val47(&self) -> u16 {
+        (self.val47_callback)()
+    }
+
+    fn set_val47(&mut self, value: u16) {
+        (self.set_val47_callback)(value);
+    }
+
+    fn val48(&self) -> u16 {
+        (self.val48_callback)()
+    }
+
+    fn set_val48(&mut self, value: u16) {
+        (self.set_val48_callback)(value);
+    }
+
+    fn val49(&self) -> u16 {
+        (self.val49_callback)()
+    }
+
+    fn set_val49(&mut self, value: u16) {
+        (self.set_val49_callback)(value);
+    }
+
+    fn val50(&self) -> u16 {
+        (self.val50_callback)()
+    }
+
+    fn set_val50(&mut self, value: u16) {
+        (self.set_val50_callback)(value);
+    }
+
+    fn val51(&self) -> u16 {
+        (self.val51_callback)()
+    }
+
+    fn set_val51(&mut self, value: u16) {
+        (self.set_val51_callback)(value);
+    }
+
+    fn val52(&self) -> u16 {
+        (self.val52_callback)()
+    }
+
+    fn set_val52(&mut self, value: u16) {
+        (self.set_val52_callback)(value);
+    }
+
+    fn val53(&self) -> u16 {
+        (self.val53_callback)()
+    }
+
+    fn set_val53(&mut self, value: u16) {
+        (self.set_val53_callback)(value);
+    }
+
+    fn val54(&self) -> u16 {
+        (self.val54_callback)()
+    }
+
+    fn set_val54(&mut self, value: u16) {
+        (self.set_val54_callback)(value);
+    }
+
+    fn val55(&self) -> u16 {
+        (self.val55_callback)()
+    }
+
+    fn set_val55(&mut self, value: u16) {
+        (self.set_val55_callback)(value);
+    }
+
+    fn val56(&self) -> u16 {
+        (self.val56_callback)()
+    }
+
+    fn set_val56(&mut self, value: u16) {
+        (self.set_val56_callback)(value);
+    }
+
+    fn val57(&self) -> u16 {
+        (self.val57_callback)()
+    }
+
+    fn set_val57(&mut self, value: u16) {
+        (self.set_val57_callback)(value);
+    }
+
+    fn val58(&self) -> u16 {
+        (self.val58_callback)()
+    }
+
+    fn set_val58(&mut self, value: u16) {
+        (self.set_val58_callback)(value);
+    }
+
+    fn val59(&self) -> u16 {
+        (self.val59_callback)()
+    }
+
+    fn set_val59(&mut self, value: u16) {
+        (self.set_val59_callback)(value);
+    }
+
+    fn val60(&self) -> u16 {
+        (self.val60_callback)()
+    }
+
+    fn set_val60(&mut self, value: u16) {
+        (self.set_val60_callback)(value);
+    }
+
+    fn val61(&self) -> u16 {
+        (self.val61_callback)()
+    }
+
+    fn set_val61(&mut self, value: u16) {
+        (self.set_val61_callback)(value);
+    }
+
+    fn val62(&self) -> u16 {
+        (self.val62_callback)()
+    }
+
+    fn set_val62(&mut self, value: u16) {
+        (self.set_val62_callback)(value);
+    }
+
+    fn val63(&self) -> u16 {
+        (self.val63_callback)()
+    }
+
+    fn set_val63(&mut self, value: u16) {
+        (self.set_val63_callback)(value);
+    }
+
+    fn val64(&self) -> u16 {
+        (self.val64_callback)()
+    }
+
+    fn set_val64(&mut self, value: u16) {
+        (self.set_val64_callback)(value);
+    }
+
+    fn val65(&self) -> u16 {
+        (self.val65_callback)()
+    }
+
+    fn set_val65(&mut self, value: u16) {
+        (self.set_val65_callback)(value);
+    }
+
+    fn val66(&self) -> u16 {
+        (self.val66_callback)()
+    }
+
+    fn set_val66(&mut self, value: u16) {
+        (self.set_val66_callback)(value);
+    }
+
+    fn val67(&self) -> u16 {
+        (self.val67_callback)()
+    }
+
+    fn set_val67(&mut self, value: u16) {
+        (self.set_val67_callback)(value);
+    }
+
+    fn val68(&self) -> u16 {
+        (self.val68_callback)()
+    }
+
+    fn set_val68(&mut self, value: u16) {
+        (self.set_val68_callback)(value);
+    }
+
+    fn val69(&self) -> u16 {
+        (self.val69_callback)()
+    }
+
+    fn set_val69(&mut self, value: u16) {
+        (self.set_val69_callback)(value);
+    }
+
+    fn val70(&self) -> u16 {
+        (self.val70_callback)()
+    }
+
+    fn set_val70(&mut self, value: u16) {
+        (self.set_val70_callback)(value);
+    }
+
+    fn val71(&self) -> u16 {
+        (self.val71_callback)()
+    }
+
+    fn set_val71(&mut self, value: u16) {
+        (self.set_val71_callback)(value);
+    }
+
+    fn val72(&self) -> u16 {
+        (self.val72_callback)()
+    }
+
+    fn set_val72(&mut self, value: u16) {
+        (self.set_val72_callback)(value);
+    }
+
+    fn val73(&self) -> u16 {
+        (self.val73_callback)()
+    }
+
+    fn set_val73(&mut self, value: u16) {
+        (self.set_val73_callback)(value);
+    }
+
+    fn val74(&self) -> u16 {
+        (self.val74_callback)()
+    }
+
+    fn set_val74(&mut self, value: u16) {
+        (self.set_val74_callback)(value);
+    }
+
+    fn val75(&self) -> u16 {
+        (self.val75_callback)()
+    }
+
+    fn set_val75(&mut self, value: u16) {
+        (self.set_val75_callback)(value);
+    }
+
+    fn val76(&self) -> u16 {
+        (self.val76_callback)()
+    }
+
+    fn set_val76(&mut self, value: u16) {
+        (self.set_val76_callback)(value);
+    }
+
+    fn val77(&self) -> u16 {
+        (self.val77_callback)()
+    }
+
+    fn set_val77(&mut self, value: u16) {
+        (self.set_val77_callback)(value);
+    }
+
+    fn val78(&self) -> u16 {
+        (self.val78_callback)()
+    }
+
+    fn set_val78(&mut self, value: u16) {
+        (self.set_val78_callback)(value);
+    }
+
+    fn val79(&self) -> u16 {
+        (self.val79_callback)()
+    }
+
+    fn set_val79(&mut self, value: u16) {
+        (self.set_val79_callback)(value);
+    }
+
+    fn val80(&self) -> u16 {
+        (self.val80_callback)()
+    }
+
+    fn set_val80(&mut self, value: u16) {
+        (self.set_val80_callback)(value);
+    }
+
+    /// Timestamp
+    ///
+    /// Timestamp value is the number of seconds since January 1, 2000
+    fn timestamp(&self) -> u32 {
+        (self.timestamp_callback)()
+    }
+
+    /// Timestamp
+    ///
+    /// Timestamp value is the number of seconds since January 1, 2000
+    fn set_timestamp(&mut self, value: u32) {
+        (self.set_timestamp_callback)(value);
+    }
+
+    /// Milliseconds
+    ///
+    /// Millisecond counter 0-999
+    fn milliseconds(&self) -> u16 {
+        (self.milliseconds_callback)()
+    }
+
+    /// Milliseconds
+    ///
+    /// Millisecond counter 0-999
+    fn set_milliseconds(&mut self, value: u16) {
+        (self.set_milliseconds_callback)(value);
+    }
+
+    /// Sequence
+    ///
+    /// Sequence number of request
+    ///
+    /// Shall be advanced for each request
+    fn sequence(&self) -> u16 {
+        (self.sequence_callback)()
+    }
+
+    /// Sequence
+    ///
+    /// Sequence number of request
+    ///
+    /// Shall be advanced for each request
+    fn set_sequence(&mut self, value: u16) {
+        (self.set_sequence_callback)(value);
+    }
+
+    /// Role
+    ///
+    /// Signing key used 0-5
+    ///
+    /// Each controller is assigned a key index that maps to their access control role
+    fn role(&self) -> u16 {
+        (self.role_callback)()
+    }
+
+    /// Role
+    ///
+    /// Signing key used 0-5
+    ///
+    /// Each controller is assigned a key index that maps to their access control role
+    fn set_role(&mut self, value: u16) {
+        (self.set_role_callback)(value);
+    }
+
+    /// Algorithm
+    ///
+    /// Algorithm used to compute the digital signature
+    ///
+    /// For future proof
+    fn algorithm(&self) -> Alg {
+        (self.algorithm_callback)()
+    }
+
+    /// Algorithm
+    ///
+    /// Algorithm used to compute the digital signature
+    ///
+    /// For future proof
+    fn set_algorithm(&mut self, value: Alg) {
+        (self.set_algorithm_callback)(value);
+    }
+
+    /// N
+    ///
+    /// Number of registers comprising the digital signature.
+    ///
+    /// The value of N must be at least 4 (64 bits)
+    fn n(&self) -> u16 {
+        (self.n_callback)()
+    }
+
+    /// N
+    ///
+    /// Number of registers comprising the digital signature.
+    ///
+    /// The value of N must be at least 4 (64 bits)
+    fn set_n(&mut self, value: u16) {
+        (self.set_n_callback)(value);
+    }
 }

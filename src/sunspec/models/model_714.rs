@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 20;
 
@@ -18,67 +18,89 @@ pub static POINTS: [ReadablePoint; 13] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::PortAlarms },
+        reference: PointReference::Model714 {
+            point: Point::PortAlarms,
+        },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::NumberOfPorts },
+        reference: PointReference::Model714 {
+            point: Point::NumberOfPorts,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcCurrent },
+        reference: PointReference::Model714 {
+            point: Point::DcCurrent,
+        },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcPower },
+        reference: PointReference::Model714 {
+            point: Point::DcPower,
+        },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcEnergyInjected },
+        reference: PointReference::Model714 {
+            point: Point::DcEnergyInjected,
+        },
         size: 4,
         data_type: PointType::Uint64,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcEnergyAbsorbed },
+        reference: PointReference::Model714 {
+            point: Point::DcEnergyAbsorbed,
+        },
         size: 4,
         data_type: PointType::Uint64,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcCurrentScaleFactor },
+        reference: PointReference::Model714 {
+            point: Point::DcCurrentScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcVoltageScaleFactor },
+        reference: PointReference::Model714 {
+            point: Point::DcVoltageScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcPowerScaleFactor },
+        reference: PointReference::Model714 {
+            point: Point::DcPowerScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::DcEnergyScaleFactor },
+        reference: PointReference::Model714 {
+            point: Point::DcEnergyScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model714 { point: Point::TemperatureScaleFactor },
+        reference: PointReference::Model714 {
+            point: Point::TemperatureScaleFactor,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -100,19 +122,69 @@ pub enum Point {
     TemperatureScaleFactor,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
-        Point::PortAlarms => if let Some(value) = model.port_alarms() { serialisation::write_u32(value, buffer, offset, limit); },
-        Point::NumberOfPorts => if let Some(value) = model.number_of_ports() { serialisation::write_u16(value, buffer); },
-        Point::DcCurrent => if let Some(value) = model.dc_current() { serialisation::write_i16(value, buffer); },
-        Point::DcPower => if let Some(value) = model.dc_power() { serialisation::write_i16(value, buffer); },
-        Point::DcEnergyInjected => if let Some(value) = model.dc_energy_injected() { serialisation::write_u64(value, buffer, offset, limit); },
-        Point::DcEnergyAbsorbed => if let Some(value) = model.dc_energy_absorbed() { serialisation::write_u64(value, buffer, offset, limit); },
-        Point::DcCurrentScaleFactor => if let Some(value) = model.dc_current_scale_factor() { serialisation::write_u16(value, buffer); },
-        Point::DcVoltageScaleFactor => if let Some(value) = model.dc_voltage_scale_factor() { serialisation::write_u16(value, buffer); },
-        Point::DcPowerScaleFactor => if let Some(value) = model.dc_power_scale_factor() { serialisation::write_u16(value, buffer); },
-        Point::DcEnergyScaleFactor => if let Some(value) = model.dc_energy_scale_factor() { serialisation::write_u16(value, buffer); },
-        Point::TemperatureScaleFactor => if let Some(value) = model.temperature_scale_factor() { serialisation::write_u16(value, buffer); },
+        Point::PortAlarms => {
+            if let Some(value) = model.port_alarms() {
+                serialisation::write_u32(value, buffer, offset, limit);
+            }
+        }
+        Point::NumberOfPorts => {
+            if let Some(value) = model.number_of_ports() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::DcCurrent => {
+            if let Some(value) = model.dc_current() {
+                serialisation::write_i16(value, buffer);
+            }
+        }
+        Point::DcPower => {
+            if let Some(value) = model.dc_power() {
+                serialisation::write_i16(value, buffer);
+            }
+        }
+        Point::DcEnergyInjected => {
+            if let Some(value) = model.dc_energy_injected() {
+                serialisation::write_u64(value, buffer, offset, limit);
+            }
+        }
+        Point::DcEnergyAbsorbed => {
+            if let Some(value) = model.dc_energy_absorbed() {
+                serialisation::write_u64(value, buffer, offset, limit);
+            }
+        }
+        Point::DcCurrentScaleFactor => {
+            if let Some(value) = model.dc_current_scale_factor() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::DcVoltageScaleFactor => {
+            if let Some(value) = model.dc_voltage_scale_factor() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::DcPowerScaleFactor => {
+            if let Some(value) = model.dc_power_scale_factor() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::DcEnergyScaleFactor => {
+            if let Some(value) = model.dc_energy_scale_factor() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::TemperatureScaleFactor => {
+            if let Some(value) = model.temperature_scale_factor() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
     }
 }
 
@@ -192,5 +264,106 @@ pub trait ModelAdapter {
     /// Temperature Scale Factor.
     fn temperature_scale_factor(&self) -> Option<u16> {
         None
+    }
+}
+
+#[repr(C)]
+pub struct Model714CallbackAdapter {
+    port_alarms_callback: Option<extern "C" fn() -> u32>,
+    number_of_ports_callback: Option<extern "C" fn() -> u16>,
+    dc_current_callback: Option<extern "C" fn() -> i16>,
+    dc_power_callback: Option<extern "C" fn() -> i16>,
+    dc_energy_injected_callback: Option<extern "C" fn() -> u64>,
+    dc_energy_absorbed_callback: Option<extern "C" fn() -> u64>,
+    dc_current_scale_factor_callback: Option<extern "C" fn() -> u16>,
+    dc_voltage_scale_factor_callback: Option<extern "C" fn() -> u16>,
+    dc_power_scale_factor_callback: Option<extern "C" fn() -> u16>,
+    dc_energy_scale_factor_callback: Option<extern "C" fn() -> u16>,
+    temperature_scale_factor_callback: Option<extern "C" fn() -> u16>,
+}
+
+impl ModelAdapter for Model714CallbackAdapter {
+    /// Port Alarms
+    ///
+    /// Bitfield of ports with active alarms. Bit is 1 if port has an active alarm. Bit 0 is first port.
+    fn port_alarms(&self) -> Option<u32> {
+        self.port_alarms_callback.map(|callback| (callback)())
+    }
+
+    /// Number Of Ports
+    ///
+    /// Number of DC ports.
+    fn number_of_ports(&self) -> Option<u16> {
+        self.number_of_ports_callback.map(|callback| (callback)())
+    }
+
+    /// DC Current
+    ///
+    /// Total DC current for all ports.
+    fn dc_current(&self) -> Option<i16> {
+        self.dc_current_callback.map(|callback| (callback)())
+    }
+
+    /// DC Power
+    ///
+    /// Total DC power for all ports.
+    fn dc_power(&self) -> Option<i16> {
+        self.dc_power_callback.map(|callback| (callback)())
+    }
+
+    /// DC Energy Injected
+    ///
+    /// Total cumulative DC energy injected for all ports.
+    fn dc_energy_injected(&self) -> Option<u64> {
+        self.dc_energy_injected_callback
+            .map(|callback| (callback)())
+    }
+
+    /// DC Energy Absorbed
+    ///
+    /// Total cumulative DC energy absorbed for all ports.
+    fn dc_energy_absorbed(&self) -> Option<u64> {
+        self.dc_energy_absorbed_callback
+            .map(|callback| (callback)())
+    }
+
+    /// DC Current Scale Factor
+    ///
+    /// DC current scale factor.
+    fn dc_current_scale_factor(&self) -> Option<u16> {
+        self.dc_current_scale_factor_callback
+            .map(|callback| (callback)())
+    }
+
+    /// DC Voltage Scale Factor
+    ///
+    /// DC voltage scale factor.
+    fn dc_voltage_scale_factor(&self) -> Option<u16> {
+        self.dc_voltage_scale_factor_callback
+            .map(|callback| (callback)())
+    }
+
+    /// DC Power Scale Factor
+    ///
+    /// DC power scale factor.
+    fn dc_power_scale_factor(&self) -> Option<u16> {
+        self.dc_power_scale_factor_callback
+            .map(|callback| (callback)())
+    }
+
+    /// DC Energy Scale Factor
+    ///
+    /// DC energy scale factor.
+    fn dc_energy_scale_factor(&self) -> Option<u16> {
+        self.dc_energy_scale_factor_callback
+            .map(|callback| (callback)())
+    }
+
+    /// Temperature Scale Factor
+    ///
+    /// Temperature Scale Factor.
+    fn temperature_scale_factor(&self) -> Option<u16> {
+        self.temperature_scale_factor_callback
+            .map(|callback| (callback)())
     }
 }

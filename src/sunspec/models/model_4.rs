@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 62;
 
@@ -18,13 +18,17 @@ pub static POINTS: [ReadablePoint; 61] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::RequestSequence },
+        reference: PointReference::Model4 {
+            point: Point::RequestSequence,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Status },
+        reference: PointReference::Model4 {
+            point: Point::Status,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
@@ -36,7 +40,9 @@ pub static POINTS: [ReadablePoint; 61] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Value1 },
+        reference: PointReference::Model4 {
+            point: Point::Value1,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -90,277 +96,369 @@ pub static POINTS: [ReadablePoint; 61] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val10 },
+        reference: PointReference::Model4 {
+            point: Point::Val10,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val11 },
+        reference: PointReference::Model4 {
+            point: Point::Val11,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val12 },
+        reference: PointReference::Model4 {
+            point: Point::Val12,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val13 },
+        reference: PointReference::Model4 {
+            point: Point::Val13,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val14 },
+        reference: PointReference::Model4 {
+            point: Point::Val14,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val15 },
+        reference: PointReference::Model4 {
+            point: Point::Val15,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val16 },
+        reference: PointReference::Model4 {
+            point: Point::Val16,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val17 },
+        reference: PointReference::Model4 {
+            point: Point::Val17,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val18 },
+        reference: PointReference::Model4 {
+            point: Point::Val18,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val19 },
+        reference: PointReference::Model4 {
+            point: Point::Val19,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val20 },
+        reference: PointReference::Model4 {
+            point: Point::Val20,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val21 },
+        reference: PointReference::Model4 {
+            point: Point::Val21,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val22 },
+        reference: PointReference::Model4 {
+            point: Point::Val22,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val23 },
+        reference: PointReference::Model4 {
+            point: Point::Val23,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val24 },
+        reference: PointReference::Model4 {
+            point: Point::Val24,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val25 },
+        reference: PointReference::Model4 {
+            point: Point::Val25,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val26 },
+        reference: PointReference::Model4 {
+            point: Point::Val26,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val27 },
+        reference: PointReference::Model4 {
+            point: Point::Val27,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val28 },
+        reference: PointReference::Model4 {
+            point: Point::Val28,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val29 },
+        reference: PointReference::Model4 {
+            point: Point::Val29,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val30 },
+        reference: PointReference::Model4 {
+            point: Point::Val30,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val31 },
+        reference: PointReference::Model4 {
+            point: Point::Val31,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val32 },
+        reference: PointReference::Model4 {
+            point: Point::Val32,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val33 },
+        reference: PointReference::Model4 {
+            point: Point::Val33,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val34 },
+        reference: PointReference::Model4 {
+            point: Point::Val34,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val35 },
+        reference: PointReference::Model4 {
+            point: Point::Val35,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val36 },
+        reference: PointReference::Model4 {
+            point: Point::Val36,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val37 },
+        reference: PointReference::Model4 {
+            point: Point::Val37,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val38 },
+        reference: PointReference::Model4 {
+            point: Point::Val38,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val39 },
+        reference: PointReference::Model4 {
+            point: Point::Val39,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val40 },
+        reference: PointReference::Model4 {
+            point: Point::Val40,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val41 },
+        reference: PointReference::Model4 {
+            point: Point::Val41,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val42 },
+        reference: PointReference::Model4 {
+            point: Point::Val42,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val43 },
+        reference: PointReference::Model4 {
+            point: Point::Val43,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val44 },
+        reference: PointReference::Model4 {
+            point: Point::Val44,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val45 },
+        reference: PointReference::Model4 {
+            point: Point::Val45,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val46 },
+        reference: PointReference::Model4 {
+            point: Point::Val46,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val47 },
+        reference: PointReference::Model4 {
+            point: Point::Val47,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val48 },
+        reference: PointReference::Model4 {
+            point: Point::Val48,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val49 },
+        reference: PointReference::Model4 {
+            point: Point::Val49,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val50 },
+        reference: PointReference::Model4 {
+            point: Point::Val50,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Timestamp },
+        reference: PointReference::Model4 {
+            point: Point::Timestamp,
+        },
         size: 2,
         data_type: PointType::Uint32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Milliseconds },
+        reference: PointReference::Model4 {
+            point: Point::Milliseconds,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Sequence },
+        reference: PointReference::Model4 {
+            point: Point::Sequence,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Alarm },
+        reference: PointReference::Model4 {
+            point: Point::Alarm,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Algorithm },
+        reference: PointReference::Model4 {
+            point: Point::Algorithm,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
@@ -436,7 +534,13 @@ pub enum Point {
     N,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
         Point::RequestSequence => serialisation::write_u16(model.request_sequence(), buffer),
         Point::Status => serialisation::write_u16(model.status() as u16, buffer),
@@ -680,4 +784,345 @@ pub enum Alg {
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
+}
+
+#[repr(C)]
+pub struct Model4CallbackAdapter {
+    request_sequence_callback: extern "C" fn() -> u16,
+    status_callback: extern "C" fn() -> Sts,
+    x_callback: extern "C" fn() -> u16,
+    value1_callback: extern "C" fn() -> u16,
+    val2_callback: extern "C" fn() -> u16,
+    val3_callback: extern "C" fn() -> u16,
+    val4_callback: extern "C" fn() -> u16,
+    val5_callback: extern "C" fn() -> u16,
+    val6_callback: extern "C" fn() -> u16,
+    val7_callback: extern "C" fn() -> u16,
+    val8_callback: extern "C" fn() -> u16,
+    val9_callback: extern "C" fn() -> u16,
+    val10_callback: extern "C" fn() -> u16,
+    val11_callback: extern "C" fn() -> u16,
+    val12_callback: extern "C" fn() -> u16,
+    val13_callback: extern "C" fn() -> u16,
+    val14_callback: extern "C" fn() -> u16,
+    val15_callback: extern "C" fn() -> u16,
+    val16_callback: extern "C" fn() -> u16,
+    val17_callback: extern "C" fn() -> u16,
+    val18_callback: extern "C" fn() -> u16,
+    val19_callback: extern "C" fn() -> u16,
+    val20_callback: extern "C" fn() -> u16,
+    val21_callback: extern "C" fn() -> u16,
+    val22_callback: extern "C" fn() -> u16,
+    val23_callback: extern "C" fn() -> u16,
+    val24_callback: extern "C" fn() -> u16,
+    val25_callback: extern "C" fn() -> u16,
+    val26_callback: extern "C" fn() -> u16,
+    val27_callback: extern "C" fn() -> u16,
+    val28_callback: extern "C" fn() -> u16,
+    val29_callback: extern "C" fn() -> u16,
+    val30_callback: extern "C" fn() -> u16,
+    val31_callback: extern "C" fn() -> u16,
+    val32_callback: extern "C" fn() -> u16,
+    val33_callback: extern "C" fn() -> u16,
+    val34_callback: extern "C" fn() -> u16,
+    val35_callback: extern "C" fn() -> u16,
+    val36_callback: extern "C" fn() -> u16,
+    val37_callback: extern "C" fn() -> u16,
+    val38_callback: extern "C" fn() -> u16,
+    val39_callback: extern "C" fn() -> u16,
+    val40_callback: extern "C" fn() -> u16,
+    val41_callback: extern "C" fn() -> u16,
+    val42_callback: extern "C" fn() -> u16,
+    val43_callback: extern "C" fn() -> u16,
+    val44_callback: extern "C" fn() -> u16,
+    val45_callback: extern "C" fn() -> u16,
+    val46_callback: extern "C" fn() -> u16,
+    val47_callback: extern "C" fn() -> u16,
+    val48_callback: extern "C" fn() -> u16,
+    val49_callback: extern "C" fn() -> u16,
+    val50_callback: extern "C" fn() -> u16,
+    timestamp_callback: extern "C" fn() -> u32,
+    milliseconds_callback: extern "C" fn() -> u16,
+    sequence_callback: extern "C" fn() -> u16,
+    alarm_callback: extern "C" fn() -> Alm,
+    algorithm_callback: extern "C" fn() -> Alg,
+    n_callback: extern "C" fn() -> u16,
+}
+
+impl ModelAdapter for Model4CallbackAdapter {
+    /// Request Sequence
+    ///
+    /// Sequence number from the request
+    fn request_sequence(&self) -> u16 {
+        (self.request_sequence_callback)()
+    }
+
+    /// Status
+    ///
+    /// Status of last read operation
+    fn status(&self) -> Sts {
+        (self.status_callback)()
+    }
+
+    /// X
+    ///
+    /// Number of values from the request
+    ///
+    /// A max of 50 values are allocated
+    fn x(&self) -> u16 {
+        (self.x_callback)()
+    }
+
+    /// Value1
+    ///
+    /// Copy of value from register Off1.
+    ///
+    /// Unused values shall return 0xFFFF (unimplemented)
+    fn value1(&self) -> u16 {
+        (self.value1_callback)()
+    }
+
+    fn val2(&self) -> u16 {
+        (self.val2_callback)()
+    }
+
+    fn val3(&self) -> u16 {
+        (self.val3_callback)()
+    }
+
+    fn val4(&self) -> u16 {
+        (self.val4_callback)()
+    }
+
+    fn val5(&self) -> u16 {
+        (self.val5_callback)()
+    }
+
+    fn val6(&self) -> u16 {
+        (self.val6_callback)()
+    }
+
+    fn val7(&self) -> u16 {
+        (self.val7_callback)()
+    }
+
+    fn val8(&self) -> u16 {
+        (self.val8_callback)()
+    }
+
+    fn val9(&self) -> u16 {
+        (self.val9_callback)()
+    }
+
+    fn val10(&self) -> u16 {
+        (self.val10_callback)()
+    }
+
+    fn val11(&self) -> u16 {
+        (self.val11_callback)()
+    }
+
+    fn val12(&self) -> u16 {
+        (self.val12_callback)()
+    }
+
+    fn val13(&self) -> u16 {
+        (self.val13_callback)()
+    }
+
+    fn val14(&self) -> u16 {
+        (self.val14_callback)()
+    }
+
+    fn val15(&self) -> u16 {
+        (self.val15_callback)()
+    }
+
+    fn val16(&self) -> u16 {
+        (self.val16_callback)()
+    }
+
+    fn val17(&self) -> u16 {
+        (self.val17_callback)()
+    }
+
+    fn val18(&self) -> u16 {
+        (self.val18_callback)()
+    }
+
+    fn val19(&self) -> u16 {
+        (self.val19_callback)()
+    }
+
+    fn val20(&self) -> u16 {
+        (self.val20_callback)()
+    }
+
+    fn val21(&self) -> u16 {
+        (self.val21_callback)()
+    }
+
+    fn val22(&self) -> u16 {
+        (self.val22_callback)()
+    }
+
+    fn val23(&self) -> u16 {
+        (self.val23_callback)()
+    }
+
+    fn val24(&self) -> u16 {
+        (self.val24_callback)()
+    }
+
+    fn val25(&self) -> u16 {
+        (self.val25_callback)()
+    }
+
+    fn val26(&self) -> u16 {
+        (self.val26_callback)()
+    }
+
+    fn val27(&self) -> u16 {
+        (self.val27_callback)()
+    }
+
+    fn val28(&self) -> u16 {
+        (self.val28_callback)()
+    }
+
+    fn val29(&self) -> u16 {
+        (self.val29_callback)()
+    }
+
+    fn val30(&self) -> u16 {
+        (self.val30_callback)()
+    }
+
+    fn val31(&self) -> u16 {
+        (self.val31_callback)()
+    }
+
+    fn val32(&self) -> u16 {
+        (self.val32_callback)()
+    }
+
+    fn val33(&self) -> u16 {
+        (self.val33_callback)()
+    }
+
+    fn val34(&self) -> u16 {
+        (self.val34_callback)()
+    }
+
+    fn val35(&self) -> u16 {
+        (self.val35_callback)()
+    }
+
+    fn val36(&self) -> u16 {
+        (self.val36_callback)()
+    }
+
+    fn val37(&self) -> u16 {
+        (self.val37_callback)()
+    }
+
+    fn val38(&self) -> u16 {
+        (self.val38_callback)()
+    }
+
+    fn val39(&self) -> u16 {
+        (self.val39_callback)()
+    }
+
+    fn val40(&self) -> u16 {
+        (self.val40_callback)()
+    }
+
+    fn val41(&self) -> u16 {
+        (self.val41_callback)()
+    }
+
+    fn val42(&self) -> u16 {
+        (self.val42_callback)()
+    }
+
+    fn val43(&self) -> u16 {
+        (self.val43_callback)()
+    }
+
+    fn val44(&self) -> u16 {
+        (self.val44_callback)()
+    }
+
+    fn val45(&self) -> u16 {
+        (self.val45_callback)()
+    }
+
+    fn val46(&self) -> u16 {
+        (self.val46_callback)()
+    }
+
+    fn val47(&self) -> u16 {
+        (self.val47_callback)()
+    }
+
+    fn val48(&self) -> u16 {
+        (self.val48_callback)()
+    }
+
+    fn val49(&self) -> u16 {
+        (self.val49_callback)()
+    }
+
+    fn val50(&self) -> u16 {
+        (self.val50_callback)()
+    }
+
+    /// Timestamp
+    ///
+    /// Timestamp value is the number of seconds since January 1, 2000
+    fn timestamp(&self) -> u32 {
+        (self.timestamp_callback)()
+    }
+
+    /// Milliseconds
+    ///
+    /// Millisecond counter 0-999
+    fn milliseconds(&self) -> u16 {
+        (self.milliseconds_callback)()
+    }
+
+    /// Sequence
+    ///
+    /// Sequence number of response
+    ///
+    /// Shall be advanced for each response
+    fn sequence(&self) -> u16 {
+        (self.sequence_callback)()
+    }
+
+    /// Alarm
+    ///
+    /// Bitmask alarm code
+    fn alarm(&self) -> Alm {
+        (self.alarm_callback)()
+    }
+
+    /// Algorithm
+    ///
+    /// Algorithm used to compute the digital signature
+    ///
+    /// For future proof
+    fn algorithm(&self) -> Alg {
+        (self.algorithm_callback)()
+    }
+
+    /// N
+    ///
+    /// Number of registers comprising the digital signature.
+    ///
+    /// The value of N must be at least 4 (64 bits)
+    fn n(&self) -> u16 {
+        (self.n_callback)()
+    }
 }

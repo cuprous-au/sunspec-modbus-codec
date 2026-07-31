@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 16;
 
@@ -18,79 +18,105 @@ pub static POINTS: [ReadablePoint; 16] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::ArGraMod },
+        reference: PointReference::Model128 {
+            point: Point::ArGraMod,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::ArGraSag },
+        reference: PointReference::Model128 {
+            point: Point::ArGraSag,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::ArGraSwell },
+        reference: PointReference::Model128 {
+            point: Point::ArGraSwell,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::ModEna },
+        reference: PointReference::Model128 {
+            point: Point::ModEna,
+        },
         size: 1,
         data_type: PointType::Bitfield16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::FilTms },
+        reference: PointReference::Model128 {
+            point: Point::FilTms,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::DbVMin },
+        reference: PointReference::Model128 {
+            point: Point::DbVMin,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::DbVMax },
+        reference: PointReference::Model128 {
+            point: Point::DbVMax,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::BlkZnV },
+        reference: PointReference::Model128 {
+            point: Point::BlkZnV,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::HysBlkZnV },
+        reference: PointReference::Model128 {
+            point: Point::HysBlkZnV,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::BlkZnTmms },
+        reference: PointReference::Model128 {
+            point: Point::BlkZnTmms,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::HoldTmms },
+        reference: PointReference::Model128 {
+            point: Point::HoldTmms,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::ArGraSf },
+        reference: PointReference::Model128 {
+            point: Point::ArGraSf,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model128 { point: Point::VRefPctSf },
+        reference: PointReference::Model128 {
+            point: Point::VRefPctSf,
+        },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -120,21 +146,59 @@ pub enum Point {
     VRefPctSf,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
         Point::ArGraMod => serialisation::write_u16(model.ar_gra_mod() as u16, buffer),
         Point::ArGraSag => serialisation::write_u16(model.ar_gra_sag(), buffer),
         Point::ArGraSwell => serialisation::write_u16(model.ar_gra_swell(), buffer),
         Point::ModEna => serialisation::write_u16(model.mod_ena(), buffer),
-        Point::FilTms => if let Some(value) = model.fil_tms() { serialisation::write_u16(value, buffer); },
-        Point::DbVMin => if let Some(value) = model.db_v_min() { serialisation::write_u16(value, buffer); },
-        Point::DbVMax => if let Some(value) = model.db_v_max() { serialisation::write_u16(value, buffer); },
-        Point::BlkZnV => if let Some(value) = model.blk_zn_v() { serialisation::write_u16(value, buffer); },
-        Point::HysBlkZnV => if let Some(value) = model.hys_blk_zn_v() { serialisation::write_u16(value, buffer); },
-        Point::BlkZnTmms => if let Some(value) = model.blk_zn_tmms() { serialisation::write_u16(value, buffer); },
-        Point::HoldTmms => if let Some(value) = model.hold_tmms() { serialisation::write_u16(value, buffer); },
+        Point::FilTms => {
+            if let Some(value) = model.fil_tms() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::DbVMin => {
+            if let Some(value) = model.db_v_min() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::DbVMax => {
+            if let Some(value) = model.db_v_max() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::BlkZnV => {
+            if let Some(value) = model.blk_zn_v() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::HysBlkZnV => {
+            if let Some(value) = model.hys_blk_zn_v() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::BlkZnTmms => {
+            if let Some(value) = model.blk_zn_tmms() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
+        Point::HoldTmms => {
+            if let Some(value) = model.hold_tmms() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
         Point::ArGraSf => serialisation::write_u16(model.ar_gra_sf(), buffer),
-        Point::VRefPctSf => if let Some(value) = model.v_ref_pct_sf() { serialisation::write_u16(value, buffer); },
+        Point::VRefPctSf => {
+            if let Some(value) = model.v_ref_pct_sf() {
+                serialisation::write_u16(value, buffer);
+            }
+        }
     }
 }
 
@@ -189,8 +253,7 @@ pub trait ModelAdapter {
     /// FilTms
     ///
     /// The time window used to calculate the moving average voltage.
-    fn set_fil_tms(&mut self, value: u16) {
-    }
+    fn set_fil_tms(&mut self, value: u16) {}
 
     /// DbVMin
     ///
@@ -202,8 +265,7 @@ pub trait ModelAdapter {
     /// DbVMin
     ///
     /// The lower delta voltage limit for which negative voltage deviations less than this value no dynamic vars are produced.
-    fn set_db_v_min(&mut self, value: u16) {
-    }
+    fn set_db_v_min(&mut self, value: u16) {}
 
     /// DbVMax
     ///
@@ -215,8 +277,7 @@ pub trait ModelAdapter {
     /// DbVMax
     ///
     /// The upper delta voltage limit for which positive voltage deviations less than this value no dynamic current produced.
-    fn set_db_v_max(&mut self, value: u16) {
-    }
+    fn set_db_v_max(&mut self, value: u16) {}
 
     /// BlkZnV
     ///
@@ -228,8 +289,7 @@ pub trait ModelAdapter {
     /// BlkZnV
     ///
     /// Block zone voltage which defines a lower voltage boundary below which no dynamic current is produced.
-    fn set_blk_zn_v(&mut self, value: u16) {
-    }
+    fn set_blk_zn_v(&mut self, value: u16) {}
 
     /// HysBlkZnV
     ///
@@ -241,8 +301,7 @@ pub trait ModelAdapter {
     /// HysBlkZnV
     ///
     /// Hysteresis voltage used with BlkZnV.
-    fn set_hys_blk_zn_v(&mut self, value: u16) {
-    }
+    fn set_hys_blk_zn_v(&mut self, value: u16) {}
 
     /// BlkZnTmms
     ///
@@ -254,8 +313,7 @@ pub trait ModelAdapter {
     /// BlkZnTmms
     ///
     /// Block zone time the time before which reactive current support remains active regardless of how low the voltage drops.
-    fn set_blk_zn_tmms(&mut self, value: u16) {
-    }
+    fn set_blk_zn_tmms(&mut self, value: u16) {}
 
     /// HoldTmms
     ///
@@ -267,8 +325,7 @@ pub trait ModelAdapter {
     /// HoldTmms
     ///
     /// Hold time during which reactive current support continues after the average voltage has entered the dead zone.
-    fn set_hold_tmms(&mut self, value: u16) {
-    }
+    fn set_hold_tmms(&mut self, value: u16) {}
 
     /// ArGra_SF
     ///
@@ -286,4 +343,216 @@ pub trait ModelAdapter {
 pub enum ArGraMod {
     Edge = 0,
     Center = 1,
+}
+
+#[repr(C)]
+pub struct Model128CallbackAdapter {
+    ar_gra_mod_callback: extern "C" fn() -> ArGraMod,
+    set_ar_gra_mod_callback: extern "C" fn(ArGraMod),
+    ar_gra_sag_callback: extern "C" fn() -> u16,
+    set_ar_gra_sag_callback: extern "C" fn(u16),
+    ar_gra_swell_callback: extern "C" fn() -> u16,
+    set_ar_gra_swell_callback: extern "C" fn(u16),
+    mod_ena_callback: extern "C" fn() -> u16,
+    set_mod_ena_callback: extern "C" fn(u16),
+    fil_tms_callback: Option<extern "C" fn() -> u16>,
+    set_fil_tms_callback: Option<extern "C" fn(u16)>,
+    db_v_min_callback: Option<extern "C" fn() -> u16>,
+    set_db_v_min_callback: Option<extern "C" fn(u16)>,
+    db_v_max_callback: Option<extern "C" fn() -> u16>,
+    set_db_v_max_callback: Option<extern "C" fn(u16)>,
+    blk_zn_v_callback: Option<extern "C" fn() -> u16>,
+    set_blk_zn_v_callback: Option<extern "C" fn(u16)>,
+    hys_blk_zn_v_callback: Option<extern "C" fn() -> u16>,
+    set_hys_blk_zn_v_callback: Option<extern "C" fn(u16)>,
+    blk_zn_tmms_callback: Option<extern "C" fn() -> u16>,
+    set_blk_zn_tmms_callback: Option<extern "C" fn(u16)>,
+    hold_tmms_callback: Option<extern "C" fn() -> u16>,
+    set_hold_tmms_callback: Option<extern "C" fn(u16)>,
+    ar_gra_sf_callback: extern "C" fn() -> u16,
+    v_ref_pct_sf_callback: Option<extern "C" fn() -> u16>,
+}
+
+impl ModelAdapter for Model128CallbackAdapter {
+    /// ArGraMod
+    ///
+    /// Indicates if gradients trend toward zero at the edges of the deadband or trend toward zero at the center of the deadband.
+    fn ar_gra_mod(&self) -> ArGraMod {
+        (self.ar_gra_mod_callback)()
+    }
+
+    /// ArGraMod
+    ///
+    /// Indicates if gradients trend toward zero at the edges of the deadband or trend toward zero at the center of the deadband.
+    fn set_ar_gra_mod(&mut self, value: ArGraMod) {
+        (self.set_ar_gra_mod_callback)(value);
+    }
+
+    /// ArGraSag
+    ///
+    /// The gradient used to increase capacitive dynamic current. A value of 0 indicates no additional reactive current support.
+    fn ar_gra_sag(&self) -> u16 {
+        (self.ar_gra_sag_callback)()
+    }
+
+    /// ArGraSag
+    ///
+    /// The gradient used to increase capacitive dynamic current. A value of 0 indicates no additional reactive current support.
+    fn set_ar_gra_sag(&mut self, value: u16) {
+        (self.set_ar_gra_sag_callback)(value);
+    }
+
+    /// ArGraSwell
+    ///
+    /// The gradient used to increase inductive dynamic current. A value of 0 indicates no additional reactive current support.
+    fn ar_gra_swell(&self) -> u16 {
+        (self.ar_gra_swell_callback)()
+    }
+
+    /// ArGraSwell
+    ///
+    /// The gradient used to increase inductive dynamic current. A value of 0 indicates no additional reactive current support.
+    fn set_ar_gra_swell(&mut self, value: u16) {
+        (self.set_ar_gra_swell_callback)(value);
+    }
+
+    /// ModEna
+    ///
+    /// Activate dynamic reactive current model
+    fn mod_ena(&self) -> u16 {
+        (self.mod_ena_callback)()
+    }
+
+    /// ModEna
+    ///
+    /// Activate dynamic reactive current model
+    fn set_mod_ena(&mut self, value: u16) {
+        (self.set_mod_ena_callback)(value);
+    }
+
+    /// FilTms
+    ///
+    /// The time window used to calculate the moving average voltage.
+    fn fil_tms(&self) -> Option<u16> {
+        self.fil_tms_callback.map(|callback| (callback)())
+    }
+
+    /// FilTms
+    ///
+    /// The time window used to calculate the moving average voltage.
+    fn set_fil_tms(&mut self, value: u16) {
+        if let Some(callback) = self.set_fil_tms_callback {
+            (callback)(value);
+        };
+    }
+
+    /// DbVMin
+    ///
+    /// The lower delta voltage limit for which negative voltage deviations less than this value no dynamic vars are produced.
+    fn db_v_min(&self) -> Option<u16> {
+        self.db_v_min_callback.map(|callback| (callback)())
+    }
+
+    /// DbVMin
+    ///
+    /// The lower delta voltage limit for which negative voltage deviations less than this value no dynamic vars are produced.
+    fn set_db_v_min(&mut self, value: u16) {
+        if let Some(callback) = self.set_db_v_min_callback {
+            (callback)(value);
+        };
+    }
+
+    /// DbVMax
+    ///
+    /// The upper delta voltage limit for which positive voltage deviations less than this value no dynamic current produced.
+    fn db_v_max(&self) -> Option<u16> {
+        self.db_v_max_callback.map(|callback| (callback)())
+    }
+
+    /// DbVMax
+    ///
+    /// The upper delta voltage limit for which positive voltage deviations less than this value no dynamic current produced.
+    fn set_db_v_max(&mut self, value: u16) {
+        if let Some(callback) = self.set_db_v_max_callback {
+            (callback)(value);
+        };
+    }
+
+    /// BlkZnV
+    ///
+    /// Block zone voltage which defines a lower voltage boundary below which no dynamic current is produced.
+    fn blk_zn_v(&self) -> Option<u16> {
+        self.blk_zn_v_callback.map(|callback| (callback)())
+    }
+
+    /// BlkZnV
+    ///
+    /// Block zone voltage which defines a lower voltage boundary below which no dynamic current is produced.
+    fn set_blk_zn_v(&mut self, value: u16) {
+        if let Some(callback) = self.set_blk_zn_v_callback {
+            (callback)(value);
+        };
+    }
+
+    /// HysBlkZnV
+    ///
+    /// Hysteresis voltage used with BlkZnV.
+    fn hys_blk_zn_v(&self) -> Option<u16> {
+        self.hys_blk_zn_v_callback.map(|callback| (callback)())
+    }
+
+    /// HysBlkZnV
+    ///
+    /// Hysteresis voltage used with BlkZnV.
+    fn set_hys_blk_zn_v(&mut self, value: u16) {
+        if let Some(callback) = self.set_hys_blk_zn_v_callback {
+            (callback)(value);
+        };
+    }
+
+    /// BlkZnTmms
+    ///
+    /// Block zone time the time before which reactive current support remains active regardless of how low the voltage drops.
+    fn blk_zn_tmms(&self) -> Option<u16> {
+        self.blk_zn_tmms_callback.map(|callback| (callback)())
+    }
+
+    /// BlkZnTmms
+    ///
+    /// Block zone time the time before which reactive current support remains active regardless of how low the voltage drops.
+    fn set_blk_zn_tmms(&mut self, value: u16) {
+        if let Some(callback) = self.set_blk_zn_tmms_callback {
+            (callback)(value);
+        };
+    }
+
+    /// HoldTmms
+    ///
+    /// Hold time during which reactive current support continues after the average voltage has entered the dead zone.
+    fn hold_tmms(&self) -> Option<u16> {
+        self.hold_tmms_callback.map(|callback| (callback)())
+    }
+
+    /// HoldTmms
+    ///
+    /// Hold time during which reactive current support continues after the average voltage has entered the dead zone.
+    fn set_hold_tmms(&mut self, value: u16) {
+        if let Some(callback) = self.set_hold_tmms_callback {
+            (callback)(value);
+        };
+    }
+
+    /// ArGra_SF
+    ///
+    /// Scale factor for the gradients.
+    fn ar_gra_sf(&self) -> u16 {
+        (self.ar_gra_sf_callback)()
+    }
+
+    /// VRefPct_SF
+    ///
+    /// Scale factor for the voltage zone and limit settings.
+    fn v_ref_pct_sf(&self) -> Option<u16> {
+        self.v_ref_pct_sf_callback.map(|callback| (callback)())
+    }
 }

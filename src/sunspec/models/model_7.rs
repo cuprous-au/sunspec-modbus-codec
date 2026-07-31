@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 12;
 
@@ -18,37 +18,49 @@ pub static POINTS: [ReadablePoint; 11] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::RequestSequence },
+        reference: PointReference::Model7 {
+            point: Point::RequestSequence,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::Status },
+        reference: PointReference::Model7 {
+            point: Point::Status,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::Timestamp },
+        reference: PointReference::Model7 {
+            point: Point::Timestamp,
+        },
         size: 2,
         data_type: PointType::Uint32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::Milliseconds },
+        reference: PointReference::Model7 {
+            point: Point::Milliseconds,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::Sequence },
+        reference: PointReference::Model7 {
+            point: Point::Sequence,
+        },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::Alarm },
+        reference: PointReference::Model7 {
+            point: Point::Alarm,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
@@ -60,7 +72,9 @@ pub static POINTS: [ReadablePoint; 11] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model7 { point: Point::Algorithm },
+        reference: PointReference::Model7 {
+            point: Point::Algorithm,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
@@ -85,7 +99,13 @@ pub enum Point {
     N,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
         Point::RequestSequence => serialisation::write_u16(model.request_sequence(), buffer),
         Point::Status => serialisation::write_u16(model.status() as u16, buffer),
@@ -176,4 +196,90 @@ pub enum Alg {
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
+}
+
+#[repr(C)]
+pub struct Model7CallbackAdapter {
+    request_sequence_callback: extern "C" fn() -> u16,
+    status_callback: extern "C" fn() -> Sts,
+    timestamp_callback: extern "C" fn() -> u32,
+    milliseconds_callback: extern "C" fn() -> u16,
+    sequence_callback: extern "C" fn() -> u16,
+    alarm_callback: extern "C" fn() -> Alm,
+    algorithm_callback: extern "C" fn() -> Alg,
+    n_callback: extern "C" fn() -> u16,
+    set_n_callback: extern "C" fn(u16),
+}
+
+impl ModelAdapter for Model7CallbackAdapter {
+    /// Request Sequence
+    ///
+    /// Sequence number from the request
+    fn request_sequence(&self) -> u16 {
+        (self.request_sequence_callback)()
+    }
+
+    /// Status
+    ///
+    /// Status of last write operation
+    fn status(&self) -> Sts {
+        (self.status_callback)()
+    }
+
+    /// Timestamp
+    ///
+    /// Timestamp value is the number of seconds since January 1, 2000
+    fn timestamp(&self) -> u32 {
+        (self.timestamp_callback)()
+    }
+
+    /// Milliseconds
+    ///
+    /// Millisecond counter 0-999
+    fn milliseconds(&self) -> u16 {
+        (self.milliseconds_callback)()
+    }
+
+    /// Sequence
+    ///
+    /// Sequence number of response
+    ///
+    /// Shall be advanced for each response
+    fn sequence(&self) -> u16 {
+        (self.sequence_callback)()
+    }
+
+    /// Alarm
+    ///
+    /// Bitmask alarm code
+    fn alarm(&self) -> Alm {
+        (self.alarm_callback)()
+    }
+
+    /// Algorithm
+    ///
+    /// Algorithm used to compute the digital signature
+    ///
+    /// For future proof
+    fn algorithm(&self) -> Alg {
+        (self.algorithm_callback)()
+    }
+
+    /// N
+    ///
+    /// Number of registers comprising the digital signature.
+    ///
+    /// The value of N must be at least 4 (64 bits)
+    fn n(&self) -> u16 {
+        (self.n_callback)()
+    }
+
+    /// N
+    ///
+    /// Number of registers comprising the digital signature.
+    ///
+    /// The value of N must be at least 4 (64 bits)
+    fn set_n(&mut self, value: u16) {
+        (self.set_n_callback)(value);
+    }
 }

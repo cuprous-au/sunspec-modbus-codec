@@ -1,6 +1,6 @@
 use crate::serialisation;
-use crate::sunspec::{PointType, ReadablePoint};
 use crate::sunspec::points::PointReference;
+use crate::sunspec::{PointType, ReadablePoint};
 
 pub const SIZE: u16 = 3;
 
@@ -18,7 +18,9 @@ pub static POINTS: [ReadablePoint; 3] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model801 { point: Point::DeprecatedModel },
+        reference: PointReference::Model801 {
+            point: Point::DeprecatedModel,
+        },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
@@ -30,7 +32,13 @@ pub enum Point {
     DeprecatedModel,
 }
 
-pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
+pub fn write_point(
+    model: &dyn ModelAdapter,
+    point: &Point,
+    buffer: &mut [u16],
+    offset: u16,
+    limit: u16,
+) {
     match point {
         Point::DeprecatedModel => serialisation::write_u16(model.deprecated_model() as u16, buffer),
     }
@@ -43,5 +51,18 @@ pub trait ModelAdapter {
     fn deprecated_model(&self) -> Deprecated;
 }
 
-pub enum Deprecated {
+pub enum Deprecated {}
+
+#[repr(C)]
+pub struct Model801CallbackAdapter {
+    deprecated_model_callback: extern "C" fn() -> Deprecated,
+}
+
+impl ModelAdapter for Model801CallbackAdapter {
+    /// Deprecated Model
+    ///
+    /// This model has been deprecated.
+    fn deprecated_model(&self) -> Deprecated {
+        (self.deprecated_model_callback)()
+    }
 }
