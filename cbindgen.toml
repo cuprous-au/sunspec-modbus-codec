@@ -9,7 +9,6 @@ documentation_style = "c"
 style = "both"
 sort_by = "Name"
 usize_is_size_t = true
-no_includes = true
 
 [parse]
 parse_deps = true
@@ -18,3 +17,6 @@ include = ["sunspec-modbus-codec"]
 
 [export]
 item_types = ["functions", "typedefs", "structs", "enums"]
+
+[enum]
+prefix_with_name = true

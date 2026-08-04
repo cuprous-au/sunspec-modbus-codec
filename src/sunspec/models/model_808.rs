@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 3;
 
@@ -18,9 +19,7 @@ pub static POINTS: [ReadablePoint; 3] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model808 {
-            point: Point::ModulePointsToBeDetermined,
-        },
+        reference: PointReference::Model808 { point: Point::ModulePointsToBeDetermined },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -32,17 +31,11 @@ pub enum Point {
     ModulePointsToBeDetermined,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::ModulePointsToBeDetermined => {
-            serialisation::write_u16(model.module_points_to_be_determined(), buffer)
-        }
+            serialisation::write_u16(model.module_points_to_be_determined(), buffer);
+        },
     }
 }
 
@@ -53,12 +46,25 @@ pub trait ModelAdapter {
 
 #[repr(C)]
 pub struct Model808CallbackAdapter {
-    module_points_to_be_determined_callback: extern "C" fn() -> u16,
+    context: *mut c_void,
+    module_points_to_be_determined_callback: extern "C" fn(*const c_void) -> u16,
 }
 
 impl ModelAdapter for Model808CallbackAdapter {
     /// Module Points To Be Determined
     fn module_points_to_be_determined(&self) -> u16 {
-        (self.module_points_to_be_determined_callback)()
+        (self.module_points_to_be_determined_callback)(self.context)
+    }
+}
+
+#[repr(C)]
+pub struct Model808StatefulAdapter {
+    module_points_to_be_determined: u16,
+}
+
+impl ModelAdapter for Model808StatefulAdapter {
+    /// Module Points To Be Determined
+    fn module_points_to_be_determined(&self) -> u16 {
+        self.module_points_to_be_determined
     }
 }

@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 6;
 
@@ -30,17 +31,13 @@ pub static POINTS: [ReadablePoint; 6] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model308 {
-            point: Point::AmbientTemperature,
-        },
+        reference: PointReference::Model308 { point: Point::AmbientTemperature },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model308 {
-            point: Point::WindSpeed,
-        },
+        reference: PointReference::Model308 { point: Point::WindSpeed },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -55,32 +52,38 @@ pub enum Point {
     WindSpeed,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::Ghi => {
             if let Some(value) = model.ghi() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::Temp => {
             if let Some(value) = model.temp() {
                 serialisation::write_i16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::AmbientTemperature => {
             if let Some(value) = model.ambient_temperature() {
                 serialisation::write_i16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::WindSpeed => {
             if let Some(value) = model.wind_speed() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -114,10 +117,11 @@ pub trait ModelAdapter {
 
 #[repr(C)]
 pub struct Model308CallbackAdapter {
-    ghi_callback: Option<extern "C" fn() -> u16>,
-    temp_callback: Option<extern "C" fn() -> i16>,
-    ambient_temperature_callback: Option<extern "C" fn() -> i16>,
-    wind_speed_callback: Option<extern "C" fn() -> u16>,
+    context: *mut c_void,
+    ghi_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    temp_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    ambient_temperature_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    wind_speed_callback: Option<extern "C" fn(*const c_void) -> u16>,
 }
 
 impl ModelAdapter for Model308CallbackAdapter {
@@ -125,24 +129,73 @@ impl ModelAdapter for Model308CallbackAdapter {
     ///
     /// Global Horizontal Irradiance
     fn ghi(&self) -> Option<u16> {
-        self.ghi_callback.map(|callback| (callback)())
+        self.ghi_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Temp
     ///
     /// Back of module temperature measurement
     fn temp(&self) -> Option<i16> {
-        self.temp_callback.map(|callback| (callback)())
+        self.temp_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Ambient Temperature
     fn ambient_temperature(&self) -> Option<i16> {
-        self.ambient_temperature_callback
-            .map(|callback| (callback)())
+        self.ambient_temperature_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Wind Speed
     fn wind_speed(&self) -> Option<u16> {
-        self.wind_speed_callback.map(|callback| (callback)())
+        self.wind_speed_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model308StatefulAdapter {
+    ghi: u16,
+    temp: i16,
+    ambient_temperature: i16,
+    wind_speed: u16,
+}
+
+impl ModelAdapter for Model308StatefulAdapter {
+    /// GHI
+    ///
+    /// Global Horizontal Irradiance
+    fn ghi(&self) -> Option<u16> {
+        Some(
+        self.ghi
+        )
+    }
+
+    /// Temp
+    ///
+    /// Back of module temperature measurement
+    fn temp(&self) -> Option<i16> {
+        Some(
+        self.temp
+        )
+    }
+
+    /// Ambient Temperature
+    fn ambient_temperature(&self) -> Option<i16> {
+        Some(
+        self.ambient_temperature
+        )
+    }
+
+    /// Wind Speed
+    fn wind_speed(&self) -> Option<u16> {
+        Some(
+        self.wind_speed
+        )
     }
 }

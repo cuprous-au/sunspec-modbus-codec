@@ -32,7 +32,7 @@ fn is_included_model(path: &Path) -> bool {
 }
 
 fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
-    glob(model_glob)
+    let mut vec: Vec<ResolvedModel> = glob(model_glob)
         .unwrap()
         .filter(|entry| match entry {
             Ok(path) => is_included_model(path),
@@ -50,12 +50,16 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
                 None
             }
         })
-        .collect()
+        .collect();
+
+    vec.sort_unstable_by_key(|model| model.model_number);
+
+    vec
 }
 
 fn format_and_write(path: String, scope: &Scope) -> std::io::Result<()> {
-    // let text = scope.to_string();
-    let text = rustfmt_wrapper::rustfmt(scope.to_string()).unwrap();
+    let text = scope.to_string();
+    // let text = rustfmt_wrapper::rustfmt(scope.to_string()).unwrap();
     fs::write(format!("{}/{}", GENERATED_SRC_DIR, path), text)
 }
 

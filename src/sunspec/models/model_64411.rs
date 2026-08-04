@@ -1,7 +1,7 @@
+use core::ffi::{CStr, c_char, c_void};
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, CStr};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 1398;
 
@@ -19,385 +19,289 @@ pub static POINTS: [ReadablePoint; 50] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ActivePhases,
-        },
+        reference: PointReference::Model64411 { point: Point::ActivePhases },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::PhaseAngle,
-        },
+        reference: PointReference::Model64411 { point: Point::PhaseAngle },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::NominalVoltage,
-        },
+        reference: PointReference::Model64411 { point: Point::NominalVoltage },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MaximumVoltage,
-        },
+        reference: PointReference::Model64411 { point: Point::MaximumVoltage },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MaximumCurrent,
-        },
+        reference: PointReference::Model64411 { point: Point::MaximumCurrent },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::Frequency,
-        },
+        reference: PointReference::Model64411 { point: Point::Frequency },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::OutputState,
-        },
+        reference: PointReference::Model64411 { point: Point::OutputState },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::RelayState,
-        },
+        reference: PointReference::Model64411 { point: Point::RelayState },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::RegenerationState,
-        },
+        reference: PointReference::Model64411 { point: Point::RegenerationState },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpoint,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageSetpoint },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpointPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageSetpointPhaseA },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpointPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageSetpointPhaseB },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpointPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageSetpointPhaseC },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::FrequencySlewRate,
-        },
+        reference: PointReference::Model64411 { point: Point::FrequencySlewRate },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSlewRate,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageSlewRate },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredVoltagePhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredVoltagePhaseA },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredVoltagePhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredVoltagePhaseB },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredVoltagePhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredVoltagePhaseC },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredFrequency,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredFrequency },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredCurrentPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredCurrentPhaseA },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredCurrentPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredCurrentPhaseB },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredCurrentPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::MeasuredCurrentPhaseC },
         size: 2,
         data_type: PointType::Int32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageHarmonicsPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageHarmonicsPhaseA },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageHarmonicsPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageHarmonicsPhaseB },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageHarmonicsPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageHarmonicsPhaseC },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentHarmonicsPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentHarmonicsPhaseA },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentHarmonicsPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentHarmonicsPhaseB },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentHarmonicsPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentHarmonicsPhaseC },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentInterharmonicsPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentInterharmonicsPhaseA },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentInterharmonicsPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentInterharmonicsPhaseB },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentInterharmonicsPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentInterharmonicsPhaseC },
         size: 150,
         data_type: PointType::String,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageThdPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageThdPhaseA },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageThdPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageThdPhaseB },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageThdPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageThdPhaseC },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentThdPhaseA,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentThdPhaseA },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentThdPhaseB,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentThdPhaseB },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentThdPhaseC,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentThdPhaseC },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::EnableProfile,
-        },
+        reference: PointReference::Model64411 { point: Point::EnableProfile },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ProfileResult,
-        },
+        reference: PointReference::Model64411 { point: Point::ProfileResult },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::StoredProfileCount,
-        },
+        reference: PointReference::Model64411 { point: Point::StoredProfileCount },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MaxProfilePointCount,
-        },
+        reference: PointReference::Model64411 { point: Point::MaxProfilePointCount },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::CurrentScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::TimeScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::TimeScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::FrequencyScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::FrequencyScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::FrequencySlewRateScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::FrequencySlewRateScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSlewRateScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::VoltageSlewRateScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ThdScaleFactor,
-        },
+        reference: PointReference::Model64411 { point: Point::ThdScaleFactor },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -456,222 +360,342 @@ pub enum Point {
     ThdScaleFactor,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::ActivePhases => {
             if let Some(value) = model.active_phases() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::PhaseAngle => {
             if let Some(value) = model.phase_angle() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::NominalVoltage => {
             if let Some(value) = model.nominal_voltage() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::MaximumVoltage => {
             if let Some(value) = model.maximum_voltage() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::MaximumCurrent => {
             if let Some(value) = model.maximum_current() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::Frequency => {
             if let Some(value) = model.frequency() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::OutputState => {
             if let Some(value) = model.output_state() {
                 serialisation::write_u16(value as u16, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::RelayState => {
             if let Some(value) = model.relay_state() {
                 serialisation::write_u16(value as u16, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::RegenerationState => {
             if let Some(value) = model.regeneration_state() {
                 serialisation::write_u16(value as u16, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VoltageSetpoint => {
             if let Some(value) = model.voltage_setpoint() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VoltageSetpointPhaseA => {
             if let Some(value) = model.voltage_setpoint_phase_a() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VoltageSetpointPhaseB => {
             if let Some(value) = model.voltage_setpoint_phase_b() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VoltageSetpointPhaseC => {
             if let Some(value) = model.voltage_setpoint_phase_c() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::FrequencySlewRate => {
             if let Some(value) = model.frequency_slew_rate() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VoltageSlewRate => {
             if let Some(value) = model.voltage_slew_rate() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::MeasuredVoltagePhaseA => {
             if let Some(value) = model.measured_voltage_phase_a() {
                 serialisation::write_i32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::MeasuredVoltagePhaseB => {
             if let Some(value) = model.measured_voltage_phase_b() {
                 serialisation::write_i32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::MeasuredVoltagePhaseC => {
             if let Some(value) = model.measured_voltage_phase_c() {
                 serialisation::write_i32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::MeasuredFrequency => {
             if let Some(value) = model.measured_frequency() {
                 serialisation::write_i32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::MeasuredCurrentPhaseA => {
             if let Some(value) = model.measured_current_phase_a() {
                 serialisation::write_i32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::MeasuredCurrentPhaseB => {
             if let Some(value) = model.measured_current_phase_b() {
                 serialisation::write_i32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::MeasuredCurrentPhaseC => {
             if let Some(value) = model.measured_current_phase_c() {
                 serialisation::write_i32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VoltageHarmonicsPhaseA => {
             if let Some(value) = model.voltage_harmonics_phase_a() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VoltageHarmonicsPhaseB => {
             if let Some(value) = model.voltage_harmonics_phase_b() {
                 serialisation::write_string(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VoltageHarmonicsPhaseC => {
             if let Some(value) = model.voltage_harmonics_phase_c() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::CurrentHarmonicsPhaseA => {
             if let Some(value) = model.current_harmonics_phase_a() {
                 serialisation::write_string(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::CurrentHarmonicsPhaseB => {
             if let Some(value) = model.current_harmonics_phase_b() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::CurrentHarmonicsPhaseC => {
             if let Some(value) = model.current_harmonics_phase_c() {
                 serialisation::write_string(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::CurrentInterharmonicsPhaseA => {
             if let Some(value) = model.current_interharmonics_phase_a() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::CurrentInterharmonicsPhaseB => {
             if let Some(value) = model.current_interharmonics_phase_b() {
                 serialisation::write_string(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::CurrentInterharmonicsPhaseC => {
             if let Some(value) = model.current_interharmonics_phase_c() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VoltageThdPhaseA => {
             if let Some(value) = model.voltage_thd_phase_a() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VoltageThdPhaseB => {
             if let Some(value) = model.voltage_thd_phase_b() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VoltageThdPhaseC => {
             if let Some(value) = model.voltage_thd_phase_c() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::CurrentThdPhaseA => {
             if let Some(value) = model.current_thd_phase_a() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::CurrentThdPhaseB => {
             if let Some(value) = model.current_thd_phase_b() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::CurrentThdPhaseC => {
             if let Some(value) = model.current_thd_phase_c() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::EnableProfile => {
             if let Some(value) = model.enable_profile() {
                 serialisation::write_u16(value as u16, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::ProfileResult => serialisation::write_u16(model.profile_result() as u16, buffer),
-        Point::StoredProfileCount => serialisation::write_u16(model.stored_profile_count(), buffer),
+        Point::ProfileResult => {
+            serialisation::write_u16(model.profile_result() as u16, buffer);
+        },
+        Point::StoredProfileCount => {
+            serialisation::write_u16(model.stored_profile_count(), buffer);
+        },
         Point::MaxProfilePointCount => {
-            serialisation::write_u16(model.max_profile_point_count(), buffer)
-        }
-        Point::VoltageScaleFactor => serialisation::write_u16(model.voltage_scale_factor(), buffer),
-        Point::CurrentScaleFactor => serialisation::write_u16(model.current_scale_factor(), buffer),
-        Point::TimeScaleFactor => serialisation::write_u16(model.time_scale_factor(), buffer),
+            serialisation::write_u16(model.max_profile_point_count(), buffer);
+        },
+        Point::VoltageScaleFactor => {
+            serialisation::write_u16(model.voltage_scale_factor(), buffer);
+        },
+        Point::CurrentScaleFactor => {
+            serialisation::write_u16(model.current_scale_factor(), buffer);
+        },
+        Point::TimeScaleFactor => {
+            serialisation::write_u16(model.time_scale_factor(), buffer);
+        },
         Point::FrequencyScaleFactor => {
-            serialisation::write_u16(model.frequency_scale_factor(), buffer)
-        }
+            serialisation::write_u16(model.frequency_scale_factor(), buffer);
+        },
         Point::FrequencySlewRateScaleFactor => {
-            serialisation::write_u16(model.frequency_slew_rate_scale_factor(), buffer)
-        }
+            serialisation::write_u16(model.frequency_slew_rate_scale_factor(), buffer);
+        },
         Point::VoltageSlewRateScaleFactor => {
-            serialisation::write_u16(model.voltage_slew_rate_scale_factor(), buffer)
-        }
-        Point::ThdScaleFactor => serialisation::write_u16(model.thd_scale_factor(), buffer),
+            serialisation::write_u16(model.voltage_slew_rate_scale_factor(), buffer);
+        },
+        Point::ThdScaleFactor => {
+            serialisation::write_u16(model.thd_scale_factor(), buffer);
+        },
     }
 }
 
@@ -686,7 +710,8 @@ pub trait ModelAdapter {
     /// Active Phases
     ///
     /// Set the number of active phases for the power supply
-    fn set_active_phases(&mut self, value: u16) {}
+    fn set_active_phases(&mut self, value: u16) {
+    }
 
     /// Phase Angle
     ///
@@ -698,7 +723,8 @@ pub trait ModelAdapter {
     /// Phase Angle
     ///
     /// Phase angle (deg) between phases. 0 for signle phase, 120 for two phase, 120 for three phase.
-    fn set_phase_angle(&mut self, value: u16) {}
+    fn set_phase_angle(&mut self, value: u16) {
+    }
 
     /// Nominal Voltage
     ///
@@ -710,7 +736,8 @@ pub trait ModelAdapter {
     /// Nominal Voltage
     ///
     /// Nominal L-N Voltage
-    fn set_nominal_voltage(&mut self, value: u16) {}
+    fn set_nominal_voltage(&mut self, value: u16) {
+    }
 
     /// Maximum Voltage
     ///
@@ -722,7 +749,8 @@ pub trait ModelAdapter {
     /// Maximum Voltage
     ///
     /// Maximum Voltage Protection Level
-    fn set_maximum_voltage(&mut self, value: u16) {}
+    fn set_maximum_voltage(&mut self, value: u16) {
+    }
 
     /// Maximum Current
     ///
@@ -734,7 +762,8 @@ pub trait ModelAdapter {
     /// Maximum Current
     ///
     /// Maximum Current Protection Level
-    fn set_maximum_current(&mut self, value: u16) {}
+    fn set_maximum_current(&mut self, value: u16) {
+    }
 
     /// Frequency
     ///
@@ -746,7 +775,8 @@ pub trait ModelAdapter {
     /// Frequency
     ///
     /// Frequency Setpoint
-    fn set_frequency(&mut self, value: u16) {}
+    fn set_frequency(&mut self, value: u16) {
+    }
 
     /// Output State
     ///
@@ -758,7 +788,8 @@ pub trait ModelAdapter {
     /// Output State
     ///
     /// AC Output State
-    fn set_output_state(&mut self, value: Output) {}
+    fn set_output_state(&mut self, value: Output) {
+    }
 
     /// Relay State
     ///
@@ -770,7 +801,8 @@ pub trait ModelAdapter {
     /// Relay State
     ///
     /// AC Relay State
-    fn set_relay_state(&mut self, value: Relay) {}
+    fn set_relay_state(&mut self, value: Relay) {
+    }
 
     /// Regeneration State
     ///
@@ -782,7 +814,8 @@ pub trait ModelAdapter {
     /// Regeneration State
     ///
     /// Regeneration State
-    fn set_regeneration_state(&mut self, value: Regen) {}
+    fn set_regeneration_state(&mut self, value: Regen) {
+    }
 
     /// Voltage Setpoint
     ///
@@ -794,7 +827,8 @@ pub trait ModelAdapter {
     /// Voltage Setpoint
     ///
     /// Voltage Setpoint (all phases)
-    fn set_voltage_setpoint(&mut self, value: u16) {}
+    fn set_voltage_setpoint(&mut self, value: u16) {
+    }
 
     /// Voltage Setpoint Phase A
     ///
@@ -806,7 +840,8 @@ pub trait ModelAdapter {
     /// Voltage Setpoint Phase A
     ///
     /// Voltage Setpoint Phase A
-    fn set_voltage_setpoint_phase_a(&mut self, value: u16) {}
+    fn set_voltage_setpoint_phase_a(&mut self, value: u16) {
+    }
 
     /// Voltage Setpoint Phase B
     ///
@@ -818,7 +853,8 @@ pub trait ModelAdapter {
     /// Voltage Setpoint Phase B
     ///
     /// Voltage Setpoint Phase B
-    fn set_voltage_setpoint_phase_b(&mut self, value: u16) {}
+    fn set_voltage_setpoint_phase_b(&mut self, value: u16) {
+    }
 
     /// Voltage Setpoint Phase C
     ///
@@ -830,7 +866,8 @@ pub trait ModelAdapter {
     /// Voltage Setpoint Phase C
     ///
     /// Voltage Setpoint Phase C
-    fn set_voltage_setpoint_phase_c(&mut self, value: u16) {}
+    fn set_voltage_setpoint_phase_c(&mut self, value: u16) {
+    }
 
     /// Frequency Slew Rate
     ///
@@ -842,7 +879,8 @@ pub trait ModelAdapter {
     /// Frequency Slew Rate
     ///
     /// Frequency Slew Rate
-    fn set_frequency_slew_rate(&mut self, value: u16) {}
+    fn set_frequency_slew_rate(&mut self, value: u16) {
+    }
 
     /// Voltage Slew Rate
     ///
@@ -854,7 +892,8 @@ pub trait ModelAdapter {
     /// Voltage Slew Rate
     ///
     /// Voltage Slew Rate
-    fn set_voltage_slew_rate(&mut self, value: u16) {}
+    fn set_voltage_slew_rate(&mut self, value: u16) {
+    }
 
     /// Measured Voltage Phase A
     ///
@@ -1020,7 +1059,8 @@ pub trait ModelAdapter {
     /// Enable Profile
     ///
     /// Start/Stop the AC Profile
-    fn set_enable_profile(&mut self, value: EnaProf) {}
+    fn set_enable_profile(&mut self, value: EnaProf) {
+    }
 
     /// Profile Result
     ///
@@ -1073,6 +1113,7 @@ pub trait ModelAdapter {
     fn thd_scale_factor(&self) -> u16;
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum Output {
     /// Output Off
@@ -1081,6 +1122,7 @@ pub enum Output {
     On = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum Relay {
     /// Relay Open
@@ -1089,6 +1131,7 @@ pub enum Relay {
     Closed = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum Regen {
     /// Regen Off
@@ -1097,6 +1140,7 @@ pub enum Regen {
     On = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum EnaProf {
     /// Stop Profile
@@ -1107,6 +1151,7 @@ pub enum EnaProf {
     Trigger = 2,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum ProfRslt {
     /// Profile update in progress.
@@ -1119,70 +1164,71 @@ pub enum ProfRslt {
 
 #[repr(C)]
 pub struct Model64411CallbackAdapter {
-    active_phases_callback: Option<extern "C" fn() -> u16>,
-    set_active_phases_callback: Option<extern "C" fn(u16)>,
-    phase_angle_callback: Option<extern "C" fn() -> u16>,
-    set_phase_angle_callback: Option<extern "C" fn(u16)>,
-    nominal_voltage_callback: Option<extern "C" fn() -> u16>,
-    set_nominal_voltage_callback: Option<extern "C" fn(u16)>,
-    maximum_voltage_callback: Option<extern "C" fn() -> u16>,
-    set_maximum_voltage_callback: Option<extern "C" fn(u16)>,
-    maximum_current_callback: Option<extern "C" fn() -> u16>,
-    set_maximum_current_callback: Option<extern "C" fn(u16)>,
-    frequency_callback: Option<extern "C" fn() -> u16>,
-    set_frequency_callback: Option<extern "C" fn(u16)>,
-    output_state_callback: Option<extern "C" fn() -> Output>,
-    set_output_state_callback: Option<extern "C" fn(Output)>,
-    relay_state_callback: Option<extern "C" fn() -> Relay>,
-    set_relay_state_callback: Option<extern "C" fn(Relay)>,
-    regeneration_state_callback: Option<extern "C" fn() -> Regen>,
-    set_regeneration_state_callback: Option<extern "C" fn(Regen)>,
-    voltage_setpoint_callback: Option<extern "C" fn() -> u16>,
-    set_voltage_setpoint_callback: Option<extern "C" fn(u16)>,
-    voltage_setpoint_phase_a_callback: Option<extern "C" fn() -> u16>,
-    set_voltage_setpoint_phase_a_callback: Option<extern "C" fn(u16)>,
-    voltage_setpoint_phase_b_callback: Option<extern "C" fn() -> u16>,
-    set_voltage_setpoint_phase_b_callback: Option<extern "C" fn(u16)>,
-    voltage_setpoint_phase_c_callback: Option<extern "C" fn() -> u16>,
-    set_voltage_setpoint_phase_c_callback: Option<extern "C" fn(u16)>,
-    frequency_slew_rate_callback: Option<extern "C" fn() -> u16>,
-    set_frequency_slew_rate_callback: Option<extern "C" fn(u16)>,
-    voltage_slew_rate_callback: Option<extern "C" fn() -> u16>,
-    set_voltage_slew_rate_callback: Option<extern "C" fn(u16)>,
-    measured_voltage_phase_a_callback: Option<extern "C" fn() -> i32>,
-    measured_voltage_phase_b_callback: Option<extern "C" fn() -> i32>,
-    measured_voltage_phase_c_callback: Option<extern "C" fn() -> i32>,
-    measured_frequency_callback: Option<extern "C" fn() -> i32>,
-    measured_current_phase_a_callback: Option<extern "C" fn() -> i32>,
-    measured_current_phase_b_callback: Option<extern "C" fn() -> i32>,
-    measured_current_phase_c_callback: Option<extern "C" fn() -> i32>,
-    voltage_harmonics_phase_a_callback: Option<extern "C" fn() -> *const c_char>,
-    voltage_harmonics_phase_b_callback: Option<extern "C" fn() -> *const c_char>,
-    voltage_harmonics_phase_c_callback: Option<extern "C" fn() -> *const c_char>,
-    current_harmonics_phase_a_callback: Option<extern "C" fn() -> *const c_char>,
-    current_harmonics_phase_b_callback: Option<extern "C" fn() -> *const c_char>,
-    current_harmonics_phase_c_callback: Option<extern "C" fn() -> *const c_char>,
-    current_interharmonics_phase_a_callback: Option<extern "C" fn() -> *const c_char>,
-    current_interharmonics_phase_b_callback: Option<extern "C" fn() -> *const c_char>,
-    current_interharmonics_phase_c_callback: Option<extern "C" fn() -> *const c_char>,
-    voltage_thd_phase_a_callback: Option<extern "C" fn() -> u16>,
-    voltage_thd_phase_b_callback: Option<extern "C" fn() -> u16>,
-    voltage_thd_phase_c_callback: Option<extern "C" fn() -> u16>,
-    current_thd_phase_a_callback: Option<extern "C" fn() -> u16>,
-    current_thd_phase_b_callback: Option<extern "C" fn() -> u16>,
-    current_thd_phase_c_callback: Option<extern "C" fn() -> u16>,
-    enable_profile_callback: Option<extern "C" fn() -> EnaProf>,
-    set_enable_profile_callback: Option<extern "C" fn(EnaProf)>,
-    profile_result_callback: extern "C" fn() -> ProfRslt,
-    stored_profile_count_callback: extern "C" fn() -> u16,
-    max_profile_point_count_callback: extern "C" fn() -> u16,
-    voltage_scale_factor_callback: extern "C" fn() -> u16,
-    current_scale_factor_callback: extern "C" fn() -> u16,
-    time_scale_factor_callback: extern "C" fn() -> u16,
-    frequency_scale_factor_callback: extern "C" fn() -> u16,
-    frequency_slew_rate_scale_factor_callback: extern "C" fn() -> u16,
-    voltage_slew_rate_scale_factor_callback: extern "C" fn() -> u16,
-    thd_scale_factor_callback: extern "C" fn() -> u16,
+    context: *mut c_void,
+    active_phases_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_active_phases_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    phase_angle_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_phase_angle_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    nominal_voltage_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_nominal_voltage_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    maximum_voltage_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_maximum_voltage_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    maximum_current_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_maximum_current_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    frequency_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_frequency_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    output_state_callback: Option<extern "C" fn(*const c_void) -> Output>,
+    set_output_state_callback: Option<extern "C" fn(Output, *mut c_void)>,
+    relay_state_callback: Option<extern "C" fn(*const c_void) -> Relay>,
+    set_relay_state_callback: Option<extern "C" fn(Relay, *mut c_void)>,
+    regeneration_state_callback: Option<extern "C" fn(*const c_void) -> Regen>,
+    set_regeneration_state_callback: Option<extern "C" fn(Regen, *mut c_void)>,
+    voltage_setpoint_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_voltage_setpoint_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    voltage_setpoint_phase_a_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_voltage_setpoint_phase_a_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    voltage_setpoint_phase_b_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_voltage_setpoint_phase_b_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    voltage_setpoint_phase_c_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_voltage_setpoint_phase_c_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    frequency_slew_rate_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_frequency_slew_rate_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    voltage_slew_rate_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_voltage_slew_rate_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    measured_voltage_phase_a_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    measured_voltage_phase_b_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    measured_voltage_phase_c_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    measured_frequency_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    measured_current_phase_a_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    measured_current_phase_b_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    measured_current_phase_c_callback: Option<extern "C" fn(*const c_void) -> i32>,
+    voltage_harmonics_phase_a_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    voltage_harmonics_phase_b_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    voltage_harmonics_phase_c_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    current_harmonics_phase_a_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    current_harmonics_phase_b_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    current_harmonics_phase_c_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    current_interharmonics_phase_a_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    current_interharmonics_phase_b_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    current_interharmonics_phase_c_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    voltage_thd_phase_a_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    voltage_thd_phase_b_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    voltage_thd_phase_c_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    current_thd_phase_a_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    current_thd_phase_b_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    current_thd_phase_c_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    enable_profile_callback: Option<extern "C" fn(*const c_void) -> EnaProf>,
+    set_enable_profile_callback: Option<extern "C" fn(EnaProf, *mut c_void)>,
+    profile_result_callback: extern "C" fn(*const c_void) -> ProfRslt,
+    stored_profile_count_callback: extern "C" fn(*const c_void) -> u16,
+    max_profile_point_count_callback: extern "C" fn(*const c_void) -> u16,
+    voltage_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    current_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    time_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    frequency_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    frequency_slew_rate_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    voltage_slew_rate_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    thd_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
 }
 
 impl ModelAdapter for Model64411CallbackAdapter {
@@ -1190,7 +1236,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Set the number of active phases for the power supply
     fn active_phases(&self) -> Option<u16> {
-        self.active_phases_callback.map(|callback| (callback)())
+        self.active_phases_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Active Phases
@@ -1198,7 +1246,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Set the number of active phases for the power supply
     fn set_active_phases(&mut self, value: u16) {
         if let Some(callback) = self.set_active_phases_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1206,7 +1254,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Phase angle (deg) between phases. 0 for signle phase, 120 for two phase, 120 for three phase.
     fn phase_angle(&self) -> Option<u16> {
-        self.phase_angle_callback.map(|callback| (callback)())
+        self.phase_angle_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Phase Angle
@@ -1214,7 +1264,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Phase angle (deg) between phases. 0 for signle phase, 120 for two phase, 120 for three phase.
     fn set_phase_angle(&mut self, value: u16) {
         if let Some(callback) = self.set_phase_angle_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1222,7 +1272,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Nominal L-N Voltage
     fn nominal_voltage(&self) -> Option<u16> {
-        self.nominal_voltage_callback.map(|callback| (callback)())
+        self.nominal_voltage_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Nominal Voltage
@@ -1230,7 +1282,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Nominal L-N Voltage
     fn set_nominal_voltage(&mut self, value: u16) {
         if let Some(callback) = self.set_nominal_voltage_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1238,7 +1290,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Maximum Voltage Protection Level
     fn maximum_voltage(&self) -> Option<u16> {
-        self.maximum_voltage_callback.map(|callback| (callback)())
+        self.maximum_voltage_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Maximum Voltage
@@ -1246,7 +1300,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Maximum Voltage Protection Level
     fn set_maximum_voltage(&mut self, value: u16) {
         if let Some(callback) = self.set_maximum_voltage_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1254,7 +1308,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Maximum Current Protection Level
     fn maximum_current(&self) -> Option<u16> {
-        self.maximum_current_callback.map(|callback| (callback)())
+        self.maximum_current_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Maximum Current
@@ -1262,7 +1318,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Maximum Current Protection Level
     fn set_maximum_current(&mut self, value: u16) {
         if let Some(callback) = self.set_maximum_current_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1270,7 +1326,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Frequency Setpoint
     fn frequency(&self) -> Option<u16> {
-        self.frequency_callback.map(|callback| (callback)())
+        self.frequency_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Frequency
@@ -1278,7 +1336,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Frequency Setpoint
     fn set_frequency(&mut self, value: u16) {
         if let Some(callback) = self.set_frequency_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1286,7 +1344,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// AC Output State
     fn output_state(&self) -> Option<Output> {
-        self.output_state_callback.map(|callback| (callback)())
+        self.output_state_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Output State
@@ -1294,7 +1354,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// AC Output State
     fn set_output_state(&mut self, value: Output) {
         if let Some(callback) = self.set_output_state_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1302,7 +1362,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// AC Relay State
     fn relay_state(&self) -> Option<Relay> {
-        self.relay_state_callback.map(|callback| (callback)())
+        self.relay_state_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Relay State
@@ -1310,7 +1372,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// AC Relay State
     fn set_relay_state(&mut self, value: Relay) {
         if let Some(callback) = self.set_relay_state_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1318,8 +1380,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Regeneration State
     fn regeneration_state(&self) -> Option<Regen> {
-        self.regeneration_state_callback
-            .map(|callback| (callback)())
+        self.regeneration_state_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Regeneration State
@@ -1327,7 +1390,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Regeneration State
     fn set_regeneration_state(&mut self, value: Regen) {
         if let Some(callback) = self.set_regeneration_state_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1335,7 +1398,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Voltage Setpoint (all phases)
     fn voltage_setpoint(&self) -> Option<u16> {
-        self.voltage_setpoint_callback.map(|callback| (callback)())
+        self.voltage_setpoint_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage Setpoint
@@ -1343,7 +1408,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Voltage Setpoint (all phases)
     fn set_voltage_setpoint(&mut self, value: u16) {
         if let Some(callback) = self.set_voltage_setpoint_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1351,8 +1416,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Voltage Setpoint Phase A
     fn voltage_setpoint_phase_a(&self) -> Option<u16> {
-        self.voltage_setpoint_phase_a_callback
-            .map(|callback| (callback)())
+        self.voltage_setpoint_phase_a_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage Setpoint Phase A
@@ -1360,7 +1426,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Voltage Setpoint Phase A
     fn set_voltage_setpoint_phase_a(&mut self, value: u16) {
         if let Some(callback) = self.set_voltage_setpoint_phase_a_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1368,8 +1434,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Voltage Setpoint Phase B
     fn voltage_setpoint_phase_b(&self) -> Option<u16> {
-        self.voltage_setpoint_phase_b_callback
-            .map(|callback| (callback)())
+        self.voltage_setpoint_phase_b_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage Setpoint Phase B
@@ -1377,7 +1444,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Voltage Setpoint Phase B
     fn set_voltage_setpoint_phase_b(&mut self, value: u16) {
         if let Some(callback) = self.set_voltage_setpoint_phase_b_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1385,8 +1452,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Voltage Setpoint Phase C
     fn voltage_setpoint_phase_c(&self) -> Option<u16> {
-        self.voltage_setpoint_phase_c_callback
-            .map(|callback| (callback)())
+        self.voltage_setpoint_phase_c_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage Setpoint Phase C
@@ -1394,7 +1462,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Voltage Setpoint Phase C
     fn set_voltage_setpoint_phase_c(&mut self, value: u16) {
         if let Some(callback) = self.set_voltage_setpoint_phase_c_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1402,8 +1470,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Frequency Slew Rate
     fn frequency_slew_rate(&self) -> Option<u16> {
-        self.frequency_slew_rate_callback
-            .map(|callback| (callback)())
+        self.frequency_slew_rate_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Frequency Slew Rate
@@ -1411,7 +1480,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Frequency Slew Rate
     fn set_frequency_slew_rate(&mut self, value: u16) {
         if let Some(callback) = self.set_frequency_slew_rate_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1419,7 +1488,9 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Voltage Slew Rate
     fn voltage_slew_rate(&self) -> Option<u16> {
-        self.voltage_slew_rate_callback.map(|callback| (callback)())
+        self.voltage_slew_rate_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage Slew Rate
@@ -1427,7 +1498,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Voltage Slew Rate
     fn set_voltage_slew_rate(&mut self, value: u16) {
         if let Some(callback) = self.set_voltage_slew_rate_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1435,183 +1506,207 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Measured Voltage Phase A
     fn measured_voltage_phase_a(&self) -> Option<i32> {
-        self.measured_voltage_phase_a_callback
-            .map(|callback| (callback)())
+        self.measured_voltage_phase_a_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Measured Voltage Phase B
     ///
     /// Measured Voltage Phase B
     fn measured_voltage_phase_b(&self) -> Option<i32> {
-        self.measured_voltage_phase_b_callback
-            .map(|callback| (callback)())
+        self.measured_voltage_phase_b_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Measured Voltage Phase C
     ///
     /// Measured Voltage Phase C
     fn measured_voltage_phase_c(&self) -> Option<i32> {
-        self.measured_voltage_phase_c_callback
-            .map(|callback| (callback)())
+        self.measured_voltage_phase_c_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Measured Frequency
     ///
     /// Measured Frequency
     fn measured_frequency(&self) -> Option<i32> {
-        self.measured_frequency_callback
-            .map(|callback| (callback)())
+        self.measured_frequency_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Measured Current Phase A
     ///
     /// Measured Current Phase A
     fn measured_current_phase_a(&self) -> Option<i32> {
-        self.measured_current_phase_a_callback
-            .map(|callback| (callback)())
+        self.measured_current_phase_a_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Measured Current Phase B
     ///
     /// Measured Current Phase B
     fn measured_current_phase_b(&self) -> Option<i32> {
-        self.measured_current_phase_b_callback
-            .map(|callback| (callback)())
+        self.measured_current_phase_b_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Measured Current Phase C
     ///
     /// Measured Current Phase C
     fn measured_current_phase_c(&self) -> Option<i32> {
-        self.measured_current_phase_c_callback
-            .map(|callback| (callback)())
+        self.measured_current_phase_c_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage Harmonics Phase A
     ///
     /// Voltage Harmonics Pct, Phase A (comma seperated string for harmonics 1-50)
     fn voltage_harmonics_phase_a(&self) -> Option<&CStr> {
-        self.voltage_harmonics_phase_a_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.voltage_harmonics_phase_a_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Voltage Harmonics Phase B
     ///
     /// Voltage Harmonics Pct, Phase B (comma seperated string for harmonics 1-50)
     fn voltage_harmonics_phase_b(&self) -> Option<&CStr> {
-        self.voltage_harmonics_phase_b_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.voltage_harmonics_phase_b_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Voltage Harmonics Phase C
     ///
     /// Voltage Harmonics Pct, Phase C (comma seperated string for harmonics 1-50)
     fn voltage_harmonics_phase_c(&self) -> Option<&CStr> {
-        self.voltage_harmonics_phase_c_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.voltage_harmonics_phase_c_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Current Harmonics Phase A
     ///
     /// Current Harmonics Pct, Phase A (comma seperated string for harmonics 1-50)
     fn current_harmonics_phase_a(&self) -> Option<&CStr> {
-        self.current_harmonics_phase_a_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.current_harmonics_phase_a_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Current Harmonics Phase B
     ///
     /// Current Harmonics Pct, Phase B (comma seperated string for harmonics 1-50)
     fn current_harmonics_phase_b(&self) -> Option<&CStr> {
-        self.current_harmonics_phase_b_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.current_harmonics_phase_b_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Current Harmonics Phase C
     ///
     /// Current Harmonics Pct, Phase C (comma seperated string for harmonics 1-50)
     fn current_harmonics_phase_c(&self) -> Option<&CStr> {
-        self.current_harmonics_phase_c_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.current_harmonics_phase_c_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Current Interharmonics Phase A
     ///
     /// Current Interharmonics Pct, Phase A (comma seperated string for interharmonics 1-50)
     fn current_interharmonics_phase_a(&self) -> Option<&CStr> {
-        self.current_interharmonics_phase_a_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.current_interharmonics_phase_a_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Current Interharmonics Phase B
     ///
     /// Current Interharmonics Pct, Phase B (comma seperated string for interharmonics 1-50)
     fn current_interharmonics_phase_b(&self) -> Option<&CStr> {
-        self.current_interharmonics_phase_b_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.current_interharmonics_phase_b_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Current Interharmonics Phase C
     ///
     /// Current Interharmonics Pct, Phase C (comma seperated string for interharmonics 1-50)
     fn current_interharmonics_phase_c(&self) -> Option<&CStr> {
-        self.current_interharmonics_phase_c_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.current_interharmonics_phase_c_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Voltage THD Phase A
     ///
     /// Voltage THD Phase A
     fn voltage_thd_phase_a(&self) -> Option<u16> {
-        self.voltage_thd_phase_a_callback
-            .map(|callback| (callback)())
+        self.voltage_thd_phase_a_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage THD Phase B
     ///
     /// Voltage THD Phase B
     fn voltage_thd_phase_b(&self) -> Option<u16> {
-        self.voltage_thd_phase_b_callback
-            .map(|callback| (callback)())
+        self.voltage_thd_phase_b_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage THD Phase C
     ///
     /// Voltage THD Phase C
     fn voltage_thd_phase_c(&self) -> Option<u16> {
-        self.voltage_thd_phase_c_callback
-            .map(|callback| (callback)())
+        self.voltage_thd_phase_c_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Current THD Phase A
     ///
     /// Current THD Phase A
     fn current_thd_phase_a(&self) -> Option<u16> {
-        self.current_thd_phase_a_callback
-            .map(|callback| (callback)())
+        self.current_thd_phase_a_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Current THD Phase B
     ///
     /// Current THD Phase B
     fn current_thd_phase_b(&self) -> Option<u16> {
-        self.current_thd_phase_b_callback
-            .map(|callback| (callback)())
+        self.current_thd_phase_b_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Current THD Phase C
     ///
     /// Current THD Phase C
     fn current_thd_phase_c(&self) -> Option<u16> {
-        self.current_thd_phase_c_callback
-            .map(|callback| (callback)())
+        self.current_thd_phase_c_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Enable Profile
     ///
     /// Start/Stop the AC Profile
     fn enable_profile(&self) -> Option<EnaProf> {
-        self.enable_profile_callback.map(|callback| (callback)())
+        self.enable_profile_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Enable Profile
@@ -1619,7 +1714,7 @@ impl ModelAdapter for Model64411CallbackAdapter {
     /// Start/Stop the AC Profile
     fn set_enable_profile(&mut self, value: EnaProf) {
         if let Some(callback) = self.set_enable_profile_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -1627,69 +1722,647 @@ impl ModelAdapter for Model64411CallbackAdapter {
     ///
     /// Result of last profile operation.
     fn profile_result(&self) -> ProfRslt {
-        (self.profile_result_callback)()
+        (self.profile_result_callback)(self.context)
     }
 
     /// Stored Profile Count
     ///
     /// Number of stored profiles supported.
     fn stored_profile_count(&self) -> u16 {
-        (self.stored_profile_count_callback)()
+        (self.stored_profile_count_callback)(self.context)
     }
 
     /// Max Profile Point Count
     ///
     /// Max profile points in the profiles.
     fn max_profile_point_count(&self) -> u16 {
-        (self.max_profile_point_count_callback)()
+        (self.max_profile_point_count_callback)(self.context)
     }
 
     /// Voltage Scale Factor
     ///
     /// Scale factor for voltage points.
     fn voltage_scale_factor(&self) -> u16 {
-        (self.voltage_scale_factor_callback)()
+        (self.voltage_scale_factor_callback)(self.context)
     }
 
     /// Current Scale Factor
     ///
     /// Scale factor for current points.
     fn current_scale_factor(&self) -> u16 {
-        (self.current_scale_factor_callback)()
+        (self.current_scale_factor_callback)(self.context)
     }
 
     /// Time Scale Factor
     ///
     /// Scale factor for time points.
     fn time_scale_factor(&self) -> u16 {
-        (self.time_scale_factor_callback)()
+        (self.time_scale_factor_callback)(self.context)
     }
 
     /// Frequency Scale Factor
     ///
     /// Scale factor for frequency points.
     fn frequency_scale_factor(&self) -> u16 {
-        (self.frequency_scale_factor_callback)()
+        (self.frequency_scale_factor_callback)(self.context)
     }
 
     /// Frequency Slew Rate Scale Factor
     ///
     /// Scale factor for frequency slew rate.
     fn frequency_slew_rate_scale_factor(&self) -> u16 {
-        (self.frequency_slew_rate_scale_factor_callback)()
+        (self.frequency_slew_rate_scale_factor_callback)(self.context)
     }
 
     /// Voltage Slew Rate Scale Factor
     ///
     /// Scale factor for voltage slew rate.
     fn voltage_slew_rate_scale_factor(&self) -> u16 {
-        (self.voltage_slew_rate_scale_factor_callback)()
+        (self.voltage_slew_rate_scale_factor_callback)(self.context)
     }
 
     /// THD Scale Factor
     ///
     /// Scale factor for THD values.
     fn thd_scale_factor(&self) -> u16 {
-        (self.thd_scale_factor_callback)()
+        (self.thd_scale_factor_callback)(self.context)
+    }
+}
+
+#[repr(C)]
+pub struct Model64411StatefulAdapter {
+    active_phases: u16,
+    phase_angle: u16,
+    nominal_voltage: u16,
+    maximum_voltage: u16,
+    maximum_current: u16,
+    frequency: u16,
+    output_state: Output,
+    relay_state: Relay,
+    regeneration_state: Regen,
+    voltage_setpoint: u16,
+    voltage_setpoint_phase_a: u16,
+    voltage_setpoint_phase_b: u16,
+    voltage_setpoint_phase_c: u16,
+    frequency_slew_rate: u16,
+    voltage_slew_rate: u16,
+    measured_voltage_phase_a: i32,
+    measured_voltage_phase_b: i32,
+    measured_voltage_phase_c: i32,
+    measured_frequency: i32,
+    measured_current_phase_a: i32,
+    measured_current_phase_b: i32,
+    measured_current_phase_c: i32,
+    voltage_harmonics_phase_a: [c_char; 300],
+    voltage_harmonics_phase_b: [c_char; 300],
+    voltage_harmonics_phase_c: [c_char; 300],
+    current_harmonics_phase_a: [c_char; 300],
+    current_harmonics_phase_b: [c_char; 300],
+    current_harmonics_phase_c: [c_char; 300],
+    current_interharmonics_phase_a: [c_char; 300],
+    current_interharmonics_phase_b: [c_char; 300],
+    current_interharmonics_phase_c: [c_char; 300],
+    voltage_thd_phase_a: u16,
+    voltage_thd_phase_b: u16,
+    voltage_thd_phase_c: u16,
+    current_thd_phase_a: u16,
+    current_thd_phase_b: u16,
+    current_thd_phase_c: u16,
+    enable_profile: EnaProf,
+    profile_result: ProfRslt,
+    stored_profile_count: u16,
+    max_profile_point_count: u16,
+    voltage_scale_factor: u16,
+    current_scale_factor: u16,
+    time_scale_factor: u16,
+    frequency_scale_factor: u16,
+    frequency_slew_rate_scale_factor: u16,
+    voltage_slew_rate_scale_factor: u16,
+    thd_scale_factor: u16,
+}
+
+impl ModelAdapter for Model64411StatefulAdapter {
+    /// Active Phases
+    ///
+    /// Set the number of active phases for the power supply
+    fn active_phases(&self) -> Option<u16> {
+        Some(
+        self.active_phases
+        )
+    }
+
+    /// Active Phases
+    ///
+    /// Set the number of active phases for the power supply
+    fn set_active_phases(&mut self, value: u16) {
+        self.active_phases = value;
+    }
+
+    /// Phase Angle
+    ///
+    /// Phase angle (deg) between phases. 0 for signle phase, 120 for two phase, 120 for three phase.
+    fn phase_angle(&self) -> Option<u16> {
+        Some(
+        self.phase_angle
+        )
+    }
+
+    /// Phase Angle
+    ///
+    /// Phase angle (deg) between phases. 0 for signle phase, 120 for two phase, 120 for three phase.
+    fn set_phase_angle(&mut self, value: u16) {
+        self.phase_angle = value;
+    }
+
+    /// Nominal Voltage
+    ///
+    /// Nominal L-N Voltage
+    fn nominal_voltage(&self) -> Option<u16> {
+        Some(
+        self.nominal_voltage
+        )
+    }
+
+    /// Nominal Voltage
+    ///
+    /// Nominal L-N Voltage
+    fn set_nominal_voltage(&mut self, value: u16) {
+        self.nominal_voltage = value;
+    }
+
+    /// Maximum Voltage
+    ///
+    /// Maximum Voltage Protection Level
+    fn maximum_voltage(&self) -> Option<u16> {
+        Some(
+        self.maximum_voltage
+        )
+    }
+
+    /// Maximum Voltage
+    ///
+    /// Maximum Voltage Protection Level
+    fn set_maximum_voltage(&mut self, value: u16) {
+        self.maximum_voltage = value;
+    }
+
+    /// Maximum Current
+    ///
+    /// Maximum Current Protection Level
+    fn maximum_current(&self) -> Option<u16> {
+        Some(
+        self.maximum_current
+        )
+    }
+
+    /// Maximum Current
+    ///
+    /// Maximum Current Protection Level
+    fn set_maximum_current(&mut self, value: u16) {
+        self.maximum_current = value;
+    }
+
+    /// Frequency
+    ///
+    /// Frequency Setpoint
+    fn frequency(&self) -> Option<u16> {
+        Some(
+        self.frequency
+        )
+    }
+
+    /// Frequency
+    ///
+    /// Frequency Setpoint
+    fn set_frequency(&mut self, value: u16) {
+        self.frequency = value;
+    }
+
+    /// Output State
+    ///
+    /// AC Output State
+    fn output_state(&self) -> Option<Output> {
+        Some(
+        self.output_state
+        )
+    }
+
+    /// Output State
+    ///
+    /// AC Output State
+    fn set_output_state(&mut self, value: Output) {
+        self.output_state = value;
+    }
+
+    /// Relay State
+    ///
+    /// AC Relay State
+    fn relay_state(&self) -> Option<Relay> {
+        Some(
+        self.relay_state
+        )
+    }
+
+    /// Relay State
+    ///
+    /// AC Relay State
+    fn set_relay_state(&mut self, value: Relay) {
+        self.relay_state = value;
+    }
+
+    /// Regeneration State
+    ///
+    /// Regeneration State
+    fn regeneration_state(&self) -> Option<Regen> {
+        Some(
+        self.regeneration_state
+        )
+    }
+
+    /// Regeneration State
+    ///
+    /// Regeneration State
+    fn set_regeneration_state(&mut self, value: Regen) {
+        self.regeneration_state = value;
+    }
+
+    /// Voltage Setpoint
+    ///
+    /// Voltage Setpoint (all phases)
+    fn voltage_setpoint(&self) -> Option<u16> {
+        Some(
+        self.voltage_setpoint
+        )
+    }
+
+    /// Voltage Setpoint
+    ///
+    /// Voltage Setpoint (all phases)
+    fn set_voltage_setpoint(&mut self, value: u16) {
+        self.voltage_setpoint = value;
+    }
+
+    /// Voltage Setpoint Phase A
+    ///
+    /// Voltage Setpoint Phase A
+    fn voltage_setpoint_phase_a(&self) -> Option<u16> {
+        Some(
+        self.voltage_setpoint_phase_a
+        )
+    }
+
+    /// Voltage Setpoint Phase A
+    ///
+    /// Voltage Setpoint Phase A
+    fn set_voltage_setpoint_phase_a(&mut self, value: u16) {
+        self.voltage_setpoint_phase_a = value;
+    }
+
+    /// Voltage Setpoint Phase B
+    ///
+    /// Voltage Setpoint Phase B
+    fn voltage_setpoint_phase_b(&self) -> Option<u16> {
+        Some(
+        self.voltage_setpoint_phase_b
+        )
+    }
+
+    /// Voltage Setpoint Phase B
+    ///
+    /// Voltage Setpoint Phase B
+    fn set_voltage_setpoint_phase_b(&mut self, value: u16) {
+        self.voltage_setpoint_phase_b = value;
+    }
+
+    /// Voltage Setpoint Phase C
+    ///
+    /// Voltage Setpoint Phase C
+    fn voltage_setpoint_phase_c(&self) -> Option<u16> {
+        Some(
+        self.voltage_setpoint_phase_c
+        )
+    }
+
+    /// Voltage Setpoint Phase C
+    ///
+    /// Voltage Setpoint Phase C
+    fn set_voltage_setpoint_phase_c(&mut self, value: u16) {
+        self.voltage_setpoint_phase_c = value;
+    }
+
+    /// Frequency Slew Rate
+    ///
+    /// Frequency Slew Rate
+    fn frequency_slew_rate(&self) -> Option<u16> {
+        Some(
+        self.frequency_slew_rate
+        )
+    }
+
+    /// Frequency Slew Rate
+    ///
+    /// Frequency Slew Rate
+    fn set_frequency_slew_rate(&mut self, value: u16) {
+        self.frequency_slew_rate = value;
+    }
+
+    /// Voltage Slew Rate
+    ///
+    /// Voltage Slew Rate
+    fn voltage_slew_rate(&self) -> Option<u16> {
+        Some(
+        self.voltage_slew_rate
+        )
+    }
+
+    /// Voltage Slew Rate
+    ///
+    /// Voltage Slew Rate
+    fn set_voltage_slew_rate(&mut self, value: u16) {
+        self.voltage_slew_rate = value;
+    }
+
+    /// Measured Voltage Phase A
+    ///
+    /// Measured Voltage Phase A
+    fn measured_voltage_phase_a(&self) -> Option<i32> {
+        Some(
+        self.measured_voltage_phase_a
+        )
+    }
+
+    /// Measured Voltage Phase B
+    ///
+    /// Measured Voltage Phase B
+    fn measured_voltage_phase_b(&self) -> Option<i32> {
+        Some(
+        self.measured_voltage_phase_b
+        )
+    }
+
+    /// Measured Voltage Phase C
+    ///
+    /// Measured Voltage Phase C
+    fn measured_voltage_phase_c(&self) -> Option<i32> {
+        Some(
+        self.measured_voltage_phase_c
+        )
+    }
+
+    /// Measured Frequency
+    ///
+    /// Measured Frequency
+    fn measured_frequency(&self) -> Option<i32> {
+        Some(
+        self.measured_frequency
+        )
+    }
+
+    /// Measured Current Phase A
+    ///
+    /// Measured Current Phase A
+    fn measured_current_phase_a(&self) -> Option<i32> {
+        Some(
+        self.measured_current_phase_a
+        )
+    }
+
+    /// Measured Current Phase B
+    ///
+    /// Measured Current Phase B
+    fn measured_current_phase_b(&self) -> Option<i32> {
+        Some(
+        self.measured_current_phase_b
+        )
+    }
+
+    /// Measured Current Phase C
+    ///
+    /// Measured Current Phase C
+    fn measured_current_phase_c(&self) -> Option<i32> {
+        Some(
+        self.measured_current_phase_c
+        )
+    }
+
+    /// Voltage Harmonics Phase A
+    ///
+    /// Voltage Harmonics Pct, Phase A (comma seperated string for harmonics 1-50)
+    fn voltage_harmonics_phase_a(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.voltage_harmonics_phase_a.as_ptr()) }
+        )
+    }
+
+    /// Voltage Harmonics Phase B
+    ///
+    /// Voltage Harmonics Pct, Phase B (comma seperated string for harmonics 1-50)
+    fn voltage_harmonics_phase_b(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.voltage_harmonics_phase_b.as_ptr()) }
+        )
+    }
+
+    /// Voltage Harmonics Phase C
+    ///
+    /// Voltage Harmonics Pct, Phase C (comma seperated string for harmonics 1-50)
+    fn voltage_harmonics_phase_c(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.voltage_harmonics_phase_c.as_ptr()) }
+        )
+    }
+
+    /// Current Harmonics Phase A
+    ///
+    /// Current Harmonics Pct, Phase A (comma seperated string for harmonics 1-50)
+    fn current_harmonics_phase_a(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.current_harmonics_phase_a.as_ptr()) }
+        )
+    }
+
+    /// Current Harmonics Phase B
+    ///
+    /// Current Harmonics Pct, Phase B (comma seperated string for harmonics 1-50)
+    fn current_harmonics_phase_b(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.current_harmonics_phase_b.as_ptr()) }
+        )
+    }
+
+    /// Current Harmonics Phase C
+    ///
+    /// Current Harmonics Pct, Phase C (comma seperated string for harmonics 1-50)
+    fn current_harmonics_phase_c(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.current_harmonics_phase_c.as_ptr()) }
+        )
+    }
+
+    /// Current Interharmonics Phase A
+    ///
+    /// Current Interharmonics Pct, Phase A (comma seperated string for interharmonics 1-50)
+    fn current_interharmonics_phase_a(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.current_interharmonics_phase_a.as_ptr()) }
+        )
+    }
+
+    /// Current Interharmonics Phase B
+    ///
+    /// Current Interharmonics Pct, Phase B (comma seperated string for interharmonics 1-50)
+    fn current_interharmonics_phase_b(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.current_interharmonics_phase_b.as_ptr()) }
+        )
+    }
+
+    /// Current Interharmonics Phase C
+    ///
+    /// Current Interharmonics Pct, Phase C (comma seperated string for interharmonics 1-50)
+    fn current_interharmonics_phase_c(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.current_interharmonics_phase_c.as_ptr()) }
+        )
+    }
+
+    /// Voltage THD Phase A
+    ///
+    /// Voltage THD Phase A
+    fn voltage_thd_phase_a(&self) -> Option<u16> {
+        Some(
+        self.voltage_thd_phase_a
+        )
+    }
+
+    /// Voltage THD Phase B
+    ///
+    /// Voltage THD Phase B
+    fn voltage_thd_phase_b(&self) -> Option<u16> {
+        Some(
+        self.voltage_thd_phase_b
+        )
+    }
+
+    /// Voltage THD Phase C
+    ///
+    /// Voltage THD Phase C
+    fn voltage_thd_phase_c(&self) -> Option<u16> {
+        Some(
+        self.voltage_thd_phase_c
+        )
+    }
+
+    /// Current THD Phase A
+    ///
+    /// Current THD Phase A
+    fn current_thd_phase_a(&self) -> Option<u16> {
+        Some(
+        self.current_thd_phase_a
+        )
+    }
+
+    /// Current THD Phase B
+    ///
+    /// Current THD Phase B
+    fn current_thd_phase_b(&self) -> Option<u16> {
+        Some(
+        self.current_thd_phase_b
+        )
+    }
+
+    /// Current THD Phase C
+    ///
+    /// Current THD Phase C
+    fn current_thd_phase_c(&self) -> Option<u16> {
+        Some(
+        self.current_thd_phase_c
+        )
+    }
+
+    /// Enable Profile
+    ///
+    /// Start/Stop the AC Profile
+    fn enable_profile(&self) -> Option<EnaProf> {
+        Some(
+        self.enable_profile
+        )
+    }
+
+    /// Enable Profile
+    ///
+    /// Start/Stop the AC Profile
+    fn set_enable_profile(&mut self, value: EnaProf) {
+        self.enable_profile = value;
+    }
+
+    /// Profile Result
+    ///
+    /// Result of last profile operation.
+    fn profile_result(&self) -> ProfRslt {
+        self.profile_result
+    }
+
+    /// Stored Profile Count
+    ///
+    /// Number of stored profiles supported.
+    fn stored_profile_count(&self) -> u16 {
+        self.stored_profile_count
+    }
+
+    /// Max Profile Point Count
+    ///
+    /// Max profile points in the profiles.
+    fn max_profile_point_count(&self) -> u16 {
+        self.max_profile_point_count
+    }
+
+    /// Voltage Scale Factor
+    ///
+    /// Scale factor for voltage points.
+    fn voltage_scale_factor(&self) -> u16 {
+        self.voltage_scale_factor
+    }
+
+    /// Current Scale Factor
+    ///
+    /// Scale factor for current points.
+    fn current_scale_factor(&self) -> u16 {
+        self.current_scale_factor
+    }
+
+    /// Time Scale Factor
+    ///
+    /// Scale factor for time points.
+    fn time_scale_factor(&self) -> u16 {
+        self.time_scale_factor
+    }
+
+    /// Frequency Scale Factor
+    ///
+    /// Scale factor for frequency points.
+    fn frequency_scale_factor(&self) -> u16 {
+        self.frequency_scale_factor
+    }
+
+    /// Frequency Slew Rate Scale Factor
+    ///
+    /// Scale factor for frequency slew rate.
+    fn frequency_slew_rate_scale_factor(&self) -> u16 {
+        self.frequency_slew_rate_scale_factor
+    }
+
+    /// Voltage Slew Rate Scale Factor
+    ///
+    /// Scale factor for voltage slew rate.
+    fn voltage_slew_rate_scale_factor(&self) -> u16 {
+        self.voltage_slew_rate_scale_factor
+    }
+
+    /// THD Scale Factor
+    ///
+    /// Scale factor for THD values.
+    fn thd_scale_factor(&self) -> u16 {
+        self.thd_scale_factor
     }
 }

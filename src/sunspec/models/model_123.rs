@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 26;
 
@@ -18,17 +19,13 @@ pub static POINTS: [ReadablePoint; 26] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::ConnWinTms,
-        },
+        reference: PointReference::Model123 { point: Point::ConnWinTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::ConnRvrtTms,
-        },
+        reference: PointReference::Model123 { point: Point::ConnRvrtTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
@@ -40,169 +37,127 @@ pub static POINTS: [ReadablePoint; 26] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPct,
-        },
+        reference: PointReference::Model123 { point: Point::WMaxLimPct },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctWinTms,
-        },
+        reference: PointReference::Model123 { point: Point::WMaxLimPctWinTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctRvrtTms,
-        },
+        reference: PointReference::Model123 { point: Point::WMaxLimPctRvrtTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctRmpTms,
-        },
+        reference: PointReference::Model123 { point: Point::WMaxLimPctRmpTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimEna,
-        },
+        reference: PointReference::Model123 { point: Point::WMaxLimEna },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSet,
-        },
+        reference: PointReference::Model123 { point: Point::OutPfSet },
         size: 1,
         data_type: PointType::Int16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetWinTms,
-        },
+        reference: PointReference::Model123 { point: Point::OutPfSetWinTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetRvrtTms,
-        },
+        reference: PointReference::Model123 { point: Point::OutPfSetRvrtTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetRmpTms,
-        },
+        reference: PointReference::Model123 { point: Point::OutPfSetRmpTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetEna,
-        },
+        reference: PointReference::Model123 { point: Point::OutPfSetEna },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArWMaxPct,
-        },
+        reference: PointReference::Model123 { point: Point::VArWMaxPct },
         size: 1,
         data_type: PointType::Int16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArMaxPct,
-        },
+        reference: PointReference::Model123 { point: Point::VArMaxPct },
         size: 1,
         data_type: PointType::Int16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArAvalPct,
-        },
+        reference: PointReference::Model123 { point: Point::VArAvalPct },
         size: 1,
         data_type: PointType::Int16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctWinTms,
-        },
+        reference: PointReference::Model123 { point: Point::VArPctWinTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctRvrtTms,
-        },
+        reference: PointReference::Model123 { point: Point::VArPctRvrtTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctRmpTms,
-        },
+        reference: PointReference::Model123 { point: Point::VArPctRmpTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctMod,
-        },
+        reference: PointReference::Model123 { point: Point::VArPctMod },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctEna,
-        },
+        reference: PointReference::Model123 { point: Point::VArPctEna },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctSf,
-        },
+        reference: PointReference::Model123 { point: Point::WMaxLimPctSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetSf,
-        },
+        reference: PointReference::Model123 { point: Point::OutPfSetSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctSf,
-        },
+        reference: PointReference::Model123 { point: Point::VArPctSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -237,100 +192,158 @@ pub enum Point {
     VArPctSf,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::ConnWinTms => {
             if let Some(value) = model.conn_win_tms() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::ConnRvrtTms => {
             if let Some(value) = model.conn_rvrt_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::Conn => serialisation::write_u16(model.conn() as u16, buffer),
-        Point::WMaxLimPct => serialisation::write_u16(model.w_max_lim_pct(), buffer),
+        Point::Conn => {
+            serialisation::write_u16(model.conn() as u16, buffer);
+        },
+        Point::WMaxLimPct => {
+            serialisation::write_u16(model.w_max_lim_pct(), buffer);
+        },
         Point::WMaxLimPctWinTms => {
             if let Some(value) = model.w_max_lim_pct_win_tms() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::WMaxLimPctRvrtTms => {
             if let Some(value) = model.w_max_lim_pct_rvrt_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::WMaxLimPctRmpTms => {
             if let Some(value) = model.w_max_lim_pct_rmp_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::WMaxLimEna => serialisation::write_u16(model.w_max_lim_ena() as u16, buffer),
-        Point::OutPfSet => serialisation::write_i16(model.out_pf_set(), buffer),
+        Point::WMaxLimEna => {
+            serialisation::write_u16(model.w_max_lim_ena() as u16, buffer);
+        },
+        Point::OutPfSet => {
+            serialisation::write_i16(model.out_pf_set(), buffer);
+        },
         Point::OutPfSetWinTms => {
             if let Some(value) = model.out_pf_set_win_tms() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::OutPfSetRvrtTms => {
             if let Some(value) = model.out_pf_set_rvrt_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::OutPfSetRmpTms => {
             if let Some(value) = model.out_pf_set_rmp_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::OutPfSetEna => serialisation::write_u16(model.out_pf_set_ena() as u16, buffer),
+        Point::OutPfSetEna => {
+            serialisation::write_u16(model.out_pf_set_ena() as u16, buffer);
+        },
         Point::VArWMaxPct => {
             if let Some(value) = model.v_ar_w_max_pct() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VArMaxPct => {
             if let Some(value) = model.v_ar_max_pct() {
                 serialisation::write_i16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VArAvalPct => {
             if let Some(value) = model.v_ar_aval_pct() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VArPctWinTms => {
             if let Some(value) = model.v_ar_pct_win_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VArPctRvrtTms => {
             if let Some(value) = model.v_ar_pct_rvrt_tms() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VArPctRmpTms => {
             if let Some(value) = model.v_ar_pct_rmp_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VArPctMod => {
             if let Some(value) = model.v_ar_pct_mod() {
                 serialisation::write_u16(value as u16, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::VArPctEna => serialisation::write_u16(model.v_ar_pct_ena() as u16, buffer),
-        Point::WMaxLimPctSf => serialisation::write_u16(model.w_max_lim_pct_sf(), buffer),
-        Point::OutPfSetSf => serialisation::write_u16(model.out_pf_set_sf(), buffer),
+        Point::VArPctEna => {
+            serialisation::write_u16(model.v_ar_pct_ena() as u16, buffer);
+        },
+        Point::WMaxLimPctSf => {
+            serialisation::write_u16(model.w_max_lim_pct_sf(), buffer);
+        },
+        Point::OutPfSetSf => {
+            serialisation::write_u16(model.out_pf_set_sf(), buffer);
+        },
         Point::VArPctSf => {
             if let Some(value) = model.v_ar_pct_sf() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -347,7 +360,8 @@ pub trait ModelAdapter {
     /// Conn_WinTms
     ///
     /// Time window for connect/disconnect.
-    fn set_conn_win_tms(&mut self, value: u16) {}
+    fn set_conn_win_tms(&mut self, value: u16) {
+    }
 
     /// Conn_RvrtTms
     ///
@@ -359,7 +373,8 @@ pub trait ModelAdapter {
     /// Conn_RvrtTms
     ///
     /// Timeout period for connect/disconnect.
-    fn set_conn_rvrt_tms(&mut self, value: u16) {}
+    fn set_conn_rvrt_tms(&mut self, value: u16) {
+    }
 
     /// Conn
     ///
@@ -391,7 +406,8 @@ pub trait ModelAdapter {
     /// WMaxLimPct_WinTms
     ///
     /// Time window for power limit change.
-    fn set_w_max_lim_pct_win_tms(&mut self, value: u16) {}
+    fn set_w_max_lim_pct_win_tms(&mut self, value: u16) {
+    }
 
     /// WMaxLimPct_RvrtTms
     ///
@@ -403,7 +419,8 @@ pub trait ModelAdapter {
     /// WMaxLimPct_RvrtTms
     ///
     /// Timeout period for power limit.
-    fn set_w_max_lim_pct_rvrt_tms(&mut self, value: u16) {}
+    fn set_w_max_lim_pct_rvrt_tms(&mut self, value: u16) {
+    }
 
     /// WMaxLimPct_RmpTms
     ///
@@ -415,7 +432,8 @@ pub trait ModelAdapter {
     /// WMaxLimPct_RmpTms
     ///
     /// Ramp time for moving from current setpoint to new setpoint.
-    fn set_w_max_lim_pct_rmp_tms(&mut self, value: u16) {}
+    fn set_w_max_lim_pct_rmp_tms(&mut self, value: u16) {
+    }
 
     /// WMaxLim_Ena
     ///
@@ -447,7 +465,8 @@ pub trait ModelAdapter {
     /// OutPFSet_WinTms
     ///
     /// Time window for power factor change.
-    fn set_out_pf_set_win_tms(&mut self, value: u16) {}
+    fn set_out_pf_set_win_tms(&mut self, value: u16) {
+    }
 
     /// OutPFSet_RvrtTms
     ///
@@ -459,7 +478,8 @@ pub trait ModelAdapter {
     /// OutPFSet_RvrtTms
     ///
     /// Timeout period for power factor.
-    fn set_out_pf_set_rvrt_tms(&mut self, value: u16) {}
+    fn set_out_pf_set_rvrt_tms(&mut self, value: u16) {
+    }
 
     /// OutPFSet_RmpTms
     ///
@@ -471,7 +491,8 @@ pub trait ModelAdapter {
     /// OutPFSet_RmpTms
     ///
     /// Ramp time for moving from current setpoint to new setpoint.
-    fn set_out_pf_set_rmp_tms(&mut self, value: u16) {}
+    fn set_out_pf_set_rmp_tms(&mut self, value: u16) {
+    }
 
     /// OutPFSet_Ena
     ///
@@ -493,7 +514,8 @@ pub trait ModelAdapter {
     /// VArWMaxPct
     ///
     /// Reactive power in percent of WMax.
-    fn set_v_ar_w_max_pct(&mut self, value: i16) {}
+    fn set_v_ar_w_max_pct(&mut self, value: i16) {
+    }
 
     /// VArMaxPct
     ///
@@ -505,7 +527,8 @@ pub trait ModelAdapter {
     /// VArMaxPct
     ///
     /// Reactive power in percent of VArMax.
-    fn set_v_ar_max_pct(&mut self, value: i16) {}
+    fn set_v_ar_max_pct(&mut self, value: i16) {
+    }
 
     /// VArAvalPct
     ///
@@ -517,7 +540,8 @@ pub trait ModelAdapter {
     /// VArAvalPct
     ///
     /// Reactive power in percent of VArAval.
-    fn set_v_ar_aval_pct(&mut self, value: i16) {}
+    fn set_v_ar_aval_pct(&mut self, value: i16) {
+    }
 
     /// VArPct_WinTms
     ///
@@ -529,7 +553,8 @@ pub trait ModelAdapter {
     /// VArPct_WinTms
     ///
     /// Time window for VAR limit change.
-    fn set_v_ar_pct_win_tms(&mut self, value: u16) {}
+    fn set_v_ar_pct_win_tms(&mut self, value: u16) {
+    }
 
     /// VArPct_RvrtTms
     ///
@@ -541,7 +566,8 @@ pub trait ModelAdapter {
     /// VArPct_RvrtTms
     ///
     /// Timeout period for VAR limit.
-    fn set_v_ar_pct_rvrt_tms(&mut self, value: u16) {}
+    fn set_v_ar_pct_rvrt_tms(&mut self, value: u16) {
+    }
 
     /// VArPct_RmpTms
     ///
@@ -553,7 +579,8 @@ pub trait ModelAdapter {
     /// VArPct_RmpTms
     ///
     /// Ramp time for moving from current setpoint to new setpoint.
-    fn set_v_ar_pct_rmp_tms(&mut self, value: u16) {}
+    fn set_v_ar_pct_rmp_tms(&mut self, value: u16) {
+    }
 
     /// VArPct_Mod
     ///
@@ -565,7 +592,8 @@ pub trait ModelAdapter {
     /// VArPct_Mod
     ///
     /// VAR percent limit mode.
-    fn set_v_ar_pct_mod(&mut self, value: VArPctMod) {}
+    fn set_v_ar_pct_mod(&mut self, value: VArPctMod) {
+    }
 
     /// VArPct_Ena
     ///
@@ -595,24 +623,28 @@ pub trait ModelAdapter {
     }
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum Conn {
     Disconnect = 0,
     Connect = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum WMaxLimEna {
     Disabled = 0,
     Enabled = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum OutPfSetEna {
     Disabled = 0,
     Enabled = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum VArPctMod {
     None = 0,
@@ -621,6 +653,7 @@ pub enum VArPctMod {
     VArAval = 3,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum VArPctEna {
     Disabled = 0,
@@ -629,51 +662,52 @@ pub enum VArPctEna {
 
 #[repr(C)]
 pub struct Model123CallbackAdapter {
-    conn_win_tms_callback: Option<extern "C" fn() -> u16>,
-    set_conn_win_tms_callback: Option<extern "C" fn(u16)>,
-    conn_rvrt_tms_callback: Option<extern "C" fn() -> u16>,
-    set_conn_rvrt_tms_callback: Option<extern "C" fn(u16)>,
-    conn_callback: extern "C" fn() -> Conn,
-    set_conn_callback: extern "C" fn(Conn),
-    w_max_lim_pct_callback: extern "C" fn() -> u16,
-    set_w_max_lim_pct_callback: extern "C" fn(u16),
-    w_max_lim_pct_win_tms_callback: Option<extern "C" fn() -> u16>,
-    set_w_max_lim_pct_win_tms_callback: Option<extern "C" fn(u16)>,
-    w_max_lim_pct_rvrt_tms_callback: Option<extern "C" fn() -> u16>,
-    set_w_max_lim_pct_rvrt_tms_callback: Option<extern "C" fn(u16)>,
-    w_max_lim_pct_rmp_tms_callback: Option<extern "C" fn() -> u16>,
-    set_w_max_lim_pct_rmp_tms_callback: Option<extern "C" fn(u16)>,
-    w_max_lim_ena_callback: extern "C" fn() -> WMaxLimEna,
-    set_w_max_lim_ena_callback: extern "C" fn(WMaxLimEna),
-    out_pf_set_callback: extern "C" fn() -> i16,
-    set_out_pf_set_callback: extern "C" fn(i16),
-    out_pf_set_win_tms_callback: Option<extern "C" fn() -> u16>,
-    set_out_pf_set_win_tms_callback: Option<extern "C" fn(u16)>,
-    out_pf_set_rvrt_tms_callback: Option<extern "C" fn() -> u16>,
-    set_out_pf_set_rvrt_tms_callback: Option<extern "C" fn(u16)>,
-    out_pf_set_rmp_tms_callback: Option<extern "C" fn() -> u16>,
-    set_out_pf_set_rmp_tms_callback: Option<extern "C" fn(u16)>,
-    out_pf_set_ena_callback: extern "C" fn() -> OutPfSetEna,
-    set_out_pf_set_ena_callback: extern "C" fn(OutPfSetEna),
-    v_ar_w_max_pct_callback: Option<extern "C" fn() -> i16>,
-    set_v_ar_w_max_pct_callback: Option<extern "C" fn(i16)>,
-    v_ar_max_pct_callback: Option<extern "C" fn() -> i16>,
-    set_v_ar_max_pct_callback: Option<extern "C" fn(i16)>,
-    v_ar_aval_pct_callback: Option<extern "C" fn() -> i16>,
-    set_v_ar_aval_pct_callback: Option<extern "C" fn(i16)>,
-    v_ar_pct_win_tms_callback: Option<extern "C" fn() -> u16>,
-    set_v_ar_pct_win_tms_callback: Option<extern "C" fn(u16)>,
-    v_ar_pct_rvrt_tms_callback: Option<extern "C" fn() -> u16>,
-    set_v_ar_pct_rvrt_tms_callback: Option<extern "C" fn(u16)>,
-    v_ar_pct_rmp_tms_callback: Option<extern "C" fn() -> u16>,
-    set_v_ar_pct_rmp_tms_callback: Option<extern "C" fn(u16)>,
-    v_ar_pct_mod_callback: Option<extern "C" fn() -> VArPctMod>,
-    set_v_ar_pct_mod_callback: Option<extern "C" fn(VArPctMod)>,
-    v_ar_pct_ena_callback: extern "C" fn() -> VArPctEna,
-    set_v_ar_pct_ena_callback: extern "C" fn(VArPctEna),
-    w_max_lim_pct_sf_callback: extern "C" fn() -> u16,
-    out_pf_set_sf_callback: extern "C" fn() -> u16,
-    v_ar_pct_sf_callback: Option<extern "C" fn() -> u16>,
+    context: *mut c_void,
+    conn_win_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_conn_win_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    conn_rvrt_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_conn_rvrt_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    conn_callback: extern "C" fn(*const c_void) -> Conn,
+    set_conn_callback: extern "C" fn(Conn, *mut c_void),
+    w_max_lim_pct_callback: extern "C" fn(*const c_void) -> u16,
+    set_w_max_lim_pct_callback: extern "C" fn(u16, *mut c_void),
+    w_max_lim_pct_win_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_w_max_lim_pct_win_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    w_max_lim_pct_rvrt_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_w_max_lim_pct_rvrt_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    w_max_lim_pct_rmp_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_w_max_lim_pct_rmp_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    w_max_lim_ena_callback: extern "C" fn(*const c_void) -> WMaxLimEna,
+    set_w_max_lim_ena_callback: extern "C" fn(WMaxLimEna, *mut c_void),
+    out_pf_set_callback: extern "C" fn(*const c_void) -> i16,
+    set_out_pf_set_callback: extern "C" fn(i16, *mut c_void),
+    out_pf_set_win_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_out_pf_set_win_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    out_pf_set_rvrt_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_out_pf_set_rvrt_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    out_pf_set_rmp_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_out_pf_set_rmp_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    out_pf_set_ena_callback: extern "C" fn(*const c_void) -> OutPfSetEna,
+    set_out_pf_set_ena_callback: extern "C" fn(OutPfSetEna, *mut c_void),
+    v_ar_w_max_pct_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    set_v_ar_w_max_pct_callback: Option<extern "C" fn(i16, *mut c_void)>,
+    v_ar_max_pct_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    set_v_ar_max_pct_callback: Option<extern "C" fn(i16, *mut c_void)>,
+    v_ar_aval_pct_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    set_v_ar_aval_pct_callback: Option<extern "C" fn(i16, *mut c_void)>,
+    v_ar_pct_win_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_v_ar_pct_win_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    v_ar_pct_rvrt_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_v_ar_pct_rvrt_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    v_ar_pct_rmp_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_v_ar_pct_rmp_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    v_ar_pct_mod_callback: Option<extern "C" fn(*const c_void) -> VArPctMod>,
+    set_v_ar_pct_mod_callback: Option<extern "C" fn(VArPctMod, *mut c_void)>,
+    v_ar_pct_ena_callback: extern "C" fn(*const c_void) -> VArPctEna,
+    set_v_ar_pct_ena_callback: extern "C" fn(VArPctEna, *mut c_void),
+    w_max_lim_pct_sf_callback: extern "C" fn(*const c_void) -> u16,
+    out_pf_set_sf_callback: extern "C" fn(*const c_void) -> u16,
+    v_ar_pct_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
 }
 
 impl ModelAdapter for Model123CallbackAdapter {
@@ -681,7 +715,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Time window for connect/disconnect.
     fn conn_win_tms(&self) -> Option<u16> {
-        self.conn_win_tms_callback.map(|callback| (callback)())
+        self.conn_win_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Conn_WinTms
@@ -689,7 +725,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Time window for connect/disconnect.
     fn set_conn_win_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_conn_win_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -697,7 +733,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Timeout period for connect/disconnect.
     fn conn_rvrt_tms(&self) -> Option<u16> {
-        self.conn_rvrt_tms_callback.map(|callback| (callback)())
+        self.conn_rvrt_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Conn_RvrtTms
@@ -705,7 +743,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Timeout period for connect/disconnect.
     fn set_conn_rvrt_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_conn_rvrt_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -713,36 +751,37 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Connection control.
     fn conn(&self) -> Conn {
-        (self.conn_callback)()
+        (self.conn_callback)(self.context)
     }
 
     /// Conn
     ///
     /// Connection control.
     fn set_conn(&mut self, value: Conn) {
-        (self.set_conn_callback)(value);
+        (self.set_conn_callback)(value, self.context);
     }
 
     /// WMaxLimPct
     ///
     /// Set power output to specified level.
     fn w_max_lim_pct(&self) -> u16 {
-        (self.w_max_lim_pct_callback)()
+        (self.w_max_lim_pct_callback)(self.context)
     }
 
     /// WMaxLimPct
     ///
     /// Set power output to specified level.
     fn set_w_max_lim_pct(&mut self, value: u16) {
-        (self.set_w_max_lim_pct_callback)(value);
+        (self.set_w_max_lim_pct_callback)(value, self.context);
     }
 
     /// WMaxLimPct_WinTms
     ///
     /// Time window for power limit change.
     fn w_max_lim_pct_win_tms(&self) -> Option<u16> {
-        self.w_max_lim_pct_win_tms_callback
-            .map(|callback| (callback)())
+        self.w_max_lim_pct_win_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// WMaxLimPct_WinTms
@@ -750,7 +789,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Time window for power limit change.
     fn set_w_max_lim_pct_win_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_w_max_lim_pct_win_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -758,8 +797,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Timeout period for power limit.
     fn w_max_lim_pct_rvrt_tms(&self) -> Option<u16> {
-        self.w_max_lim_pct_rvrt_tms_callback
-            .map(|callback| (callback)())
+        self.w_max_lim_pct_rvrt_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// WMaxLimPct_RvrtTms
@@ -767,7 +807,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Timeout period for power limit.
     fn set_w_max_lim_pct_rvrt_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_w_max_lim_pct_rvrt_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -775,8 +815,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Ramp time for moving from current setpoint to new setpoint.
     fn w_max_lim_pct_rmp_tms(&self) -> Option<u16> {
-        self.w_max_lim_pct_rmp_tms_callback
-            .map(|callback| (callback)())
+        self.w_max_lim_pct_rmp_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// WMaxLimPct_RmpTms
@@ -784,7 +825,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Ramp time for moving from current setpoint to new setpoint.
     fn set_w_max_lim_pct_rmp_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_w_max_lim_pct_rmp_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -792,36 +833,37 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Throttle enable/disable control.
     fn w_max_lim_ena(&self) -> WMaxLimEna {
-        (self.w_max_lim_ena_callback)()
+        (self.w_max_lim_ena_callback)(self.context)
     }
 
     /// WMaxLim_Ena
     ///
     /// Throttle enable/disable control.
     fn set_w_max_lim_ena(&mut self, value: WMaxLimEna) {
-        (self.set_w_max_lim_ena_callback)(value);
+        (self.set_w_max_lim_ena_callback)(value, self.context);
     }
 
     /// OutPFSet
     ///
     /// Set power factor to specific value - cosine of angle.
     fn out_pf_set(&self) -> i16 {
-        (self.out_pf_set_callback)()
+        (self.out_pf_set_callback)(self.context)
     }
 
     /// OutPFSet
     ///
     /// Set power factor to specific value - cosine of angle.
     fn set_out_pf_set(&mut self, value: i16) {
-        (self.set_out_pf_set_callback)(value);
+        (self.set_out_pf_set_callback)(value, self.context);
     }
 
     /// OutPFSet_WinTms
     ///
     /// Time window for power factor change.
     fn out_pf_set_win_tms(&self) -> Option<u16> {
-        self.out_pf_set_win_tms_callback
-            .map(|callback| (callback)())
+        self.out_pf_set_win_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// OutPFSet_WinTms
@@ -829,7 +871,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Time window for power factor change.
     fn set_out_pf_set_win_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_out_pf_set_win_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -837,8 +879,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Timeout period for power factor.
     fn out_pf_set_rvrt_tms(&self) -> Option<u16> {
-        self.out_pf_set_rvrt_tms_callback
-            .map(|callback| (callback)())
+        self.out_pf_set_rvrt_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// OutPFSet_RvrtTms
@@ -846,7 +889,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Timeout period for power factor.
     fn set_out_pf_set_rvrt_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_out_pf_set_rvrt_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -854,8 +897,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Ramp time for moving from current setpoint to new setpoint.
     fn out_pf_set_rmp_tms(&self) -> Option<u16> {
-        self.out_pf_set_rmp_tms_callback
-            .map(|callback| (callback)())
+        self.out_pf_set_rmp_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// OutPFSet_RmpTms
@@ -863,7 +907,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Ramp time for moving from current setpoint to new setpoint.
     fn set_out_pf_set_rmp_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_out_pf_set_rmp_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -871,21 +915,23 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Fixed power factor enable/disable control.
     fn out_pf_set_ena(&self) -> OutPfSetEna {
-        (self.out_pf_set_ena_callback)()
+        (self.out_pf_set_ena_callback)(self.context)
     }
 
     /// OutPFSet_Ena
     ///
     /// Fixed power factor enable/disable control.
     fn set_out_pf_set_ena(&mut self, value: OutPfSetEna) {
-        (self.set_out_pf_set_ena_callback)(value);
+        (self.set_out_pf_set_ena_callback)(value, self.context);
     }
 
     /// VArWMaxPct
     ///
     /// Reactive power in percent of WMax.
     fn v_ar_w_max_pct(&self) -> Option<i16> {
-        self.v_ar_w_max_pct_callback.map(|callback| (callback)())
+        self.v_ar_w_max_pct_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArWMaxPct
@@ -893,7 +939,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Reactive power in percent of WMax.
     fn set_v_ar_w_max_pct(&mut self, value: i16) {
         if let Some(callback) = self.set_v_ar_w_max_pct_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -901,7 +947,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Reactive power in percent of VArMax.
     fn v_ar_max_pct(&self) -> Option<i16> {
-        self.v_ar_max_pct_callback.map(|callback| (callback)())
+        self.v_ar_max_pct_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArMaxPct
@@ -909,7 +957,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Reactive power in percent of VArMax.
     fn set_v_ar_max_pct(&mut self, value: i16) {
         if let Some(callback) = self.set_v_ar_max_pct_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -917,7 +965,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Reactive power in percent of VArAval.
     fn v_ar_aval_pct(&self) -> Option<i16> {
-        self.v_ar_aval_pct_callback.map(|callback| (callback)())
+        self.v_ar_aval_pct_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArAvalPct
@@ -925,7 +975,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Reactive power in percent of VArAval.
     fn set_v_ar_aval_pct(&mut self, value: i16) {
         if let Some(callback) = self.set_v_ar_aval_pct_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -933,7 +983,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Time window for VAR limit change.
     fn v_ar_pct_win_tms(&self) -> Option<u16> {
-        self.v_ar_pct_win_tms_callback.map(|callback| (callback)())
+        self.v_ar_pct_win_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArPct_WinTms
@@ -941,7 +993,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Time window for VAR limit change.
     fn set_v_ar_pct_win_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_v_ar_pct_win_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -949,7 +1001,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Timeout period for VAR limit.
     fn v_ar_pct_rvrt_tms(&self) -> Option<u16> {
-        self.v_ar_pct_rvrt_tms_callback.map(|callback| (callback)())
+        self.v_ar_pct_rvrt_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArPct_RvrtTms
@@ -957,7 +1011,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Timeout period for VAR limit.
     fn set_v_ar_pct_rvrt_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_v_ar_pct_rvrt_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -965,7 +1019,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Ramp time for moving from current setpoint to new setpoint.
     fn v_ar_pct_rmp_tms(&self) -> Option<u16> {
-        self.v_ar_pct_rmp_tms_callback.map(|callback| (callback)())
+        self.v_ar_pct_rmp_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArPct_RmpTms
@@ -973,7 +1029,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// Ramp time for moving from current setpoint to new setpoint.
     fn set_v_ar_pct_rmp_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_v_ar_pct_rmp_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -981,7 +1037,9 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// VAR percent limit mode.
     fn v_ar_pct_mod(&self) -> Option<VArPctMod> {
-        self.v_ar_pct_mod_callback.map(|callback| (callback)())
+        self.v_ar_pct_mod_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VArPct_Mod
@@ -989,7 +1047,7 @@ impl ModelAdapter for Model123CallbackAdapter {
     /// VAR percent limit mode.
     fn set_v_ar_pct_mod(&mut self, value: VArPctMod) {
         if let Some(callback) = self.set_v_ar_pct_mod_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -997,34 +1055,413 @@ impl ModelAdapter for Model123CallbackAdapter {
     ///
     /// Percent limit VAr enable/disable control.
     fn v_ar_pct_ena(&self) -> VArPctEna {
-        (self.v_ar_pct_ena_callback)()
+        (self.v_ar_pct_ena_callback)(self.context)
     }
 
     /// VArPct_Ena
     ///
     /// Percent limit VAr enable/disable control.
     fn set_v_ar_pct_ena(&mut self, value: VArPctEna) {
-        (self.set_v_ar_pct_ena_callback)(value);
+        (self.set_v_ar_pct_ena_callback)(value, self.context);
     }
 
     /// WMaxLimPct_SF
     ///
     /// Scale factor for power output percent.
     fn w_max_lim_pct_sf(&self) -> u16 {
-        (self.w_max_lim_pct_sf_callback)()
+        (self.w_max_lim_pct_sf_callback)(self.context)
     }
 
     /// OutPFSet_SF
     ///
     /// Scale factor for power factor.
     fn out_pf_set_sf(&self) -> u16 {
-        (self.out_pf_set_sf_callback)()
+        (self.out_pf_set_sf_callback)(self.context)
     }
 
     /// VArPct_SF
     ///
     /// Scale factor for reactive power percent.
     fn v_ar_pct_sf(&self) -> Option<u16> {
-        self.v_ar_pct_sf_callback.map(|callback| (callback)())
+        self.v_ar_pct_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model123StatefulAdapter {
+    conn_win_tms: u16,
+    conn_rvrt_tms: u16,
+    conn: Conn,
+    w_max_lim_pct: u16,
+    w_max_lim_pct_win_tms: u16,
+    w_max_lim_pct_rvrt_tms: u16,
+    w_max_lim_pct_rmp_tms: u16,
+    w_max_lim_ena: WMaxLimEna,
+    out_pf_set: i16,
+    out_pf_set_win_tms: u16,
+    out_pf_set_rvrt_tms: u16,
+    out_pf_set_rmp_tms: u16,
+    out_pf_set_ena: OutPfSetEna,
+    v_ar_w_max_pct: i16,
+    v_ar_max_pct: i16,
+    v_ar_aval_pct: i16,
+    v_ar_pct_win_tms: u16,
+    v_ar_pct_rvrt_tms: u16,
+    v_ar_pct_rmp_tms: u16,
+    v_ar_pct_mod: VArPctMod,
+    v_ar_pct_ena: VArPctEna,
+    w_max_lim_pct_sf: u16,
+    out_pf_set_sf: u16,
+    v_ar_pct_sf: u16,
+}
+
+impl ModelAdapter for Model123StatefulAdapter {
+    /// Conn_WinTms
+    ///
+    /// Time window for connect/disconnect.
+    fn conn_win_tms(&self) -> Option<u16> {
+        Some(
+        self.conn_win_tms
+        )
+    }
+
+    /// Conn_WinTms
+    ///
+    /// Time window for connect/disconnect.
+    fn set_conn_win_tms(&mut self, value: u16) {
+        self.conn_win_tms = value;
+    }
+
+    /// Conn_RvrtTms
+    ///
+    /// Timeout period for connect/disconnect.
+    fn conn_rvrt_tms(&self) -> Option<u16> {
+        Some(
+        self.conn_rvrt_tms
+        )
+    }
+
+    /// Conn_RvrtTms
+    ///
+    /// Timeout period for connect/disconnect.
+    fn set_conn_rvrt_tms(&mut self, value: u16) {
+        self.conn_rvrt_tms = value;
+    }
+
+    /// Conn
+    ///
+    /// Connection control.
+    fn conn(&self) -> Conn {
+        self.conn
+    }
+
+    /// Conn
+    ///
+    /// Connection control.
+    fn set_conn(&mut self, value: Conn) {
+        self.conn = value;
+    }
+
+    /// WMaxLimPct
+    ///
+    /// Set power output to specified level.
+    fn w_max_lim_pct(&self) -> u16 {
+        self.w_max_lim_pct
+    }
+
+    /// WMaxLimPct
+    ///
+    /// Set power output to specified level.
+    fn set_w_max_lim_pct(&mut self, value: u16) {
+        self.w_max_lim_pct = value;
+    }
+
+    /// WMaxLimPct_WinTms
+    ///
+    /// Time window for power limit change.
+    fn w_max_lim_pct_win_tms(&self) -> Option<u16> {
+        Some(
+        self.w_max_lim_pct_win_tms
+        )
+    }
+
+    /// WMaxLimPct_WinTms
+    ///
+    /// Time window for power limit change.
+    fn set_w_max_lim_pct_win_tms(&mut self, value: u16) {
+        self.w_max_lim_pct_win_tms = value;
+    }
+
+    /// WMaxLimPct_RvrtTms
+    ///
+    /// Timeout period for power limit.
+    fn w_max_lim_pct_rvrt_tms(&self) -> Option<u16> {
+        Some(
+        self.w_max_lim_pct_rvrt_tms
+        )
+    }
+
+    /// WMaxLimPct_RvrtTms
+    ///
+    /// Timeout period for power limit.
+    fn set_w_max_lim_pct_rvrt_tms(&mut self, value: u16) {
+        self.w_max_lim_pct_rvrt_tms = value;
+    }
+
+    /// WMaxLimPct_RmpTms
+    ///
+    /// Ramp time for moving from current setpoint to new setpoint.
+    fn w_max_lim_pct_rmp_tms(&self) -> Option<u16> {
+        Some(
+        self.w_max_lim_pct_rmp_tms
+        )
+    }
+
+    /// WMaxLimPct_RmpTms
+    ///
+    /// Ramp time for moving from current setpoint to new setpoint.
+    fn set_w_max_lim_pct_rmp_tms(&mut self, value: u16) {
+        self.w_max_lim_pct_rmp_tms = value;
+    }
+
+    /// WMaxLim_Ena
+    ///
+    /// Throttle enable/disable control.
+    fn w_max_lim_ena(&self) -> WMaxLimEna {
+        self.w_max_lim_ena
+    }
+
+    /// WMaxLim_Ena
+    ///
+    /// Throttle enable/disable control.
+    fn set_w_max_lim_ena(&mut self, value: WMaxLimEna) {
+        self.w_max_lim_ena = value;
+    }
+
+    /// OutPFSet
+    ///
+    /// Set power factor to specific value - cosine of angle.
+    fn out_pf_set(&self) -> i16 {
+        self.out_pf_set
+    }
+
+    /// OutPFSet
+    ///
+    /// Set power factor to specific value - cosine of angle.
+    fn set_out_pf_set(&mut self, value: i16) {
+        self.out_pf_set = value;
+    }
+
+    /// OutPFSet_WinTms
+    ///
+    /// Time window for power factor change.
+    fn out_pf_set_win_tms(&self) -> Option<u16> {
+        Some(
+        self.out_pf_set_win_tms
+        )
+    }
+
+    /// OutPFSet_WinTms
+    ///
+    /// Time window for power factor change.
+    fn set_out_pf_set_win_tms(&mut self, value: u16) {
+        self.out_pf_set_win_tms = value;
+    }
+
+    /// OutPFSet_RvrtTms
+    ///
+    /// Timeout period for power factor.
+    fn out_pf_set_rvrt_tms(&self) -> Option<u16> {
+        Some(
+        self.out_pf_set_rvrt_tms
+        )
+    }
+
+    /// OutPFSet_RvrtTms
+    ///
+    /// Timeout period for power factor.
+    fn set_out_pf_set_rvrt_tms(&mut self, value: u16) {
+        self.out_pf_set_rvrt_tms = value;
+    }
+
+    /// OutPFSet_RmpTms
+    ///
+    /// Ramp time for moving from current setpoint to new setpoint.
+    fn out_pf_set_rmp_tms(&self) -> Option<u16> {
+        Some(
+        self.out_pf_set_rmp_tms
+        )
+    }
+
+    /// OutPFSet_RmpTms
+    ///
+    /// Ramp time for moving from current setpoint to new setpoint.
+    fn set_out_pf_set_rmp_tms(&mut self, value: u16) {
+        self.out_pf_set_rmp_tms = value;
+    }
+
+    /// OutPFSet_Ena
+    ///
+    /// Fixed power factor enable/disable control.
+    fn out_pf_set_ena(&self) -> OutPfSetEna {
+        self.out_pf_set_ena
+    }
+
+    /// OutPFSet_Ena
+    ///
+    /// Fixed power factor enable/disable control.
+    fn set_out_pf_set_ena(&mut self, value: OutPfSetEna) {
+        self.out_pf_set_ena = value;
+    }
+
+    /// VArWMaxPct
+    ///
+    /// Reactive power in percent of WMax.
+    fn v_ar_w_max_pct(&self) -> Option<i16> {
+        Some(
+        self.v_ar_w_max_pct
+        )
+    }
+
+    /// VArWMaxPct
+    ///
+    /// Reactive power in percent of WMax.
+    fn set_v_ar_w_max_pct(&mut self, value: i16) {
+        self.v_ar_w_max_pct = value;
+    }
+
+    /// VArMaxPct
+    ///
+    /// Reactive power in percent of VArMax.
+    fn v_ar_max_pct(&self) -> Option<i16> {
+        Some(
+        self.v_ar_max_pct
+        )
+    }
+
+    /// VArMaxPct
+    ///
+    /// Reactive power in percent of VArMax.
+    fn set_v_ar_max_pct(&mut self, value: i16) {
+        self.v_ar_max_pct = value;
+    }
+
+    /// VArAvalPct
+    ///
+    /// Reactive power in percent of VArAval.
+    fn v_ar_aval_pct(&self) -> Option<i16> {
+        Some(
+        self.v_ar_aval_pct
+        )
+    }
+
+    /// VArAvalPct
+    ///
+    /// Reactive power in percent of VArAval.
+    fn set_v_ar_aval_pct(&mut self, value: i16) {
+        self.v_ar_aval_pct = value;
+    }
+
+    /// VArPct_WinTms
+    ///
+    /// Time window for VAR limit change.
+    fn v_ar_pct_win_tms(&self) -> Option<u16> {
+        Some(
+        self.v_ar_pct_win_tms
+        )
+    }
+
+    /// VArPct_WinTms
+    ///
+    /// Time window for VAR limit change.
+    fn set_v_ar_pct_win_tms(&mut self, value: u16) {
+        self.v_ar_pct_win_tms = value;
+    }
+
+    /// VArPct_RvrtTms
+    ///
+    /// Timeout period for VAR limit.
+    fn v_ar_pct_rvrt_tms(&self) -> Option<u16> {
+        Some(
+        self.v_ar_pct_rvrt_tms
+        )
+    }
+
+    /// VArPct_RvrtTms
+    ///
+    /// Timeout period for VAR limit.
+    fn set_v_ar_pct_rvrt_tms(&mut self, value: u16) {
+        self.v_ar_pct_rvrt_tms = value;
+    }
+
+    /// VArPct_RmpTms
+    ///
+    /// Ramp time for moving from current setpoint to new setpoint.
+    fn v_ar_pct_rmp_tms(&self) -> Option<u16> {
+        Some(
+        self.v_ar_pct_rmp_tms
+        )
+    }
+
+    /// VArPct_RmpTms
+    ///
+    /// Ramp time for moving from current setpoint to new setpoint.
+    fn set_v_ar_pct_rmp_tms(&mut self, value: u16) {
+        self.v_ar_pct_rmp_tms = value;
+    }
+
+    /// VArPct_Mod
+    ///
+    /// VAR percent limit mode.
+    fn v_ar_pct_mod(&self) -> Option<VArPctMod> {
+        Some(
+        self.v_ar_pct_mod
+        )
+    }
+
+    /// VArPct_Mod
+    ///
+    /// VAR percent limit mode.
+    fn set_v_ar_pct_mod(&mut self, value: VArPctMod) {
+        self.v_ar_pct_mod = value;
+    }
+
+    /// VArPct_Ena
+    ///
+    /// Percent limit VAr enable/disable control.
+    fn v_ar_pct_ena(&self) -> VArPctEna {
+        self.v_ar_pct_ena
+    }
+
+    /// VArPct_Ena
+    ///
+    /// Percent limit VAr enable/disable control.
+    fn set_v_ar_pct_ena(&mut self, value: VArPctEna) {
+        self.v_ar_pct_ena = value;
+    }
+
+    /// WMaxLimPct_SF
+    ///
+    /// Scale factor for power output percent.
+    fn w_max_lim_pct_sf(&self) -> u16 {
+        self.w_max_lim_pct_sf
+    }
+
+    /// OutPFSet_SF
+    ///
+    /// Scale factor for power factor.
+    fn out_pf_set_sf(&self) -> u16 {
+        self.out_pf_set_sf
+    }
+
+    /// VArPct_SF
+    ///
+    /// Scale factor for reactive power percent.
+    fn v_ar_pct_sf(&self) -> Option<u16> {
+        Some(
+        self.v_ar_pct_sf
+        )
     }
 }

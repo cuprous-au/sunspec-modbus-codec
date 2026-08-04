@@ -1,7 +1,7 @@
+use core::ffi::{CStr, c_char, c_void};
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, CStr};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 54;
 
@@ -25,41 +25,31 @@ pub static POINTS: [ReadablePoint; 13] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Config,
-        },
+        reference: PointReference::Model16 { point: Point::Config },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Control,
-        },
+        reference: PointReference::Model16 { point: Point::Control },
         size: 1,
         data_type: PointType::Bitfield16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Address,
-        },
+        reference: PointReference::Model16 { point: Point::Address },
         size: 8,
         data_type: PointType::String,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Netmask,
-        },
+        reference: PointReference::Model16 { point: Point::Netmask },
         size: 8,
         data_type: PointType::String,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Gateway,
-        },
+        reference: PointReference::Model16 { point: Point::Gateway },
         size: 8,
         data_type: PointType::String,
         writeable: true,
@@ -83,9 +73,7 @@ pub static POINTS: [ReadablePoint; 13] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::LinkControl,
-        },
+        reference: PointReference::Model16 { point: Point::LinkControl },
         size: 1,
         data_type: PointType::Bitfield16,
         writeable: true,
@@ -112,46 +100,66 @@ pub enum Point {
     LinkControl,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::Name => {
             if let Some(value) = model.name() {
                 serialisation::write_string(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::Config => serialisation::write_u16(model.config() as u16, buffer),
-        Point::Control => serialisation::write_u16(model.control(), buffer),
-        Point::Address => serialisation::write_string(model.address(), buffer, offset, limit),
-        Point::Netmask => serialisation::write_string(model.netmask(), buffer, offset, limit),
+        Point::Config => {
+            serialisation::write_u16(model.config() as u16, buffer);
+        },
+        Point::Control => {
+            serialisation::write_u16(model.control(), buffer);
+        },
+        Point::Address => {
+            serialisation::write_string(model.address(), buffer, offset, limit);
+        },
+        Point::Netmask => {
+            serialisation::write_string(model.netmask(), buffer, offset, limit);
+        },
         Point::Gateway => {
             if let Some(value) = model.gateway() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::Dns1 => {
             if let Some(value) = model.dns1() {
                 serialisation::write_string(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::Dns2 => {
             if let Some(value) = model.dns2() {
                 serialisation::write_string(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::Mac => {
             if let Some(value) = model.mac() {
                 serialisation::write_eui48(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::LinkControl => {
             if let Some(value) = model.link_control() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -168,7 +176,8 @@ pub trait ModelAdapter {
     /// Name
     ///
     /// Interface name. (8 chars)
-    fn set_name(&mut self, value: &CStr) {}
+    fn set_name(&mut self, value: &CStr) {
+    }
 
     /// Config
     ///
@@ -215,7 +224,8 @@ pub trait ModelAdapter {
     /// Gateway
     ///
     /// Gateway IP address
-    fn set_gateway(&mut self, value: &CStr) {}
+    fn set_gateway(&mut self, value: &CStr) {
+    }
 
     /// DNS1
     ///
@@ -227,7 +237,8 @@ pub trait ModelAdapter {
     /// DNS1
     ///
     /// 32 bit IP address of DNS server
-    fn set_dns1(&mut self, value: &CStr) {}
+    fn set_dns1(&mut self, value: &CStr) {
+    }
 
     /// DNS2
     ///
@@ -239,7 +250,8 @@ pub trait ModelAdapter {
     /// DNS2
     ///
     /// 32 bit IP address of DNS server
-    fn set_dns2(&mut self, value: &CStr) {}
+    fn set_dns2(&mut self, value: &CStr) {
+    }
 
     /// MAC
     ///
@@ -258,9 +270,11 @@ pub trait ModelAdapter {
     /// Link Control
     ///
     /// Link control flags
-    fn set_link_control(&mut self, value: u16) {}
+    fn set_link_control(&mut self, value: u16) {
+    }
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum Cfg {
     Static = 0,
@@ -269,24 +283,25 @@ pub enum Cfg {
 
 #[repr(C)]
 pub struct Model16CallbackAdapter {
-    name_callback: Option<extern "C" fn() -> *const c_char>,
-    set_name_callback: Option<extern "C" fn(*const c_char)>,
-    config_callback: extern "C" fn() -> Cfg,
-    control_callback: extern "C" fn() -> u16,
-    set_control_callback: extern "C" fn(u16),
-    address_callback: extern "C" fn() -> *const c_char,
-    set_address_callback: extern "C" fn(*const c_char),
-    netmask_callback: extern "C" fn() -> *const c_char,
-    set_netmask_callback: extern "C" fn(*const c_char),
-    gateway_callback: Option<extern "C" fn() -> *const c_char>,
-    set_gateway_callback: Option<extern "C" fn(*const c_char)>,
-    dns1_callback: Option<extern "C" fn() -> *const c_char>,
-    set_dns1_callback: Option<extern "C" fn(*const c_char)>,
-    dns2_callback: Option<extern "C" fn() -> *const c_char>,
-    set_dns2_callback: Option<extern "C" fn(*const c_char)>,
-    mac_callback: Option<extern "C" fn() -> *const u8>,
-    link_control_callback: Option<extern "C" fn() -> u16>,
-    set_link_control_callback: Option<extern "C" fn(u16)>,
+    context: *mut c_void,
+    name_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    set_name_callback: Option<extern "C" fn(*const c_char, *mut c_void)>,
+    config_callback: extern "C" fn(*const c_void) -> Cfg,
+    control_callback: extern "C" fn(*const c_void) -> u16,
+    set_control_callback: extern "C" fn(u16, *mut c_void),
+    address_callback: extern "C" fn(*const c_void) -> *const c_char,
+    set_address_callback: extern "C" fn(*const c_char, *mut c_void),
+    netmask_callback: extern "C" fn(*const c_void) -> *const c_char,
+    set_netmask_callback: extern "C" fn(*const c_char, *mut c_void),
+    gateway_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    set_gateway_callback: Option<extern "C" fn(*const c_char, *mut c_void)>,
+    dns1_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    set_dns1_callback: Option<extern "C" fn(*const c_char, *mut c_void)>,
+    dns2_callback: Option<extern "C" fn(*const c_void) -> *const c_char>,
+    set_dns2_callback: Option<extern "C" fn(*const c_char, *mut c_void)>,
+    mac_callback: Option<extern "C" fn(*const c_void) -> *const u8>,
+    link_control_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_link_control_callback: Option<extern "C" fn(u16, *mut c_void)>,
 }
 
 impl ModelAdapter for Model16CallbackAdapter {
@@ -294,8 +309,9 @@ impl ModelAdapter for Model16CallbackAdapter {
     ///
     /// Interface name. (8 chars)
     fn name(&self) -> Option<&CStr> {
-        self.name_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.name_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Name
@@ -303,7 +319,7 @@ impl ModelAdapter for Model16CallbackAdapter {
     /// Interface name. (8 chars)
     fn set_name(&mut self, value: &CStr) {
         if let Some(callback) = self.set_name_callback {
-            (callback)(value.as_ptr());
+        (callback)(value.as_ptr(), self.context);
         };
     }
 
@@ -311,57 +327,58 @@ impl ModelAdapter for Model16CallbackAdapter {
     ///
     /// Force IPv4 configuration method
     fn config(&self) -> Cfg {
-        (self.config_callback)()
+        (self.config_callback)(self.context)
     }
 
     /// Control
     ///
     /// Configure use of services
     fn control(&self) -> u16 {
-        (self.control_callback)()
+        (self.control_callback)(self.context)
     }
 
     /// Control
     ///
     /// Configure use of services
     fn set_control(&mut self, value: u16) {
-        (self.set_control_callback)(value);
+        (self.set_control_callback)(value, self.context);
     }
 
     /// Address
     ///
     /// IP address
     fn address(&self) -> &CStr {
-        unsafe { CStr::from_ptr((self.address_callback)()) }
+        unsafe { CStr::from_ptr((self.address_callback)(self.context)) }
     }
 
     /// Address
     ///
     /// IP address
     fn set_address(&mut self, value: &CStr) {
-        (self.set_address_callback)(value.as_ptr());
+        (self.set_address_callback)(value.as_ptr(), self.context);
     }
 
     /// Netmask
     ///
     /// Netmask
     fn netmask(&self) -> &CStr {
-        unsafe { CStr::from_ptr((self.netmask_callback)()) }
+        unsafe { CStr::from_ptr((self.netmask_callback)(self.context)) }
     }
 
     /// Netmask
     ///
     /// Netmask
     fn set_netmask(&mut self, value: &CStr) {
-        (self.set_netmask_callback)(value.as_ptr());
+        (self.set_netmask_callback)(value.as_ptr(), self.context);
     }
 
     /// Gateway
     ///
     /// Gateway IP address
     fn gateway(&self) -> Option<&CStr> {
-        self.gateway_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.gateway_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// Gateway
@@ -369,7 +386,7 @@ impl ModelAdapter for Model16CallbackAdapter {
     /// Gateway IP address
     fn set_gateway(&mut self, value: &CStr) {
         if let Some(callback) = self.set_gateway_callback {
-            (callback)(value.as_ptr());
+        (callback)(value.as_ptr(), self.context);
         };
     }
 
@@ -377,8 +394,9 @@ impl ModelAdapter for Model16CallbackAdapter {
     ///
     /// 32 bit IP address of DNS server
     fn dns1(&self) -> Option<&CStr> {
-        self.dns1_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.dns1_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// DNS1
@@ -386,7 +404,7 @@ impl ModelAdapter for Model16CallbackAdapter {
     /// 32 bit IP address of DNS server
     fn set_dns1(&mut self, value: &CStr) {
         if let Some(callback) = self.set_dns1_callback {
-            (callback)(value.as_ptr());
+        (callback)(value.as_ptr(), self.context);
         };
     }
 
@@ -394,8 +412,9 @@ impl ModelAdapter for Model16CallbackAdapter {
     ///
     /// 32 bit IP address of DNS server
     fn dns2(&self) -> Option<&CStr> {
-        self.dns2_callback
-            .map(|callback| unsafe { CStr::from_ptr((callback)()) })
+        self.dns2_callback.map(|callback| {
+        unsafe { CStr::from_ptr((callback)(self.context)) }
+        })
     }
 
     /// DNS2
@@ -403,7 +422,7 @@ impl ModelAdapter for Model16CallbackAdapter {
     /// 32 bit IP address of DNS server
     fn set_dns2(&mut self, value: &CStr) {
         if let Some(callback) = self.set_dns2_callback {
-            (callback)(value.as_ptr());
+        (callback)(value.as_ptr(), self.context);
         };
     }
 
@@ -411,15 +430,18 @@ impl ModelAdapter for Model16CallbackAdapter {
     ///
     /// IEEE MAC address of this interface
     fn mac(&self) -> Option<&[u8; 6]> {
-        self.mac_callback
-            .map(|callback| unsafe { &*((callback)() as *const [u8; 6]) })
+        self.mac_callback.map(|callback| {
+        unsafe { &*((callback)(self.context) as *const [u8; 6]) }
+        })
     }
 
     /// Link Control
     ///
     /// Link control flags
     fn link_control(&self) -> Option<u16> {
-        self.link_control_callback.map(|callback| (callback)())
+        self.link_control_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Link Control
@@ -427,7 +449,173 @@ impl ModelAdapter for Model16CallbackAdapter {
     /// Link control flags
     fn set_link_control(&mut self, value: u16) {
         if let Some(callback) = self.set_link_control_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
+    }
+}
+
+#[repr(C)]
+pub struct Model16StatefulAdapter {
+    name: [c_char; 8],
+    config: Cfg,
+    control: u16,
+    address: [c_char; 16],
+    netmask: [c_char; 16],
+    gateway: [c_char; 16],
+    dns1: [c_char; 16],
+    dns2: [c_char; 16],
+    mac: [u8; 6],
+    link_control: u16,
+}
+
+impl ModelAdapter for Model16StatefulAdapter {
+    /// Name
+    ///
+    /// Interface name. (8 chars)
+    fn name(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.name.as_ptr()) }
+        )
+    }
+
+    /// Name
+    ///
+    /// Interface name. (8 chars)
+    fn set_name(&mut self, value: &CStr) {
+        for (dest, src) in self.name.iter_mut().zip(value.to_bytes_with_nul().iter()) {
+            *dest = *src as c_char;
+        }
+    }
+
+    /// Config
+    ///
+    /// Force IPv4 configuration method
+    fn config(&self) -> Cfg {
+        self.config
+    }
+
+    /// Control
+    ///
+    /// Configure use of services
+    fn control(&self) -> u16 {
+        self.control
+    }
+
+    /// Control
+    ///
+    /// Configure use of services
+    fn set_control(&mut self, value: u16) {
+        self.control = value;
+    }
+
+    /// Address
+    ///
+    /// IP address
+    fn address(&self) -> &CStr {
+        unsafe { CStr::from_ptr(self.address.as_ptr()) }
+    }
+
+    /// Address
+    ///
+    /// IP address
+    fn set_address(&mut self, value: &CStr) {
+        for (dest, src) in self.address.iter_mut().zip(value.to_bytes_with_nul().iter()) {
+            *dest = *src as c_char;
+        }
+    }
+
+    /// Netmask
+    ///
+    /// Netmask
+    fn netmask(&self) -> &CStr {
+        unsafe { CStr::from_ptr(self.netmask.as_ptr()) }
+    }
+
+    /// Netmask
+    ///
+    /// Netmask
+    fn set_netmask(&mut self, value: &CStr) {
+        for (dest, src) in self.netmask.iter_mut().zip(value.to_bytes_with_nul().iter()) {
+            *dest = *src as c_char;
+        }
+    }
+
+    /// Gateway
+    ///
+    /// Gateway IP address
+    fn gateway(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.gateway.as_ptr()) }
+        )
+    }
+
+    /// Gateway
+    ///
+    /// Gateway IP address
+    fn set_gateway(&mut self, value: &CStr) {
+        for (dest, src) in self.gateway.iter_mut().zip(value.to_bytes_with_nul().iter()) {
+            *dest = *src as c_char;
+        }
+    }
+
+    /// DNS1
+    ///
+    /// 32 bit IP address of DNS server
+    fn dns1(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.dns1.as_ptr()) }
+        )
+    }
+
+    /// DNS1
+    ///
+    /// 32 bit IP address of DNS server
+    fn set_dns1(&mut self, value: &CStr) {
+        for (dest, src) in self.dns1.iter_mut().zip(value.to_bytes_with_nul().iter()) {
+            *dest = *src as c_char;
+        }
+    }
+
+    /// DNS2
+    ///
+    /// 32 bit IP address of DNS server
+    fn dns2(&self) -> Option<&CStr> {
+        Some(
+        unsafe { CStr::from_ptr(self.dns2.as_ptr()) }
+        )
+    }
+
+    /// DNS2
+    ///
+    /// 32 bit IP address of DNS server
+    fn set_dns2(&mut self, value: &CStr) {
+        for (dest, src) in self.dns2.iter_mut().zip(value.to_bytes_with_nul().iter()) {
+            *dest = *src as c_char;
+        }
+    }
+
+    /// MAC
+    ///
+    /// IEEE MAC address of this interface
+    fn mac(&self) -> Option<&[u8; 6]> {
+        Some(
+        unsafe { &*(self.mac.as_ptr() as *const [u8; 6]) }
+        )
+    }
+
+    /// Link Control
+    ///
+    /// Link control flags
+    fn link_control(&self) -> Option<u16> {
+        Some(
+        self.link_control
+        )
+    }
+
+    /// Link Control
+    ///
+    /// Link control flags
+    fn set_link_control(&mut self, value: u16) {
+        self.link_control = value;
     }
 }

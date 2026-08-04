@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 5;
 
@@ -18,25 +19,19 @@ pub static POINTS: [ReadablePoint; 5] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::IvLength,
-        },
+        reference: PointReference::Model64413 { point: Point::IvLength },
         size: 1,
         data_type: PointType::Count,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::PoaIrradiance,
-        },
+        reference: PointReference::Model64413 { point: Point::PoaIrradiance },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::IrrSf,
-        },
+        reference: PointReference::Model64413 { point: Point::IrrSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -50,27 +45,30 @@ pub enum Point {
     IrrSf,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::IvLength => {
             if let Some(value) = model.iv_length() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::PoaIrradiance => {
             if let Some(value) = model.poa_irradiance() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::IrrSf => {
             if let Some(value) = model.irr_sf() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -98,9 +96,10 @@ pub trait ModelAdapter {
 
 #[repr(C)]
 pub struct Model64413CallbackAdapter {
-    iv_length_callback: Option<extern "C" fn() -> u16>,
-    poa_irradiance_callback: Option<extern "C" fn() -> u16>,
-    irr_sf_callback: Option<extern "C" fn() -> u16>,
+    context: *mut c_void,
+    iv_length_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    poa_irradiance_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    irr_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
 }
 
 impl ModelAdapter for Model64413CallbackAdapter {
@@ -108,17 +107,56 @@ impl ModelAdapter for Model64413CallbackAdapter {
     ///
     /// Number of points in the IV curve.
     fn iv_length(&self) -> Option<u16> {
-        self.iv_length_callback.map(|callback| (callback)())
+        self.iv_length_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// POA Irradiance
     ///
     /// Plane of Array Irradiance
     fn poa_irradiance(&self) -> Option<u16> {
-        self.poa_irradiance_callback.map(|callback| (callback)())
+        self.poa_irradiance_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn irr_sf(&self) -> Option<u16> {
-        self.irr_sf_callback.map(|callback| (callback)())
+        self.irr_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model64413StatefulAdapter {
+    iv_length: u16,
+    poa_irradiance: u16,
+    irr_sf: u16,
+}
+
+impl ModelAdapter for Model64413StatefulAdapter {
+    /// IV length
+    ///
+    /// Number of points in the IV curve.
+    fn iv_length(&self) -> Option<u16> {
+        Some(
+        self.iv_length
+        )
+    }
+
+    /// POA Irradiance
+    ///
+    /// Plane of Array Irradiance
+    fn poa_irradiance(&self) -> Option<u16> {
+        Some(
+        self.poa_irradiance
+        )
+    }
+
+    fn irr_sf(&self) -> Option<u16> {
+        Some(
+        self.irr_sf
+        )
     }
 }

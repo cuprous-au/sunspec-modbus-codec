@@ -12,13 +12,6 @@ pub enum CodegenFeature {
 
 pub type DocLines = Vec<String>;
 
-fn cast_string_from_c(value: &str) -> String {
-    format!("unsafe {{ CStr::from_ptr({}) }}", value)
-}
-fn cast_eui48_from_c(value: &str) -> String {
-    format!("unsafe {{ &*({} as *const [u8; 6]) }}", value)
-}
-
 pub struct ResolvedType {
     pub raw_type: String,
     pub rust_type: String,
@@ -27,7 +20,8 @@ pub struct ResolvedType {
     pub writer_function_name: String,
     pub writer_allow_offset: bool,
     pub writer_value_cast: Option<String>,
-    pub cast_from_c: Option<fn(&str) -> String>
+    pub array_length: Option<i64>,
+    pub cast_from_c: Option<fn(&str) -> String>,
 }
 
 pub struct ResolvedPoint {
@@ -61,6 +55,17 @@ pub struct ResolvedModel {
     pub size: u16,
     pub features: HashSet<CodegenFeature>,
     pub doc: DocLines,
+    pub model_number: u16,
+}
+
+fn cast_string_from_c(value: &str) -> String {
+    format!("unsafe {{ CStr::from_ptr({}) }}", value)
+}
+fn cast_eui48_from_c(value: &str) -> String {
+    format!("unsafe {{ &*({} as *const [u8; 6]) }}", value)
+}
+fn cast_ipv6_from_c(value: &str) -> String {
+    format!("unsafe {{ &*({} as *const [u16; 8]) }}", value)
 }
 
 fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> ResolvedType {
@@ -86,14 +91,8 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
             features.insert(CodegenFeature::String);
             "string".to_string()
         }
-        PointType::Ipaddr => {
-            features.insert(CodegenFeature::Ipv4Addr);
-            "Ipv4Addr".to_string()
-        }
-        PointType::Ipv6addr => {
-            features.insert(CodegenFeature::Ipv6Addr);
-            "Ipv6Addr".to_string()
-        }
+        PointType::Ipaddr => "u32".to_string(),
+        PointType::Ipv6addr => "Ipv6Addr".to_string(),
         PointType::Eui48 => "eui48".to_string(),
     };
 
@@ -103,15 +102,24 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     let rust_type = match point.type_ {
         PointType::String => "&CStr".to_string(),
         PointType::Eui48 => "&[u8; 6]".to_string(),
+        PointType::Ipv6addr => "&[u16; 8]".to_string(),
         _ if is_enum => point.name.to_pascal_case(),
         _ => base_type.clone(),
     };
 
     let c_type = match point.type_ {
-        PointType::String => "*const c_char".to_string(),
-        PointType::Eui48 => "*const u8".to_string(),
+        PointType::String => "c_char".to_string(),
+        PointType::Eui48 => "u8".to_string(),
+        PointType::Ipv6addr => "u16".to_string(),
         _ if is_enum => point.name.to_pascal_case(),
         _ => base_type.clone(),
+    };
+
+    let array_length = match point.type_ {
+        PointType::String => Some(point.size * 2),
+        PointType::Eui48 => Some(6),
+        PointType::Ipv6addr => Some(8),
+        _ => None,
     };
 
     let writer_function_name = match point.type_ {
@@ -128,7 +136,8 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     let cast_from_c: Option<fn(&str) -> String> = match point.type_ {
         PointType::String => Some(cast_string_from_c),
         PointType::Eui48 => Some(cast_eui48_from_c),
-        _ => None
+        PointType::Ipv6addr => Some(cast_ipv6_from_c),
+        _ => None,
     };
 
     ResolvedType {
@@ -136,6 +145,7 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         rust_type,
         c_type,
         size: point.size as u16,
+        array_length,
         writer_function_name,
         writer_allow_offset,
         writer_value_cast,
@@ -149,7 +159,18 @@ pub fn resolve_point(
     model_size: u16,
 ) -> Option<ResolvedPoint> {
     let point_type = resolve_point_type(point, features);
-    let name = point.label.as_ref().unwrap_or(&point.name).to_string();
+
+    let name = point
+        .label
+        .clone()
+        .map(|label| {
+            if point.access == PointAccess::Rw && label.starts_with("Set ") {
+                label[4..].to_string()
+            } else {
+                label
+            }
+        })
+        .unwrap_or(point.name.clone());
 
     let doc = [
         point.label.as_ref(),
@@ -221,7 +242,8 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
 }
 
 pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
-    let mut features = HashSet::new();
+    let model_number: u16 = file_name[6..].parse().unwrap();
+    let mut features: HashSet<CodegenFeature> = HashSet::new();
 
     let model_size = model
         .group
@@ -249,6 +271,7 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
     .collect();
 
     ResolvedModel {
+        model_number,
         name_snake_case: file_name.to_snake_case(),
         name_pascal_case: file_name.to_pascal_case(),
         points,

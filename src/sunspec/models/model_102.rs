@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 52;
 
@@ -24,25 +25,19 @@ pub static POINTS: [ReadablePoint; 45] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::AmpsPhaseA,
-        },
+        reference: PointReference::Model102 { point: Point::AmpsPhaseA },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::AmpsPhaseB,
-        },
+        reference: PointReference::Model102 { point: Point::AmpsPhaseB },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::AmpsPhaseC,
-        },
+        reference: PointReference::Model102 { point: Point::AmpsPhaseC },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -54,49 +49,37 @@ pub static POINTS: [ReadablePoint; 45] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::PhaseVoltageAb,
-        },
+        reference: PointReference::Model102 { point: Point::PhaseVoltageAb },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::PhaseVoltageBc,
-        },
+        reference: PointReference::Model102 { point: Point::PhaseVoltageBc },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::PhaseVoltageCa,
-        },
+        reference: PointReference::Model102 { point: Point::PhaseVoltageCa },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::PhaseVoltageAn,
-        },
+        reference: PointReference::Model102 { point: Point::PhaseVoltageAn },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::PhaseVoltageBn,
-        },
+        reference: PointReference::Model102 { point: Point::PhaseVoltageBn },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::PhaseVoltageCn,
-        },
+        reference: PointReference::Model102 { point: Point::PhaseVoltageCn },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -108,9 +91,7 @@ pub static POINTS: [ReadablePoint; 45] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::Watts,
-        },
+        reference: PointReference::Model102 { point: Point::Watts },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
@@ -152,9 +133,7 @@ pub static POINTS: [ReadablePoint; 45] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::VArSf,
-        },
+        reference: PointReference::Model102 { point: Point::VArSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -172,9 +151,7 @@ pub static POINTS: [ReadablePoint; 45] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::WattHours,
-        },
+        reference: PointReference::Model102 { point: Point::WattHours },
         size: 2,
         data_type: PointType::Acc32,
         writeable: false,
@@ -186,153 +163,115 @@ pub static POINTS: [ReadablePoint; 45] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::DcAmps,
-        },
+        reference: PointReference::Model102 { point: Point::DcAmps },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::DcaSf,
-        },
+        reference: PointReference::Model102 { point: Point::DcaSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::DcVoltage,
-        },
+        reference: PointReference::Model102 { point: Point::DcVoltage },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::DcvSf,
-        },
+        reference: PointReference::Model102 { point: Point::DcvSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::DcWatts,
-        },
+        reference: PointReference::Model102 { point: Point::DcWatts },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::DcwSf,
-        },
+        reference: PointReference::Model102 { point: Point::DcwSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::CabinetTemperature,
-        },
+        reference: PointReference::Model102 { point: Point::CabinetTemperature },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::HeatSinkTemperature,
-        },
+        reference: PointReference::Model102 { point: Point::HeatSinkTemperature },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::TransformerTemperature,
-        },
+        reference: PointReference::Model102 { point: Point::TransformerTemperature },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::OtherTemperature,
-        },
+        reference: PointReference::Model102 { point: Point::OtherTemperature },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::TmpSf,
-        },
+        reference: PointReference::Model102 { point: Point::TmpSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::OperatingState,
-        },
+        reference: PointReference::Model102 { point: Point::OperatingState },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::VendorOperatingState,
-        },
+        reference: PointReference::Model102 { point: Point::VendorOperatingState },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::Event1,
-        },
+        reference: PointReference::Model102 { point: Point::Event1 },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::EventBitfield2,
-        },
+        reference: PointReference::Model102 { point: Point::EventBitfield2 },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::VendorEventBitfield1,
-        },
+        reference: PointReference::Model102 { point: Point::VendorEventBitfield1 },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::VendorEventBitfield2,
-        },
+        reference: PointReference::Model102 { point: Point::VendorEventBitfield2 },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::VendorEventBitfield3,
-        },
+        reference: PointReference::Model102 { point: Point::VendorEventBitfield3 },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model102 {
-            point: Point::VendorEventBitfield4,
-        },
+        reference: PointReference::Model102 { point: Point::VendorEventBitfield4 },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
@@ -386,157 +325,260 @@ pub enum Point {
     VendorEventBitfield4,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
-        Point::Amps => serialisation::write_u16(model.amps(), buffer),
-        Point::AmpsPhaseA => serialisation::write_u16(model.amps_phase_a(), buffer),
-        Point::AmpsPhaseB => serialisation::write_u16(model.amps_phase_b(), buffer),
+        Point::Amps => {
+            serialisation::write_u16(model.amps(), buffer);
+        },
+        Point::AmpsPhaseA => {
+            serialisation::write_u16(model.amps_phase_a(), buffer);
+        },
+        Point::AmpsPhaseB => {
+            serialisation::write_u16(model.amps_phase_b(), buffer);
+        },
         Point::AmpsPhaseC => {
             if let Some(value) = model.amps_phase_c() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::ASf => serialisation::write_u16(model.a_sf(), buffer),
+        Point::ASf => {
+            serialisation::write_u16(model.a_sf(), buffer);
+        },
         Point::PhaseVoltageAb => {
             if let Some(value) = model.phase_voltage_ab() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::PhaseVoltageBc => {
             if let Some(value) = model.phase_voltage_bc() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::PhaseVoltageCa => {
             if let Some(value) = model.phase_voltage_ca() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::PhaseVoltageAn => serialisation::write_u16(model.phase_voltage_an(), buffer),
-        Point::PhaseVoltageBn => serialisation::write_u16(model.phase_voltage_bn(), buffer),
+        Point::PhaseVoltageAn => {
+            serialisation::write_u16(model.phase_voltage_an(), buffer);
+        },
+        Point::PhaseVoltageBn => {
+            serialisation::write_u16(model.phase_voltage_bn(), buffer);
+        },
         Point::PhaseVoltageCn => {
             if let Some(value) = model.phase_voltage_cn() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::VSf => serialisation::write_u16(model.v_sf(), buffer),
-        Point::Watts => serialisation::write_i16(model.watts(), buffer),
-        Point::WSf => serialisation::write_u16(model.w_sf(), buffer),
-        Point::Hz => serialisation::write_u16(model.hz(), buffer),
-        Point::HzSf => serialisation::write_u16(model.hz_sf(), buffer),
+        Point::VSf => {
+            serialisation::write_u16(model.v_sf(), buffer);
+        },
+        Point::Watts => {
+            serialisation::write_i16(model.watts(), buffer);
+        },
+        Point::WSf => {
+            serialisation::write_u16(model.w_sf(), buffer);
+        },
+        Point::Hz => {
+            serialisation::write_u16(model.hz(), buffer);
+        },
+        Point::HzSf => {
+            serialisation::write_u16(model.hz_sf(), buffer);
+        },
         Point::Va => {
             if let Some(value) = model.va() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VaSf => {
             if let Some(value) = model.va_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VAr => {
             if let Some(value) = model.v_ar() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VArSf => {
             if let Some(value) = model.v_ar_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::Pf => {
             if let Some(value) = model.pf() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::PfSf => {
             if let Some(value) = model.pf_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::WattHours => serialisation::write_u32(model.watt_hours(), buffer, offset, limit),
-        Point::WhSf => serialisation::write_u16(model.wh_sf(), buffer),
+        Point::WattHours => {
+            serialisation::write_u32(model.watt_hours(), buffer, offset, limit);
+        },
+        Point::WhSf => {
+            serialisation::write_u16(model.wh_sf(), buffer);
+        },
         Point::DcAmps => {
             if let Some(value) = model.dc_amps() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::DcaSf => {
             if let Some(value) = model.dca_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::DcVoltage => {
             if let Some(value) = model.dc_voltage() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::DcvSf => {
             if let Some(value) = model.dcv_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::DcWatts => {
             if let Some(value) = model.dc_watts() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::DcwSf => {
             if let Some(value) = model.dcw_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::CabinetTemperature => serialisation::write_i16(model.cabinet_temperature(), buffer),
+        Point::CabinetTemperature => {
+            serialisation::write_i16(model.cabinet_temperature(), buffer);
+        },
         Point::HeatSinkTemperature => {
             if let Some(value) = model.heat_sink_temperature() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::TransformerTemperature => {
             if let Some(value) = model.transformer_temperature() {
                 serialisation::write_i16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::OtherTemperature => {
             if let Some(value) = model.other_temperature() {
                 serialisation::write_i16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::TmpSf => serialisation::write_u16(model.tmp_sf(), buffer),
-        Point::OperatingState => serialisation::write_u16(model.operating_state() as u16, buffer),
+        Point::TmpSf => {
+            serialisation::write_u16(model.tmp_sf(), buffer);
+        },
+        Point::OperatingState => {
+            serialisation::write_u16(model.operating_state() as u16, buffer);
+        },
         Point::VendorOperatingState => {
             if let Some(value) = model.vendor_operating_state() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::Event1 => serialisation::write_u32(model.event1(), buffer, offset, limit),
+        Point::Event1 => {
+            serialisation::write_u32(model.event1(), buffer, offset, limit);
+        },
         Point::EventBitfield2 => {
-            serialisation::write_u32(model.event_bitfield_2(), buffer, offset, limit)
-        }
+            serialisation::write_u32(model.event_bitfield_2(), buffer, offset, limit);
+        },
         Point::VendorEventBitfield1 => {
             if let Some(value) = model.vendor_event_bitfield_1() {
                 serialisation::write_u32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::VendorEventBitfield2 => {
             if let Some(value) = model.vendor_event_bitfield_2() {
                 serialisation::write_u32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VendorEventBitfield3 => {
             if let Some(value) = model.vendor_event_bitfield_3() {
                 serialisation::write_u32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::VendorEventBitfield4 => {
             if let Some(value) = model.vendor_event_bitfield_4() {
                 serialisation::write_u32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -779,6 +821,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum St {
     Off = 1,
@@ -793,49 +836,50 @@ pub enum St {
 
 #[repr(C)]
 pub struct Model102CallbackAdapter {
-    amps_callback: extern "C" fn() -> u16,
-    amps_phase_a_callback: extern "C" fn() -> u16,
-    amps_phase_b_callback: extern "C" fn() -> u16,
-    amps_phase_c_callback: Option<extern "C" fn() -> u16>,
-    a_sf_callback: extern "C" fn() -> u16,
-    phase_voltage_ab_callback: Option<extern "C" fn() -> u16>,
-    phase_voltage_bc_callback: Option<extern "C" fn() -> u16>,
-    phase_voltage_ca_callback: Option<extern "C" fn() -> u16>,
-    phase_voltage_an_callback: extern "C" fn() -> u16,
-    phase_voltage_bn_callback: extern "C" fn() -> u16,
-    phase_voltage_cn_callback: Option<extern "C" fn() -> u16>,
-    v_sf_callback: extern "C" fn() -> u16,
-    watts_callback: extern "C" fn() -> i16,
-    w_sf_callback: extern "C" fn() -> u16,
-    hz_callback: extern "C" fn() -> u16,
-    hz_sf_callback: extern "C" fn() -> u16,
-    va_callback: Option<extern "C" fn() -> i16>,
-    va_sf_callback: Option<extern "C" fn() -> u16>,
-    v_ar_callback: Option<extern "C" fn() -> i16>,
-    v_ar_sf_callback: Option<extern "C" fn() -> u16>,
-    pf_callback: Option<extern "C" fn() -> i16>,
-    pf_sf_callback: Option<extern "C" fn() -> u16>,
-    watt_hours_callback: extern "C" fn() -> u32,
-    wh_sf_callback: extern "C" fn() -> u16,
-    dc_amps_callback: Option<extern "C" fn() -> u16>,
-    dca_sf_callback: Option<extern "C" fn() -> u16>,
-    dc_voltage_callback: Option<extern "C" fn() -> u16>,
-    dcv_sf_callback: Option<extern "C" fn() -> u16>,
-    dc_watts_callback: Option<extern "C" fn() -> i16>,
-    dcw_sf_callback: Option<extern "C" fn() -> u16>,
-    cabinet_temperature_callback: extern "C" fn() -> i16,
-    heat_sink_temperature_callback: Option<extern "C" fn() -> i16>,
-    transformer_temperature_callback: Option<extern "C" fn() -> i16>,
-    other_temperature_callback: Option<extern "C" fn() -> i16>,
-    tmp_sf_callback: extern "C" fn() -> u16,
-    operating_state_callback: extern "C" fn() -> St,
-    vendor_operating_state_callback: Option<extern "C" fn() -> u16>,
-    event1_callback: extern "C" fn() -> u32,
-    event_bitfield_2_callback: extern "C" fn() -> u32,
-    vendor_event_bitfield_1_callback: Option<extern "C" fn() -> u32>,
-    vendor_event_bitfield_2_callback: Option<extern "C" fn() -> u32>,
-    vendor_event_bitfield_3_callback: Option<extern "C" fn() -> u32>,
-    vendor_event_bitfield_4_callback: Option<extern "C" fn() -> u32>,
+    context: *mut c_void,
+    amps_callback: extern "C" fn(*const c_void) -> u16,
+    amps_phase_a_callback: extern "C" fn(*const c_void) -> u16,
+    amps_phase_b_callback: extern "C" fn(*const c_void) -> u16,
+    amps_phase_c_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    a_sf_callback: extern "C" fn(*const c_void) -> u16,
+    phase_voltage_ab_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    phase_voltage_bc_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    phase_voltage_ca_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    phase_voltage_an_callback: extern "C" fn(*const c_void) -> u16,
+    phase_voltage_bn_callback: extern "C" fn(*const c_void) -> u16,
+    phase_voltage_cn_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    v_sf_callback: extern "C" fn(*const c_void) -> u16,
+    watts_callback: extern "C" fn(*const c_void) -> i16,
+    w_sf_callback: extern "C" fn(*const c_void) -> u16,
+    hz_callback: extern "C" fn(*const c_void) -> u16,
+    hz_sf_callback: extern "C" fn(*const c_void) -> u16,
+    va_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    va_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    v_ar_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    v_ar_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    pf_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    pf_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    watt_hours_callback: extern "C" fn(*const c_void) -> u32,
+    wh_sf_callback: extern "C" fn(*const c_void) -> u16,
+    dc_amps_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    dca_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    dc_voltage_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    dcv_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    dc_watts_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    dcw_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    cabinet_temperature_callback: extern "C" fn(*const c_void) -> i16,
+    heat_sink_temperature_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    transformer_temperature_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    other_temperature_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    tmp_sf_callback: extern "C" fn(*const c_void) -> u16,
+    operating_state_callback: extern "C" fn(*const c_void) -> St,
+    vendor_operating_state_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    event1_callback: extern "C" fn(*const c_void) -> u32,
+    event_bitfield_2_callback: extern "C" fn(*const c_void) -> u32,
+    vendor_event_bitfield_1_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    vendor_event_bitfield_2_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    vendor_event_bitfield_3_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    vendor_event_bitfield_4_callback: Option<extern "C" fn(*const c_void) -> u32>,
 }
 
 impl ModelAdapter for Model102CallbackAdapter {
@@ -845,7 +889,7 @@ impl ModelAdapter for Model102CallbackAdapter {
     ///
     /// Sum of active phases
     fn amps(&self) -> u16 {
-        (self.amps_callback)()
+        (self.amps_callback)(self.context)
     }
 
     /// Amps PhaseA
@@ -854,7 +898,7 @@ impl ModelAdapter for Model102CallbackAdapter {
     ///
     /// Connected Phase
     fn amps_phase_a(&self) -> u16 {
-        (self.amps_phase_a_callback)()
+        (self.amps_phase_a_callback)(self.context)
     }
 
     /// Amps PhaseB
@@ -863,257 +907,670 @@ impl ModelAdapter for Model102CallbackAdapter {
     ///
     /// Connected Phase
     fn amps_phase_b(&self) -> u16 {
-        (self.amps_phase_b_callback)()
+        (self.amps_phase_b_callback)(self.context)
     }
 
     /// Amps PhaseC
     ///
     /// Phase C Current
     fn amps_phase_c(&self) -> Option<u16> {
-        self.amps_phase_c_callback.map(|callback| (callback)())
+        self.amps_phase_c_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn a_sf(&self) -> u16 {
-        (self.a_sf_callback)()
+        (self.a_sf_callback)(self.context)
     }
 
     /// Phase Voltage AB
     ///
     /// Phase Voltage AB
     fn phase_voltage_ab(&self) -> Option<u16> {
-        self.phase_voltage_ab_callback.map(|callback| (callback)())
+        self.phase_voltage_ab_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Phase Voltage BC
     ///
     /// Phase Voltage BC
     fn phase_voltage_bc(&self) -> Option<u16> {
-        self.phase_voltage_bc_callback.map(|callback| (callback)())
+        self.phase_voltage_bc_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Phase Voltage CA
     ///
     /// Phase Voltage CA
     fn phase_voltage_ca(&self) -> Option<u16> {
-        self.phase_voltage_ca_callback.map(|callback| (callback)())
+        self.phase_voltage_ca_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Phase Voltage AN
     ///
     /// Phase Voltage AN
     fn phase_voltage_an(&self) -> u16 {
-        (self.phase_voltage_an_callback)()
+        (self.phase_voltage_an_callback)(self.context)
     }
 
     /// Phase Voltage BN
     ///
     /// Phase Voltage BN
     fn phase_voltage_bn(&self) -> u16 {
-        (self.phase_voltage_bn_callback)()
+        (self.phase_voltage_bn_callback)(self.context)
     }
 
     /// Phase Voltage CN
     ///
     /// Phase Voltage CN
     fn phase_voltage_cn(&self) -> Option<u16> {
-        self.phase_voltage_cn_callback.map(|callback| (callback)())
+        self.phase_voltage_cn_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn v_sf(&self) -> u16 {
-        (self.v_sf_callback)()
+        (self.v_sf_callback)(self.context)
     }
 
     /// Watts
     ///
     /// AC Power
     fn watts(&self) -> i16 {
-        (self.watts_callback)()
+        (self.watts_callback)(self.context)
     }
 
     fn w_sf(&self) -> u16 {
-        (self.w_sf_callback)()
+        (self.w_sf_callback)(self.context)
     }
 
     /// Hz
     ///
     /// Line Frequency
     fn hz(&self) -> u16 {
-        (self.hz_callback)()
+        (self.hz_callback)(self.context)
     }
 
     fn hz_sf(&self) -> u16 {
-        (self.hz_sf_callback)()
+        (self.hz_sf_callback)(self.context)
     }
 
     /// VA
     ///
     /// AC Apparent Power
     fn va(&self) -> Option<i16> {
-        self.va_callback.map(|callback| (callback)())
+        self.va_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn va_sf(&self) -> Option<u16> {
-        self.va_sf_callback.map(|callback| (callback)())
+        self.va_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// VAr
     ///
     /// AC Reactive Power
     fn v_ar(&self) -> Option<i16> {
-        self.v_ar_callback.map(|callback| (callback)())
+        self.v_ar_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn v_ar_sf(&self) -> Option<u16> {
-        self.v_ar_sf_callback.map(|callback| (callback)())
+        self.v_ar_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// PF
     ///
     /// AC Power Factor
     fn pf(&self) -> Option<i16> {
-        self.pf_callback.map(|callback| (callback)())
+        self.pf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn pf_sf(&self) -> Option<u16> {
-        self.pf_sf_callback.map(|callback| (callback)())
+        self.pf_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// WattHours
     ///
     /// AC Energy
     fn watt_hours(&self) -> u32 {
-        (self.watt_hours_callback)()
+        (self.watt_hours_callback)(self.context)
     }
 
     fn wh_sf(&self) -> u16 {
-        (self.wh_sf_callback)()
+        (self.wh_sf_callback)(self.context)
     }
 
     /// DC Amps
     ///
     /// DC Current
     fn dc_amps(&self) -> Option<u16> {
-        self.dc_amps_callback.map(|callback| (callback)())
+        self.dc_amps_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn dca_sf(&self) -> Option<u16> {
-        self.dca_sf_callback.map(|callback| (callback)())
+        self.dca_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// DC Voltage
     ///
     /// DC Voltage
     fn dc_voltage(&self) -> Option<u16> {
-        self.dc_voltage_callback.map(|callback| (callback)())
+        self.dc_voltage_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn dcv_sf(&self) -> Option<u16> {
-        self.dcv_sf_callback.map(|callback| (callback)())
+        self.dcv_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// DC Watts
     ///
     /// DC Power
     fn dc_watts(&self) -> Option<i16> {
-        self.dc_watts_callback.map(|callback| (callback)())
+        self.dc_watts_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn dcw_sf(&self) -> Option<u16> {
-        self.dcw_sf_callback.map(|callback| (callback)())
+        self.dcw_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Cabinet Temperature
     ///
     /// Cabinet Temperature
     fn cabinet_temperature(&self) -> i16 {
-        (self.cabinet_temperature_callback)()
+        (self.cabinet_temperature_callback)(self.context)
     }
 
     /// Heat Sink Temperature
     ///
     /// Heat Sink Temperature
     fn heat_sink_temperature(&self) -> Option<i16> {
-        self.heat_sink_temperature_callback
-            .map(|callback| (callback)())
+        self.heat_sink_temperature_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Transformer Temperature
     ///
     /// Transformer Temperature
     fn transformer_temperature(&self) -> Option<i16> {
-        self.transformer_temperature_callback
-            .map(|callback| (callback)())
+        self.transformer_temperature_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Other Temperature
     ///
     /// Other Temperature
     fn other_temperature(&self) -> Option<i16> {
-        self.other_temperature_callback.map(|callback| (callback)())
+        self.other_temperature_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     fn tmp_sf(&self) -> u16 {
-        (self.tmp_sf_callback)()
+        (self.tmp_sf_callback)(self.context)
     }
 
     /// Operating State
     ///
     /// Operating state
     fn operating_state(&self) -> St {
-        (self.operating_state_callback)()
+        (self.operating_state_callback)(self.context)
     }
 
     /// Vendor Operating State
     ///
     /// Vendor specific operating state code
     fn vendor_operating_state(&self) -> Option<u16> {
-        self.vendor_operating_state_callback
-            .map(|callback| (callback)())
+        self.vendor_operating_state_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Event1
     ///
     /// Event fields
     fn event1(&self) -> u32 {
-        (self.event1_callback)()
+        (self.event1_callback)(self.context)
     }
 
     /// Event Bitfield 2
     ///
     /// Reserved for future use
     fn event_bitfield_2(&self) -> u32 {
-        (self.event_bitfield_2_callback)()
+        (self.event_bitfield_2_callback)(self.context)
     }
 
     /// Vendor Event Bitfield 1
     ///
     /// Vendor defined events
     fn vendor_event_bitfield_1(&self) -> Option<u32> {
-        self.vendor_event_bitfield_1_callback
-            .map(|callback| (callback)())
+        self.vendor_event_bitfield_1_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Vendor Event Bitfield 2
     ///
     /// Vendor defined events
     fn vendor_event_bitfield_2(&self) -> Option<u32> {
-        self.vendor_event_bitfield_2_callback
-            .map(|callback| (callback)())
+        self.vendor_event_bitfield_2_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Vendor Event Bitfield 3
     ///
     /// Vendor defined events
     fn vendor_event_bitfield_3(&self) -> Option<u32> {
-        self.vendor_event_bitfield_3_callback
-            .map(|callback| (callback)())
+        self.vendor_event_bitfield_3_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Vendor Event Bitfield 4
     ///
     /// Vendor defined events
     fn vendor_event_bitfield_4(&self) -> Option<u32> {
-        self.vendor_event_bitfield_4_callback
-            .map(|callback| (callback)())
+        self.vendor_event_bitfield_4_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model102StatefulAdapter {
+    amps: u16,
+    amps_phase_a: u16,
+    amps_phase_b: u16,
+    amps_phase_c: u16,
+    a_sf: u16,
+    phase_voltage_ab: u16,
+    phase_voltage_bc: u16,
+    phase_voltage_ca: u16,
+    phase_voltage_an: u16,
+    phase_voltage_bn: u16,
+    phase_voltage_cn: u16,
+    v_sf: u16,
+    watts: i16,
+    w_sf: u16,
+    hz: u16,
+    hz_sf: u16,
+    va: i16,
+    va_sf: u16,
+    v_ar: i16,
+    v_ar_sf: u16,
+    pf: i16,
+    pf_sf: u16,
+    watt_hours: u32,
+    wh_sf: u16,
+    dc_amps: u16,
+    dca_sf: u16,
+    dc_voltage: u16,
+    dcv_sf: u16,
+    dc_watts: i16,
+    dcw_sf: u16,
+    cabinet_temperature: i16,
+    heat_sink_temperature: i16,
+    transformer_temperature: i16,
+    other_temperature: i16,
+    tmp_sf: u16,
+    operating_state: St,
+    vendor_operating_state: u16,
+    event1: u32,
+    event_bitfield_2: u32,
+    vendor_event_bitfield_1: u32,
+    vendor_event_bitfield_2: u32,
+    vendor_event_bitfield_3: u32,
+    vendor_event_bitfield_4: u32,
+}
+
+impl ModelAdapter for Model102StatefulAdapter {
+    /// Amps
+    ///
+    /// AC Current
+    ///
+    /// Sum of active phases
+    fn amps(&self) -> u16 {
+        self.amps
+    }
+
+    /// Amps PhaseA
+    ///
+    /// Phase A Current
+    ///
+    /// Connected Phase
+    fn amps_phase_a(&self) -> u16 {
+        self.amps_phase_a
+    }
+
+    /// Amps PhaseB
+    ///
+    /// Phase B Current
+    ///
+    /// Connected Phase
+    fn amps_phase_b(&self) -> u16 {
+        self.amps_phase_b
+    }
+
+    /// Amps PhaseC
+    ///
+    /// Phase C Current
+    fn amps_phase_c(&self) -> Option<u16> {
+        Some(
+        self.amps_phase_c
+        )
+    }
+
+    fn a_sf(&self) -> u16 {
+        self.a_sf
+    }
+
+    /// Phase Voltage AB
+    ///
+    /// Phase Voltage AB
+    fn phase_voltage_ab(&self) -> Option<u16> {
+        Some(
+        self.phase_voltage_ab
+        )
+    }
+
+    /// Phase Voltage BC
+    ///
+    /// Phase Voltage BC
+    fn phase_voltage_bc(&self) -> Option<u16> {
+        Some(
+        self.phase_voltage_bc
+        )
+    }
+
+    /// Phase Voltage CA
+    ///
+    /// Phase Voltage CA
+    fn phase_voltage_ca(&self) -> Option<u16> {
+        Some(
+        self.phase_voltage_ca
+        )
+    }
+
+    /// Phase Voltage AN
+    ///
+    /// Phase Voltage AN
+    fn phase_voltage_an(&self) -> u16 {
+        self.phase_voltage_an
+    }
+
+    /// Phase Voltage BN
+    ///
+    /// Phase Voltage BN
+    fn phase_voltage_bn(&self) -> u16 {
+        self.phase_voltage_bn
+    }
+
+    /// Phase Voltage CN
+    ///
+    /// Phase Voltage CN
+    fn phase_voltage_cn(&self) -> Option<u16> {
+        Some(
+        self.phase_voltage_cn
+        )
+    }
+
+    fn v_sf(&self) -> u16 {
+        self.v_sf
+    }
+
+    /// Watts
+    ///
+    /// AC Power
+    fn watts(&self) -> i16 {
+        self.watts
+    }
+
+    fn w_sf(&self) -> u16 {
+        self.w_sf
+    }
+
+    /// Hz
+    ///
+    /// Line Frequency
+    fn hz(&self) -> u16 {
+        self.hz
+    }
+
+    fn hz_sf(&self) -> u16 {
+        self.hz_sf
+    }
+
+    /// VA
+    ///
+    /// AC Apparent Power
+    fn va(&self) -> Option<i16> {
+        Some(
+        self.va
+        )
+    }
+
+    fn va_sf(&self) -> Option<u16> {
+        Some(
+        self.va_sf
+        )
+    }
+
+    /// VAr
+    ///
+    /// AC Reactive Power
+    fn v_ar(&self) -> Option<i16> {
+        Some(
+        self.v_ar
+        )
+    }
+
+    fn v_ar_sf(&self) -> Option<u16> {
+        Some(
+        self.v_ar_sf
+        )
+    }
+
+    /// PF
+    ///
+    /// AC Power Factor
+    fn pf(&self) -> Option<i16> {
+        Some(
+        self.pf
+        )
+    }
+
+    fn pf_sf(&self) -> Option<u16> {
+        Some(
+        self.pf_sf
+        )
+    }
+
+    /// WattHours
+    ///
+    /// AC Energy
+    fn watt_hours(&self) -> u32 {
+        self.watt_hours
+    }
+
+    fn wh_sf(&self) -> u16 {
+        self.wh_sf
+    }
+
+    /// DC Amps
+    ///
+    /// DC Current
+    fn dc_amps(&self) -> Option<u16> {
+        Some(
+        self.dc_amps
+        )
+    }
+
+    fn dca_sf(&self) -> Option<u16> {
+        Some(
+        self.dca_sf
+        )
+    }
+
+    /// DC Voltage
+    ///
+    /// DC Voltage
+    fn dc_voltage(&self) -> Option<u16> {
+        Some(
+        self.dc_voltage
+        )
+    }
+
+    fn dcv_sf(&self) -> Option<u16> {
+        Some(
+        self.dcv_sf
+        )
+    }
+
+    /// DC Watts
+    ///
+    /// DC Power
+    fn dc_watts(&self) -> Option<i16> {
+        Some(
+        self.dc_watts
+        )
+    }
+
+    fn dcw_sf(&self) -> Option<u16> {
+        Some(
+        self.dcw_sf
+        )
+    }
+
+    /// Cabinet Temperature
+    ///
+    /// Cabinet Temperature
+    fn cabinet_temperature(&self) -> i16 {
+        self.cabinet_temperature
+    }
+
+    /// Heat Sink Temperature
+    ///
+    /// Heat Sink Temperature
+    fn heat_sink_temperature(&self) -> Option<i16> {
+        Some(
+        self.heat_sink_temperature
+        )
+    }
+
+    /// Transformer Temperature
+    ///
+    /// Transformer Temperature
+    fn transformer_temperature(&self) -> Option<i16> {
+        Some(
+        self.transformer_temperature
+        )
+    }
+
+    /// Other Temperature
+    ///
+    /// Other Temperature
+    fn other_temperature(&self) -> Option<i16> {
+        Some(
+        self.other_temperature
+        )
+    }
+
+    fn tmp_sf(&self) -> u16 {
+        self.tmp_sf
+    }
+
+    /// Operating State
+    ///
+    /// Operating state
+    fn operating_state(&self) -> St {
+        self.operating_state
+    }
+
+    /// Vendor Operating State
+    ///
+    /// Vendor specific operating state code
+    fn vendor_operating_state(&self) -> Option<u16> {
+        Some(
+        self.vendor_operating_state
+        )
+    }
+
+    /// Event1
+    ///
+    /// Event fields
+    fn event1(&self) -> u32 {
+        self.event1
+    }
+
+    /// Event Bitfield 2
+    ///
+    /// Reserved for future use
+    fn event_bitfield_2(&self) -> u32 {
+        self.event_bitfield_2
+    }
+
+    /// Vendor Event Bitfield 1
+    ///
+    /// Vendor defined events
+    fn vendor_event_bitfield_1(&self) -> Option<u32> {
+        Some(
+        self.vendor_event_bitfield_1
+        )
+    }
+
+    /// Vendor Event Bitfield 2
+    ///
+    /// Vendor defined events
+    fn vendor_event_bitfield_2(&self) -> Option<u32> {
+        Some(
+        self.vendor_event_bitfield_2
+        )
+    }
+
+    /// Vendor Event Bitfield 3
+    ///
+    /// Vendor defined events
+    fn vendor_event_bitfield_3(&self) -> Option<u32> {
+        Some(
+        self.vendor_event_bitfield_3
+        )
+    }
+
+    /// Vendor Event Bitfield 4
+    ///
+    /// Vendor defined events
+    fn vendor_event_bitfield_4(&self) -> Option<u32> {
+        Some(
+        self.vendor_event_bitfield_4
+        )
     }
 }

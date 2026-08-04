@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 10;
 
@@ -18,17 +19,13 @@ pub static POINTS: [ReadablePoint; 10] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model125 {
-            point: Point::ModEna,
-        },
+        reference: PointReference::Model125 { point: Point::ModEna },
         size: 1,
         data_type: PointType::Bitfield16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model125 {
-            point: Point::SigType,
-        },
+        reference: PointReference::Model125 { point: Point::SigType },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
@@ -40,33 +37,25 @@ pub static POINTS: [ReadablePoint; 10] = [
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model125 {
-            point: Point::WinTms,
-        },
+        reference: PointReference::Model125 { point: Point::WinTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model125 {
-            point: Point::RvtTms,
-        },
+        reference: PointReference::Model125 { point: Point::RvtTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model125 {
-            point: Point::RmpTms,
-        },
+        reference: PointReference::Model125 { point: Point::RmpTms },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model125 {
-            point: Point::SigSf,
-        },
+        reference: PointReference::Model125 { point: Point::SigSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -90,37 +79,49 @@ pub enum Point {
     SigSf,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
-        Point::ModEna => serialisation::write_u16(model.mod_ena(), buffer),
+        Point::ModEna => {
+            serialisation::write_u16(model.mod_ena(), buffer);
+        },
         Point::SigType => {
             if let Some(value) = model.sig_type() {
                 serialisation::write_u16(value as u16, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::Sig => serialisation::write_i16(model.sig(), buffer),
+        Point::Sig => {
+            serialisation::write_i16(model.sig(), buffer);
+        },
         Point::WinTms => {
             if let Some(value) = model.win_tms() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::RvtTms => {
             if let Some(value) = model.rvt_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::RmpTms => {
             if let Some(value) = model.rmp_tms() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::SigSf => serialisation::write_u16(model.sig_sf(), buffer),
+        Point::SigSf => {
+            serialisation::write_u16(model.sig_sf(), buffer);
+        },
     }
 }
 
@@ -145,7 +146,8 @@ pub trait ModelAdapter {
     /// SigType
     ///
     /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
-    fn set_sig_type(&mut self, value: SigType) {}
+    fn set_sig_type(&mut self, value: SigType) {
+    }
 
     /// Sig
     ///
@@ -167,7 +169,8 @@ pub trait ModelAdapter {
     /// WinTms
     ///
     /// Time window for charge/discharge pricing change.
-    fn set_win_tms(&mut self, value: u16) {}
+    fn set_win_tms(&mut self, value: u16) {
+    }
 
     /// RvtTms
     ///
@@ -179,7 +182,8 @@ pub trait ModelAdapter {
     /// RvtTms
     ///
     /// Timeout period for charge/discharge pricing change.
-    fn set_rvt_tms(&mut self, value: u16) {}
+    fn set_rvt_tms(&mut self, value: u16) {
+    }
 
     /// RmpTms
     ///
@@ -191,7 +195,8 @@ pub trait ModelAdapter {
     /// RmpTms
     ///
     /// Ramp time for moving from current charge or discharge level to new level.
-    fn set_rmp_tms(&mut self, value: u16) {}
+    fn set_rmp_tms(&mut self, value: u16) {
+    }
 
     /// Sig_SF
     ///
@@ -199,6 +204,7 @@ pub trait ModelAdapter {
     fn sig_sf(&self) -> u16;
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum SigType {
     Unknown = 0,
@@ -210,19 +216,20 @@ pub enum SigType {
 
 #[repr(C)]
 pub struct Model125CallbackAdapter {
-    mod_ena_callback: extern "C" fn() -> u16,
-    set_mod_ena_callback: extern "C" fn(u16),
-    sig_type_callback: Option<extern "C" fn() -> SigType>,
-    set_sig_type_callback: Option<extern "C" fn(SigType)>,
-    sig_callback: extern "C" fn() -> i16,
-    set_sig_callback: extern "C" fn(i16),
-    win_tms_callback: Option<extern "C" fn() -> u16>,
-    set_win_tms_callback: Option<extern "C" fn(u16)>,
-    rvt_tms_callback: Option<extern "C" fn() -> u16>,
-    set_rvt_tms_callback: Option<extern "C" fn(u16)>,
-    rmp_tms_callback: Option<extern "C" fn() -> u16>,
-    set_rmp_tms_callback: Option<extern "C" fn(u16)>,
-    sig_sf_callback: extern "C" fn() -> u16,
+    context: *mut c_void,
+    mod_ena_callback: extern "C" fn(*const c_void) -> u16,
+    set_mod_ena_callback: extern "C" fn(u16, *mut c_void),
+    sig_type_callback: Option<extern "C" fn(*const c_void) -> SigType>,
+    set_sig_type_callback: Option<extern "C" fn(SigType, *mut c_void)>,
+    sig_callback: extern "C" fn(*const c_void) -> i16,
+    set_sig_callback: extern "C" fn(i16, *mut c_void),
+    win_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_win_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    rvt_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_rvt_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    rmp_tms_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_rmp_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    sig_sf_callback: extern "C" fn(*const c_void) -> u16,
 }
 
 impl ModelAdapter for Model125CallbackAdapter {
@@ -230,21 +237,23 @@ impl ModelAdapter for Model125CallbackAdapter {
     ///
     /// Is price-based charge/discharge mode active?
     fn mod_ena(&self) -> u16 {
-        (self.mod_ena_callback)()
+        (self.mod_ena_callback)(self.context)
     }
 
     /// ModEna
     ///
     /// Is price-based charge/discharge mode active?
     fn set_mod_ena(&mut self, value: u16) {
-        (self.set_mod_ena_callback)(value);
+        (self.set_mod_ena_callback)(value, self.context);
     }
 
     /// SigType
     ///
     /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
     fn sig_type(&self) -> Option<SigType> {
-        self.sig_type_callback.map(|callback| (callback)())
+        self.sig_type_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// SigType
@@ -252,7 +261,7 @@ impl ModelAdapter for Model125CallbackAdapter {
     /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
     fn set_sig_type(&mut self, value: SigType) {
         if let Some(callback) = self.set_sig_type_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -260,21 +269,23 @@ impl ModelAdapter for Model125CallbackAdapter {
     ///
     /// Utility/ESP specific pricing signal. Content depends on pricing signal type. When H/M/L type is specified. Low=0; Med=1; High=2.
     fn sig(&self) -> i16 {
-        (self.sig_callback)()
+        (self.sig_callback)(self.context)
     }
 
     /// Sig
     ///
     /// Utility/ESP specific pricing signal. Content depends on pricing signal type. When H/M/L type is specified. Low=0; Med=1; High=2.
     fn set_sig(&mut self, value: i16) {
-        (self.set_sig_callback)(value);
+        (self.set_sig_callback)(value, self.context);
     }
 
     /// WinTms
     ///
     /// Time window for charge/discharge pricing change.
     fn win_tms(&self) -> Option<u16> {
-        self.win_tms_callback.map(|callback| (callback)())
+        self.win_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// WinTms
@@ -282,7 +293,7 @@ impl ModelAdapter for Model125CallbackAdapter {
     /// Time window for charge/discharge pricing change.
     fn set_win_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_win_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -290,7 +301,9 @@ impl ModelAdapter for Model125CallbackAdapter {
     ///
     /// Timeout period for charge/discharge pricing change.
     fn rvt_tms(&self) -> Option<u16> {
-        self.rvt_tms_callback.map(|callback| (callback)())
+        self.rvt_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// RvtTms
@@ -298,7 +311,7 @@ impl ModelAdapter for Model125CallbackAdapter {
     /// Timeout period for charge/discharge pricing change.
     fn set_rvt_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_rvt_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -306,7 +319,9 @@ impl ModelAdapter for Model125CallbackAdapter {
     ///
     /// Ramp time for moving from current charge or discharge level to new level.
     fn rmp_tms(&self) -> Option<u16> {
-        self.rmp_tms_callback.map(|callback| (callback)())
+        self.rmp_tms_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// RmpTms
@@ -314,7 +329,7 @@ impl ModelAdapter for Model125CallbackAdapter {
     /// Ramp time for moving from current charge or discharge level to new level.
     fn set_rmp_tms(&mut self, value: u16) {
         if let Some(callback) = self.set_rmp_tms_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -322,6 +337,118 @@ impl ModelAdapter for Model125CallbackAdapter {
     ///
     /// Pricing signal scale factor.
     fn sig_sf(&self) -> u16 {
-        (self.sig_sf_callback)()
+        (self.sig_sf_callback)(self.context)
+    }
+}
+
+#[repr(C)]
+pub struct Model125StatefulAdapter {
+    mod_ena: u16,
+    sig_type: SigType,
+    sig: i16,
+    win_tms: u16,
+    rvt_tms: u16,
+    rmp_tms: u16,
+    sig_sf: u16,
+}
+
+impl ModelAdapter for Model125StatefulAdapter {
+    /// ModEna
+    ///
+    /// Is price-based charge/discharge mode active?
+    fn mod_ena(&self) -> u16 {
+        self.mod_ena
+    }
+
+    /// ModEna
+    ///
+    /// Is price-based charge/discharge mode active?
+    fn set_mod_ena(&mut self, value: u16) {
+        self.mod_ena = value;
+    }
+
+    /// SigType
+    ///
+    /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
+    fn sig_type(&self) -> Option<SigType> {
+        Some(
+        self.sig_type
+        )
+    }
+
+    /// SigType
+    ///
+    /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
+    fn set_sig_type(&mut self, value: SigType) {
+        self.sig_type = value;
+    }
+
+    /// Sig
+    ///
+    /// Utility/ESP specific pricing signal. Content depends on pricing signal type. When H/M/L type is specified. Low=0; Med=1; High=2.
+    fn sig(&self) -> i16 {
+        self.sig
+    }
+
+    /// Sig
+    ///
+    /// Utility/ESP specific pricing signal. Content depends on pricing signal type. When H/M/L type is specified. Low=0; Med=1; High=2.
+    fn set_sig(&mut self, value: i16) {
+        self.sig = value;
+    }
+
+    /// WinTms
+    ///
+    /// Time window for charge/discharge pricing change.
+    fn win_tms(&self) -> Option<u16> {
+        Some(
+        self.win_tms
+        )
+    }
+
+    /// WinTms
+    ///
+    /// Time window for charge/discharge pricing change.
+    fn set_win_tms(&mut self, value: u16) {
+        self.win_tms = value;
+    }
+
+    /// RvtTms
+    ///
+    /// Timeout period for charge/discharge pricing change.
+    fn rvt_tms(&self) -> Option<u16> {
+        Some(
+        self.rvt_tms
+        )
+    }
+
+    /// RvtTms
+    ///
+    /// Timeout period for charge/discharge pricing change.
+    fn set_rvt_tms(&mut self, value: u16) {
+        self.rvt_tms = value;
+    }
+
+    /// RmpTms
+    ///
+    /// Ramp time for moving from current charge or discharge level to new level.
+    fn rmp_tms(&self) -> Option<u16> {
+        Some(
+        self.rmp_tms
+        )
+    }
+
+    /// RmpTms
+    ///
+    /// Ramp time for moving from current charge or discharge level to new level.
+    fn set_rmp_tms(&mut self, value: u16) {
+        self.rmp_tms = value;
+    }
+
+    /// Sig_SF
+    ///
+    /// Pricing signal scale factor.
+    fn sig_sf(&self) -> u16 {
+        self.sig_sf
     }
 }

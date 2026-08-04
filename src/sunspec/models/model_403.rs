@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 18;
 
@@ -18,33 +19,25 @@ pub static POINTS: [ReadablePoint; 15] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::DcaSf,
-        },
+        reference: PointReference::Model403 { point: Point::DcaSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::DcAhrSf,
-        },
+        reference: PointReference::Model403 { point: Point::DcAhrSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::DcvSf,
-        },
+        reference: PointReference::Model403 { point: Point::DcvSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::Rating,
-        },
+        reference: PointReference::Model403 { point: Point::Rating },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -56,17 +49,13 @@ pub static POINTS: [ReadablePoint; 15] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::Event,
-        },
+        reference: PointReference::Model403 { point: Point::Event },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::VendorEvent,
-        },
+        reference: PointReference::Model403 { point: Point::VendorEvent },
         size: 2,
         data_type: PointType::Bitfield32,
         writeable: false,
@@ -78,17 +67,13 @@ pub static POINTS: [ReadablePoint; 15] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::AmpHours,
-        },
+        reference: PointReference::Model403 { point: Point::AmpHours },
         size: 2,
         data_type: PointType::Acc32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::Voltage,
-        },
+        reference: PointReference::Model403 { point: Point::Voltage },
         size: 1,
         data_type: PointType::Int16,
         writeable: false,
@@ -100,17 +85,13 @@ pub static POINTS: [ReadablePoint; 15] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::InDcaSf,
-        },
+        reference: PointReference::Model403 { point: Point::InDcaSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model403 {
-            point: Point::InDcAhrSf,
-        },
+        reference: PointReference::Model403 { point: Point::InDcAhrSf },
         size: 1,
         data_type: PointType::Sunssf,
         writeable: false,
@@ -134,57 +115,85 @@ pub enum Point {
     InDcAhrSf,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
-        Point::DcaSf => serialisation::write_u16(model.dca_sf(), buffer),
+        Point::DcaSf => {
+            serialisation::write_u16(model.dca_sf(), buffer);
+        },
         Point::DcAhrSf => {
             if let Some(value) = model.dc_ahr_sf() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::DcvSf => {
             if let Some(value) = model.dcv_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::Rating => serialisation::write_u16(model.rating(), buffer),
-        Point::N => serialisation::write_u16(model.n(), buffer),
-        Point::Event => serialisation::write_u32(model.event(), buffer, offset, limit),
+        Point::Rating => {
+            serialisation::write_u16(model.rating(), buffer);
+        },
+        Point::N => {
+            serialisation::write_u16(model.n(), buffer);
+        },
+        Point::Event => {
+            serialisation::write_u32(model.event(), buffer, offset, limit);
+        },
         Point::VendorEvent => {
             if let Some(value) = model.vendor_event() {
                 serialisation::write_u32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::Amps => serialisation::write_i16(model.amps(), buffer),
+        Point::Amps => {
+            serialisation::write_i16(model.amps(), buffer);
+        },
         Point::AmpHours => {
             if let Some(value) = model.amp_hours() {
                 serialisation::write_u32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::Voltage => {
             if let Some(value) = model.voltage() {
                 serialisation::write_i16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::Temp => {
             if let Some(value) = model.temp() {
                 serialisation::write_i16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::InDcaSf => {
             if let Some(value) = model.in_dca_sf() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::InDcAhrSf => {
             if let Some(value) = model.in_dc_ahr_sf() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -265,100 +274,233 @@ pub trait ModelAdapter {
 
 #[repr(C)]
 pub struct Model403CallbackAdapter {
-    dca_sf_callback: extern "C" fn() -> u16,
-    dc_ahr_sf_callback: Option<extern "C" fn() -> u16>,
-    dcv_sf_callback: Option<extern "C" fn() -> u16>,
-    rating_callback: extern "C" fn() -> u16,
-    n_callback: extern "C" fn() -> u16,
-    event_callback: extern "C" fn() -> u32,
-    vendor_event_callback: Option<extern "C" fn() -> u32>,
-    amps_callback: extern "C" fn() -> i16,
-    amp_hours_callback: Option<extern "C" fn() -> u32>,
-    voltage_callback: Option<extern "C" fn() -> i16>,
-    temp_callback: Option<extern "C" fn() -> i16>,
-    in_dca_sf_callback: Option<extern "C" fn() -> u16>,
-    in_dc_ahr_sf_callback: Option<extern "C" fn() -> u16>,
+    context: *mut c_void,
+    dca_sf_callback: extern "C" fn(*const c_void) -> u16,
+    dc_ahr_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    dcv_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    rating_callback: extern "C" fn(*const c_void) -> u16,
+    n_callback: extern "C" fn(*const c_void) -> u16,
+    event_callback: extern "C" fn(*const c_void) -> u32,
+    vendor_event_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    amps_callback: extern "C" fn(*const c_void) -> i16,
+    amp_hours_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    voltage_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    temp_callback: Option<extern "C" fn(*const c_void) -> i16>,
+    in_dca_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    in_dc_ahr_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
 }
 
 impl ModelAdapter for Model403CallbackAdapter {
     /// Current scale factor
     fn dca_sf(&self) -> u16 {
-        (self.dca_sf_callback)()
+        (self.dca_sf_callback)(self.context)
     }
 
     /// Amp-hour scale factor
     fn dc_ahr_sf(&self) -> Option<u16> {
-        self.dc_ahr_sf_callback.map(|callback| (callback)())
+        self.dc_ahr_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage scale factor
     fn dcv_sf(&self) -> Option<u16> {
-        self.dcv_sf_callback.map(|callback| (callback)())
+        self.dcv_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Rating
     ///
     /// Maximum DC Current Rating
     fn rating(&self) -> u16 {
-        (self.rating_callback)()
+        (self.rating_callback)(self.context)
     }
 
     /// N
     ///
     /// Number of Inputs
     fn n(&self) -> u16 {
-        (self.n_callback)()
+        (self.n_callback)(self.context)
     }
 
     /// Event
     ///
     /// Events
     fn event(&self) -> u32 {
-        (self.event_callback)()
+        (self.event_callback)(self.context)
     }
 
     /// Vendor Event
     ///
     /// Vendor defined events
     fn vendor_event(&self) -> Option<u32> {
-        self.vendor_event_callback.map(|callback| (callback)())
+        self.vendor_event_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Amps
     ///
     /// Total measured current
     fn amps(&self) -> i16 {
-        (self.amps_callback)()
+        (self.amps_callback)(self.context)
     }
 
     /// Amp-hours
     ///
     /// Total metered Amp-hours
     fn amp_hours(&self) -> Option<u32> {
-        self.amp_hours_callback.map(|callback| (callback)())
+        self.amp_hours_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage
     ///
     /// Output Voltage
     fn voltage(&self) -> Option<i16> {
-        self.voltage_callback.map(|callback| (callback)())
+        self.voltage_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Temp
     ///
     /// Internal operating temperature
     fn temp(&self) -> Option<i16> {
-        self.temp_callback.map(|callback| (callback)())
+        self.temp_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Current scale factor for inputs
     fn in_dca_sf(&self) -> Option<u16> {
-        self.in_dca_sf_callback.map(|callback| (callback)())
+        self.in_dca_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Amp-hour scale factor for inputs
     fn in_dc_ahr_sf(&self) -> Option<u16> {
-        self.in_dc_ahr_sf_callback.map(|callback| (callback)())
+        self.in_dc_ahr_sf_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model403StatefulAdapter {
+    dca_sf: u16,
+    dc_ahr_sf: u16,
+    dcv_sf: u16,
+    rating: u16,
+    n: u16,
+    event: u32,
+    vendor_event: u32,
+    amps: i16,
+    amp_hours: u32,
+    voltage: i16,
+    temp: i16,
+    in_dca_sf: u16,
+    in_dc_ahr_sf: u16,
+}
+
+impl ModelAdapter for Model403StatefulAdapter {
+    /// Current scale factor
+    fn dca_sf(&self) -> u16 {
+        self.dca_sf
+    }
+
+    /// Amp-hour scale factor
+    fn dc_ahr_sf(&self) -> Option<u16> {
+        Some(
+        self.dc_ahr_sf
+        )
+    }
+
+    /// Voltage scale factor
+    fn dcv_sf(&self) -> Option<u16> {
+        Some(
+        self.dcv_sf
+        )
+    }
+
+    /// Rating
+    ///
+    /// Maximum DC Current Rating
+    fn rating(&self) -> u16 {
+        self.rating
+    }
+
+    /// N
+    ///
+    /// Number of Inputs
+    fn n(&self) -> u16 {
+        self.n
+    }
+
+    /// Event
+    ///
+    /// Events
+    fn event(&self) -> u32 {
+        self.event
+    }
+
+    /// Vendor Event
+    ///
+    /// Vendor defined events
+    fn vendor_event(&self) -> Option<u32> {
+        Some(
+        self.vendor_event
+        )
+    }
+
+    /// Amps
+    ///
+    /// Total measured current
+    fn amps(&self) -> i16 {
+        self.amps
+    }
+
+    /// Amp-hours
+    ///
+    /// Total metered Amp-hours
+    fn amp_hours(&self) -> Option<u32> {
+        Some(
+        self.amp_hours
+        )
+    }
+
+    /// Voltage
+    ///
+    /// Output Voltage
+    fn voltage(&self) -> Option<i16> {
+        Some(
+        self.voltage
+        )
+    }
+
+    /// Temp
+    ///
+    /// Internal operating temperature
+    fn temp(&self) -> Option<i16> {
+        Some(
+        self.temp
+        )
+    }
+
+    /// Current scale factor for inputs
+    fn in_dca_sf(&self) -> Option<u16> {
+        Some(
+        self.in_dca_sf
+        )
+    }
+
+    /// Amp-hour scale factor for inputs
+    fn in_dc_ahr_sf(&self) -> Option<u16> {
+        Some(
+        self.in_dc_ahr_sf
+        )
     }
 }

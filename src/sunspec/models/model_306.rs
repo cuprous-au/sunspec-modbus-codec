@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 6;
 
@@ -30,17 +31,13 @@ pub static POINTS: [ReadablePoint; 6] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model306 {
-            point: Point::Voltage,
-        },
+        reference: PointReference::Model306 { point: Point::Voltage },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model306 {
-            point: Point::Temperature,
-        },
+        reference: PointReference::Model306 { point: Point::Temperature },
         size: 1,
         data_type: PointType::Uint16,
         writeable: false,
@@ -55,32 +52,38 @@ pub enum Point {
     Temperature,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::Ghi => {
             if let Some(value) = model.ghi() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::Amps => {
             if let Some(value) = model.amps() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::Voltage => {
             if let Some(value) = model.voltage() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::Temperature => {
             if let Some(value) = model.temperature() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -118,10 +121,11 @@ pub trait ModelAdapter {
 
 #[repr(C)]
 pub struct Model306CallbackAdapter {
-    ghi_callback: Option<extern "C" fn() -> u16>,
-    amps_callback: Option<extern "C" fn() -> u16>,
-    voltage_callback: Option<extern "C" fn() -> u16>,
-    temperature_callback: Option<extern "C" fn() -> u16>,
+    context: *mut c_void,
+    ghi_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    amps_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    voltage_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    temperature_callback: Option<extern "C" fn(*const c_void) -> u16>,
 }
 
 impl ModelAdapter for Model306CallbackAdapter {
@@ -129,27 +133,81 @@ impl ModelAdapter for Model306CallbackAdapter {
     ///
     /// Global Horizontal Irradiance
     fn ghi(&self) -> Option<u16> {
-        self.ghi_callback.map(|callback| (callback)())
+        self.ghi_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Amps
     ///
     /// Current measurement at reference point
     fn amps(&self) -> Option<u16> {
-        self.amps_callback.map(|callback| (callback)())
+        self.amps_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Voltage
     ///
     /// Voltage measurement at reference point
     fn voltage(&self) -> Option<u16> {
-        self.voltage_callback.map(|callback| (callback)())
+        self.voltage_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Temperature
     ///
     /// Temperature measurement at reference point
     fn temperature(&self) -> Option<u16> {
-        self.temperature_callback.map(|callback| (callback)())
+        self.temperature_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model306StatefulAdapter {
+    ghi: u16,
+    amps: u16,
+    voltage: u16,
+    temperature: u16,
+}
+
+impl ModelAdapter for Model306StatefulAdapter {
+    /// GHI
+    ///
+    /// Global Horizontal Irradiance
+    fn ghi(&self) -> Option<u16> {
+        Some(
+        self.ghi
+        )
+    }
+
+    /// Amps
+    ///
+    /// Current measurement at reference point
+    fn amps(&self) -> Option<u16> {
+        Some(
+        self.amps
+        )
+    }
+
+    /// Voltage
+    ///
+    /// Voltage measurement at reference point
+    fn voltage(&self) -> Option<u16> {
+        Some(
+        self.voltage
+        )
+    }
+
+    /// Temperature
+    ///
+    /// Temperature measurement at reference point
+    fn temperature(&self) -> Option<u16> {
+        Some(
+        self.temperature
+        )
     }
 }

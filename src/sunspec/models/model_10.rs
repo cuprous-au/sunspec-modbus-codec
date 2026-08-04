@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 6;
 
@@ -18,25 +19,19 @@ pub static POINTS: [ReadablePoint; 6] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model10 {
-            point: Point::InterfaceStatus,
-        },
+        reference: PointReference::Model10 { point: Point::InterfaceStatus },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model10 {
-            point: Point::InterfaceControl,
-        },
+        reference: PointReference::Model10 { point: Point::InterfaceControl },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model10 {
-            point: Point::PhysicalAccessType,
-        },
+        reference: PointReference::Model10 { point: Point::PhysicalAccessType },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
@@ -56,23 +51,25 @@ pub enum Point {
     PhysicalAccessType,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
-        Point::InterfaceStatus => serialisation::write_u16(model.interface_status() as u16, buffer),
+        Point::InterfaceStatus => {
+            serialisation::write_u16(model.interface_status() as u16, buffer);
+        },
         Point::InterfaceControl => {
             if let Some(value) = model.interface_control() {
                 serialisation::write_u16(value, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::PhysicalAccessType => {
             if let Some(value) = model.physical_access_type() {
                 serialisation::write_u16(value as u16, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -94,7 +91,8 @@ pub trait ModelAdapter {
     /// Interface Control
     ///
     /// Overall interface control (TBD)
-    fn set_interface_control(&mut self, value: u16) {}
+    fn set_interface_control(&mut self, value: u16) {
+    }
 
     /// Physical Access Type
     ///
@@ -104,6 +102,7 @@ pub trait ModelAdapter {
     }
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum St {
     Down = 0,
@@ -111,6 +110,7 @@ pub enum St {
     Fault = 2,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum Typ {
     Unknown = 0,
@@ -122,10 +122,11 @@ pub enum Typ {
 
 #[repr(C)]
 pub struct Model10CallbackAdapter {
-    interface_status_callback: extern "C" fn() -> St,
-    interface_control_callback: Option<extern "C" fn() -> u16>,
-    set_interface_control_callback: Option<extern "C" fn(u16)>,
-    physical_access_type_callback: Option<extern "C" fn() -> Typ>,
+    context: *mut c_void,
+    interface_status_callback: extern "C" fn(*const c_void) -> St,
+    interface_control_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_interface_control_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    physical_access_type_callback: Option<extern "C" fn(*const c_void) -> Typ>,
 }
 
 impl ModelAdapter for Model10CallbackAdapter {
@@ -133,14 +134,16 @@ impl ModelAdapter for Model10CallbackAdapter {
     ///
     /// Overall interface status
     fn interface_status(&self) -> St {
-        (self.interface_status_callback)()
+        (self.interface_status_callback)(self.context)
     }
 
     /// Interface Control
     ///
     /// Overall interface control (TBD)
     fn interface_control(&self) -> Option<u16> {
-        self.interface_control_callback.map(|callback| (callback)())
+        self.interface_control_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Interface Control
@@ -148,7 +151,7 @@ impl ModelAdapter for Model10CallbackAdapter {
     /// Overall interface control (TBD)
     fn set_interface_control(&mut self, value: u16) {
         if let Some(callback) = self.set_interface_control_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -156,7 +159,49 @@ impl ModelAdapter for Model10CallbackAdapter {
     ///
     /// Type of physical media
     fn physical_access_type(&self) -> Option<Typ> {
-        self.physical_access_type_callback
-            .map(|callback| (callback)())
+        self.physical_access_type_callback.map(|callback| {
+        (callback)(self.context)
+        })
+    }
+}
+
+#[repr(C)]
+pub struct Model10StatefulAdapter {
+    interface_status: St,
+    interface_control: u16,
+    physical_access_type: Typ,
+}
+
+impl ModelAdapter for Model10StatefulAdapter {
+    /// Interface Status
+    ///
+    /// Overall interface status
+    fn interface_status(&self) -> St {
+        self.interface_status
+    }
+
+    /// Interface Control
+    ///
+    /// Overall interface control (TBD)
+    fn interface_control(&self) -> Option<u16> {
+        Some(
+        self.interface_control
+        )
+    }
+
+    /// Interface Control
+    ///
+    /// Overall interface control (TBD)
+    fn set_interface_control(&mut self, value: u16) {
+        self.interface_control = value;
+    }
+
+    /// Physical Access Type
+    ///
+    /// Type of physical media
+    fn physical_access_type(&self) -> Option<Typ> {
+        Some(
+        self.physical_access_type
+        )
     }
 }

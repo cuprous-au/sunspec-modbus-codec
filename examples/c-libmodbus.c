@@ -25,6 +25,73 @@ const char *serial_number_callback()
     return static_content2;
 };
 
+const uint16_t zero_callback_u16()
+{
+    printf("zero callback - u16");
+    return 0;
+};
+
+const uint32_t zero_callback_u32()
+{
+    return 0;
+};
+
+const int16_t zero_callback_i16()
+{
+    return 0;
+};
+
+const void noop_callback() {
+};
+
+const void handle_panic(const char* message) {
+    fprintf(stderr, "Panic from rust lib: %s", message);
+    exit(1);
+};
+
+typedef struct BatteryState
+{
+    uint32_t cycle_count;
+    uint16_t alarm_reset;
+    SetOp operation;
+    SetInvState inverter_state;
+} BatteryState;
+
+const uint32_t cycle_count_callback(const void *self)
+{
+    return (*(struct BatteryState *)self).cycle_count;
+}
+
+const uint16_t alarm_reset_callback(const void *self)
+{
+    return (*(struct BatteryState *)self).alarm_reset;
+}
+
+const SetOp operation_callback(const void *self)
+{
+    return (*(struct BatteryState *)self).operation;
+}
+
+const SetInvState inverter_state_callback(const void *self)
+{
+    return (*(struct BatteryState *)self).inverter_state;
+}
+
+const void set_alarm_reset_callback(uint16_t value, void *self)
+{
+    (*(struct BatteryState *)self).alarm_reset = value;
+}
+
+const void set_operation_callback(SetOp value, void *self)
+{
+    (*(struct BatteryState *)self).operation = value;
+}
+
+const void set_inverter_state_callback(SetInvState value, void *self)
+{
+    (*(struct BatteryState *)self).inverter_state = value;
+}
+
 int main(void)
 {
     modbus_t *ctx = modbus_new_tcp("127.0.0.1", 5502);
@@ -43,8 +110,70 @@ int main(void)
         .model_callback = model_callback,
         .serial_number_callback = serial_number_callback,
     };
-    struct SunspecService sunspec_service;
-    sunspec_service_init(&sunspec_service, &sunspec_common_adapter);
+
+    struct BatteryState battery_state = {
+        .cycle_count = 10,
+        .alarm_reset = 0,
+        .operation = SetOp_Disconnect,
+        .inverter_state = SetInvState_InverterStandby,
+    };
+
+    struct Model802CallbackAdapter sunspec_battery_adapter =
+        {
+            .context = &battery_state,
+            .nameplate_charge_capacity_callback = zero_callback_u16,
+            .nameplate_energy_capacity_callback = zero_callback_u16,
+            .nameplate_max_charge_rate_callback = zero_callback_u16,
+            .nameplate_max_discharge_rate_callback = zero_callback_u16,
+            .state_of_charge_callback = zero_callback_u16,
+            .cycle_count_callback = cycle_count_callback,
+            .control_mode_callback = zero_callback_u16,
+            .alarm_reset_callback = alarm_reset_callback,
+            .battery_type_callback = zero_callback_u16,
+            .state_of_the_battery_bank_callback = zero_callback_u16,
+            .battery_event_1_bitfield_callback = zero_callback_u32,
+            .battery_event_2_bitfield_callback = zero_callback_u32,
+            .vendor_event_bitfield_1_callback = zero_callback_u32,
+            .vendor_event_bitfield_2_callback = zero_callback_u32,
+            .external_battery_voltage_callback = zero_callback_u16,
+            .total_dc_current_callback = zero_callback_i16,
+            .total_power_callback = zero_callback_i16,
+            .ah_rtg_sf_callback = zero_callback_u16,
+            .wh_rtg_sf_callback = zero_callback_u16,
+            .w_cha_dis_cha_max_sf_callback = zero_callback_u16,
+            .so_c_sf_callback = zero_callback_u16,
+            .v_sf_callback = zero_callback_u16,
+            .cell_v_sf_callback = zero_callback_u16,
+            .a_sf_callback = zero_callback_u16,
+            .a_max_sf_callback = zero_callback_u16,
+            .inverter_state_callback = inverter_state_callback,
+            .operation_callback = operation_callback,
+            .set_alarm_reset_callback = set_alarm_reset_callback,
+            .set_operation_callback = set_operation_callback,
+            .set_inverter_state_callback = set_inverter_state_callback,
+        };
+
+    struct Model103StatefulAdapter inverter_adapter =
+        {
+            .amps = 1,
+            .amps_phase_a = 2,
+            .amps_phase_b = 3,
+            .amps_phase_c = 4,
+            .a_sf = 0,
+            .phase_voltage_ab = 0,
+            .phase_voltage_bc = 0,
+            .phase_voltage_ca = 0,
+            .phase_voltage_an = 0,
+            .phase_voltage_bn = 0,
+            .phase_voltage_cn = 0,
+        };
+
+    struct SunspecExternalAdapters adapters =
+        {
+            .model_1_callback_adapter = &sunspec_common_adapter,
+            .model_802_callback_adapter = &sunspec_battery_adapter,
+            .model_103_stateful_adapter = &inverter_adapter,
+        };
 
     int server_socket = modbus_tcp_listen(ctx, 1);
     if (server_socket == -1)
@@ -87,7 +216,7 @@ int main(void)
                     res[1] = function_code;
                     res[2] = bytes;
 
-                    sunspec_service_handle_request(&sunspec_service, address, length, (uint16_t *)&res[3]);
+                    sunspec_service_handle_request(&adapters, address, length, (uint16_t *)&res[3]);
 
                     printf("Responding with %d bytes\n", bytes + 3);
                     for (int i = 0; i < bytes + 3; i++)

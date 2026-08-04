@@ -1,6 +1,7 @@
+use core::ffi::c_void;
 use crate::serialisation;
-use crate::sunspec::points::PointReference;
 use crate::sunspec::{PointType, ReadablePoint};
+use crate::sunspec::points::PointReference;
 
 pub const SIZE: u16 = 9;
 
@@ -18,41 +19,31 @@ pub static POINTS: [ReadablePoint; 7] = [
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::ControlMode,
-        },
+        reference: PointReference::Model715 { point: Point::ControlMode },
         size: 1,
         data_type: PointType::Enum16,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::DerHeartbeat,
-        },
+        reference: PointReference::Model715 { point: Point::DerHeartbeat },
         size: 2,
         data_type: PointType::Uint32,
         writeable: false,
     },
     ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::ControllerHeartbeat,
-        },
+        reference: PointReference::Model715 { point: Point::ControllerHeartbeat },
         size: 2,
         data_type: PointType::Uint32,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::AlarmReset,
-        },
+        reference: PointReference::Model715 { point: Point::AlarmReset },
         size: 1,
         data_type: PointType::Uint16,
         writeable: true,
     },
     ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::SetOperation,
-        },
+        reference: PointReference::Model715 { point: Point::Operation },
         size: 1,
         data_type: PointType::Enum16,
         writeable: true,
@@ -65,40 +56,49 @@ pub enum Point {
     DerHeartbeat,
     ControllerHeartbeat,
     AlarmReset,
-    SetOperation,
+    Operation,
 }
 
-pub fn write_point(
-    model: &dyn ModelAdapter,
-    point: &Point,
-    buffer: &mut [u16],
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_point(model: &dyn ModelAdapter, point: &Point, buffer: &mut [u16], offset: u16, limit: u16) {
     match point {
         Point::ControlMode => {
             if let Some(value) = model.control_mode() {
                 serialisation::write_u16(value as u16, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::DerHeartbeat => {
             if let Some(value) = model.der_heartbeat() {
                 serialisation::write_u32(value, buffer, offset, limit);
             }
+            else {
+                buffer.fill(0)
+            }
         }
         Point::ControllerHeartbeat => {
             if let Some(value) = model.controller_heartbeat() {
                 serialisation::write_u32(value, buffer, offset, limit);
+            }
+            else {
+                buffer.fill(0)
             }
         }
         Point::AlarmReset => {
             if let Some(value) = model.alarm_reset() {
                 serialisation::write_u16(value, buffer);
             }
+            else {
+                buffer.fill(0)
+            }
         }
-        Point::SetOperation => {
-            if let Some(value) = model.set_operation() {
+        Point::Operation => {
+            if let Some(value) = model.operation() {
                 serialisation::write_u16(value as u16, buffer);
+            }
+            else {
+                buffer.fill(0)
             }
         }
     }
@@ -129,7 +129,8 @@ pub trait ModelAdapter {
     /// Controller Heartbeat
     ///
     /// Value is incremented every second by the controller with periodic resets to zero.
-    fn set_controller_heartbeat(&mut self, value: u32) {}
+    fn set_controller_heartbeat(&mut self, value: u32) {
+    }
 
     /// Alarm Reset
     ///
@@ -141,31 +142,35 @@ pub trait ModelAdapter {
     /// Alarm Reset
     ///
     /// Used to reset any latched alarms. 1 = Reset.
-    fn set_alarm_reset(&mut self, value: u16) {}
+    fn set_alarm_reset(&mut self, value: u16) {
+    }
 
     /// Set Operation
     ///
     /// Commands to PCS.
-    fn set_operation(&self) -> Option<OpCtl> {
+    fn operation(&self) -> Option<OpCtl> {
         None
     }
 
     /// Set Operation
     ///
     /// Commands to PCS.
-    fn set_set_operation(&mut self, value: OpCtl) {}
+    fn set_operation(&mut self, value: OpCtl) {
+    }
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum LocRemCtl {
     /// Remote Control
     Remote = 0,
     /// Local Control
-    ///
+    /// 
     /// Local mode is required for manual/maintenance operations. Once invoked, it must be explicitly exited for the inverter to be controlled remotely.
     Local = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(u16)]
 pub enum OpCtl {
     /// Stop the DER
@@ -180,14 +185,15 @@ pub enum OpCtl {
 
 #[repr(C)]
 pub struct Model715CallbackAdapter {
-    control_mode_callback: Option<extern "C" fn() -> LocRemCtl>,
-    der_heartbeat_callback: Option<extern "C" fn() -> u32>,
-    controller_heartbeat_callback: Option<extern "C" fn() -> u32>,
-    set_controller_heartbeat_callback: Option<extern "C" fn(u32)>,
-    alarm_reset_callback: Option<extern "C" fn() -> u16>,
-    set_alarm_reset_callback: Option<extern "C" fn(u16)>,
-    set_operation_callback: Option<extern "C" fn() -> OpCtl>,
-    set_set_operation_callback: Option<extern "C" fn(OpCtl)>,
+    context: *mut c_void,
+    control_mode_callback: Option<extern "C" fn(*const c_void) -> LocRemCtl>,
+    der_heartbeat_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    controller_heartbeat_callback: Option<extern "C" fn(*const c_void) -> u32>,
+    set_controller_heartbeat_callback: Option<extern "C" fn(u32, *mut c_void)>,
+    alarm_reset_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_alarm_reset_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    operation_callback: Option<extern "C" fn(*const c_void) -> OpCtl>,
+    set_operation_callback: Option<extern "C" fn(OpCtl, *mut c_void)>,
 }
 
 impl ModelAdapter for Model715CallbackAdapter {
@@ -195,22 +201,27 @@ impl ModelAdapter for Model715CallbackAdapter {
     ///
     /// DER control mode. Enumeration.
     fn control_mode(&self) -> Option<LocRemCtl> {
-        self.control_mode_callback.map(|callback| (callback)())
+        self.control_mode_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// DER Heartbeat
     ///
     /// Value is incremented every second by the DER with periodic resets to zero.
     fn der_heartbeat(&self) -> Option<u32> {
-        self.der_heartbeat_callback.map(|callback| (callback)())
+        self.der_heartbeat_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Controller Heartbeat
     ///
     /// Value is incremented every second by the controller with periodic resets to zero.
     fn controller_heartbeat(&self) -> Option<u32> {
-        self.controller_heartbeat_callback
-            .map(|callback| (callback)())
+        self.controller_heartbeat_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Controller Heartbeat
@@ -218,7 +229,7 @@ impl ModelAdapter for Model715CallbackAdapter {
     /// Value is incremented every second by the controller with periodic resets to zero.
     fn set_controller_heartbeat(&mut self, value: u32) {
         if let Some(callback) = self.set_controller_heartbeat_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
@@ -226,7 +237,9 @@ impl ModelAdapter for Model715CallbackAdapter {
     ///
     /// Used to reset any latched alarms. 1 = Reset.
     fn alarm_reset(&self) -> Option<u16> {
-        self.alarm_reset_callback.map(|callback| (callback)())
+        self.alarm_reset_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Alarm Reset
@@ -234,23 +247,102 @@ impl ModelAdapter for Model715CallbackAdapter {
     /// Used to reset any latched alarms. 1 = Reset.
     fn set_alarm_reset(&mut self, value: u16) {
         if let Some(callback) = self.set_alarm_reset_callback {
-            (callback)(value);
+        (callback)(value, self.context);
         };
     }
 
     /// Set Operation
     ///
     /// Commands to PCS.
-    fn set_operation(&self) -> Option<OpCtl> {
-        self.set_operation_callback.map(|callback| (callback)())
+    fn operation(&self) -> Option<OpCtl> {
+        self.operation_callback.map(|callback| {
+        (callback)(self.context)
+        })
     }
 
     /// Set Operation
     ///
     /// Commands to PCS.
-    fn set_set_operation(&mut self, value: OpCtl) {
-        if let Some(callback) = self.set_set_operation_callback {
-            (callback)(value);
+    fn set_operation(&mut self, value: OpCtl) {
+        if let Some(callback) = self.set_operation_callback {
+        (callback)(value, self.context);
         };
+    }
+}
+
+#[repr(C)]
+pub struct Model715StatefulAdapter {
+    control_mode: LocRemCtl,
+    der_heartbeat: u32,
+    controller_heartbeat: u32,
+    alarm_reset: u16,
+    operation: OpCtl,
+}
+
+impl ModelAdapter for Model715StatefulAdapter {
+    /// Control Mode
+    ///
+    /// DER control mode. Enumeration.
+    fn control_mode(&self) -> Option<LocRemCtl> {
+        Some(
+        self.control_mode
+        )
+    }
+
+    /// DER Heartbeat
+    ///
+    /// Value is incremented every second by the DER with periodic resets to zero.
+    fn der_heartbeat(&self) -> Option<u32> {
+        Some(
+        self.der_heartbeat
+        )
+    }
+
+    /// Controller Heartbeat
+    ///
+    /// Value is incremented every second by the controller with periodic resets to zero.
+    fn controller_heartbeat(&self) -> Option<u32> {
+        Some(
+        self.controller_heartbeat
+        )
+    }
+
+    /// Controller Heartbeat
+    ///
+    /// Value is incremented every second by the controller with periodic resets to zero.
+    fn set_controller_heartbeat(&mut self, value: u32) {
+        self.controller_heartbeat = value;
+    }
+
+    /// Alarm Reset
+    ///
+    /// Used to reset any latched alarms. 1 = Reset.
+    fn alarm_reset(&self) -> Option<u16> {
+        Some(
+        self.alarm_reset
+        )
+    }
+
+    /// Alarm Reset
+    ///
+    /// Used to reset any latched alarms. 1 = Reset.
+    fn set_alarm_reset(&mut self, value: u16) {
+        self.alarm_reset = value;
+    }
+
+    /// Set Operation
+    ///
+    /// Commands to PCS.
+    fn operation(&self) -> Option<OpCtl> {
+        Some(
+        self.operation
+        )
+    }
+
+    /// Set Operation
+    ///
+    /// Commands to PCS.
+    fn set_operation(&mut self, value: OpCtl) {
+        self.operation = value;
     }
 }
