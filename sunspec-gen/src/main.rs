@@ -21,7 +21,7 @@ const EXCLUDED_MODELS: [&str; 8] = [
     "model_702",
     "model_63002",
 ];
-const GENERATED_SRC_DIR: &str = "../src/sunspec";
+const GENERATED_SRC_DIR: &str = "../sunspec-modbus-lib-rs/src/sunspec";
 
 fn model_name_from_path(path: &Path) -> &str {
     path.file_prefix().and_then(OsStr::to_str).unwrap()

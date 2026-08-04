@@ -133,6 +133,8 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     }
 
     scope.import("crate", "ReadablePoint");
+    scope.import("crate::buffer", "ModbusBuffer");
+    scope.import("crate::buffer", "write_u16");
     scope.import("crate::sunspec::points", "PointReference");
 
     let adapter_trait = scope
@@ -271,12 +273,12 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         .generic("'a")
         .arg("adapters", "&'a dyn SunspecAdapterProvider<'a>")
         .arg("point_ref", "&PointReference")
-        .arg("buffer", "&mut [u16]")
+        .arg("buffer", "ModbusBuffer<'a>")
         .arg("offset", "u16")
         .arg("limit", "u16");
 
     let mut matcher = Block::new("match point_ref");
-    matcher.line("PointReference::Static { value } => { buffer[0] = value.to_be(); }");
+    matcher.line("PointReference::Static { value } => write_u16(*value, buffer),");
     for model in models {
         let mut match_block = Block::new(format!(
             "PointReference::{} {{ point }} =>",
@@ -293,7 +295,8 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
             .line("buffer,")
             .line("offset,")
             .line("limit,")
-            .line(");");
+            .line(");")
+            .after(",");
 
         matcher.push_block(match_block);
     }
@@ -512,7 +515,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     scope.import("core::ffi", "c_void");
-    scope.import("crate", "serialisation");
+    scope.import("crate::buffer", "self");
+    scope.import("crate::buffer", "ModbusBuffer");
     scope.import("crate::sunspec", "{PointType, ReadablePoint}");
     scope.import("crate::sunspec::points", "PointReference");
 
@@ -558,18 +562,18 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
             if point.mandatory == PointMandatory::M {
                 match_block
                     .line(format!(
-                        "serialisation::{}({value_reader}{value_cast}{rest_args});",
+                        "buffer::{}({value_reader}{value_cast}{rest_args});",
                         point.point_type.writer_function_name
                     ))
                     .after(",");
             } else {
                 let mut some_block = Block::new(format!("if let Some(value) = {value_reader}"));
                 some_block.line(format!(
-                    "serialisation::{}(value{value_cast}{rest_args});",
+                    "buffer::{}(value{value_cast}{rest_args});",
                     point.point_type.writer_function_name
                 ));
                 let mut else_block = Block::new("else");
-                else_block.line("buffer.fill(0)");
+                else_block.line("buffer::zero(buffer, offset);");
 
                 match_block.push_block(some_block);
                 match_block.push_block(else_block);
@@ -580,10 +584,11 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
 
     scope
         .new_fn("write_point")
+        .generic("'a")
         .vis("pub")
         .arg("model", "&dyn ModelAdapter")
         .arg("point", "&Point")
-        .arg("buffer", "&mut [u16]")
+        .arg("buffer", "ModbusBuffer<'a>")
         .arg("offset", "u16")
         .arg("limit", "u16")
         .push_block(writer_block);

@@ -1,31 +1,15 @@
-[package]
-name = "sunspec-modbus-codec"
-version = "0.1.0"
-edition = "2024"
-
-[lib]
-crate-type = ["staticlib", "lib"]
-
-[features]
-nopanic = []
+[workspace]
+resolver = "3"
+members = ["sunspec-modbus-lib-rs", "sunspec-modbus-lib-static", "sunspec-gen"]
 
 [profile.dev]
 lto = true
 debug = true
 strip = false
+panic = "abort"
 
 [profile.release]
 lto = true
 debug = true
 strip = false
-
-[dependencies]
-heapless = "0.9.3"
-log = "0.4.33"
-
-[dev-dependencies]
-tokio = { version = "1.52.3", features = ["time"] }
-tokio-modbus = { version = "*", default-features = false, features = ["tcp-server"] }
-
-[build-dependencies]
-cbindgen = "0.29.4"
+panic = "abort"
