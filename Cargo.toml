@@ -1,6 +1,10 @@
 [workspace]
 resolver = "3"
-members = ["sunspec-modbus-lib-rs", "sunspec-modbus-lib-static", "sunspec-gen"]
+members = [
+    "crates/sunspec-modbus-lib-rs",
+    "crates/sunspec-modbus-lib-static",
+    "crates/sunspec-gen"
+]
 
 [profile.dev]
 lto = true
@@ -13,3 +17,19 @@ lto = true
 debug = true
 strip = false
 panic = "abort"
+
+[workspace.dependencies]
+bytemuck = "1.25.2"
+heapless = "0.9.3"
+sunspec-modbus-lib-rs = { path = "../sunspec-modbus-lib-rs" }
+codegen = "0.3.0"
+glob = "0.3.3"
+heck = "0.5.0"
+serde = "1.0.228"
+serde_json = "1.0.150"
+typify = "0.7.0"
+schemars = "0.8"
+rustfmt-wrapper = "0.2.1"
+tokio = { version = "1.52.3", features = ["time"] }
+tokio-modbus = { version = "*", default-features = false, features = ["tcp-server"] }
+cbindgen = "0.29.4"

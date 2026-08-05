@@ -1,0 +1,21 @@
+[package]
+name = "sunspec-gen"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+codegen = { workspace = true }
+glob = { workspace = true }
+heck = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+typify = { workspace = true }
+schemars = { workspace = true }
+rustfmt-wrapper = { workspace = true }
+
+[build-dependencies]
+serde_json = { workspace = true }
+typify = { workspace = true }
+schemars = { workspace = true }
+rustfmt-wrapper = { workspace = true }

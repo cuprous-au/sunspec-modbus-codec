@@ -1,0 +1,458 @@
+<sunSpecModels v="1">
+
+  <!-- 160: Multiple MPPT Inverter Extension Model -->
+  <model id="160" len="28" name="mppt">
+    <block len="8" type="fixed">
+      <point id="DCA_SF" offset="0" type="sunssf" len="1" />
+      <point id="DCV_SF" offset="1" type="sunssf" len="1" />
+      <point id="DCW_SF" offset="2" type="sunssf" len="1" />
+      <point id="DCWH_SF" offset="3" type="sunssf" len="1" />
+      <point id="Evt" offset="4" type="bitfield32" len="2" >
+        <symbol id="GROUND_FAULT">0</symbol>
+        <symbol id="INPUT_OVER_VOLTAGE">1</symbol>
+        <symbol id="RESERVED_2">2</symbol>
+        <symbol id="DC_DISCONNECT">3</symbol>
+        <symbol id="RESERVED_4">4</symbol>
+        <symbol id="CABINET_OPEN">5</symbol>
+        <symbol id="MANUAL_SHUTDOWN">6</symbol>
+        <symbol id="OVER_TEMP">7</symbol>
+        <symbol id="RESERVED_8">8</symbol>
+        <symbol id="RESERVED_9">9</symbol>
+        <symbol id="RESERVED_10">10</symbol>
+        <symbol id="RESERVED_11">11</symbol>
+        <symbol id="BLOWN_FUSE">12</symbol>
+        <symbol id="UNDER_TEMP">13</symbol>
+        <symbol id="MEMORY_LOSS">14</symbol>
+        <symbol id="ARC_DETECTION">15</symbol>
+        <symbol id="RESERVED_16">16</symbol>
+        <symbol id="RESERVED_17">17</symbol>
+        <symbol id="RESERVED_18">18</symbol>
+        <symbol id="RESERVED_19">19</symbol>
+        <symbol id="TEST_FAILED">20</symbol>
+        <symbol id="INPUT_UNDER_VOLTAGE">21</symbol>
+        <symbol id="INPUT_OVER_CURRENT">22</symbol>
+      </point>
+      <point id="N" offset="6" type="count" len="1" />
+      <point id="TmsPer" offset="7" type="uint16" len="1" />
+    </block>
+    <block len="20" type="repeating" name="module">
+      <point id="ID" offset="0" type="uint16" len="1" />
+      <point id="IDStr" offset="1" type="string" len="8" />
+      <point id="DCA" offset="9" type="uint16" len="1" sf="DCA_SF" units="A" />
+      <point id="DCV" offset="10" type="uint16" len="1" sf="DCV_SF" units="V" />
+      <point id="DCW" offset="11" type="uint16" len="1" sf="DCW_SF" units="W" />
+      <point id="DCWH" offset="12" type="acc32" len="2" sf="DCWH_SF" units="Wh" />
+      <point id="Tms" offset="14" type="uint32" len="2" units="Secs" />
+      <point id="Tmp" offset="16" type="int16" len="1" units="C" />
+      <point id="DCSt" offset="17" type="enum16" len="1" >
+        <symbol id="OFF">1</symbol>
+        <symbol id="SLEEPING">2</symbol>
+        <symbol id="STARTING">3</symbol>
+        <symbol id="MPPT">4</symbol>
+        <symbol id="THROTTLED">5</symbol>
+        <symbol id="SHUTTING_DOWN">6</symbol>
+        <symbol id="FAULT">7</symbol>
+        <symbol id="STANDBY">8</symbol>
+        <symbol id="TEST">9</symbol>
+        <symbol id="RESERVED_10">10</symbol>
+      </point>
+      <point id="DCEvt" offset="18" type="bitfield32" len="2" >
+        <symbol id="GROUND_FAULT">0</symbol>
+        <symbol id="INPUT_OVER_VOLTAGE">1</symbol>
+        <symbol id="RESERVED_2">2</symbol>
+        <symbol id="DC_DISCONNECT">3</symbol>
+        <symbol id="RESERVED_4">4</symbol>
+        <symbol id="CABINET_OPEN">5</symbol>
+        <symbol id="MANUAL_SHUTDOWN">6</symbol>
+        <symbol id="OVER_TEMP">7</symbol>
+        <symbol id="RESERVED_8">8</symbol>
+        <symbol id="RESERVED_9">9</symbol>
+        <symbol id="RESERVED_10">10</symbol>
+        <symbol id="RESERVED_11">11</symbol>
+        <symbol id="BLOWN_FUSE">12</symbol>
+        <symbol id="UNDER_TEMP">13</symbol>
+        <symbol id="MEMORY_LOSS">14</symbol>
+        <symbol id="ARC_DETECTION">15</symbol>
+        <symbol id="RESERVED_16">16</symbol>
+        <symbol id="RESERVED_17">17</symbol>
+        <symbol id="RESERVED_18">18</symbol>
+        <symbol id="RESERVED_19">19</symbol>
+        <symbol id="TEST_FAILED">20</symbol>
+        <symbol id="INPUT_UNDER_VOLTAGE">21</symbol>
+        <symbol id="INPUT_OVER_CURRENT">22</symbol>
+      </point>
+    </block>
+  </model>
+  <strings id="160" locale="en">
+    <model>
+      <label>Multiple MPPT Inverter Extension Model</label>
+      <description/>
+      <notes/>
+    </model>
+    <point id="DCA_SF">
+      <label>Current Scale Factor</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCV_SF">
+      <label>Voltage Scale Factor</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCW_SF">
+      <label>Power Scale Factor</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCWH_SF">
+      <label>Energy Scale Factor</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="Evt">
+      <label>Global Events</label>
+      <description/>
+      <notes/>
+      <symbol id="GROUND_FAULT">
+        <label>Ground Fault</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="INPUT_OVER_VOLTAGE">
+        <label>Input Over Voltage</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="DC_DISCONNECT">
+        <label>DC Disconnect</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="CABINET_OPEN">
+        <label>Cabinet Open</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="MANUAL_SHUTDOWN">
+        <label>Manual Shutdown</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="OVER_TEMP">
+        <label>Over Temperature</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="BLOWN_FUSE">
+        <label>Blown Fuse</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="UNDER_TEMP">
+        <label>Under Temperature</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="MEMORY_LOSS">
+        <label>Memory Loss</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="ARC_DETECTION">
+        <label>Arc Detection</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="TEST_FAILED">
+        <label>Test Failed</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="INPUT_UNDER_VOLTAGE">
+        <label>Under Voltage</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="INPUT_OVER_CURRENT">
+        <label>Over Current</label>
+        <description/>
+        <notes/>
+      </symbol>
+    </point>
+    <point id="N">
+      <label>Number of Modules</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="ID">
+      <label>Input ID</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="IDStr">
+      <label>Input ID String</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCA">
+      <label>DC Current</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCV">
+      <label>DC Voltage</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCW">
+      <label>DC Power</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCWH">
+      <label>Lifetime Energy</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="Tms">
+      <label>Timestamp</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="TmsPer">
+      <label>Timestamp Period</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="Tmp">
+      <label>Temperature</label>
+      <description/>
+      <notes/>
+    </point>
+    <point id="DCSt">
+      <label>Operating State</label>
+      <description/>
+      <notes/>
+      <symbol id="OFF">
+        <label>Off</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="SLEEPING">
+        <label>Sleeping</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="STARTING">
+        <label>Starting</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="MPPT">
+        <label>MPPT</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="THROTTLED">
+        <label>Throttled</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="SHUTTING_DOWN">
+        <label>Shutting Down</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="FAULT">
+        <label>Fault</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="STANDBY">
+        <label>Standby</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="TEST">
+        <label>Test</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+    </point>
+    <point id="DCEvt">
+      <label>Module Events</label>
+      <description/>
+      <notes/>
+      <symbol id="GROUND_FAULT">
+        <label>Ground Fault</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="INPUT_OVER_VOLTAGE">
+        <label>Input Over Voltage</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="DC_DISCONNECT">
+        <label>DC Disconnect</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="CABINET_OPEN">
+        <label>Cabinet Open</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="MANUAL_SHUTDOWN">
+        <label>Manual Shutdown</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="OVER_TEMP">
+        <label>Over Temperature</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="BLOWN_FUSE">
+        <label>Blown Fuse</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="UNDER_TEMP">
+        <label>Under Temperature</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="MEMORY_LOSS">
+        <label>Memory Loss</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="ARC_DETECTION">
+        <label>Arc Detection</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="RESERVED">
+        <label>Reserved</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="TEST_FAILED">
+        <label>Test Failed</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="INPUT_UNDER_VOLTAGE">
+        <label>Under Voltage</label>
+        <description/>
+        <notes/>
+      </symbol>
+      <symbol id="INPUT_OVER_CURRENT">
+        <label>Over Current</label>
+        <description/>
+        <notes/>
+      </symbol>
+    </point>
+  </strings>
+</sunSpecModels>
