@@ -30,7 +30,14 @@ pub fn log(str: &CStr) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn sunspec_service_handle_request(
+/// Handles a SunSpec Modbus register read request and writes the encoded response.
+///
+/// # Safety
+/// - `adapters` must be a valid, non-null pointer to a live `SunspecExternalAdapters`.
+/// - `response_buffer` must be a valid, non-null, writable buffer of at least
+///   `length * 2` bytes.
+/// - Both pointers must remain valid for the duration of this call.
+pub unsafe extern "C" fn sunspec_service_handle_request(
     adapters: *const SunspecExternalAdapters,
     address: u16,
     length: u16,

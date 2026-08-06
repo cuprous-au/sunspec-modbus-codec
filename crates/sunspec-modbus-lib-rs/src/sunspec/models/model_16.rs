@@ -115,14 +115,14 @@ pub enum Point {
     LinkControl,
 }
 
-pub fn model_length<'a>(model: &dyn ModelAdapter) -> u16 {
+pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     54
 }
 
-pub fn write_point<'a, 'b>(
+pub fn write_point<'a>(
     model: &dyn ModelAdapter,
     point: &Point,
-    buffer: ModbusBuffer<'b>,
+    buffer: ModbusBuffer<'a>,
     offset: u16,
     limit: u16,
 ) {

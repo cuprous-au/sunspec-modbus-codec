@@ -52,42 +52,42 @@ impl<'a> From<&'a mut [u8]> for ModbusBuffer<'a> {
     }
 }
 
-pub fn write_u16<'a>(value: u16, buffer: ModbusBuffer<'a>) -> () {
+pub fn write_u16<'a>(value: u16, buffer: ModbusBuffer<'a>) {
     buffer.buffer[0] = match buffer.byte_order {
         ModbusWordByteOrder::BigEndian => value.to_be_bytes(),
         ModbusWordByteOrder::System => value.to_ne_bytes(),
     }
 }
 
-pub fn write_u32<'a>(value: u32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_u32<'a>(value: u32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_u64<'a>(value: u64, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_u64<'a>(value: u64, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_u128<'a>(value: u128, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_u128<'a>(value: u128, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_i16<'a>(value: i16, buffer: ModbusBuffer<'a>) -> () {
+pub fn write_i16<'a>(value: i16, buffer: ModbusBuffer<'a>) {
     buffer.buffer[0] = value.to_ne_bytes();
 }
 
-pub fn write_i32<'a>(value: i32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_i32<'a>(value: i32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_i64<'a>(value: i64, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_i64<'a>(value: i64, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_f32<'a>(value: f32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_f32<'a>(value: f32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_f64<'a>(value: f64, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_f64<'a>(value: f64, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
@@ -96,7 +96,7 @@ pub fn write_ipv4_addr<'a>(
     buffer: ModbusBuffer<'a>,
     offset: u16,
     limit: u16,
-) -> () {
+) {
     write_bytes(&value.octets(), buffer, offset, limit)
 }
 
@@ -105,25 +105,25 @@ pub fn write_ipv6_addr<'a>(
     buffer: ModbusBuffer<'a>,
     offset: u16,
     limit: u16,
-) -> () {
+) {
     value
-        .into_iter()
+        .iter()
         .skip(offset as usize)
         .take(limit as usize)
         .zip(buffer.buffer)
         .for_each(|(v, buf_word)| *buf_word = v.to_ne_bytes());
 }
 
-pub fn write_eui48<'a>(value: &[u8; 6], buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_eui48<'a>(value: &[u8; 6], buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(value, buffer, offset, limit)
 }
 
-pub fn write_string<'a>(str: &CStr, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) -> () {
+pub fn write_string<'a>(str: &CStr, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     buffer.buffer.fill([0, 0]);
-    write_bytes(&str.to_bytes_with_nul(), buffer, offset, limit);
+    write_bytes(str.to_bytes_with_nul(), buffer, offset, limit);
 }
 
-pub fn zero<'a>(buffer: ModbusBuffer<'a>, limit: u16) -> () {
+pub fn zero<'a>(buffer: ModbusBuffer<'a>, limit: u16) {
     buffer.buffer[..limit as usize].fill([0, 0]);
 }
 
@@ -146,7 +146,7 @@ pub fn write_bytes<'a>(bytes: &[u8], buffer: ModbusBuffer<'a>, offset: u16, limi
     let last_chunk = remainder.first().map(|byte| [*byte, 0_u8]);
 
     chunks
-        .into_iter()
+        .iter()
         .chain(&last_chunk)
         .skip(offset as usize)
         .take(limit as usize)

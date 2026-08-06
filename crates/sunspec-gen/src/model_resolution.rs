@@ -146,9 +146,7 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         _ => None,
     };
 
-    let writer_function_name = match point.type_ {
-        _ => format!("write_{}", base_type.to_snake_case()),
-    };
+    let writer_function_name = format!("write_{}", base_type.to_snake_case());
 
     let writer_allow_offset = base_type != "u16" && base_type != "i16";
 
@@ -201,7 +199,7 @@ pub fn resolve_point(
         point.detail.as_ref(),
     ]
     .iter()
-    .flat_map(|r| r.map(|s| s.clone()))
+    .flat_map(|r| r.cloned())
     .collect();
 
     let value_type = if point.type_ == PointType::Pad {
@@ -242,7 +240,7 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
                     symbol.detail.as_ref(),
                 ]
                 .iter()
-                .flat_map(|r| r.map(|s| s.clone()))
+                .flat_map(|r| r.cloned())
                 .collect(),
             })
             .collect();
@@ -325,9 +323,9 @@ pub fn resolve_group(
         name_snake_case: group.name.to_snake_case(),
         static_size: size,
         repeat_count_point,
-        points: points,
-        enums: enums,
-        repeating_child: repeating_groups.into_iter().map(|g| Box::new(g)).next(),
+        points,
+        enums,
+        repeating_child: repeating_groups.into_iter().map(Box::new).next(),
     }
 }
 
@@ -342,7 +340,7 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
         model.detail.as_ref(),
     ]
     .iter()
-    .flat_map(|r| r.map(|s| s.clone()))
+    .flat_map(|r| r.cloned())
     .collect();
 
     ResolvedModel {

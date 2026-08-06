@@ -1,0 +1,100 @@
+use codegen::Scope;
+use glob::glob;
+use std::{ffi::OsStr, fs, path::Path};
+
+use crate::code_generation::{
+    generate_adapter_structs, generate_model, generate_models_mod, generate_point_types,
+};
+use crate::model_resolution::{ResolvedModel, resolve_model};
+use crate::sunspec_schema::SunspecModel;
+
+mod code_generation;
+mod model_resolution;
+mod sunspec_schema;
+const EXCLUDED_MODELS: [&str; 8] = [
+    "model_9",
+    "model_14",
+    "model_302",
+    "model_303",
+    "model_304",
+    "model_601",
+    "model_702",
+    "model_63002",
+];
+
+fn model_name_from_path(path: &Path) -> &str {
+    path.file_prefix().and_then(OsStr::to_str).unwrap()
+}
+
+fn is_included_model(path: &Path) -> bool {
+    !EXCLUDED_MODELS.contains(&model_name_from_path(path))
+}
+
+fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
+    let mut vec: Vec<ResolvedModel> = glob(model_glob)
+        .unwrap()
+        .filter(|entry| match entry {
+            Ok(path) => is_included_model(path),
+            Err(_) => true,
+        })
+        .flat_map(|entry| match entry {
+            Ok(path) => {
+                let json = fs::read_to_string(&path).unwrap();
+                let model: SunspecModel = serde_json::from_str(&json).unwrap();
+                let model_name = model_name_from_path(path.as_path());
+                Some(resolve_model(&model, model_name.to_string()))
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                None
+            }
+        })
+        .collect();
+
+    vec.sort_unstable_by_key(|model| model.model_number);
+
+    vec
+}
+
+fn format_and_write(path: &Path, scope: &Scope) -> std::io::Result<()> {
+    let text = rustfmt_wrapper::rustfmt(scope.to_string()).unwrap();
+    fs::write(path, text)
+}
+
+pub fn generate() {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_glob = format!("{project_root}/models/json/model_*.json");
+    let src_path = format!("{project_root}/../sunspec-modbus-lib-rs/src/sunspec");
+    let generated_src_dir = Path::new(&src_path);
+
+    fs::remove_dir_all(generated_src_dir).unwrap();
+    fs::create_dir_all(generated_src_dir.join("models")).unwrap();
+
+    let models = collect_models(&model_glob);
+
+    for model in &models {
+        format_and_write(
+            &generated_src_dir
+                .join("models")
+                .join(format!("{}.rs", model.name_snake_case)),
+            &generate_model(model),
+        )
+        .unwrap();
+    }
+
+    format_and_write(
+        &generated_src_dir.join("points.rs"),
+        &generate_point_types(&models),
+    )
+    .unwrap();
+    format_and_write(
+        &generated_src_dir.join("adapters.rs"),
+        &generate_adapter_structs(&models),
+    )
+    .unwrap();
+    format_and_write(
+        &generated_src_dir.join("models.rs"),
+        &generate_models_mod(&models),
+    )
+    .unwrap();
+}

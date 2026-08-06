@@ -11996,6 +11996,15 @@ extern void handle_panic(const char *message);
 
 extern int32_t printf(const char *format, ...);
 
+/*
+ Handles a SunSpec Modbus register read request and writes the encoded response.
+
+ # Safety
+ - `adapters` must be a valid, non-null pointer to a live `SunspecExternalAdapters`.
+ - `response_buffer` must be a valid, non-null, writable buffer of at least
+   `length * 2` bytes.
+ - Both pointers must remain valid for the duration of this call.
+ */
 int32_t sunspec_service_handle_request(const struct SunspecExternalAdapters *adapters,
                                        uint16_t address,
                                        uint16_t length,

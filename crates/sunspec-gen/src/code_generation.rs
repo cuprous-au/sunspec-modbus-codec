@@ -429,13 +429,13 @@ fn generate_model_length_calculator(group: &ResolvedGroup) -> String {
                 format!("model.{}().unwrap_or(0)", repeat_count_pt.name_snake_case)
             }
         };
-        return format!(
+        format!(
             "{} + {repeat_count_ref} * ({})",
-            group.static_size.to_string(),
+            group.static_size,
             generate_model_length_calculator(repeating_block)
-        );
+        )
     } else {
-        return group.static_size.to_string();
+        group.static_size.to_string()
     }
 }
 
@@ -521,7 +521,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
             let getter = generate_getter(point);
             let setter = generate_setter(point);
 
-            let funcs: Vec<Function> = vec![Some(getter), setter]
+            let funcs: Vec<Function> = [Some(getter), setter]
                 .iter()
                 .filter_map(|x| x.clone())
                 .collect();
@@ -555,7 +555,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
 
     scope.raw(format!("pub const SIZE: u16 = {};", size));
 
-    scope.raw(generate_point_array(&model));
+    scope.raw(generate_point_array(model));
 
     let point_enum = scope.new_enum("Point").vis("pub").derive("Debug");
 
@@ -569,7 +569,6 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope
         .new_fn("model_length")
         .vis("pub")
-        .generic("'a")
         .arg("model", "&dyn ModelAdapter")
         .ret("u16")
         .line(generate_model_length_calculator(&model.group));
@@ -628,11 +627,10 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope
         .new_fn("write_point")
         .generic("'a")
-        .generic("'b")
         .vis("pub")
         .arg("model", "&dyn ModelAdapter")
         .arg("point", "&Point")
-        .arg("buffer", "ModbusBuffer<'b>")
+        .arg("buffer", "ModbusBuffer<'a>")
         .arg("offset", "u16")
         .arg("limit", "u16")
         .push_block(writer_block);
@@ -644,7 +642,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     for enum_type in &model.group.enums {
-        scope.push_enum(generate_enum(&enum_type));
+        scope.push_enum(generate_enum(enum_type));
     }
 
     generate_callback_struct(model, &mut scope);
