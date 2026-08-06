@@ -251,19 +251,28 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
 
     for (i, model) in models.iter().enumerate() {
         let name = &model.name_snake_case;
-        let mut outer_block = Block::new(format!("if adapters.{name}_adapter().is_some()"));
 
-        let mut within_size = Block::new(format!("if offset < {name}::SIZE"));
-        within_size.line(format!(
-            "return Some((&{name}::POINTS as &'a [ReadablePoint], offset));"
-        ));
-        outer_block.push_block(within_size);
+        let adapter_exists_condition = format!("adapters.{name}_adapter().is_some()");
+        let within_size_condition = format!("offset < {name}::SIZE");
+        let return_points =
+            format!("return Some((&{name}::POINTS as &'a [ReadablePoint], offset));");
         if i < models.len() - 1 {
+            // Not final block, include full if/else
+            let mut outer_block = Block::new(format!("if {adapter_exists_condition}"));
+            let mut within_size_block = Block::new(format!("if {within_size_condition}"));
+            within_size_block.line(return_points);
             let mut else_block = Block::new("else");
             else_block.line(format!("offset -= {name}::SIZE;"));
+            outer_block.push_block(within_size_block);
             outer_block.push_block(else_block);
-        }
-        points_fn.push_block(outer_block);
+            points_fn.push_block(outer_block);
+        } else {
+            let mut block = Block::new(format!(
+                "if {adapter_exists_condition} && {within_size_condition}"
+            ));
+            block.line(return_points);
+            points_fn.push_block(block);
+        };
     }
 
     points_fn.line("None");
@@ -534,9 +543,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
             CodegenFeature::String => {
                 scope.import("core::ffi", "CStr");
                 scope.import("core::ffi", "c_char")
-            }
-            CodegenFeature::Ipv4Addr => scope.import("core::net", "Ipv4Addr"),
-            CodegenFeature::Ipv6Addr => scope.import("core::net", "Ipv6Addr"),
+            } // CodegenFeature::Ipv4Addr => scope.import("core::net", "Ipv4Addr"),
+              // CodegenFeature::Ipv6Addr => scope.import("core::net", "Ipv6Addr"),
         };
     }
 

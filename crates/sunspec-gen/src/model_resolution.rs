@@ -8,8 +8,6 @@ use crate::sunspec_schema::{
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CodegenFeature {
     String,
-    Ipv4Addr,
-    Ipv6Addr,
 }
 
 pub type DocLines = Vec<String>;
@@ -58,7 +56,6 @@ pub struct ResolvedEnum {
 #[derive(Clone)]
 pub struct EnumValue {
     pub name_pascal_case: String,
-    pub name_snake_case: String,
     pub discriminant: String,
     pub doc: DocLines,
 }
@@ -67,7 +64,6 @@ pub struct ResolvedModel {
     pub name_pascal_case: String,
     pub name_snake_case: String,
     pub features: HashSet<CodegenFeature>,
-    pub doc: DocLines,
     pub model_number: u16,
     pub group: ResolvedGroup,
 }
@@ -231,7 +227,6 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
             .symbols
             .iter()
             .map(|symbol| EnumValue {
-                name_snake_case: symbol.name.to_snake_case(),
                 name_pascal_case: symbol.name.to_pascal_case(),
                 discriminant: symbol.value.to_string(),
                 doc: [
@@ -334,21 +329,11 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
     let mut features: HashSet<CodegenFeature> = HashSet::new();
     let group = resolve_group(&model.group, None, &mut features);
 
-    let doc = [
-        model.label.as_ref(),
-        model.desc.as_ref(),
-        model.detail.as_ref(),
-    ]
-    .iter()
-    .flat_map(|r| r.cloned())
-    .collect();
-
     ResolvedModel {
         model_number,
         name_snake_case: file_name.to_snake_case(),
         name_pascal_case: file_name.to_pascal_case(),
         group,
         features,
-        doc,
     }
 }

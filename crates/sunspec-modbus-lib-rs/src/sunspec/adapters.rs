@@ -2530,10 +2530,8 @@ pub fn points_array_and_offset<'a>(
             offset -= model_64414::SIZE;
         }
     }
-    if adapters.model_64415_adapter().is_some() {
-        if offset < model_64415::SIZE {
-            return Some((&model_64415::POINTS as &'a [ReadablePoint], offset));
-        }
+    if adapters.model_64415_adapter().is_some() && offset < model_64415::SIZE {
+        return Some((&model_64415::POINTS as &'a [ReadablePoint], offset));
     }
     None
 }
