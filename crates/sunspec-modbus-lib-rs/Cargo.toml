@@ -8,7 +8,6 @@ crate-type = ["lib"]
 
 [dependencies]
 bytemuck = { workspace = true }
-heapless = { workspace = true }
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["time"] }

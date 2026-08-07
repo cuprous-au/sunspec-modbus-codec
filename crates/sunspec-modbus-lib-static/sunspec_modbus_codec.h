@@ -12093,8 +12093,6 @@ extern "C" {
 
 extern void handle_panic(const char *message);
 
-extern int32_t printf(const char *format, ...);
-
 /*
  Handles a SunSpec Modbus register read request and writes the encoded response.
 

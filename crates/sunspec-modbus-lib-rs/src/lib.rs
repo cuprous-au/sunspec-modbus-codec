@@ -2,6 +2,8 @@
 pub mod buffer;
 pub mod sunspec;
 
+use core::cmp::min;
+
 use crate::{
     ModbusRequest::{ReadRegister, Unknown},
     buffer::{ModbusBuffer, write_u16},
@@ -72,7 +74,7 @@ pub fn handle_request<'a, R: Into<ModbusRequest>, B: Into<ModbusBuffer<'a>>>(
                                 offset,
                                 limit,
                             );
-                            words_written += point.size;
+                            words_written += min(point.size, limit);
                             offset = 0;
                         } else {
                             offset -= point.size;

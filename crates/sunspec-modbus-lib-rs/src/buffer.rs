@@ -1,5 +1,5 @@
 use core::{
-    ffi::{CStr, c_int},
+    ffi::CStr,
     net::Ipv4Addr,
 };
 
@@ -7,9 +7,6 @@ use core::{
 pub enum ModbusWordByteOrder {
     System,
     BigEndian,
-}
-unsafe extern "C" {
-    pub fn printf(format: *const core::ffi::c_char, ...) -> i32;
 }
 
 pub struct ModbusBuffer<'a> {
@@ -19,13 +16,6 @@ pub struct ModbusBuffer<'a> {
 
 impl<'a> ModbusBuffer<'a> {
     pub fn slice<'b>(&'b mut self, word_offset: u16, length: u16) -> ModbusBuffer<'b> {
-        unsafe {
-            printf(
-                c"slicing %d starting from %d\n".as_ptr(),
-                word_offset as c_int,
-                length as c_int,
-            )
-        };
         ModbusBuffer {
             buffer: &mut self.buffer[word_offset as usize..(word_offset + length) as usize],
             byte_order: self.byte_order,
