@@ -364,7 +364,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwInjPowerFactorWInj,
+            point: Point::PowerFactorWInjPowerFactorWInj,
         },
         size: 1,
         data_type: PointType::Uint16,
@@ -372,7 +372,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwInjPowerFactorExcitationWInj,
+            point: Point::PowerFactorWInjPowerFactorExcitationWInj,
         },
         size: 1,
         data_type: PointType::Enum16,
@@ -380,7 +380,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwInjRvrtReversionPowerFactorWInj,
+            point: Point::ReversionPowerFactorWInjReversionPowerFactorWInj,
         },
         size: 1,
         data_type: PointType::Uint16,
@@ -388,7 +388,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwInjRvrtReversionPfExcitationWInj,
+            point: Point::ReversionPowerFactorWInjReversionPfExcitationWInj,
         },
         size: 1,
         data_type: PointType::Enum16,
@@ -396,7 +396,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwAbsPowerFactorWAbs,
+            point: Point::PowerFactorWAbsPowerFactorWAbs,
         },
         size: 1,
         data_type: PointType::Uint16,
@@ -404,7 +404,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwAbsPowerFactorExcitationWAbs,
+            point: Point::PowerFactorWAbsPowerFactorExcitationWAbs,
         },
         size: 1,
         data_type: PointType::Enum16,
@@ -412,7 +412,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwAbsRvrtReversionPowerFactorWAbs,
+            point: Point::ReversionPowerFactorWAbsReversionPowerFactorWAbs,
         },
         size: 1,
         data_type: PointType::Uint16,
@@ -420,7 +420,7 @@ pub static POINTS: [ReadablePoint; 53] = [
     },
     ReadablePoint {
         reference: PointReference::Model704 {
-            point: Point::PfwAbsRvrtReversionPfExcitationWAbs,
+            point: Point::ReversionPowerFactorWAbsReversionPfExcitationWAbs,
         },
         size: 1,
         data_type: PointType::Enum16,
@@ -473,14 +473,14 @@ pub enum Point {
     ActivePowerPctScaleFactor,
     ReactivePowerScaleFactor,
     ReactivePowerPctScaleFactor,
-    PfwInjPowerFactorWInj,
-    PfwInjPowerFactorExcitationWInj,
-    PfwInjRvrtReversionPowerFactorWInj,
-    PfwInjRvrtReversionPfExcitationWInj,
-    PfwAbsPowerFactorWAbs,
-    PfwAbsPowerFactorExcitationWAbs,
-    PfwAbsRvrtReversionPowerFactorWAbs,
-    PfwAbsRvrtReversionPfExcitationWAbs,
+    PowerFactorWInjPowerFactorWInj,
+    PowerFactorWInjPowerFactorExcitationWInj,
+    ReversionPowerFactorWInjReversionPowerFactorWInj,
+    ReversionPowerFactorWInjReversionPfExcitationWInj,
+    PowerFactorWAbsPowerFactorWAbs,
+    PowerFactorWAbsPowerFactorExcitationWAbs,
+    ReversionPowerFactorWAbsReversionPowerFactorWAbs,
+    ReversionPowerFactorWAbsReversionPfExcitationWAbs,
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -796,57 +796,59 @@ pub fn write_point<'a>(
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwInjPowerFactorWInj => {
-            if let Some(value) = model.pfw_inj_power_factor_w_inj() {
+        Point::PowerFactorWInjPowerFactorWInj => {
+            if let Some(value) = model.power_factor_w_inj_power_factor_w_inj() {
                 buffer::write_u16(value, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwInjPowerFactorExcitationWInj => {
-            if let Some(value) = model.pfw_inj_power_factor_excitation_w_inj() {
+        Point::PowerFactorWInjPowerFactorExcitationWInj => {
+            if let Some(value) = model.power_factor_w_inj_power_factor_excitation_w_inj() {
                 buffer::write_u16(value as u16, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwInjRvrtReversionPowerFactorWInj => {
-            if let Some(value) = model.pfw_inj_rvrt_reversion_power_factor_w_inj() {
+        Point::ReversionPowerFactorWInjReversionPowerFactorWInj => {
+            if let Some(value) = model.reversion_power_factor_w_inj_reversion_power_factor_w_inj() {
                 buffer::write_u16(value, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwInjRvrtReversionPfExcitationWInj => {
-            if let Some(value) = model.pfw_inj_rvrt_reversion_pf_excitation_w_inj() {
+        Point::ReversionPowerFactorWInjReversionPfExcitationWInj => {
+            if let Some(value) = model.reversion_power_factor_w_inj_reversion_pf_excitation_w_inj()
+            {
                 buffer::write_u16(value as u16, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwAbsPowerFactorWAbs => {
-            if let Some(value) = model.pfw_abs_power_factor_w_abs() {
+        Point::PowerFactorWAbsPowerFactorWAbs => {
+            if let Some(value) = model.power_factor_w_abs_power_factor_w_abs() {
                 buffer::write_u16(value, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwAbsPowerFactorExcitationWAbs => {
-            if let Some(value) = model.pfw_abs_power_factor_excitation_w_abs() {
+        Point::PowerFactorWAbsPowerFactorExcitationWAbs => {
+            if let Some(value) = model.power_factor_w_abs_power_factor_excitation_w_abs() {
                 buffer::write_u16(value as u16, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwAbsRvrtReversionPowerFactorWAbs => {
-            if let Some(value) = model.pfw_abs_rvrt_reversion_power_factor_w_abs() {
+        Point::ReversionPowerFactorWAbsReversionPowerFactorWAbs => {
+            if let Some(value) = model.reversion_power_factor_w_abs_reversion_power_factor_w_abs() {
                 buffer::write_u16(value, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
         }
-        Point::PfwAbsRvrtReversionPfExcitationWAbs => {
-            if let Some(value) = model.pfw_abs_rvrt_reversion_pf_excitation_w_abs() {
+        Point::ReversionPowerFactorWAbsReversionPfExcitationWAbs => {
+            if let Some(value) = model.reversion_power_factor_w_abs_reversion_pf_excitation_w_abs()
+            {
                 buffer::write_u16(value as u16, buffer);
             } else {
                 buffer::zero(buffer, offset);
@@ -1320,98 +1322,98 @@ pub trait ModelAdapter {
     /// Power Factor (W Inj)
     ///
     /// Power factor setpoint when injecting active power.
-    fn pfw_inj_power_factor_w_inj(&self) -> Option<u16> {
+    fn power_factor_w_inj_power_factor_w_inj(&self) -> Option<u16> {
         None
     }
 
     /// Power Factor (W Inj)
     ///
     /// Power factor setpoint when injecting active power.
-    fn set_pfw_inj_power_factor_w_inj(&mut self, value: u16) {}
+    fn set_power_factor_w_inj_power_factor_w_inj(&mut self, value: u16) {}
 
     /// Power Factor Excitation (W Inj)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    fn pfw_inj_power_factor_excitation_w_inj(&self) -> Option<Ext> {
+    fn power_factor_w_inj_power_factor_excitation_w_inj(&self) -> Option<Ext> {
         None
     }
 
     /// Power Factor Excitation (W Inj)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    fn set_pfw_inj_power_factor_excitation_w_inj(&mut self, value: Ext) {}
+    fn set_power_factor_w_inj_power_factor_excitation_w_inj(&mut self, value: Ext) {}
 
     /// Reversion Power Factor (W Inj)
     ///
     /// Reversion power factor setpoint when injecting active power.
-    fn pfw_inj_rvrt_reversion_power_factor_w_inj(&self) -> Option<u16> {
+    fn reversion_power_factor_w_inj_reversion_power_factor_w_inj(&self) -> Option<u16> {
         None
     }
 
     /// Reversion Power Factor (W Inj)
     ///
     /// Reversion power factor setpoint when injecting active power.
-    fn set_pfw_inj_rvrt_reversion_power_factor_w_inj(&mut self, value: u16) {}
+    fn set_reversion_power_factor_w_inj_reversion_power_factor_w_inj(&mut self, value: u16) {}
 
     /// Reversion PF Excitation (W Inj)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    fn pfw_inj_rvrt_reversion_pf_excitation_w_inj(&self) -> Option<Ext> {
+    fn reversion_power_factor_w_inj_reversion_pf_excitation_w_inj(&self) -> Option<Ext> {
         None
     }
 
     /// Reversion PF Excitation (W Inj)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    fn set_pfw_inj_rvrt_reversion_pf_excitation_w_inj(&mut self, value: Ext) {}
+    fn set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj(&mut self, value: Ext) {}
 
     /// Power Factor (W Abs)
     ///
     /// Power factor setpoint when absorbing active power.
-    fn pfw_abs_power_factor_w_abs(&self) -> Option<u16> {
+    fn power_factor_w_abs_power_factor_w_abs(&self) -> Option<u16> {
         None
     }
 
     /// Power Factor (W Abs)
     ///
     /// Power factor setpoint when absorbing active power.
-    fn set_pfw_abs_power_factor_w_abs(&mut self, value: u16) {}
+    fn set_power_factor_w_abs_power_factor_w_abs(&mut self, value: u16) {}
 
     /// Power Factor Excitation (W Abs)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    fn pfw_abs_power_factor_excitation_w_abs(&self) -> Option<Ext> {
+    fn power_factor_w_abs_power_factor_excitation_w_abs(&self) -> Option<Ext> {
         None
     }
 
     /// Power Factor Excitation (W Abs)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    fn set_pfw_abs_power_factor_excitation_w_abs(&mut self, value: Ext) {}
+    fn set_power_factor_w_abs_power_factor_excitation_w_abs(&mut self, value: Ext) {}
 
     /// Reversion Power Factor (W Abs)
     ///
     /// Reversion power factor setpoint when absorbing active power.
-    fn pfw_abs_rvrt_reversion_power_factor_w_abs(&self) -> Option<u16> {
+    fn reversion_power_factor_w_abs_reversion_power_factor_w_abs(&self) -> Option<u16> {
         None
     }
 
     /// Reversion Power Factor (W Abs)
     ///
     /// Reversion power factor setpoint when absorbing active power.
-    fn set_pfw_abs_rvrt_reversion_power_factor_w_abs(&mut self, value: u16) {}
+    fn set_reversion_power_factor_w_abs_reversion_power_factor_w_abs(&mut self, value: u16) {}
 
     /// Reversion PF Excitation (W Abs)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    fn pfw_abs_rvrt_reversion_pf_excitation_w_abs(&self) -> Option<Ext> {
+    fn reversion_power_factor_w_abs_reversion_pf_excitation_w_abs(&self) -> Option<Ext> {
         None
     }
 
     /// Reversion PF Excitation (W Abs)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    fn set_pfw_abs_rvrt_reversion_pf_excitation_w_abs(&mut self, value: Ext) {}
+    fn set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs(&mut self, value: Ext) {}
 }
 
 #[derive(Clone, Copy)]
@@ -1722,25 +1724,33 @@ pub struct Model704CallbackAdapter {
     active_power_pct_scale_factor_callback: Option<extern "C" fn(*const c_void) -> u16>,
     reactive_power_scale_factor_callback: Option<extern "C" fn(*const c_void) -> u16>,
     reactive_power_pct_scale_factor_callback: Option<extern "C" fn(*const c_void) -> u16>,
-    pfw_inj_power_factor_w_inj_callback: Option<extern "C" fn(*const c_void) -> u16>,
-    set_pfw_inj_power_factor_w_inj_callback: Option<extern "C" fn(u16, *mut c_void)>,
-    pfw_inj_power_factor_excitation_w_inj_callback: Option<extern "C" fn(*const c_void) -> Ext>,
-    set_pfw_inj_power_factor_excitation_w_inj_callback: Option<extern "C" fn(Ext, *mut c_void)>,
-    pfw_inj_rvrt_reversion_power_factor_w_inj_callback: Option<extern "C" fn(*const c_void) -> u16>,
-    set_pfw_inj_rvrt_reversion_power_factor_w_inj_callback: Option<extern "C" fn(u16, *mut c_void)>,
-    pfw_inj_rvrt_reversion_pf_excitation_w_inj_callback:
+    power_factor_w_inj_power_factor_w_inj_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_power_factor_w_inj_power_factor_w_inj_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    power_factor_w_inj_power_factor_excitation_w_inj_callback:
         Option<extern "C" fn(*const c_void) -> Ext>,
-    set_pfw_inj_rvrt_reversion_pf_excitation_w_inj_callback:
+    set_power_factor_w_inj_power_factor_excitation_w_inj_callback:
         Option<extern "C" fn(Ext, *mut c_void)>,
-    pfw_abs_power_factor_w_abs_callback: Option<extern "C" fn(*const c_void) -> u16>,
-    set_pfw_abs_power_factor_w_abs_callback: Option<extern "C" fn(u16, *mut c_void)>,
-    pfw_abs_power_factor_excitation_w_abs_callback: Option<extern "C" fn(*const c_void) -> Ext>,
-    set_pfw_abs_power_factor_excitation_w_abs_callback: Option<extern "C" fn(Ext, *mut c_void)>,
-    pfw_abs_rvrt_reversion_power_factor_w_abs_callback: Option<extern "C" fn(*const c_void) -> u16>,
-    set_pfw_abs_rvrt_reversion_power_factor_w_abs_callback: Option<extern "C" fn(u16, *mut c_void)>,
-    pfw_abs_rvrt_reversion_pf_excitation_w_abs_callback:
+    reversion_power_factor_w_inj_reversion_power_factor_w_inj_callback:
+        Option<extern "C" fn(*const c_void) -> u16>,
+    set_reversion_power_factor_w_inj_reversion_power_factor_w_inj_callback:
+        Option<extern "C" fn(u16, *mut c_void)>,
+    reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback:
         Option<extern "C" fn(*const c_void) -> Ext>,
-    set_pfw_abs_rvrt_reversion_pf_excitation_w_abs_callback:
+    set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback:
+        Option<extern "C" fn(Ext, *mut c_void)>,
+    power_factor_w_abs_power_factor_w_abs_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    set_power_factor_w_abs_power_factor_w_abs_callback: Option<extern "C" fn(u16, *mut c_void)>,
+    power_factor_w_abs_power_factor_excitation_w_abs_callback:
+        Option<extern "C" fn(*const c_void) -> Ext>,
+    set_power_factor_w_abs_power_factor_excitation_w_abs_callback:
+        Option<extern "C" fn(Ext, *mut c_void)>,
+    reversion_power_factor_w_abs_reversion_power_factor_w_abs_callback:
+        Option<extern "C" fn(*const c_void) -> u16>,
+    set_reversion_power_factor_w_abs_reversion_power_factor_w_abs_callback:
+        Option<extern "C" fn(u16, *mut c_void)>,
+    reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback:
+        Option<extern "C" fn(*const c_void) -> Ext>,
+    set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback:
         Option<extern "C" fn(Ext, *mut c_void)>,
 }
 
@@ -2380,16 +2390,16 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Power Factor (W Inj)
     ///
     /// Power factor setpoint when injecting active power.
-    fn pfw_inj_power_factor_w_inj(&self) -> Option<u16> {
-        self.pfw_inj_power_factor_w_inj_callback
+    fn power_factor_w_inj_power_factor_w_inj(&self) -> Option<u16> {
+        self.power_factor_w_inj_power_factor_w_inj_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Power Factor (W Inj)
     ///
     /// Power factor setpoint when injecting active power.
-    fn set_pfw_inj_power_factor_w_inj(&mut self, value: u16) {
-        if let Some(callback) = self.set_pfw_inj_power_factor_w_inj_callback {
+    fn set_power_factor_w_inj_power_factor_w_inj(&mut self, value: u16) {
+        if let Some(callback) = self.set_power_factor_w_inj_power_factor_w_inj_callback {
             (callback)(value, self.context);
         };
     }
@@ -2397,16 +2407,16 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Power Factor Excitation (W Inj)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    fn pfw_inj_power_factor_excitation_w_inj(&self) -> Option<Ext> {
-        self.pfw_inj_power_factor_excitation_w_inj_callback
+    fn power_factor_w_inj_power_factor_excitation_w_inj(&self) -> Option<Ext> {
+        self.power_factor_w_inj_power_factor_excitation_w_inj_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Power Factor Excitation (W Inj)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    fn set_pfw_inj_power_factor_excitation_w_inj(&mut self, value: Ext) {
-        if let Some(callback) = self.set_pfw_inj_power_factor_excitation_w_inj_callback {
+    fn set_power_factor_w_inj_power_factor_excitation_w_inj(&mut self, value: Ext) {
+        if let Some(callback) = self.set_power_factor_w_inj_power_factor_excitation_w_inj_callback {
             (callback)(value, self.context);
         };
     }
@@ -2414,16 +2424,18 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Reversion Power Factor (W Inj)
     ///
     /// Reversion power factor setpoint when injecting active power.
-    fn pfw_inj_rvrt_reversion_power_factor_w_inj(&self) -> Option<u16> {
-        self.pfw_inj_rvrt_reversion_power_factor_w_inj_callback
+    fn reversion_power_factor_w_inj_reversion_power_factor_w_inj(&self) -> Option<u16> {
+        self.reversion_power_factor_w_inj_reversion_power_factor_w_inj_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Reversion Power Factor (W Inj)
     ///
     /// Reversion power factor setpoint when injecting active power.
-    fn set_pfw_inj_rvrt_reversion_power_factor_w_inj(&mut self, value: u16) {
-        if let Some(callback) = self.set_pfw_inj_rvrt_reversion_power_factor_w_inj_callback {
+    fn set_reversion_power_factor_w_inj_reversion_power_factor_w_inj(&mut self, value: u16) {
+        if let Some(callback) =
+            self.set_reversion_power_factor_w_inj_reversion_power_factor_w_inj_callback
+        {
             (callback)(value, self.context);
         };
     }
@@ -2431,16 +2443,18 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Reversion PF Excitation (W Inj)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    fn pfw_inj_rvrt_reversion_pf_excitation_w_inj(&self) -> Option<Ext> {
-        self.pfw_inj_rvrt_reversion_pf_excitation_w_inj_callback
+    fn reversion_power_factor_w_inj_reversion_pf_excitation_w_inj(&self) -> Option<Ext> {
+        self.reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Reversion PF Excitation (W Inj)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    fn set_pfw_inj_rvrt_reversion_pf_excitation_w_inj(&mut self, value: Ext) {
-        if let Some(callback) = self.set_pfw_inj_rvrt_reversion_pf_excitation_w_inj_callback {
+    fn set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj(&mut self, value: Ext) {
+        if let Some(callback) =
+            self.set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback
+        {
             (callback)(value, self.context);
         };
     }
@@ -2448,16 +2462,16 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Power Factor (W Abs)
     ///
     /// Power factor setpoint when absorbing active power.
-    fn pfw_abs_power_factor_w_abs(&self) -> Option<u16> {
-        self.pfw_abs_power_factor_w_abs_callback
+    fn power_factor_w_abs_power_factor_w_abs(&self) -> Option<u16> {
+        self.power_factor_w_abs_power_factor_w_abs_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Power Factor (W Abs)
     ///
     /// Power factor setpoint when absorbing active power.
-    fn set_pfw_abs_power_factor_w_abs(&mut self, value: u16) {
-        if let Some(callback) = self.set_pfw_abs_power_factor_w_abs_callback {
+    fn set_power_factor_w_abs_power_factor_w_abs(&mut self, value: u16) {
+        if let Some(callback) = self.set_power_factor_w_abs_power_factor_w_abs_callback {
             (callback)(value, self.context);
         };
     }
@@ -2465,16 +2479,16 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Power Factor Excitation (W Abs)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    fn pfw_abs_power_factor_excitation_w_abs(&self) -> Option<Ext> {
-        self.pfw_abs_power_factor_excitation_w_abs_callback
+    fn power_factor_w_abs_power_factor_excitation_w_abs(&self) -> Option<Ext> {
+        self.power_factor_w_abs_power_factor_excitation_w_abs_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Power Factor Excitation (W Abs)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    fn set_pfw_abs_power_factor_excitation_w_abs(&mut self, value: Ext) {
-        if let Some(callback) = self.set_pfw_abs_power_factor_excitation_w_abs_callback {
+    fn set_power_factor_w_abs_power_factor_excitation_w_abs(&mut self, value: Ext) {
+        if let Some(callback) = self.set_power_factor_w_abs_power_factor_excitation_w_abs_callback {
             (callback)(value, self.context);
         };
     }
@@ -2482,16 +2496,18 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Reversion Power Factor (W Abs)
     ///
     /// Reversion power factor setpoint when absorbing active power.
-    fn pfw_abs_rvrt_reversion_power_factor_w_abs(&self) -> Option<u16> {
-        self.pfw_abs_rvrt_reversion_power_factor_w_abs_callback
+    fn reversion_power_factor_w_abs_reversion_power_factor_w_abs(&self) -> Option<u16> {
+        self.reversion_power_factor_w_abs_reversion_power_factor_w_abs_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Reversion Power Factor (W Abs)
     ///
     /// Reversion power factor setpoint when absorbing active power.
-    fn set_pfw_abs_rvrt_reversion_power_factor_w_abs(&mut self, value: u16) {
-        if let Some(callback) = self.set_pfw_abs_rvrt_reversion_power_factor_w_abs_callback {
+    fn set_reversion_power_factor_w_abs_reversion_power_factor_w_abs(&mut self, value: u16) {
+        if let Some(callback) =
+            self.set_reversion_power_factor_w_abs_reversion_power_factor_w_abs_callback
+        {
             (callback)(value, self.context);
         };
     }
@@ -2499,16 +2515,18 @@ impl ModelAdapter for Model704CallbackAdapter {
     /// Reversion PF Excitation (W Abs)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    fn pfw_abs_rvrt_reversion_pf_excitation_w_abs(&self) -> Option<Ext> {
-        self.pfw_abs_rvrt_reversion_pf_excitation_w_abs_callback
+    fn reversion_power_factor_w_abs_reversion_pf_excitation_w_abs(&self) -> Option<Ext> {
+        self.reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback
             .map(|callback| (callback)(self.context))
     }
 
     /// Reversion PF Excitation (W Abs)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    fn set_pfw_abs_rvrt_reversion_pf_excitation_w_abs(&mut self, value: Ext) {
-        if let Some(callback) = self.set_pfw_abs_rvrt_reversion_pf_excitation_w_abs_callback {
+    fn set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs(&mut self, value: Ext) {
+        if let Some(callback) =
+            self.set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback
+        {
             (callback)(value, self.context);
         };
     }
@@ -2559,14 +2577,14 @@ pub struct Model704StatefulAdapter {
     active_power_pct_scale_factor: u16,
     reactive_power_scale_factor: u16,
     reactive_power_pct_scale_factor: u16,
-    pfw_inj_power_factor_w_inj: u16,
-    pfw_inj_power_factor_excitation_w_inj: Ext,
-    pfw_inj_rvrt_reversion_power_factor_w_inj: u16,
-    pfw_inj_rvrt_reversion_pf_excitation_w_inj: Ext,
-    pfw_abs_power_factor_w_abs: u16,
-    pfw_abs_power_factor_excitation_w_abs: Ext,
-    pfw_abs_rvrt_reversion_power_factor_w_abs: u16,
-    pfw_abs_rvrt_reversion_pf_excitation_w_abs: Ext,
+    power_factor_w_inj_power_factor_w_inj: u16,
+    power_factor_w_inj_power_factor_excitation_w_inj: Ext,
+    reversion_power_factor_w_inj_reversion_power_factor_w_inj: u16,
+    reversion_power_factor_w_inj_reversion_pf_excitation_w_inj: Ext,
+    power_factor_w_abs_power_factor_w_abs: u16,
+    power_factor_w_abs_power_factor_excitation_w_abs: Ext,
+    reversion_power_factor_w_abs_reversion_power_factor_w_abs: u16,
+    reversion_power_factor_w_abs_reversion_pf_excitation_w_abs: Ext,
 }
 
 impl ModelAdapter for Model704StatefulAdapter {
@@ -3098,112 +3116,112 @@ impl ModelAdapter for Model704StatefulAdapter {
     /// Power Factor (W Inj)
     ///
     /// Power factor setpoint when injecting active power.
-    fn pfw_inj_power_factor_w_inj(&self) -> Option<u16> {
-        Some(self.pfw_inj_power_factor_w_inj)
+    fn power_factor_w_inj_power_factor_w_inj(&self) -> Option<u16> {
+        Some(self.power_factor_w_inj_power_factor_w_inj)
     }
 
     /// Power Factor (W Inj)
     ///
     /// Power factor setpoint when injecting active power.
-    fn set_pfw_inj_power_factor_w_inj(&mut self, value: u16) {
-        self.pfw_inj_power_factor_w_inj = value;
+    fn set_power_factor_w_inj_power_factor_w_inj(&mut self, value: u16) {
+        self.power_factor_w_inj_power_factor_w_inj = value;
     }
 
     /// Power Factor Excitation (W Inj)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    fn pfw_inj_power_factor_excitation_w_inj(&self) -> Option<Ext> {
-        Some(self.pfw_inj_power_factor_excitation_w_inj)
+    fn power_factor_w_inj_power_factor_excitation_w_inj(&self) -> Option<Ext> {
+        Some(self.power_factor_w_inj_power_factor_excitation_w_inj)
     }
 
     /// Power Factor Excitation (W Inj)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    fn set_pfw_inj_power_factor_excitation_w_inj(&mut self, value: Ext) {
-        self.pfw_inj_power_factor_excitation_w_inj = value;
+    fn set_power_factor_w_inj_power_factor_excitation_w_inj(&mut self, value: Ext) {
+        self.power_factor_w_inj_power_factor_excitation_w_inj = value;
     }
 
     /// Reversion Power Factor (W Inj)
     ///
     /// Reversion power factor setpoint when injecting active power.
-    fn pfw_inj_rvrt_reversion_power_factor_w_inj(&self) -> Option<u16> {
-        Some(self.pfw_inj_rvrt_reversion_power_factor_w_inj)
+    fn reversion_power_factor_w_inj_reversion_power_factor_w_inj(&self) -> Option<u16> {
+        Some(self.reversion_power_factor_w_inj_reversion_power_factor_w_inj)
     }
 
     /// Reversion Power Factor (W Inj)
     ///
     /// Reversion power factor setpoint when injecting active power.
-    fn set_pfw_inj_rvrt_reversion_power_factor_w_inj(&mut self, value: u16) {
-        self.pfw_inj_rvrt_reversion_power_factor_w_inj = value;
+    fn set_reversion_power_factor_w_inj_reversion_power_factor_w_inj(&mut self, value: u16) {
+        self.reversion_power_factor_w_inj_reversion_power_factor_w_inj = value;
     }
 
     /// Reversion PF Excitation (W Inj)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    fn pfw_inj_rvrt_reversion_pf_excitation_w_inj(&self) -> Option<Ext> {
-        Some(self.pfw_inj_rvrt_reversion_pf_excitation_w_inj)
+    fn reversion_power_factor_w_inj_reversion_pf_excitation_w_inj(&self) -> Option<Ext> {
+        Some(self.reversion_power_factor_w_inj_reversion_pf_excitation_w_inj)
     }
 
     /// Reversion PF Excitation (W Inj)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    fn set_pfw_inj_rvrt_reversion_pf_excitation_w_inj(&mut self, value: Ext) {
-        self.pfw_inj_rvrt_reversion_pf_excitation_w_inj = value;
+    fn set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj(&mut self, value: Ext) {
+        self.reversion_power_factor_w_inj_reversion_pf_excitation_w_inj = value;
     }
 
     /// Power Factor (W Abs)
     ///
     /// Power factor setpoint when absorbing active power.
-    fn pfw_abs_power_factor_w_abs(&self) -> Option<u16> {
-        Some(self.pfw_abs_power_factor_w_abs)
+    fn power_factor_w_abs_power_factor_w_abs(&self) -> Option<u16> {
+        Some(self.power_factor_w_abs_power_factor_w_abs)
     }
 
     /// Power Factor (W Abs)
     ///
     /// Power factor setpoint when absorbing active power.
-    fn set_pfw_abs_power_factor_w_abs(&mut self, value: u16) {
-        self.pfw_abs_power_factor_w_abs = value;
+    fn set_power_factor_w_abs_power_factor_w_abs(&mut self, value: u16) {
+        self.power_factor_w_abs_power_factor_w_abs = value;
     }
 
     /// Power Factor Excitation (W Abs)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    fn pfw_abs_power_factor_excitation_w_abs(&self) -> Option<Ext> {
-        Some(self.pfw_abs_power_factor_excitation_w_abs)
+    fn power_factor_w_abs_power_factor_excitation_w_abs(&self) -> Option<Ext> {
+        Some(self.power_factor_w_abs_power_factor_excitation_w_abs)
     }
 
     /// Power Factor Excitation (W Abs)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    fn set_pfw_abs_power_factor_excitation_w_abs(&mut self, value: Ext) {
-        self.pfw_abs_power_factor_excitation_w_abs = value;
+    fn set_power_factor_w_abs_power_factor_excitation_w_abs(&mut self, value: Ext) {
+        self.power_factor_w_abs_power_factor_excitation_w_abs = value;
     }
 
     /// Reversion Power Factor (W Abs)
     ///
     /// Reversion power factor setpoint when absorbing active power.
-    fn pfw_abs_rvrt_reversion_power_factor_w_abs(&self) -> Option<u16> {
-        Some(self.pfw_abs_rvrt_reversion_power_factor_w_abs)
+    fn reversion_power_factor_w_abs_reversion_power_factor_w_abs(&self) -> Option<u16> {
+        Some(self.reversion_power_factor_w_abs_reversion_power_factor_w_abs)
     }
 
     /// Reversion Power Factor (W Abs)
     ///
     /// Reversion power factor setpoint when absorbing active power.
-    fn set_pfw_abs_rvrt_reversion_power_factor_w_abs(&mut self, value: u16) {
-        self.pfw_abs_rvrt_reversion_power_factor_w_abs = value;
+    fn set_reversion_power_factor_w_abs_reversion_power_factor_w_abs(&mut self, value: u16) {
+        self.reversion_power_factor_w_abs_reversion_power_factor_w_abs = value;
     }
 
     /// Reversion PF Excitation (W Abs)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    fn pfw_abs_rvrt_reversion_pf_excitation_w_abs(&self) -> Option<Ext> {
-        Some(self.pfw_abs_rvrt_reversion_pf_excitation_w_abs)
+    fn reversion_power_factor_w_abs_reversion_pf_excitation_w_abs(&self) -> Option<Ext> {
+        Some(self.reversion_power_factor_w_abs_reversion_pf_excitation_w_abs)
     }
 
     /// Reversion PF Excitation (W Abs)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    fn set_pfw_abs_rvrt_reversion_pf_excitation_w_abs(&mut self, value: Ext) {
-        self.pfw_abs_rvrt_reversion_pf_excitation_w_abs = value;
+    fn set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs(&mut self, value: Ext) {
+        self.reversion_power_factor_w_abs_reversion_pf_excitation_w_abs = value;
     }
 }

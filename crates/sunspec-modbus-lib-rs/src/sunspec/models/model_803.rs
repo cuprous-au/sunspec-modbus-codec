@@ -255,6 +255,30 @@ pub enum Point {
     SoHSf,
     SoCSf,
     VSf,
+    StringModuleCount { string_index: u16 },
+    StringStringStatus { string_index: u16 },
+    StringConnectionFailureReason { string_index: u16 },
+    StringStringStateOfCharge { string_index: u16 },
+    StringStringStateOfHealth { string_index: u16 },
+    StringStringCurrent { string_index: u16 },
+    StringMaxCellVoltage { string_index: u16 },
+    StringMaxCellVoltageModule { string_index: u16 },
+    StringMinCellVoltage { string_index: u16 },
+    StringMinCellVoltageModule { string_index: u16 },
+    StringAverageCellVoltage { string_index: u16 },
+    StringMaxModuleTemperature { string_index: u16 },
+    StringMaxModuleTemperatureModule { string_index: u16 },
+    StringMinModuleTemperature { string_index: u16 },
+    StringMinModuleTemperatureModule { string_index: u16 },
+    StringAverageModuleTemperature { string_index: u16 },
+    StringDisabledReason { string_index: u16 },
+    StringContactorStatus { string_index: u16 },
+    StringStringEvent1 { string_index: u16 },
+    StringStringEvent2 { string_index: u16 },
+    StringVendorStringEventBitfield1 { string_index: u16 },
+    StringVendorStringEventBitfield2 { string_index: u16 },
+    StringEnableDisableString { string_index: u16 },
+    StringConnectDisconnectString { string_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -418,6 +442,143 @@ pub fn write_point<'a>(
         Point::VSf => {
             if let Some(value) = model.v_sf() {
                 buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringModuleCount { string_index } => {
+            buffer::write_u16(model.string_module_count(*string_index), buffer);
+        }
+        Point::StringStringStatus { string_index } => {
+            buffer::write_u32(
+                model.string_string_status(*string_index),
+                buffer,
+                offset,
+                limit,
+            );
+        }
+        Point::StringConnectionFailureReason { string_index } => {
+            if let Some(value) = model.string_connection_failure_reason(*string_index) {
+                buffer::write_u16(value as u16, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringStringStateOfCharge { string_index } => {
+            buffer::write_u16(model.string_string_state_of_charge(*string_index), buffer);
+        }
+        Point::StringStringStateOfHealth { string_index } => {
+            if let Some(value) = model.string_string_state_of_health(*string_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringStringCurrent { string_index } => {
+            buffer::write_i16(model.string_string_current(*string_index), buffer);
+        }
+        Point::StringMaxCellVoltage { string_index } => {
+            buffer::write_u16(model.string_max_cell_voltage(*string_index), buffer);
+        }
+        Point::StringMaxCellVoltageModule { string_index } => {
+            if let Some(value) = model.string_max_cell_voltage_module(*string_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringMinCellVoltage { string_index } => {
+            buffer::write_u16(model.string_min_cell_voltage(*string_index), buffer);
+        }
+        Point::StringMinCellVoltageModule { string_index } => {
+            if let Some(value) = model.string_min_cell_voltage_module(*string_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringAverageCellVoltage { string_index } => {
+            buffer::write_u16(model.string_average_cell_voltage(*string_index), buffer);
+        }
+        Point::StringMaxModuleTemperature { string_index } => {
+            buffer::write_i16(model.string_max_module_temperature(*string_index), buffer);
+        }
+        Point::StringMaxModuleTemperatureModule { string_index } => {
+            if let Some(value) = model.string_max_module_temperature_module(*string_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringMinModuleTemperature { string_index } => {
+            buffer::write_i16(model.string_min_module_temperature(*string_index), buffer);
+        }
+        Point::StringMinModuleTemperatureModule { string_index } => {
+            if let Some(value) = model.string_min_module_temperature_module(*string_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringAverageModuleTemperature { string_index } => {
+            buffer::write_i16(
+                model.string_average_module_temperature(*string_index),
+                buffer,
+            );
+        }
+        Point::StringDisabledReason { string_index } => {
+            if let Some(value) = model.string_disabled_reason(*string_index) {
+                buffer::write_u16(value as u16, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringContactorStatus { string_index } => {
+            if let Some(value) = model.string_contactor_status(*string_index) {
+                buffer::write_u32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringStringEvent1 { string_index } => {
+            buffer::write_u32(
+                model.string_string_event_1(*string_index),
+                buffer,
+                offset,
+                limit,
+            );
+        }
+        Point::StringStringEvent2 { string_index } => {
+            if let Some(value) = model.string_string_event_2(*string_index) {
+                buffer::write_u32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringVendorStringEventBitfield1 { string_index } => {
+            if let Some(value) = model.string_vendor_string_event_bitfield_1(*string_index) {
+                buffer::write_u32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringVendorStringEventBitfield2 { string_index } => {
+            if let Some(value) = model.string_vendor_string_event_bitfield_2(*string_index) {
+                buffer::write_u32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringEnableDisableString { string_index } => {
+            if let Some(value) = model.string_enable_disable_string(*string_index) {
+                buffer::write_u16(value as u16, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::StringConnectDisconnectString { string_index } => {
+            if let Some(value) = model.string_connect_disconnect_string(*string_index) {
+                buffer::write_u16(value as u16, buffer);
             } else {
                 buffer::zero(buffer, offset);
             }
@@ -597,6 +758,198 @@ pub trait ModelAdapter {
     fn v_sf(&self) -> Option<u16> {
         None
     }
+
+    /// Module Count
+    ///
+    /// Count of modules in the string.
+    fn string_module_count(&self, string_index: u16) -> u16;
+
+    /// String Status
+    ///
+    /// Current status of the string.
+    fn string_string_status(&self, string_index: u16) -> u32;
+
+    /// Connection Failure Reason
+    fn string_connection_failure_reason(&self, string_index: u16) -> Option<StrConFail> {
+        None
+    }
+
+    /// String State of Charge
+    ///
+    /// Battery string state of charge, expressed as a percentage.
+    fn string_string_state_of_charge(&self, string_index: u16) -> u16;
+
+    /// String State of Health
+    ///
+    /// Battery string state of health, expressed as a percentage.
+    fn string_string_state_of_health(&self, string_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// String Current
+    ///
+    /// String current measurement.
+    fn string_string_current(&self, string_index: u16) -> i16;
+
+    /// Max Cell Voltage
+    ///
+    /// Maximum voltage for all cells in the string.
+    fn string_max_cell_voltage(&self, string_index: u16) -> u16;
+
+    /// Max Cell Voltage Module
+    ///
+    /// Module containing the maximum cell voltage.
+    fn string_max_cell_voltage_module(&self, string_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Min Cell Voltage
+    ///
+    /// Minimum voltage for all cells in the string.
+    fn string_min_cell_voltage(&self, string_index: u16) -> u16;
+
+    /// Min Cell Voltage Module
+    ///
+    /// Module containing the minimum cell voltage.
+    fn string_min_cell_voltage_module(&self, string_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Average Cell Voltage
+    ///
+    /// Average voltage for all cells in the string.
+    fn string_average_cell_voltage(&self, string_index: u16) -> u16;
+
+    /// Max Module Temperature
+    ///
+    /// Maximum temperature for all modules in the bank.
+    fn string_max_module_temperature(&self, string_index: u16) -> i16;
+
+    /// Max Module Temperature Module
+    ///
+    /// Module with the maximum temperature.
+    fn string_max_module_temperature_module(&self, string_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Min Module Temperature
+    ///
+    /// Minimum temperature for all modules in the bank.
+    fn string_min_module_temperature(&self, string_index: u16) -> i16;
+
+    /// Min Module Temperature Module
+    ///
+    /// Module with the minimum temperature.
+    fn string_min_module_temperature_module(&self, string_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Average Module Temperature
+    ///
+    /// Average temperature for all modules in the bank.
+    fn string_average_module_temperature(&self, string_index: u16) -> i16;
+
+    /// Disabled Reason
+    ///
+    /// Reason why the string is currently disabled.
+    fn string_disabled_reason(&self, string_index: u16) -> Option<StrDisRsn> {
+        None
+    }
+
+    /// Contactor Status
+    ///
+    /// Status of the contactor(s) for the string.
+    fn string_contactor_status(&self, string_index: u16) -> Option<u32> {
+        None
+    }
+
+    /// String Event 1
+    ///
+    /// Alarms, warnings and status values.
+    fn string_string_event_1(&self, string_index: u16) -> u32;
+
+    /// String Event 2
+    ///
+    /// Alarms, warnings and status values.
+    fn string_string_event_2(&self, string_index: u16) -> Option<u32> {
+        None
+    }
+
+    /// Vendor String Event Bitfield 1
+    ///
+    /// Vendor defined events.
+    fn string_vendor_string_event_bitfield_1(&self, string_index: u16) -> Option<u32> {
+        None
+    }
+
+    /// Vendor String Event Bitfield 2
+    ///
+    /// Vendor defined events.
+    fn string_vendor_string_event_bitfield_2(&self, string_index: u16) -> Option<u32> {
+        None
+    }
+
+    /// Enable/Disable String
+    ///
+    /// Enables and disables the string.
+    fn string_enable_disable_string(&self, string_index: u16) -> Option<StrSetEna> {
+        None
+    }
+
+    /// Enable/Disable String
+    ///
+    /// Enables and disables the string.
+    fn set_string_enable_disable_string(&mut self, value: StrSetEna, string_index: u16) {}
+
+    /// Connect/Disconnect String
+    ///
+    /// Connects and disconnects the string.
+    fn string_connect_disconnect_string(&self, string_index: u16) -> Option<StrSetCon> {
+        None
+    }
+
+    /// Connect/Disconnect String
+    ///
+    /// Connects and disconnects the string.
+    fn set_string_connect_disconnect_string(&mut self, value: StrSetCon, string_index: u16) {}
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum StrConFail {
+    NoFailure = 0,
+    ButtonPushed = 1,
+    StrGroundFault = 2,
+    OutsideVoltageRange = 3,
+    StringNotEnabled = 4,
+    FuseOpen = 5,
+    ContactorFailure = 6,
+    PrechargeFailure = 7,
+    StringFault = 8,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum StrDisRsn {
+    None = 0,
+    Fault = 1,
+    Maintenance = 2,
+    External = 3,
+    Other = 4,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum StrSetCon {
+    ConnectString = 1,
+    DisconnectString = 2,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum StrSetEna {
+    EnableString = 1,
+    DisableString = 2,
 }
 
 #[repr(C)]
@@ -628,6 +981,37 @@ pub struct Model803CallbackAdapter {
     so_h_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
     so_c_sf_callback: extern "C" fn(*const c_void) -> u16,
     v_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    string_module_count_callback: extern "C" fn(*const c_void, u16) -> u16,
+    string_string_status_callback: extern "C" fn(*const c_void, u16) -> u32,
+    string_connection_failure_reason_callback:
+        Option<extern "C" fn(*const c_void, u16) -> StrConFail>,
+    string_string_state_of_charge_callback: extern "C" fn(*const c_void, u16) -> u16,
+    string_string_state_of_health_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    string_string_current_callback: extern "C" fn(*const c_void, u16) -> i16,
+    string_max_cell_voltage_callback: extern "C" fn(*const c_void, u16) -> u16,
+    string_max_cell_voltage_module_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    string_min_cell_voltage_callback: extern "C" fn(*const c_void, u16) -> u16,
+    string_min_cell_voltage_module_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    string_average_cell_voltage_callback: extern "C" fn(*const c_void, u16) -> u16,
+    string_max_module_temperature_callback: extern "C" fn(*const c_void, u16) -> i16,
+    string_max_module_temperature_module_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    string_min_module_temperature_callback: extern "C" fn(*const c_void, u16) -> i16,
+    string_min_module_temperature_module_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    string_average_module_temperature_callback: extern "C" fn(*const c_void, u16) -> i16,
+    string_disabled_reason_callback: Option<extern "C" fn(*const c_void, u16) -> StrDisRsn>,
+    string_contactor_status_callback: Option<extern "C" fn(*const c_void, u16) -> u32>,
+    string_string_event_1_callback: extern "C" fn(*const c_void, u16) -> u32,
+    string_string_event_2_callback: Option<extern "C" fn(*const c_void, u16) -> u32>,
+    string_vendor_string_event_bitfield_1_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u32>,
+    string_vendor_string_event_bitfield_2_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u32>,
+    string_enable_disable_string_callback: Option<extern "C" fn(*const c_void, u16) -> StrSetEna>,
+    set_string_enable_disable_string_callback: Option<extern "C" fn(StrSetEna, *mut c_void, u16)>,
+    string_connect_disconnect_string_callback:
+        Option<extern "C" fn(*const c_void, u16) -> StrSetCon>,
+    set_string_connect_disconnect_string_callback:
+        Option<extern "C" fn(StrSetCon, *mut c_void, u16)>,
 }
 
 impl ModelAdapter for Model803CallbackAdapter {
@@ -835,10 +1219,207 @@ impl ModelAdapter for Model803CallbackAdapter {
     fn v_sf(&self) -> Option<u16> {
         self.v_sf_callback.map(|callback| (callback)(self.context))
     }
+
+    /// Module Count
+    ///
+    /// Count of modules in the string.
+    fn string_module_count(&self, string_index: u16) -> u16 {
+        (self.string_module_count_callback)(self.context, string_index)
+    }
+
+    /// String Status
+    ///
+    /// Current status of the string.
+    fn string_string_status(&self, string_index: u16) -> u32 {
+        (self.string_string_status_callback)(self.context, string_index)
+    }
+
+    /// Connection Failure Reason
+    fn string_connection_failure_reason(&self, string_index: u16) -> Option<StrConFail> {
+        self.string_connection_failure_reason_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// String State of Charge
+    ///
+    /// Battery string state of charge, expressed as a percentage.
+    fn string_string_state_of_charge(&self, string_index: u16) -> u16 {
+        (self.string_string_state_of_charge_callback)(self.context, string_index)
+    }
+
+    /// String State of Health
+    ///
+    /// Battery string state of health, expressed as a percentage.
+    fn string_string_state_of_health(&self, string_index: u16) -> Option<u16> {
+        self.string_string_state_of_health_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// String Current
+    ///
+    /// String current measurement.
+    fn string_string_current(&self, string_index: u16) -> i16 {
+        (self.string_string_current_callback)(self.context, string_index)
+    }
+
+    /// Max Cell Voltage
+    ///
+    /// Maximum voltage for all cells in the string.
+    fn string_max_cell_voltage(&self, string_index: u16) -> u16 {
+        (self.string_max_cell_voltage_callback)(self.context, string_index)
+    }
+
+    /// Max Cell Voltage Module
+    ///
+    /// Module containing the maximum cell voltage.
+    fn string_max_cell_voltage_module(&self, string_index: u16) -> Option<u16> {
+        self.string_max_cell_voltage_module_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Min Cell Voltage
+    ///
+    /// Minimum voltage for all cells in the string.
+    fn string_min_cell_voltage(&self, string_index: u16) -> u16 {
+        (self.string_min_cell_voltage_callback)(self.context, string_index)
+    }
+
+    /// Min Cell Voltage Module
+    ///
+    /// Module containing the minimum cell voltage.
+    fn string_min_cell_voltage_module(&self, string_index: u16) -> Option<u16> {
+        self.string_min_cell_voltage_module_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Average Cell Voltage
+    ///
+    /// Average voltage for all cells in the string.
+    fn string_average_cell_voltage(&self, string_index: u16) -> u16 {
+        (self.string_average_cell_voltage_callback)(self.context, string_index)
+    }
+
+    /// Max Module Temperature
+    ///
+    /// Maximum temperature for all modules in the bank.
+    fn string_max_module_temperature(&self, string_index: u16) -> i16 {
+        (self.string_max_module_temperature_callback)(self.context, string_index)
+    }
+
+    /// Max Module Temperature Module
+    ///
+    /// Module with the maximum temperature.
+    fn string_max_module_temperature_module(&self, string_index: u16) -> Option<u16> {
+        self.string_max_module_temperature_module_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Min Module Temperature
+    ///
+    /// Minimum temperature for all modules in the bank.
+    fn string_min_module_temperature(&self, string_index: u16) -> i16 {
+        (self.string_min_module_temperature_callback)(self.context, string_index)
+    }
+
+    /// Min Module Temperature Module
+    ///
+    /// Module with the minimum temperature.
+    fn string_min_module_temperature_module(&self, string_index: u16) -> Option<u16> {
+        self.string_min_module_temperature_module_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Average Module Temperature
+    ///
+    /// Average temperature for all modules in the bank.
+    fn string_average_module_temperature(&self, string_index: u16) -> i16 {
+        (self.string_average_module_temperature_callback)(self.context, string_index)
+    }
+
+    /// Disabled Reason
+    ///
+    /// Reason why the string is currently disabled.
+    fn string_disabled_reason(&self, string_index: u16) -> Option<StrDisRsn> {
+        self.string_disabled_reason_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Contactor Status
+    ///
+    /// Status of the contactor(s) for the string.
+    fn string_contactor_status(&self, string_index: u16) -> Option<u32> {
+        self.string_contactor_status_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// String Event 1
+    ///
+    /// Alarms, warnings and status values.
+    fn string_string_event_1(&self, string_index: u16) -> u32 {
+        (self.string_string_event_1_callback)(self.context, string_index)
+    }
+
+    /// String Event 2
+    ///
+    /// Alarms, warnings and status values.
+    fn string_string_event_2(&self, string_index: u16) -> Option<u32> {
+        self.string_string_event_2_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Vendor String Event Bitfield 1
+    ///
+    /// Vendor defined events.
+    fn string_vendor_string_event_bitfield_1(&self, string_index: u16) -> Option<u32> {
+        self.string_vendor_string_event_bitfield_1_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Vendor String Event Bitfield 2
+    ///
+    /// Vendor defined events.
+    fn string_vendor_string_event_bitfield_2(&self, string_index: u16) -> Option<u32> {
+        self.string_vendor_string_event_bitfield_2_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Enable/Disable String
+    ///
+    /// Enables and disables the string.
+    fn string_enable_disable_string(&self, string_index: u16) -> Option<StrSetEna> {
+        self.string_enable_disable_string_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Enable/Disable String
+    ///
+    /// Enables and disables the string.
+    fn set_string_enable_disable_string(&mut self, value: StrSetEna, string_index: u16) {
+        if let Some(callback) = self.set_string_enable_disable_string_callback {
+            (callback)(value, self.context, string_index);
+        };
+    }
+
+    /// Connect/Disconnect String
+    ///
+    /// Connects and disconnects the string.
+    fn string_connect_disconnect_string(&self, string_index: u16) -> Option<StrSetCon> {
+        self.string_connect_disconnect_string_callback
+            .map(|callback| (callback)(self.context, string_index))
+    }
+
+    /// Connect/Disconnect String
+    ///
+    /// Connects and disconnects the string.
+    fn set_string_connect_disconnect_string(&mut self, value: StrSetCon, string_index: u16) {
+        if let Some(callback) = self.set_string_connect_disconnect_string_callback {
+            (callback)(value, self.context, string_index);
+        };
+    }
 }
 
 #[repr(C)]
-pub struct Model803StatefulAdapter {
+pub struct Model803StatefulAdapter<const STRING_COUNT: usize> {
     string_count: u16,
     connected_string_count: u16,
     max_module_temperature: i16,
@@ -865,9 +1446,38 @@ pub struct Model803StatefulAdapter {
     so_h_sf: u16,
     so_c_sf: u16,
     v_sf: u16,
+    string: [Model803String; STRING_COUNT],
 }
 
-impl ModelAdapter for Model803StatefulAdapter {
+#[repr(C)]
+pub struct Model803String {
+    string_module_count: u16,
+    string_string_status: u32,
+    string_connection_failure_reason: StrConFail,
+    string_string_state_of_charge: u16,
+    string_string_state_of_health: u16,
+    string_string_current: i16,
+    string_max_cell_voltage: u16,
+    string_max_cell_voltage_module: u16,
+    string_min_cell_voltage: u16,
+    string_min_cell_voltage_module: u16,
+    string_average_cell_voltage: u16,
+    string_max_module_temperature: i16,
+    string_max_module_temperature_module: u16,
+    string_min_module_temperature: i16,
+    string_min_module_temperature_module: u16,
+    string_average_module_temperature: i16,
+    string_disabled_reason: StrDisRsn,
+    string_contactor_status: u32,
+    string_string_event_1: u32,
+    string_string_event_2: u32,
+    string_vendor_string_event_bitfield_1: u32,
+    string_vendor_string_event_bitfield_2: u32,
+    string_enable_disable_string: StrSetEna,
+    string_connect_disconnect_string: StrSetCon,
+}
+
+impl<const STRING_COUNT: usize> ModelAdapter for Model803StatefulAdapter<STRING_COUNT> {
     /// String Count
     ///
     /// Number of strings in the bank.
@@ -1054,5 +1664,185 @@ impl ModelAdapter for Model803StatefulAdapter {
     /// Scale factor for string voltage.
     fn v_sf(&self) -> Option<u16> {
         Some(self.v_sf)
+    }
+
+    /// Module Count
+    ///
+    /// Count of modules in the string.
+    fn string_module_count(&self, string_index: u16) -> u16 {
+        self.string[string_index as usize].string_module_count
+    }
+
+    /// String Status
+    ///
+    /// Current status of the string.
+    fn string_string_status(&self, string_index: u16) -> u32 {
+        self.string[string_index as usize].string_string_status
+    }
+
+    /// Connection Failure Reason
+    fn string_connection_failure_reason(&self, string_index: u16) -> Option<StrConFail> {
+        Some(self.string[string_index as usize].string_connection_failure_reason)
+    }
+
+    /// String State of Charge
+    ///
+    /// Battery string state of charge, expressed as a percentage.
+    fn string_string_state_of_charge(&self, string_index: u16) -> u16 {
+        self.string[string_index as usize].string_string_state_of_charge
+    }
+
+    /// String State of Health
+    ///
+    /// Battery string state of health, expressed as a percentage.
+    fn string_string_state_of_health(&self, string_index: u16) -> Option<u16> {
+        Some(self.string[string_index as usize].string_string_state_of_health)
+    }
+
+    /// String Current
+    ///
+    /// String current measurement.
+    fn string_string_current(&self, string_index: u16) -> i16 {
+        self.string[string_index as usize].string_string_current
+    }
+
+    /// Max Cell Voltage
+    ///
+    /// Maximum voltage for all cells in the string.
+    fn string_max_cell_voltage(&self, string_index: u16) -> u16 {
+        self.string[string_index as usize].string_max_cell_voltage
+    }
+
+    /// Max Cell Voltage Module
+    ///
+    /// Module containing the maximum cell voltage.
+    fn string_max_cell_voltage_module(&self, string_index: u16) -> Option<u16> {
+        Some(self.string[string_index as usize].string_max_cell_voltage_module)
+    }
+
+    /// Min Cell Voltage
+    ///
+    /// Minimum voltage for all cells in the string.
+    fn string_min_cell_voltage(&self, string_index: u16) -> u16 {
+        self.string[string_index as usize].string_min_cell_voltage
+    }
+
+    /// Min Cell Voltage Module
+    ///
+    /// Module containing the minimum cell voltage.
+    fn string_min_cell_voltage_module(&self, string_index: u16) -> Option<u16> {
+        Some(self.string[string_index as usize].string_min_cell_voltage_module)
+    }
+
+    /// Average Cell Voltage
+    ///
+    /// Average voltage for all cells in the string.
+    fn string_average_cell_voltage(&self, string_index: u16) -> u16 {
+        self.string[string_index as usize].string_average_cell_voltage
+    }
+
+    /// Max Module Temperature
+    ///
+    /// Maximum temperature for all modules in the bank.
+    fn string_max_module_temperature(&self, string_index: u16) -> i16 {
+        self.string[string_index as usize].string_max_module_temperature
+    }
+
+    /// Max Module Temperature Module
+    ///
+    /// Module with the maximum temperature.
+    fn string_max_module_temperature_module(&self, string_index: u16) -> Option<u16> {
+        Some(self.string[string_index as usize].string_max_module_temperature_module)
+    }
+
+    /// Min Module Temperature
+    ///
+    /// Minimum temperature for all modules in the bank.
+    fn string_min_module_temperature(&self, string_index: u16) -> i16 {
+        self.string[string_index as usize].string_min_module_temperature
+    }
+
+    /// Min Module Temperature Module
+    ///
+    /// Module with the minimum temperature.
+    fn string_min_module_temperature_module(&self, string_index: u16) -> Option<u16> {
+        Some(self.string[string_index as usize].string_min_module_temperature_module)
+    }
+
+    /// Average Module Temperature
+    ///
+    /// Average temperature for all modules in the bank.
+    fn string_average_module_temperature(&self, string_index: u16) -> i16 {
+        self.string[string_index as usize].string_average_module_temperature
+    }
+
+    /// Disabled Reason
+    ///
+    /// Reason why the string is currently disabled.
+    fn string_disabled_reason(&self, string_index: u16) -> Option<StrDisRsn> {
+        Some(self.string[string_index as usize].string_disabled_reason)
+    }
+
+    /// Contactor Status
+    ///
+    /// Status of the contactor(s) for the string.
+    fn string_contactor_status(&self, string_index: u16) -> Option<u32> {
+        Some(self.string[string_index as usize].string_contactor_status)
+    }
+
+    /// String Event 1
+    ///
+    /// Alarms, warnings and status values.
+    fn string_string_event_1(&self, string_index: u16) -> u32 {
+        self.string[string_index as usize].string_string_event_1
+    }
+
+    /// String Event 2
+    ///
+    /// Alarms, warnings and status values.
+    fn string_string_event_2(&self, string_index: u16) -> Option<u32> {
+        Some(self.string[string_index as usize].string_string_event_2)
+    }
+
+    /// Vendor String Event Bitfield 1
+    ///
+    /// Vendor defined events.
+    fn string_vendor_string_event_bitfield_1(&self, string_index: u16) -> Option<u32> {
+        Some(self.string[string_index as usize].string_vendor_string_event_bitfield_1)
+    }
+
+    /// Vendor String Event Bitfield 2
+    ///
+    /// Vendor defined events.
+    fn string_vendor_string_event_bitfield_2(&self, string_index: u16) -> Option<u32> {
+        Some(self.string[string_index as usize].string_vendor_string_event_bitfield_2)
+    }
+
+    /// Enable/Disable String
+    ///
+    /// Enables and disables the string.
+    fn string_enable_disable_string(&self, string_index: u16) -> Option<StrSetEna> {
+        Some(self.string[string_index as usize].string_enable_disable_string)
+    }
+
+    /// Enable/Disable String
+    ///
+    /// Enables and disables the string.
+    fn set_string_enable_disable_string(&mut self, value: StrSetEna, string_index: u16) {
+        self.string[string_index as usize].string_enable_disable_string = value;
+    }
+
+    /// Connect/Disconnect String
+    ///
+    /// Connects and disconnects the string.
+    fn string_connect_disconnect_string(&self, string_index: u16) -> Option<StrSetCon> {
+        Some(self.string[string_index as usize].string_connect_disconnect_string)
+    }
+
+    /// Connect/Disconnect String
+    ///
+    /// Connects and disconnects the string.
+    fn set_string_connect_disconnect_string(&mut self, value: StrSetCon, string_index: u16) {
+        self.string[string_index as usize].string_connect_disconnect_string = value;
     }
 }

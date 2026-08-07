@@ -115,6 +115,12 @@ pub enum Point {
     ReversionCurve,
     ActivePowerScaleFactor,
     VarScaleFactor,
+    CrvActivePoints { crv_index: u16 },
+    CrvDependentReference { crv_index: u16 },
+    CrvPowerPriority { crv_index: u16 },
+    CrvCurveAccess { crv_index: u16 },
+    PtActivePowerPoint { crv_index: u16, pt_index: u16 },
+    PtReactivePowerPoint { crv_index: u16, pt_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -173,6 +179,42 @@ pub fn write_point<'a>(
         }
         Point::VarScaleFactor => {
             buffer::write_u16(model.var_scale_factor(), buffer);
+        }
+        Point::CrvActivePoints { crv_index } => {
+            buffer::write_u16(model.crv_active_points(*crv_index), buffer);
+        }
+        Point::CrvDependentReference { crv_index } => {
+            buffer::write_u16(model.crv_dependent_reference(*crv_index) as u16, buffer);
+        }
+        Point::CrvPowerPriority { crv_index } => {
+            if let Some(value) = model.crv_power_priority(*crv_index) {
+                buffer::write_u16(value as u16, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::CrvCurveAccess { crv_index } => {
+            buffer::write_u16(model.crv_curve_access(*crv_index) as u16, buffer);
+        }
+        Point::PtActivePowerPoint {
+            crv_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_active_power_point(*crv_index, *pt_index) {
+                buffer::write_i16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PtReactivePowerPoint {
+            crv_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_reactive_power_point(*crv_index, *pt_index) {
+                buffer::write_i16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
         }
     }
 }
@@ -253,6 +295,75 @@ pub trait ModelAdapter {
     ///
     /// Scale factor for curve var points.
     fn var_scale_factor(&self) -> u16;
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn crv_active_points(&self, crv_index: u16) -> u16;
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_crv_active_points(&mut self, value: u16, crv_index: u16);
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn crv_dependent_reference(&self, crv_index: u16) -> DeptRef;
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn set_crv_dependent_reference(&mut self, value: DeptRef, crv_index: u16);
+
+    /// Power Priority
+    ///
+    /// Power priority.
+    fn crv_power_priority(&self, crv_index: u16) -> Option<Pri> {
+        None
+    }
+
+    /// Power Priority
+    ///
+    /// Power priority.
+    fn set_crv_power_priority(&mut self, value: Pri, crv_index: u16) {}
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly;
+
+    /// Active Power Point
+    ///
+    /// Curve active power point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points.
+    fn pt_active_power_point(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        None
+    }
+
+    /// Active Power Point
+    ///
+    /// Curve active power point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points.
+    fn set_pt_active_power_point(&mut self, value: i16, crv_index: u16, pt_index: u16) {}
+
+    /// Reactive Power Point
+    ///
+    /// Curve reactive power point as set in DeptRef point.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points
+    fn pt_reactive_power_point(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        None
+    }
+
+    /// Reactive Power Point
+    ///
+    /// Curve reactive power point as set in DeptRef point.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points
+    fn set_pt_reactive_power_point(&mut self, value: i16, crv_index: u16, pt_index: u16) {}
 }
 
 #[derive(Clone, Copy)]
@@ -274,6 +385,19 @@ pub enum AdptCrvRslt {
 
 #[derive(Clone, Copy)]
 #[repr(u16)]
+pub enum DeptRef {
+    /// Percent Max Watts
+    WMaxPct = 0,
+    /// Percent Max Vars
+    VarMaxPct = 1,
+    /// Percent Available Vars
+    VarAvalPct = 2,
+    /// Percent Max Apparent Power
+    VaMaxPct = 3,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
 pub enum Ena {
     /// Disabled
     ///
@@ -283,6 +407,32 @@ pub enum Ena {
     ///
     /// Function is enabled.
     Enabled = 1,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum Pri {
+    /// Active Power Priority
+    ///
+    /// Active power priority.
+    Active = 0,
+    /// Reactive Power Priority
+    ///
+    /// Reactive power priority.
+    Reactive = 1,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum ReadOnly {
+    /// Read-Write Access
+    ///
+    /// Curve has read-write access.
+    Rw = 0,
+    /// Read-Only Access
+    ///
+    /// Curve has read-only access.
+    R = 1,
 }
 
 #[repr(C)]
@@ -302,6 +452,17 @@ pub struct Model712CallbackAdapter {
     set_reversion_curve_callback: Option<extern "C" fn(u16, *mut c_void)>,
     active_power_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
     var_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    crv_active_points_callback: extern "C" fn(*const c_void, u16) -> u16,
+    set_crv_active_points_callback: extern "C" fn(u16, *mut c_void, u16),
+    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> DeptRef,
+    set_crv_dependent_reference_callback: extern "C" fn(DeptRef, *mut c_void, u16),
+    crv_power_priority_callback: Option<extern "C" fn(*const c_void, u16) -> Pri>,
+    set_crv_power_priority_callback: Option<extern "C" fn(Pri, *mut c_void, u16)>,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    pt_active_power_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> i16>,
+    set_pt_active_power_point_callback: Option<extern "C" fn(i16, *mut c_void, u16, u16)>,
+    pt_reactive_power_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> i16>,
+    set_pt_reactive_power_point_callback: Option<extern "C" fn(i16, *mut c_void, u16, u16)>,
 }
 
 impl ModelAdapter for Model712CallbackAdapter {
@@ -409,10 +570,104 @@ impl ModelAdapter for Model712CallbackAdapter {
     fn var_scale_factor(&self) -> u16 {
         (self.var_scale_factor_callback)(self.context)
     }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn crv_active_points(&self, crv_index: u16) -> u16 {
+        (self.crv_active_points_callback)(self.context, crv_index)
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_crv_active_points(&mut self, value: u16, crv_index: u16) {
+        (self.set_crv_active_points_callback)(value, self.context, crv_index);
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn crv_dependent_reference(&self, crv_index: u16) -> DeptRef {
+        (self.crv_dependent_reference_callback)(self.context, crv_index)
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn set_crv_dependent_reference(&mut self, value: DeptRef, crv_index: u16) {
+        (self.set_crv_dependent_reference_callback)(value, self.context, crv_index);
+    }
+
+    /// Power Priority
+    ///
+    /// Power priority.
+    fn crv_power_priority(&self, crv_index: u16) -> Option<Pri> {
+        self.crv_power_priority_callback
+            .map(|callback| (callback)(self.context, crv_index))
+    }
+
+    /// Power Priority
+    ///
+    /// Power priority.
+    fn set_crv_power_priority(&mut self, value: Pri, crv_index: u16) {
+        if let Some(callback) = self.set_crv_power_priority_callback {
+            (callback)(value, self.context, crv_index);
+        };
+    }
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly {
+        (self.crv_curve_access_callback)(self.context, crv_index)
+    }
+
+    /// Active Power Point
+    ///
+    /// Curve active power point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points.
+    fn pt_active_power_point(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        self.pt_active_power_point_callback
+            .map(|callback| (callback)(self.context, crv_index, pt_index))
+    }
+
+    /// Active Power Point
+    ///
+    /// Curve active power point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points.
+    fn set_pt_active_power_point(&mut self, value: i16, crv_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_active_power_point_callback {
+            (callback)(value, self.context, crv_index, pt_index);
+        };
+    }
+
+    /// Reactive Power Point
+    ///
+    /// Curve reactive power point as set in DeptRef point.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points
+    fn pt_reactive_power_point(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        self.pt_reactive_power_point_callback
+            .map(|callback| (callback)(self.context, crv_index, pt_index))
+    }
+
+    /// Reactive Power Point
+    ///
+    /// Curve reactive power point as set in DeptRef point.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points
+    fn set_pt_reactive_power_point(&mut self, value: i16, crv_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_reactive_power_point_callback {
+            (callback)(value, self.context, crv_index, pt_index);
+        };
+    }
 }
 
 #[repr(C)]
-pub struct Model712StatefulAdapter {
+pub struct Model712StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER_OF_POINTS: usize> {
     der_watt_var_module_enable: Ena,
     active_curve_request: u16,
     set_active_curve_result: AdptCrvRslt,
@@ -423,9 +678,27 @@ pub struct Model712StatefulAdapter {
     reversion_curve: u16,
     active_power_scale_factor: u16,
     var_scale_factor: u16,
+    stored_curves: [Model712StoredCurves<NUMBER_OF_POINTS>; STORED_CURVE_COUNT],
 }
 
-impl ModelAdapter for Model712StatefulAdapter {
+#[repr(C)]
+pub struct Model712StoredCurves<const NUMBER_OF_POINTS: usize> {
+    crv_active_points: u16,
+    crv_dependent_reference: DeptRef,
+    crv_power_priority: Pri,
+    crv_curve_access: ReadOnly,
+    stored_curve_points: [Model712StoredCurvePoints; NUMBER_OF_POINTS],
+}
+
+#[repr(C)]
+pub struct Model712StoredCurvePoints {
+    pt_active_power_point: i16,
+    pt_reactive_power_point: i16,
+}
+
+impl<const STORED_CURVE_COUNT: usize, const NUMBER_OF_POINTS: usize> ModelAdapter
+    for Model712StatefulAdapter<STORED_CURVE_COUNT, NUMBER_OF_POINTS>
+{
     /// DER Watt-Var Module Enable
     ///
     /// DER Watt-Var control enable.
@@ -522,5 +795,98 @@ impl ModelAdapter for Model712StatefulAdapter {
     /// Scale factor for curve var points.
     fn var_scale_factor(&self) -> u16 {
         self.var_scale_factor
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn crv_active_points(&self, crv_index: u16) -> u16 {
+        self.stored_curves[crv_index as usize].crv_active_points
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_crv_active_points(&mut self, value: u16, crv_index: u16) {
+        self.stored_curves[crv_index as usize].crv_active_points = value;
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn crv_dependent_reference(&self, crv_index: u16) -> DeptRef {
+        self.stored_curves[crv_index as usize].crv_dependent_reference
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn set_crv_dependent_reference(&mut self, value: DeptRef, crv_index: u16) {
+        self.stored_curves[crv_index as usize].crv_dependent_reference = value;
+    }
+
+    /// Power Priority
+    ///
+    /// Power priority.
+    fn crv_power_priority(&self, crv_index: u16) -> Option<Pri> {
+        Some(self.stored_curves[crv_index as usize].crv_power_priority)
+    }
+
+    /// Power Priority
+    ///
+    /// Power priority.
+    fn set_crv_power_priority(&mut self, value: Pri, crv_index: u16) {
+        self.stored_curves[crv_index as usize].crv_power_priority = value;
+    }
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly {
+        self.stored_curves[crv_index as usize].crv_curve_access
+    }
+
+    /// Active Power Point
+    ///
+    /// Curve active power point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points.
+    fn pt_active_power_point(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        Some(
+            self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+                .pt_active_power_point,
+        )
+    }
+
+    /// Active Power Point
+    ///
+    /// Curve active power point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points.
+    fn set_pt_active_power_point(&mut self, value: i16, crv_index: u16, pt_index: u16) {
+        self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+            .pt_active_power_point = value;
+    }
+
+    /// Reactive Power Point
+    ///
+    /// Curve reactive power point as set in DeptRef point.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points
+    fn pt_reactive_power_point(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        Some(
+            self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+                .pt_reactive_power_point,
+        )
+    }
+
+    /// Reactive Power Point
+    ///
+    /// Curve reactive power point as set in DeptRef point.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes. IEEE 1547 implementations must allow 0 values for all three load points
+    fn set_pt_reactive_power_point(&mut self, value: i16, crv_index: u16, pt_index: u16) {
+        self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+            .pt_reactive_power_point = value;
     }
 }

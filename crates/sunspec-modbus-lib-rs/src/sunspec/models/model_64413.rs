@@ -52,6 +52,9 @@ pub enum Point {
     IvLength,
     PoaIrradiance,
     IrrSf,
+    IvPower { iv_index: u16 },
+    IvCurrent { iv_index: u16 },
+    IvVoltage { iv_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -90,6 +93,27 @@ pub fn write_point<'a>(
                 buffer::zero(buffer, offset);
             }
         }
+        Point::IvPower { iv_index } => {
+            if let Some(value) = model.iv_power(*iv_index) {
+                buffer::write_f32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::IvCurrent { iv_index } => {
+            if let Some(value) = model.iv_current(*iv_index) {
+                buffer::write_f32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::IvVoltage { iv_index } => {
+            if let Some(value) = model.iv_voltage(*iv_index) {
+                buffer::write_f32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
     }
 }
 
@@ -111,6 +135,27 @@ pub trait ModelAdapter {
     fn irr_sf(&self) -> Option<u16> {
         None
     }
+
+    /// Power
+    ///
+    /// Power
+    fn iv_power(&self, iv_index: u16) -> Option<f32> {
+        None
+    }
+
+    /// Current
+    ///
+    /// Current
+    fn iv_current(&self, iv_index: u16) -> Option<f32> {
+        None
+    }
+
+    /// Voltage
+    ///
+    /// Voltage
+    fn iv_voltage(&self, iv_index: u16) -> Option<f32> {
+        None
+    }
 }
 
 #[repr(C)]
@@ -119,6 +164,9 @@ pub struct Model64413CallbackAdapter {
     iv_length_callback: Option<extern "C" fn(*const c_void) -> u16>,
     poa_irradiance_callback: Option<extern "C" fn(*const c_void) -> u16>,
     irr_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    iv_power_callback: Option<extern "C" fn(*const c_void, u16) -> f32>,
+    iv_current_callback: Option<extern "C" fn(*const c_void, u16) -> f32>,
+    iv_voltage_callback: Option<extern "C" fn(*const c_void, u16) -> f32>,
 }
 
 impl ModelAdapter for Model64413CallbackAdapter {
@@ -142,16 +190,48 @@ impl ModelAdapter for Model64413CallbackAdapter {
         self.irr_sf_callback
             .map(|callback| (callback)(self.context))
     }
+
+    /// Power
+    ///
+    /// Power
+    fn iv_power(&self, iv_index: u16) -> Option<f32> {
+        self.iv_power_callback
+            .map(|callback| (callback)(self.context, iv_index))
+    }
+
+    /// Current
+    ///
+    /// Current
+    fn iv_current(&self, iv_index: u16) -> Option<f32> {
+        self.iv_current_callback
+            .map(|callback| (callback)(self.context, iv_index))
+    }
+
+    /// Voltage
+    ///
+    /// Voltage
+    fn iv_voltage(&self, iv_index: u16) -> Option<f32> {
+        self.iv_voltage_callback
+            .map(|callback| (callback)(self.context, iv_index))
+    }
 }
 
 #[repr(C)]
-pub struct Model64413StatefulAdapter {
+pub struct Model64413StatefulAdapter<const IV_LENGTH: usize> {
     iv_length: u16,
     poa_irradiance: u16,
     irr_sf: u16,
+    iv: [Model64413Iv; IV_LENGTH],
 }
 
-impl ModelAdapter for Model64413StatefulAdapter {
+#[repr(C)]
+pub struct Model64413Iv {
+    iv_power: f32,
+    iv_current: f32,
+    iv_voltage: f32,
+}
+
+impl<const IV_LENGTH: usize> ModelAdapter for Model64413StatefulAdapter<IV_LENGTH> {
     /// IV length
     ///
     /// Number of points in the IV curve.
@@ -168,5 +248,26 @@ impl ModelAdapter for Model64413StatefulAdapter {
 
     fn irr_sf(&self) -> Option<u16> {
         Some(self.irr_sf)
+    }
+
+    /// Power
+    ///
+    /// Power
+    fn iv_power(&self, iv_index: u16) -> Option<f32> {
+        Some(self.iv[iv_index as usize].iv_power)
+    }
+
+    /// Current
+    ///
+    /// Current
+    fn iv_current(&self, iv_index: u16) -> Option<f32> {
+        Some(self.iv[iv_index as usize].iv_current)
+    }
+
+    /// Voltage
+    ///
+    /// Voltage
+    fn iv_voltage(&self, iv_index: u16) -> Option<f32> {
+        Some(self.iv[iv_index as usize].iv_voltage)
     }
 }

@@ -41,8 +41,15 @@ pub struct ResolvedPoint {
     pub point_type: ResolvedType,
     pub access: PointAccess,
     pub mandatory: PointMandatory,
+    pub block_indices: Vec<BlockIndex>,
     pub doc: DocLines,
     pub size: u16,
+}
+
+#[derive(Clone)]
+pub struct BlockIndex {
+    pub group_name: String,
+    pub index_name: String,
 }
 
 #[derive(Clone)]
@@ -71,11 +78,11 @@ pub struct ResolvedModel {
 pub struct ResolvedGroup {
     pub name_pascal_case: String,
     pub name_snake_case: String,
+    pub name_short: String,
     pub static_size: u16,
-    pub repeat_count_point: Option<ResolvedPoint>,
     pub points: Vec<ResolvedPoint>,
     pub enums: Vec<ResolvedEnum>,
-    pub repeating_child: Option<Box<ResolvedGroup>>,
+    pub repeating_child: Option<(ResolvedPoint, Box<ResolvedGroup>)>,
 }
 
 fn cast_string_from_c(value: &str) -> String {
@@ -174,10 +181,12 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
 pub fn resolve_point(
     point: &Point,
     features: &mut HashSet<CodegenFeature>,
+    block_indices: Vec<BlockIndex>,
+    name_prefix: Option<String>,
 ) -> Option<ResolvedPoint> {
     let point_type = resolve_point_type(point, features);
 
-    let name = point
+    let main_name = point
         .label
         .clone()
         .map(|label| {
@@ -188,6 +197,8 @@ pub fn resolve_point(
             }
         })
         .unwrap_or(point.name.clone());
+
+    let name = format!("{} {}", name_prefix.clone().get_or_insert_default(), main_name);
 
     let doc = [
         point.label.as_ref(),
@@ -214,6 +225,7 @@ pub fn resolve_point(
         internal_name: point.name.clone(),
         point_type,
         value_type,
+        block_indices,
         access: point.access,
         mandatory: point.mandatory,
         size: point.size as u16,
@@ -261,20 +273,61 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
 
 pub fn resolve_group(
     group: &Group,
-    top_level_points: Option<&[ResolvedPoint]>,
+    top_level_points_opt: Option<&[ResolvedPoint]>,
     features: &mut HashSet<CodegenFeature>,
+    block_indices: Vec<BlockIndex>,
+    name_prefix: Option<String>,
 ) -> ResolvedGroup {
     let root_points: Vec<ResolvedPoint> = group
         .points
         .iter()
-        .flat_map(|point| resolve_point(point, features))
+        .flat_map(|point| resolve_point(point, features, block_indices.clone(), name_prefix.clone()))
         .collect();
 
-    let (repeating_groups, groups): (Vec<ResolvedGroup>, Vec<ResolvedGroup>) = group
+    let top_level_points = top_level_points_opt.unwrap_or(&root_points);
+
+    let groups: Vec<ResolvedGroup> = group
         .groups
         .iter()
-        .map(|child| resolve_group(child, top_level_points.or(Some(&root_points)), features))
-        .partition(|g| g.repeat_count_point.is_some());
+        .filter(|g| matches!(g.count, GroupCount::Integer(_)))
+        .map(|child| {
+            resolve_group(
+                child,
+                Some(top_level_points),
+                features,
+                block_indices.clone(),
+                name_prefix.clone(),
+            )
+        })
+        .collect();
+
+    let repeating_child = group.groups.iter().find_map(|g| match &g.count {
+        GroupCount::String(count_name) => {
+            let count_point = top_level_points
+                .iter()
+                .find(|p| p.internal_name == *count_name);
+
+            let mut child_block_indices = block_indices.clone();
+            child_block_indices.push(BlockIndex {
+                group_name: g.label.as_ref().unwrap_or(&g.name).to_snake_case(),
+                index_name: format!("{}_index", g.name.to_snake_case()),
+            });
+
+            count_point.map(|p| {
+                (
+                    p.clone(),
+                    Box::new(resolve_group(
+                        g,
+                        Some(top_level_points),
+                        features,
+                        child_block_indices,
+                        Some(g.name.clone())
+                    )),
+                )
+            })
+        }
+        _ => None,
+    });
 
     let points: Vec<ResolvedPoint> = root_points
         .into_iter()
@@ -292,6 +345,11 @@ pub fn resolve_group(
         .iter()
         .flat_map(resolve_enum)
         .chain(groups.iter().flat_map(|g| g.enums.iter().cloned()))
+        .chain(
+            repeating_child
+                .iter()
+                .flat_map(|(_, g)| g.enums.iter().cloned()),
+        )
         .collect();
 
     enums.sort_by_key(|e| e.name_snake_case.clone());
@@ -299,35 +357,23 @@ pub fn resolve_group(
 
     let size = points.iter().map(|point| point.size).sum();
 
-    let count_name = match &group.count {
-        GroupCount::String(s) => Some(s.clone()),
-        _ => None,
-    };
-
-    let repeat_count_point = count_name
-        .and_then(|n| {
-            top_level_points
-                .into_iter()
-                .flatten()
-                .find(|p| p.internal_name == n)
-        })
-        .cloned();
+    let name = group.label.as_ref().unwrap_or(&group.name);
 
     ResolvedGroup {
-        name_pascal_case: group.name.to_pascal_case(),
-        name_snake_case: group.name.to_snake_case(),
+        name_pascal_case: name.to_pascal_case(),
+        name_snake_case: name.to_snake_case(),
+        name_short: group.name.to_snake_case(),
         static_size: size,
-        repeat_count_point,
         points,
         enums,
-        repeating_child: repeating_groups.into_iter().map(Box::new).next(),
+        repeating_child,
     }
 }
 
 pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
     let model_number: u16 = file_name[6..].parse().unwrap();
     let mut features: HashSet<CodegenFeature> = HashSet::new();
-    let group = resolve_group(&model.group, None, &mut features);
+    let group = resolve_group(&model.group, None, &mut features, vec![], None);
 
     ResolvedModel {
         model_number,

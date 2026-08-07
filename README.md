@@ -22,19 +22,20 @@ a developer can choose to use the C-based libmodbus, or Rust-based MODBUS librar
 However, many devices have no operating system and quite often in support of serial comms over RS485 only.
 In this instance, the library could be used along with implementations of Rust's embedded-hal IO library.
 
-## C bindings generation
+## Crates
+# sunspec-gen
+This crate is responsible for generating the content of the `src/sunspec` directory of the `sunspec-modbus-lib-rs` crate
+described below. It sources the latest Sunspec MOBDBUS model definitions from https://github.com/sunspec/models, and generates
+adapter definitions for each model.
 
-This crate auto-generates a C header during build using `cbindgen`.
-
-- Config file: `cbindgen.toml`
-- Generated header: `sunspec_modbus_codec.h`
-- Trigger: any change under `src/` or `cbindgen.toml`
-
-To regenerate manually without building:
-
-```bash
-cbindgen --config cbindgen.toml --crate sunspec-modbus-codec --output sunspec_modbus_codec.h
+The codegen step can be triggered in isolation by running:
+```sh
+cargo run -p sunspec-gen
 ```
 
-The current work configures deterministic C header generation with a no_std-friendly dependency surface.
-It does not by itself make all exported Rust types fully C ABI-safe.
+# sunspec-modbus-lib-rs
+This is the core rust crate that provides serialisation and deserialisation of Sunspec MODBUS models from a collection of
+adapters.
+
+# sunspec-modbus-lib-static
+This wraps a subset of the `sunspec-modbus-lib-rs` crate in a stable FFI-safe interface to allow its usage from C. 

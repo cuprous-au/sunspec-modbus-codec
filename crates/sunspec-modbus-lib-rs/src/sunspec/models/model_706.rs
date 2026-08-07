@@ -124,6 +124,12 @@ pub enum Point {
     VoltageScaleFactor,
     WattScaleFactor,
     OpenLoopScaleFactor,
+    CrvActivePoints { crv_index: u16 },
+    CrvDependentReference { crv_index: u16 },
+    CrvOpenLoopResponseTime { crv_index: u16 },
+    CrvCurveAccess { crv_index: u16 },
+    PtVoltagePoint { crv_index: u16, pt_index: u16 },
+    PtDependentReference { crv_index: u16, pt_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -185,6 +191,42 @@ pub fn write_point<'a>(
         }
         Point::OpenLoopScaleFactor => {
             buffer::write_u16(model.open_loop_scale_factor(), buffer);
+        }
+        Point::CrvActivePoints { crv_index } => {
+            buffer::write_u16(model.crv_active_points(*crv_index), buffer);
+        }
+        Point::CrvDependentReference { crv_index } => {
+            buffer::write_u16(model.crv_dependent_reference(*crv_index) as u16, buffer);
+        }
+        Point::CrvOpenLoopResponseTime { crv_index } => {
+            if let Some(value) = model.crv_open_loop_response_time(*crv_index) {
+                buffer::write_u32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::CrvCurveAccess { crv_index } => {
+            buffer::write_u16(model.crv_curve_access(*crv_index) as u16, buffer);
+        }
+        Point::PtVoltagePoint {
+            crv_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_voltage_point(*crv_index, *pt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PtDependentReference {
+            crv_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_dependent_reference(*crv_index, *pt_index) {
+                buffer::write_i16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
         }
     }
 }
@@ -270,6 +312,75 @@ pub trait ModelAdapter {
     ///
     /// Open loop response time scale factor.
     fn open_loop_scale_factor(&self) -> u16;
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn crv_active_points(&self, crv_index: u16) -> u16;
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_crv_active_points(&mut self, value: u16, crv_index: u16);
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn crv_dependent_reference(&self, crv_index: u16) -> DeptRef;
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn set_crv_dependent_reference(&mut self, value: DeptRef, crv_index: u16);
+
+    /// Open Loop Response Time
+    ///
+    /// Open loop response time.
+    fn crv_open_loop_response_time(&self, crv_index: u16) -> Option<u32> {
+        None
+    }
+
+    /// Open Loop Response Time
+    ///
+    /// Open loop response time.
+    fn set_crv_open_loop_response_time(&mut self, value: u32, crv_index: u16) {}
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly;
+
+    /// Voltage Point
+    ///
+    /// Curve voltage point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn pt_voltage_point(&self, crv_index: u16, pt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Voltage Point
+    ///
+    /// Curve voltage point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn set_pt_voltage_point(&mut self, value: u16, crv_index: u16, pt_index: u16) {}
+
+    /// Dependent Reference
+    ///
+    /// Active power in percent of rated active power.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn pt_dependent_reference(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        None
+    }
+
+    /// Dependent Reference
+    ///
+    /// Active power in percent of rated active power.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn set_pt_dependent_reference(&mut self, value: i16, crv_index: u16, pt_index: u16) {}
 }
 
 #[derive(Clone, Copy)]
@@ -291,6 +402,13 @@ pub enum AdptCrvRslt {
 
 #[derive(Clone, Copy)]
 #[repr(u16)]
+pub enum DeptRef {
+    WMaxPct = 0,
+    WAvalPct = 1,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
 pub enum Ena {
     /// Disabled
     ///
@@ -300,6 +418,19 @@ pub enum Ena {
     ///
     /// Function is enabled.
     Enabled = 1,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum ReadOnly {
+    /// Read-Write Access
+    ///
+    /// Curve has read-write access.
+    Rw = 0,
+    /// Read-Only Access
+    ///
+    /// Curve has read-only access.
+    R = 1,
 }
 
 #[repr(C)]
@@ -320,6 +451,17 @@ pub struct Model706CallbackAdapter {
     voltage_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
     watt_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
     open_loop_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    crv_active_points_callback: extern "C" fn(*const c_void, u16) -> u16,
+    set_crv_active_points_callback: extern "C" fn(u16, *mut c_void, u16),
+    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> DeptRef,
+    set_crv_dependent_reference_callback: extern "C" fn(DeptRef, *mut c_void, u16),
+    crv_open_loop_response_time_callback: Option<extern "C" fn(*const c_void, u16) -> u32>,
+    set_crv_open_loop_response_time_callback: Option<extern "C" fn(u32, *mut c_void, u16)>,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    pt_voltage_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> u16>,
+    set_pt_voltage_point_callback: Option<extern "C" fn(u16, *mut c_void, u16, u16)>,
+    pt_dependent_reference_callback: Option<extern "C" fn(*const c_void, u16, u16) -> i16>,
+    set_pt_dependent_reference_callback: Option<extern "C" fn(i16, *mut c_void, u16, u16)>,
 }
 
 impl ModelAdapter for Model706CallbackAdapter {
@@ -434,10 +576,104 @@ impl ModelAdapter for Model706CallbackAdapter {
     fn open_loop_scale_factor(&self) -> u16 {
         (self.open_loop_scale_factor_callback)(self.context)
     }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn crv_active_points(&self, crv_index: u16) -> u16 {
+        (self.crv_active_points_callback)(self.context, crv_index)
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_crv_active_points(&mut self, value: u16, crv_index: u16) {
+        (self.set_crv_active_points_callback)(value, self.context, crv_index);
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn crv_dependent_reference(&self, crv_index: u16) -> DeptRef {
+        (self.crv_dependent_reference_callback)(self.context, crv_index)
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn set_crv_dependent_reference(&mut self, value: DeptRef, crv_index: u16) {
+        (self.set_crv_dependent_reference_callback)(value, self.context, crv_index);
+    }
+
+    /// Open Loop Response Time
+    ///
+    /// Open loop response time.
+    fn crv_open_loop_response_time(&self, crv_index: u16) -> Option<u32> {
+        self.crv_open_loop_response_time_callback
+            .map(|callback| (callback)(self.context, crv_index))
+    }
+
+    /// Open Loop Response Time
+    ///
+    /// Open loop response time.
+    fn set_crv_open_loop_response_time(&mut self, value: u32, crv_index: u16) {
+        if let Some(callback) = self.set_crv_open_loop_response_time_callback {
+            (callback)(value, self.context, crv_index);
+        };
+    }
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly {
+        (self.crv_curve_access_callback)(self.context, crv_index)
+    }
+
+    /// Voltage Point
+    ///
+    /// Curve voltage point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn pt_voltage_point(&self, crv_index: u16, pt_index: u16) -> Option<u16> {
+        self.pt_voltage_point_callback
+            .map(|callback| (callback)(self.context, crv_index, pt_index))
+    }
+
+    /// Voltage Point
+    ///
+    /// Curve voltage point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn set_pt_voltage_point(&mut self, value: u16, crv_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_voltage_point_callback {
+            (callback)(value, self.context, crv_index, pt_index);
+        };
+    }
+
+    /// Dependent Reference
+    ///
+    /// Active power in percent of rated active power.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn pt_dependent_reference(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        self.pt_dependent_reference_callback
+            .map(|callback| (callback)(self.context, crv_index, pt_index))
+    }
+
+    /// Dependent Reference
+    ///
+    /// Active power in percent of rated active power.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn set_pt_dependent_reference(&mut self, value: i16, crv_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_dependent_reference_callback {
+            (callback)(value, self.context, crv_index, pt_index);
+        };
+    }
 }
 
 #[repr(C)]
-pub struct Model706StatefulAdapter {
+pub struct Model706StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER_OF_POINTS: usize> {
     der_volt_watt_module_enable: Ena,
     adopt_curve_request: u16,
     adopt_curve_result: AdptCrvRslt,
@@ -449,9 +685,27 @@ pub struct Model706StatefulAdapter {
     voltage_scale_factor: u16,
     watt_scale_factor: u16,
     open_loop_scale_factor: u16,
+    stored_curves: [Model706StoredCurves<NUMBER_OF_POINTS>; STORED_CURVE_COUNT],
 }
 
-impl ModelAdapter for Model706StatefulAdapter {
+#[repr(C)]
+pub struct Model706StoredCurves<const NUMBER_OF_POINTS: usize> {
+    crv_active_points: u16,
+    crv_dependent_reference: DeptRef,
+    crv_open_loop_response_time: u32,
+    crv_curve_access: ReadOnly,
+    stored_curve_points: [Model706StoredCurvePoints; NUMBER_OF_POINTS],
+}
+
+#[repr(C)]
+pub struct Model706StoredCurvePoints {
+    pt_voltage_point: u16,
+    pt_dependent_reference: i16,
+}
+
+impl<const STORED_CURVE_COUNT: usize, const NUMBER_OF_POINTS: usize> ModelAdapter
+    for Model706StatefulAdapter<STORED_CURVE_COUNT, NUMBER_OF_POINTS>
+{
     /// DER Volt-Watt Module Enable
     ///
     /// Volt-Watt control enable.
@@ -555,5 +809,98 @@ impl ModelAdapter for Model706StatefulAdapter {
     /// Open loop response time scale factor.
     fn open_loop_scale_factor(&self) -> u16 {
         self.open_loop_scale_factor
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn crv_active_points(&self, crv_index: u16) -> u16 {
+        self.stored_curves[crv_index as usize].crv_active_points
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_crv_active_points(&mut self, value: u16, crv_index: u16) {
+        self.stored_curves[crv_index as usize].crv_active_points = value;
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn crv_dependent_reference(&self, crv_index: u16) -> DeptRef {
+        self.stored_curves[crv_index as usize].crv_dependent_reference
+    }
+
+    /// Dependent Reference
+    ///
+    /// Curve dependent reference.
+    fn set_crv_dependent_reference(&mut self, value: DeptRef, crv_index: u16) {
+        self.stored_curves[crv_index as usize].crv_dependent_reference = value;
+    }
+
+    /// Open Loop Response Time
+    ///
+    /// Open loop response time.
+    fn crv_open_loop_response_time(&self, crv_index: u16) -> Option<u32> {
+        Some(self.stored_curves[crv_index as usize].crv_open_loop_response_time)
+    }
+
+    /// Open Loop Response Time
+    ///
+    /// Open loop response time.
+    fn set_crv_open_loop_response_time(&mut self, value: u32, crv_index: u16) {
+        self.stored_curves[crv_index as usize].crv_open_loop_response_time = value;
+    }
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly {
+        self.stored_curves[crv_index as usize].crv_curve_access
+    }
+
+    /// Voltage Point
+    ///
+    /// Curve voltage point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn pt_voltage_point(&self, crv_index: u16, pt_index: u16) -> Option<u16> {
+        Some(
+            self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+                .pt_voltage_point,
+        )
+    }
+
+    /// Voltage Point
+    ///
+    /// Curve voltage point as percentage.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn set_pt_voltage_point(&mut self, value: u16, crv_index: u16, pt_index: u16) {
+        self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+            .pt_voltage_point = value;
+    }
+
+    /// Dependent Reference
+    ///
+    /// Active power in percent of rated active power.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn pt_dependent_reference(&self, crv_index: u16, pt_index: u16) -> Option<i16> {
+        Some(
+            self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+                .pt_dependent_reference,
+        )
+    }
+
+    /// Dependent Reference
+    ///
+    /// Active power in percent of rated active power.
+    ///
+    /// Internal curve conformance checks should be conducted when AdptCrvReq is set to 1, not on point writes.
+    fn set_pt_dependent_reference(&mut self, value: i16, crv_index: u16, pt_index: u16) {
+        self.stored_curves[crv_index as usize].stored_curve_points[pt_index as usize]
+            .pt_dependent_reference = value;
     }
 }

@@ -331,6 +331,13 @@ pub enum Point {
     PowerSlewRateScaleFactor,
     CurrentSlewRateScaleFactor,
     PercentScaleFactor,
+    ProfActivePoints { prof_index: u16 },
+    ProfDependentReferences { prof_index: u16 },
+    PtProfileTime { prof_index: u16, pt_index: u16 },
+    PtVoltagePoint { prof_index: u16, pt_index: u16 },
+    PtPowerPoint { prof_index: u16, pt_index: u16 },
+    PtCurrentPoint { prof_index: u16, pt_index: u16 },
+    PtIrradiancePoint { prof_index: u16, pt_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -537,6 +544,67 @@ pub fn write_point<'a>(
         }
         Point::PercentScaleFactor => {
             buffer::write_u16(model.percent_scale_factor(), buffer);
+        }
+        Point::ProfActivePoints { prof_index } => {
+            buffer::write_u16(model.prof_active_points(*prof_index), buffer);
+        }
+        Point::ProfDependentReferences { prof_index } => {
+            buffer::write_u32(
+                model.prof_dependent_references(*prof_index),
+                buffer,
+                offset,
+                limit,
+            );
+        }
+        Point::PtProfileTime {
+            prof_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_profile_time(*prof_index, *pt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PtVoltagePoint {
+            prof_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_voltage_point(*prof_index, *pt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PtPowerPoint {
+            prof_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_power_point(*prof_index, *pt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PtCurrentPoint {
+            prof_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_current_point(*prof_index, *pt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PtIrradiancePoint {
+            prof_index,
+            pt_index,
+        } => {
+            if let Some(value) = model.pt_irradiance_point(*prof_index, *pt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
         }
     }
 }
@@ -890,6 +958,86 @@ pub trait ModelAdapter {
     ///
     /// Scale factor for percentages.
     fn set_percent_scale_factor(&mut self, value: u16);
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn prof_active_points(&self, prof_index: u16) -> u16;
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_prof_active_points(&mut self, value: u16, prof_index: u16);
+
+    /// Dependent References
+    ///
+    /// Profile references.
+    fn prof_dependent_references(&self, prof_index: u16) -> u32;
+
+    /// Dependent References
+    ///
+    /// Profile references.
+    fn set_prof_dependent_references(&mut self, value: u32, prof_index: u16);
+
+    /// Profile Time
+    ///
+    /// Profile time.
+    fn pt_profile_time(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Profile Time
+    ///
+    /// Profile time.
+    fn set_pt_profile_time(&mut self, value: u16, prof_index: u16, pt_index: u16) {}
+
+    /// Voltage Point
+    ///
+    /// Profile voltage point in Volts.
+    fn pt_voltage_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Voltage Point
+    ///
+    /// Profile voltage point in Volts.
+    fn set_pt_voltage_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {}
+
+    /// Power Point
+    ///
+    /// Profile power point in Watts.
+    fn pt_power_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Power Point
+    ///
+    /// Profile power point in Watts.
+    fn set_pt_power_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {}
+
+    /// Current Point
+    ///
+    /// Profile current point in Amps.
+    fn pt_current_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Current Point
+    ///
+    /// Profile current point in Amps.
+    fn set_pt_current_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {}
+
+    /// Irradiance Point
+    ///
+    /// Profile irradiance point as percentage.
+    fn pt_irradiance_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Irradiance Point
+    ///
+    /// Profile irradiance point as percentage.
+    fn set_pt_irradiance_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {}
 }
 
 #[derive(Clone, Copy)]
@@ -1038,6 +1186,20 @@ pub struct Model64410CallbackAdapter {
     set_current_slew_rate_scale_factor_callback: extern "C" fn(u16, *mut c_void),
     percent_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
     set_percent_scale_factor_callback: extern "C" fn(u16, *mut c_void),
+    prof_active_points_callback: extern "C" fn(*const c_void, u16) -> u16,
+    set_prof_active_points_callback: extern "C" fn(u16, *mut c_void, u16),
+    prof_dependent_references_callback: extern "C" fn(*const c_void, u16) -> u32,
+    set_prof_dependent_references_callback: extern "C" fn(u32, *mut c_void, u16),
+    pt_profile_time_callback: Option<extern "C" fn(*const c_void, u16, u16) -> u16>,
+    set_pt_profile_time_callback: Option<extern "C" fn(u16, *mut c_void, u16, u16)>,
+    pt_voltage_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> u16>,
+    set_pt_voltage_point_callback: Option<extern "C" fn(u16, *mut c_void, u16, u16)>,
+    pt_power_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> u16>,
+    set_pt_power_point_callback: Option<extern "C" fn(u16, *mut c_void, u16, u16)>,
+    pt_current_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> u16>,
+    set_pt_current_point_callback: Option<extern "C" fn(u16, *mut c_void, u16, u16)>,
+    pt_irradiance_point_callback: Option<extern "C" fn(*const c_void, u16, u16) -> u16>,
+    set_pt_irradiance_point_callback: Option<extern "C" fn(u16, *mut c_void, u16, u16)>,
 }
 
 impl ModelAdapter for Model64410CallbackAdapter {
@@ -1525,10 +1687,126 @@ impl ModelAdapter for Model64410CallbackAdapter {
     fn set_percent_scale_factor(&mut self, value: u16) {
         (self.set_percent_scale_factor_callback)(value, self.context);
     }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn prof_active_points(&self, prof_index: u16) -> u16 {
+        (self.prof_active_points_callback)(self.context, prof_index)
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_prof_active_points(&mut self, value: u16, prof_index: u16) {
+        (self.set_prof_active_points_callback)(value, self.context, prof_index);
+    }
+
+    /// Dependent References
+    ///
+    /// Profile references.
+    fn prof_dependent_references(&self, prof_index: u16) -> u32 {
+        (self.prof_dependent_references_callback)(self.context, prof_index)
+    }
+
+    /// Dependent References
+    ///
+    /// Profile references.
+    fn set_prof_dependent_references(&mut self, value: u32, prof_index: u16) {
+        (self.set_prof_dependent_references_callback)(value, self.context, prof_index);
+    }
+
+    /// Profile Time
+    ///
+    /// Profile time.
+    fn pt_profile_time(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        self.pt_profile_time_callback
+            .map(|callback| (callback)(self.context, prof_index, pt_index))
+    }
+
+    /// Profile Time
+    ///
+    /// Profile time.
+    fn set_pt_profile_time(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_profile_time_callback {
+            (callback)(value, self.context, prof_index, pt_index);
+        };
+    }
+
+    /// Voltage Point
+    ///
+    /// Profile voltage point in Volts.
+    fn pt_voltage_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        self.pt_voltage_point_callback
+            .map(|callback| (callback)(self.context, prof_index, pt_index))
+    }
+
+    /// Voltage Point
+    ///
+    /// Profile voltage point in Volts.
+    fn set_pt_voltage_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_voltage_point_callback {
+            (callback)(value, self.context, prof_index, pt_index);
+        };
+    }
+
+    /// Power Point
+    ///
+    /// Profile power point in Watts.
+    fn pt_power_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        self.pt_power_point_callback
+            .map(|callback| (callback)(self.context, prof_index, pt_index))
+    }
+
+    /// Power Point
+    ///
+    /// Profile power point in Watts.
+    fn set_pt_power_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_power_point_callback {
+            (callback)(value, self.context, prof_index, pt_index);
+        };
+    }
+
+    /// Current Point
+    ///
+    /// Profile current point in Amps.
+    fn pt_current_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        self.pt_current_point_callback
+            .map(|callback| (callback)(self.context, prof_index, pt_index))
+    }
+
+    /// Current Point
+    ///
+    /// Profile current point in Amps.
+    fn set_pt_current_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_current_point_callback {
+            (callback)(value, self.context, prof_index, pt_index);
+        };
+    }
+
+    /// Irradiance Point
+    ///
+    /// Profile irradiance point as percentage.
+    fn pt_irradiance_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        self.pt_irradiance_point_callback
+            .map(|callback| (callback)(self.context, prof_index, pt_index))
+    }
+
+    /// Irradiance Point
+    ///
+    /// Profile irradiance point as percentage.
+    fn set_pt_irradiance_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        if let Some(callback) = self.set_pt_irradiance_point_callback {
+            (callback)(value, self.context, prof_index, pt_index);
+        };
+    }
 }
 
 #[repr(C)]
-pub struct Model64410StatefulAdapter {
+pub struct Model64410StatefulAdapter<
+    const STORED_PROFILE_COUNT: usize,
+    const NUMBER_OF_POINTS: usize,
+> {
     maximum_voltage: u16,
     maximum_power: u16,
     maximum_current: u16,
@@ -1563,9 +1841,28 @@ pub struct Model64410StatefulAdapter {
     power_slew_rate_scale_factor: u16,
     current_slew_rate_scale_factor: u16,
     percent_scale_factor: u16,
+    stored_profiles: [Model64410StoredProfiles<NUMBER_OF_POINTS>; STORED_PROFILE_COUNT],
 }
 
-impl ModelAdapter for Model64410StatefulAdapter {
+#[repr(C)]
+pub struct Model64410StoredProfiles<const NUMBER_OF_POINTS: usize> {
+    prof_active_points: u16,
+    prof_dependent_references: u32,
+    stored_profile_points: [Model64410StoredProfilePoints; NUMBER_OF_POINTS],
+}
+
+#[repr(C)]
+pub struct Model64410StoredProfilePoints {
+    pt_profile_time: u16,
+    pt_voltage_point: u16,
+    pt_power_point: u16,
+    pt_current_point: u16,
+    pt_irradiance_point: u16,
+}
+
+impl<const STORED_PROFILE_COUNT: usize, const NUMBER_OF_POINTS: usize> ModelAdapter
+    for Model64410StatefulAdapter<STORED_PROFILE_COUNT, NUMBER_OF_POINTS>
+{
     /// Maximum Voltage
     ///
     /// Upper Voltage Protection Limit
@@ -1991,5 +2288,123 @@ impl ModelAdapter for Model64410StatefulAdapter {
     /// Scale factor for percentages.
     fn set_percent_scale_factor(&mut self, value: u16) {
         self.percent_scale_factor = value;
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn prof_active_points(&self, prof_index: u16) -> u16 {
+        self.stored_profiles[prof_index as usize].prof_active_points
+    }
+
+    /// Active Points
+    ///
+    /// Number of active points.
+    fn set_prof_active_points(&mut self, value: u16, prof_index: u16) {
+        self.stored_profiles[prof_index as usize].prof_active_points = value;
+    }
+
+    /// Dependent References
+    ///
+    /// Profile references.
+    fn prof_dependent_references(&self, prof_index: u16) -> u32 {
+        self.stored_profiles[prof_index as usize].prof_dependent_references
+    }
+
+    /// Dependent References
+    ///
+    /// Profile references.
+    fn set_prof_dependent_references(&mut self, value: u32, prof_index: u16) {
+        self.stored_profiles[prof_index as usize].prof_dependent_references = value;
+    }
+
+    /// Profile Time
+    ///
+    /// Profile time.
+    fn pt_profile_time(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        Some(
+            self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+                .pt_profile_time,
+        )
+    }
+
+    /// Profile Time
+    ///
+    /// Profile time.
+    fn set_pt_profile_time(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+            .pt_profile_time = value;
+    }
+
+    /// Voltage Point
+    ///
+    /// Profile voltage point in Volts.
+    fn pt_voltage_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        Some(
+            self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+                .pt_voltage_point,
+        )
+    }
+
+    /// Voltage Point
+    ///
+    /// Profile voltage point in Volts.
+    fn set_pt_voltage_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+            .pt_voltage_point = value;
+    }
+
+    /// Power Point
+    ///
+    /// Profile power point in Watts.
+    fn pt_power_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        Some(
+            self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+                .pt_power_point,
+        )
+    }
+
+    /// Power Point
+    ///
+    /// Profile power point in Watts.
+    fn set_pt_power_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+            .pt_power_point = value;
+    }
+
+    /// Current Point
+    ///
+    /// Profile current point in Amps.
+    fn pt_current_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        Some(
+            self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+                .pt_current_point,
+        )
+    }
+
+    /// Current Point
+    ///
+    /// Profile current point in Amps.
+    fn set_pt_current_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+            .pt_current_point = value;
+    }
+
+    /// Irradiance Point
+    ///
+    /// Profile irradiance point as percentage.
+    fn pt_irradiance_point(&self, prof_index: u16, pt_index: u16) -> Option<u16> {
+        Some(
+            self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+                .pt_irradiance_point,
+        )
+    }
+
+    /// Irradiance Point
+    ///
+    /// Profile irradiance point as percentage.
+    fn set_pt_irradiance_point(&mut self, value: u16, prof_index: u16, pt_index: u16) {
+        self.stored_profiles[prof_index as usize].stored_profile_points[pt_index as usize]
+            .pt_irradiance_point = value;
     }
 }

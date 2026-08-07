@@ -360,6 +360,45 @@ pub enum Point {
     VSf,
     CellVSf,
     ModTmpSf,
+    LithiumIonStringModuleModuleCellCount {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleModuleSoC {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleModuleSoH {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMaxCellVoltage {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMaxCellVoltageCell {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMinCellVoltage {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMinCellVoltageCell {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleAverageCellVoltage {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMaxCellTemperature {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMaxCellTemperatureCell {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMinCellTemperature {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleMinCellTemperatureCell {
+        lithium_ion_string_module_index: u16,
+    },
+    LithiumIonStringModuleAverageCellTemperature {
+        lithium_ion_string_module_index: u16,
+    },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -549,6 +588,136 @@ pub fn write_point<'a>(
         }
         Point::ModTmpSf => {
             buffer::write_u16(model.mod_tmp_sf(), buffer);
+        }
+        Point::LithiumIonStringModuleModuleCellCount {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_u16(
+                model.lithium_ion_string_module_module_cell_count(*lithium_ion_string_module_index),
+                buffer,
+            );
+        }
+        Point::LithiumIonStringModuleModuleSoC {
+            lithium_ion_string_module_index,
+        } => {
+            if let Some(value) =
+                model.lithium_ion_string_module_module_so_c(*lithium_ion_string_module_index)
+            {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::LithiumIonStringModuleModuleSoH {
+            lithium_ion_string_module_index,
+        } => {
+            if let Some(value) =
+                model.lithium_ion_string_module_module_so_h(*lithium_ion_string_module_index)
+            {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::LithiumIonStringModuleMaxCellVoltage {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_u16(
+                model.lithium_ion_string_module_max_cell_voltage(*lithium_ion_string_module_index),
+                buffer,
+            );
+        }
+        Point::LithiumIonStringModuleMaxCellVoltageCell {
+            lithium_ion_string_module_index,
+        } => {
+            if let Some(value) = model
+                .lithium_ion_string_module_max_cell_voltage_cell(*lithium_ion_string_module_index)
+            {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::LithiumIonStringModuleMinCellVoltage {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_u16(
+                model.lithium_ion_string_module_min_cell_voltage(*lithium_ion_string_module_index),
+                buffer,
+            );
+        }
+        Point::LithiumIonStringModuleMinCellVoltageCell {
+            lithium_ion_string_module_index,
+        } => {
+            if let Some(value) = model
+                .lithium_ion_string_module_min_cell_voltage_cell(*lithium_ion_string_module_index)
+            {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::LithiumIonStringModuleAverageCellVoltage {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_u16(
+                model.lithium_ion_string_module_average_cell_voltage(
+                    *lithium_ion_string_module_index,
+                ),
+                buffer,
+            );
+        }
+        Point::LithiumIonStringModuleMaxCellTemperature {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_i16(
+                model.lithium_ion_string_module_max_cell_temperature(
+                    *lithium_ion_string_module_index,
+                ),
+                buffer,
+            );
+        }
+        Point::LithiumIonStringModuleMaxCellTemperatureCell {
+            lithium_ion_string_module_index,
+        } => {
+            if let Some(value) = model.lithium_ion_string_module_max_cell_temperature_cell(
+                *lithium_ion_string_module_index,
+            ) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::LithiumIonStringModuleMinCellTemperature {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_i16(
+                model.lithium_ion_string_module_min_cell_temperature(
+                    *lithium_ion_string_module_index,
+                ),
+                buffer,
+            );
+        }
+        Point::LithiumIonStringModuleMinCellTemperatureCell {
+            lithium_ion_string_module_index,
+        } => {
+            if let Some(value) = model.lithium_ion_string_module_min_cell_temperature_cell(
+                *lithium_ion_string_module_index,
+            ) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::LithiumIonStringModuleAverageCellTemperature {
+            lithium_ion_string_module_index,
+        } => {
+            buffer::write_i16(
+                model.lithium_ion_string_module_average_cell_temperature(
+                    *lithium_ion_string_module_index,
+                ),
+                buffer,
+            );
         }
     }
 }
@@ -786,6 +955,122 @@ pub trait ModelAdapter {
 
     /// Scale factor for module temperature.
     fn mod_tmp_sf(&self) -> u16;
+
+    /// Module Cell Count
+    ///
+    /// Count of all cells in the module.
+    fn lithium_ion_string_module_module_cell_count(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16;
+
+    /// Module SoC
+    ///
+    /// Module state of charge, expressed as a percentage.
+    fn lithium_ion_string_module_module_so_c(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        None
+    }
+
+    /// Module SoH
+    ///
+    /// Module state of health, expressed as a percentage.
+    fn lithium_ion_string_module_module_so_h(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        None
+    }
+
+    /// Max Cell Voltage
+    ///
+    /// Maximum voltage for all cells in the module.
+    fn lithium_ion_string_module_max_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16;
+
+    /// Max Cell Voltage Cell
+    ///
+    /// Cell with maximum voltage.
+    fn lithium_ion_string_module_max_cell_voltage_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        None
+    }
+
+    /// Min Cell Voltage
+    ///
+    /// Minimum voltage for all cells in the module.
+    fn lithium_ion_string_module_min_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16;
+
+    /// Min Cell Voltage Cell
+    ///
+    /// Cell with minimum voltage.
+    fn lithium_ion_string_module_min_cell_voltage_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        None
+    }
+
+    /// Average Cell Voltage
+    ///
+    /// Average voltage for all cells in the module.
+    fn lithium_ion_string_module_average_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16;
+
+    /// Max Cell Temperature
+    ///
+    /// Maximum temperature for all cells in the module.
+    fn lithium_ion_string_module_max_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16;
+
+    /// Max Cell Temperature Cell
+    ///
+    /// Cell with maximum temperature.
+    fn lithium_ion_string_module_max_cell_temperature_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        None
+    }
+
+    /// Min Cell Temperature
+    ///
+    /// Minimum temperature for all cells in the module.
+    fn lithium_ion_string_module_min_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16;
+
+    /// Min Cell Temperature Cell
+    ///
+    /// Cell with minimum temperature.
+    fn lithium_ion_string_module_min_cell_temperature_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        None
+    }
+
+    /// Average Cell Temperature
+    ///
+    /// Average temperature for all cells in the module.
+    fn lithium_ion_string_module_average_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16;
 }
 
 #[derive(Clone, Copy)]
@@ -850,6 +1135,29 @@ pub struct Model804CallbackAdapter {
     v_sf_callback: Option<extern "C" fn(*const c_void) -> u16>,
     cell_v_sf_callback: extern "C" fn(*const c_void) -> u16,
     mod_tmp_sf_callback: extern "C" fn(*const c_void) -> u16,
+    lithium_ion_string_module_module_cell_count_callback: extern "C" fn(*const c_void, u16) -> u16,
+    lithium_ion_string_module_module_so_c_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    lithium_ion_string_module_module_so_h_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    lithium_ion_string_module_max_cell_voltage_callback: extern "C" fn(*const c_void, u16) -> u16,
+    lithium_ion_string_module_max_cell_voltage_cell_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    lithium_ion_string_module_min_cell_voltage_callback: extern "C" fn(*const c_void, u16) -> u16,
+    lithium_ion_string_module_min_cell_voltage_cell_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    lithium_ion_string_module_average_cell_voltage_callback:
+        extern "C" fn(*const c_void, u16) -> u16,
+    lithium_ion_string_module_max_cell_temperature_callback:
+        extern "C" fn(*const c_void, u16) -> i16,
+    lithium_ion_string_module_max_cell_temperature_cell_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    lithium_ion_string_module_min_cell_temperature_callback:
+        extern "C" fn(*const c_void, u16) -> i16,
+    lithium_ion_string_module_min_cell_temperature_cell_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    lithium_ion_string_module_average_cell_temperature_callback:
+        extern "C" fn(*const c_void, u16) -> i16,
 }
 
 impl ModelAdapter for Model804CallbackAdapter {
@@ -1145,10 +1453,167 @@ impl ModelAdapter for Model804CallbackAdapter {
     fn mod_tmp_sf(&self) -> u16 {
         (self.mod_tmp_sf_callback)(self.context)
     }
+
+    /// Module Cell Count
+    ///
+    /// Count of all cells in the module.
+    fn lithium_ion_string_module_module_cell_count(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        (self.lithium_ion_string_module_module_cell_count_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
+
+    /// Module SoC
+    ///
+    /// Module state of charge, expressed as a percentage.
+    fn lithium_ion_string_module_module_so_c(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        self.lithium_ion_string_module_module_so_c_callback
+            .map(|callback| (callback)(self.context, lithium_ion_string_module_index))
+    }
+
+    /// Module SoH
+    ///
+    /// Module state of health, expressed as a percentage.
+    fn lithium_ion_string_module_module_so_h(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        self.lithium_ion_string_module_module_so_h_callback
+            .map(|callback| (callback)(self.context, lithium_ion_string_module_index))
+    }
+
+    /// Max Cell Voltage
+    ///
+    /// Maximum voltage for all cells in the module.
+    fn lithium_ion_string_module_max_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        (self.lithium_ion_string_module_max_cell_voltage_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
+
+    /// Max Cell Voltage Cell
+    ///
+    /// Cell with maximum voltage.
+    fn lithium_ion_string_module_max_cell_voltage_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        self.lithium_ion_string_module_max_cell_voltage_cell_callback
+            .map(|callback| (callback)(self.context, lithium_ion_string_module_index))
+    }
+
+    /// Min Cell Voltage
+    ///
+    /// Minimum voltage for all cells in the module.
+    fn lithium_ion_string_module_min_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        (self.lithium_ion_string_module_min_cell_voltage_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
+
+    /// Min Cell Voltage Cell
+    ///
+    /// Cell with minimum voltage.
+    fn lithium_ion_string_module_min_cell_voltage_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        self.lithium_ion_string_module_min_cell_voltage_cell_callback
+            .map(|callback| (callback)(self.context, lithium_ion_string_module_index))
+    }
+
+    /// Average Cell Voltage
+    ///
+    /// Average voltage for all cells in the module.
+    fn lithium_ion_string_module_average_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        (self.lithium_ion_string_module_average_cell_voltage_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
+
+    /// Max Cell Temperature
+    ///
+    /// Maximum temperature for all cells in the module.
+    fn lithium_ion_string_module_max_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16 {
+        (self.lithium_ion_string_module_max_cell_temperature_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
+
+    /// Max Cell Temperature Cell
+    ///
+    /// Cell with maximum temperature.
+    fn lithium_ion_string_module_max_cell_temperature_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        self.lithium_ion_string_module_max_cell_temperature_cell_callback
+            .map(|callback| (callback)(self.context, lithium_ion_string_module_index))
+    }
+
+    /// Min Cell Temperature
+    ///
+    /// Minimum temperature for all cells in the module.
+    fn lithium_ion_string_module_min_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16 {
+        (self.lithium_ion_string_module_min_cell_temperature_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
+
+    /// Min Cell Temperature Cell
+    ///
+    /// Cell with minimum temperature.
+    fn lithium_ion_string_module_min_cell_temperature_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        self.lithium_ion_string_module_min_cell_temperature_cell_callback
+            .map(|callback| (callback)(self.context, lithium_ion_string_module_index))
+    }
+
+    /// Average Cell Temperature
+    ///
+    /// Average temperature for all cells in the module.
+    fn lithium_ion_string_module_average_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16 {
+        (self.lithium_ion_string_module_average_cell_temperature_callback)(
+            self.context,
+            lithium_ion_string_module_index,
+        )
+    }
 }
 
 #[repr(C)]
-pub struct Model804StatefulAdapter {
+pub struct Model804StatefulAdapter<const MODULE_COUNT: usize> {
     string_index: u16,
     module_count: u16,
     string_status: u32,
@@ -1184,9 +1649,27 @@ pub struct Model804StatefulAdapter {
     v_sf: u16,
     cell_v_sf: u16,
     mod_tmp_sf: u16,
+    lithium_ion_string_module: [Model804LithiumIonStringModule; MODULE_COUNT],
 }
 
-impl ModelAdapter for Model804StatefulAdapter {
+#[repr(C)]
+pub struct Model804LithiumIonStringModule {
+    lithium_ion_string_module_module_cell_count: u16,
+    lithium_ion_string_module_module_so_c: u16,
+    lithium_ion_string_module_module_so_h: u16,
+    lithium_ion_string_module_max_cell_voltage: u16,
+    lithium_ion_string_module_max_cell_voltage_cell: u16,
+    lithium_ion_string_module_min_cell_voltage: u16,
+    lithium_ion_string_module_min_cell_voltage_cell: u16,
+    lithium_ion_string_module_average_cell_voltage: u16,
+    lithium_ion_string_module_max_cell_temperature: i16,
+    lithium_ion_string_module_max_cell_temperature_cell: u16,
+    lithium_ion_string_module_min_cell_temperature: i16,
+    lithium_ion_string_module_min_cell_temperature_cell: u16,
+    lithium_ion_string_module_average_cell_temperature: i16,
+}
+
+impl<const MODULE_COUNT: usize> ModelAdapter for Model804StatefulAdapter<MODULE_COUNT> {
     /// String Index
     ///
     /// Index of the string within the bank.
@@ -1458,5 +1941,160 @@ impl ModelAdapter for Model804StatefulAdapter {
     /// Scale factor for module temperature.
     fn mod_tmp_sf(&self) -> u16 {
         self.mod_tmp_sf
+    }
+
+    /// Module Cell Count
+    ///
+    /// Count of all cells in the module.
+    fn lithium_ion_string_module_module_cell_count(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_module_cell_count
+    }
+
+    /// Module SoC
+    ///
+    /// Module state of charge, expressed as a percentage.
+    fn lithium_ion_string_module_module_so_c(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        Some(
+            self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+                .lithium_ion_string_module_module_so_c,
+        )
+    }
+
+    /// Module SoH
+    ///
+    /// Module state of health, expressed as a percentage.
+    fn lithium_ion_string_module_module_so_h(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        Some(
+            self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+                .lithium_ion_string_module_module_so_h,
+        )
+    }
+
+    /// Max Cell Voltage
+    ///
+    /// Maximum voltage for all cells in the module.
+    fn lithium_ion_string_module_max_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_max_cell_voltage
+    }
+
+    /// Max Cell Voltage Cell
+    ///
+    /// Cell with maximum voltage.
+    fn lithium_ion_string_module_max_cell_voltage_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        Some(
+            self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+                .lithium_ion_string_module_max_cell_voltage_cell,
+        )
+    }
+
+    /// Min Cell Voltage
+    ///
+    /// Minimum voltage for all cells in the module.
+    fn lithium_ion_string_module_min_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_min_cell_voltage
+    }
+
+    /// Min Cell Voltage Cell
+    ///
+    /// Cell with minimum voltage.
+    fn lithium_ion_string_module_min_cell_voltage_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        Some(
+            self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+                .lithium_ion_string_module_min_cell_voltage_cell,
+        )
+    }
+
+    /// Average Cell Voltage
+    ///
+    /// Average voltage for all cells in the module.
+    fn lithium_ion_string_module_average_cell_voltage(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> u16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_average_cell_voltage
+    }
+
+    /// Max Cell Temperature
+    ///
+    /// Maximum temperature for all cells in the module.
+    fn lithium_ion_string_module_max_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_max_cell_temperature
+    }
+
+    /// Max Cell Temperature Cell
+    ///
+    /// Cell with maximum temperature.
+    fn lithium_ion_string_module_max_cell_temperature_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        Some(
+            self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+                .lithium_ion_string_module_max_cell_temperature_cell,
+        )
+    }
+
+    /// Min Cell Temperature
+    ///
+    /// Minimum temperature for all cells in the module.
+    fn lithium_ion_string_module_min_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_min_cell_temperature
+    }
+
+    /// Min Cell Temperature Cell
+    ///
+    /// Cell with minimum temperature.
+    fn lithium_ion_string_module_min_cell_temperature_cell(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> Option<u16> {
+        Some(
+            self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+                .lithium_ion_string_module_min_cell_temperature_cell,
+        )
+    }
+
+    /// Average Cell Temperature
+    ///
+    /// Average temperature for all cells in the module.
+    fn lithium_ion_string_module_average_cell_temperature(
+        &self,
+        lithium_ion_string_module_index: u16,
+    ) -> i16 {
+        self.lithium_ion_string_module[lithium_ion_string_module_index as usize]
+            .lithium_ion_string_module_average_cell_temperature
     }
 }

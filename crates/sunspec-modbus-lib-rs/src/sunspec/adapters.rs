@@ -900,25 +900,16 @@ pub struct SunspecExternalAdapters<'a> {
     pub model_704_callback_adapter: Option<&'a model_704::Model704CallbackAdapter>,
     pub model_704_stateful_adapter: Option<&'a model_704::Model704StatefulAdapter>,
     pub model_705_callback_adapter: Option<&'a model_705::Model705CallbackAdapter>,
-    pub model_705_stateful_adapter: Option<&'a model_705::Model705StatefulAdapter>,
     pub model_706_callback_adapter: Option<&'a model_706::Model706CallbackAdapter>,
-    pub model_706_stateful_adapter: Option<&'a model_706::Model706StatefulAdapter>,
     pub model_707_callback_adapter: Option<&'a model_707::Model707CallbackAdapter>,
-    pub model_707_stateful_adapter: Option<&'a model_707::Model707StatefulAdapter>,
     pub model_708_callback_adapter: Option<&'a model_708::Model708CallbackAdapter>,
-    pub model_708_stateful_adapter: Option<&'a model_708::Model708StatefulAdapter>,
     pub model_709_callback_adapter: Option<&'a model_709::Model709CallbackAdapter>,
-    pub model_709_stateful_adapter: Option<&'a model_709::Model709StatefulAdapter>,
     pub model_710_callback_adapter: Option<&'a model_710::Model710CallbackAdapter>,
-    pub model_710_stateful_adapter: Option<&'a model_710::Model710StatefulAdapter>,
     pub model_711_callback_adapter: Option<&'a model_711::Model711CallbackAdapter>,
-    pub model_711_stateful_adapter: Option<&'a model_711::Model711StatefulAdapter>,
     pub model_712_callback_adapter: Option<&'a model_712::Model712CallbackAdapter>,
-    pub model_712_stateful_adapter: Option<&'a model_712::Model712StatefulAdapter>,
     pub model_713_callback_adapter: Option<&'a model_713::Model713CallbackAdapter>,
     pub model_713_stateful_adapter: Option<&'a model_713::Model713StatefulAdapter>,
     pub model_714_callback_adapter: Option<&'a model_714::Model714CallbackAdapter>,
-    pub model_714_stateful_adapter: Option<&'a model_714::Model714StatefulAdapter>,
     pub model_715_callback_adapter: Option<&'a model_715::Model715CallbackAdapter>,
     pub model_715_stateful_adapter: Option<&'a model_715::Model715StatefulAdapter>,
     pub model_801_callback_adapter: Option<&'a model_801::Model801CallbackAdapter>,
@@ -926,9 +917,7 @@ pub struct SunspecExternalAdapters<'a> {
     pub model_802_callback_adapter: Option<&'a model_802::Model802CallbackAdapter>,
     pub model_802_stateful_adapter: Option<&'a model_802::Model802StatefulAdapter>,
     pub model_803_callback_adapter: Option<&'a model_803::Model803CallbackAdapter>,
-    pub model_803_stateful_adapter: Option<&'a model_803::Model803StatefulAdapter>,
     pub model_804_callback_adapter: Option<&'a model_804::Model804CallbackAdapter>,
-    pub model_804_stateful_adapter: Option<&'a model_804::Model804StatefulAdapter>,
     pub model_805_callback_adapter: Option<&'a model_805::Model805CallbackAdapter>,
     pub model_805_stateful_adapter: Option<&'a model_805::Model805StatefulAdapter>,
     pub model_806_callback_adapter: Option<&'a model_806::Model806CallbackAdapter>,
@@ -952,13 +941,10 @@ pub struct SunspecExternalAdapters<'a> {
     pub model_64112_callback_adapter: Option<&'a model_64112::Model64112CallbackAdapter>,
     pub model_64112_stateful_adapter: Option<&'a model_64112::Model64112StatefulAdapter>,
     pub model_64410_callback_adapter: Option<&'a model_64410::Model64410CallbackAdapter>,
-    pub model_64410_stateful_adapter: Option<&'a model_64410::Model64410StatefulAdapter>,
     pub model_64411_callback_adapter: Option<&'a model_64411::Model64411CallbackAdapter>,
-    pub model_64411_stateful_adapter: Option<&'a model_64411::Model64411StatefulAdapter>,
     pub model_64412_callback_adapter: Option<&'a model_64412::Model64412CallbackAdapter>,
     pub model_64412_stateful_adapter: Option<&'a model_64412::Model64412StatefulAdapter>,
     pub model_64413_callback_adapter: Option<&'a model_64413::Model64413CallbackAdapter>,
-    pub model_64413_stateful_adapter: Option<&'a model_64413::Model64413StatefulAdapter>,
     pub model_64414_callback_adapter: Option<&'a model_64414::Model64414CallbackAdapter>,
     pub model_64414_stateful_adapter: Option<&'a model_64414::Model64414StatefulAdapter>,
     pub model_64415_callback_adapter: Option<&'a model_64415::Model64415CallbackAdapter>,
@@ -1545,65 +1531,41 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
     fn model_705_adapter(&self) -> Option<&'a dyn model_705::ModelAdapter> {
         self.model_705_callback_adapter
             .map(|a| a as &'a dyn model_705::ModelAdapter)
-            .or(self
-                .model_705_stateful_adapter
-                .map(|a| a as &'a dyn model_705::ModelAdapter))
     }
 
     fn model_706_adapter(&self) -> Option<&'a dyn model_706::ModelAdapter> {
         self.model_706_callback_adapter
             .map(|a| a as &'a dyn model_706::ModelAdapter)
-            .or(self
-                .model_706_stateful_adapter
-                .map(|a| a as &'a dyn model_706::ModelAdapter))
     }
 
     fn model_707_adapter(&self) -> Option<&'a dyn model_707::ModelAdapter> {
         self.model_707_callback_adapter
             .map(|a| a as &'a dyn model_707::ModelAdapter)
-            .or(self
-                .model_707_stateful_adapter
-                .map(|a| a as &'a dyn model_707::ModelAdapter))
     }
 
     fn model_708_adapter(&self) -> Option<&'a dyn model_708::ModelAdapter> {
         self.model_708_callback_adapter
             .map(|a| a as &'a dyn model_708::ModelAdapter)
-            .or(self
-                .model_708_stateful_adapter
-                .map(|a| a as &'a dyn model_708::ModelAdapter))
     }
 
     fn model_709_adapter(&self) -> Option<&'a dyn model_709::ModelAdapter> {
         self.model_709_callback_adapter
             .map(|a| a as &'a dyn model_709::ModelAdapter)
-            .or(self
-                .model_709_stateful_adapter
-                .map(|a| a as &'a dyn model_709::ModelAdapter))
     }
 
     fn model_710_adapter(&self) -> Option<&'a dyn model_710::ModelAdapter> {
         self.model_710_callback_adapter
             .map(|a| a as &'a dyn model_710::ModelAdapter)
-            .or(self
-                .model_710_stateful_adapter
-                .map(|a| a as &'a dyn model_710::ModelAdapter))
     }
 
     fn model_711_adapter(&self) -> Option<&'a dyn model_711::ModelAdapter> {
         self.model_711_callback_adapter
             .map(|a| a as &'a dyn model_711::ModelAdapter)
-            .or(self
-                .model_711_stateful_adapter
-                .map(|a| a as &'a dyn model_711::ModelAdapter))
     }
 
     fn model_712_adapter(&self) -> Option<&'a dyn model_712::ModelAdapter> {
         self.model_712_callback_adapter
             .map(|a| a as &'a dyn model_712::ModelAdapter)
-            .or(self
-                .model_712_stateful_adapter
-                .map(|a| a as &'a dyn model_712::ModelAdapter))
     }
 
     fn model_713_adapter(&self) -> Option<&'a dyn model_713::ModelAdapter> {
@@ -1617,9 +1579,6 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
     fn model_714_adapter(&self) -> Option<&'a dyn model_714::ModelAdapter> {
         self.model_714_callback_adapter
             .map(|a| a as &'a dyn model_714::ModelAdapter)
-            .or(self
-                .model_714_stateful_adapter
-                .map(|a| a as &'a dyn model_714::ModelAdapter))
     }
 
     fn model_715_adapter(&self) -> Option<&'a dyn model_715::ModelAdapter> {
@@ -1649,17 +1608,11 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
     fn model_803_adapter(&self) -> Option<&'a dyn model_803::ModelAdapter> {
         self.model_803_callback_adapter
             .map(|a| a as &'a dyn model_803::ModelAdapter)
-            .or(self
-                .model_803_stateful_adapter
-                .map(|a| a as &'a dyn model_803::ModelAdapter))
     }
 
     fn model_804_adapter(&self) -> Option<&'a dyn model_804::ModelAdapter> {
         self.model_804_callback_adapter
             .map(|a| a as &'a dyn model_804::ModelAdapter)
-            .or(self
-                .model_804_stateful_adapter
-                .map(|a| a as &'a dyn model_804::ModelAdapter))
     }
 
     fn model_805_adapter(&self) -> Option<&'a dyn model_805::ModelAdapter> {
@@ -1753,17 +1706,11 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
     fn model_64410_adapter(&self) -> Option<&'a dyn model_64410::ModelAdapter> {
         self.model_64410_callback_adapter
             .map(|a| a as &'a dyn model_64410::ModelAdapter)
-            .or(self
-                .model_64410_stateful_adapter
-                .map(|a| a as &'a dyn model_64410::ModelAdapter))
     }
 
     fn model_64411_adapter(&self) -> Option<&'a dyn model_64411::ModelAdapter> {
         self.model_64411_callback_adapter
             .map(|a| a as &'a dyn model_64411::ModelAdapter)
-            .or(self
-                .model_64411_stateful_adapter
-                .map(|a| a as &'a dyn model_64411::ModelAdapter))
     }
 
     fn model_64412_adapter(&self) -> Option<&'a dyn model_64412::ModelAdapter> {
@@ -1777,9 +1724,6 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
     fn model_64413_adapter(&self) -> Option<&'a dyn model_64413::ModelAdapter> {
         self.model_64413_callback_adapter
             .map(|a| a as &'a dyn model_64413::ModelAdapter)
-            .or(self
-                .model_64413_stateful_adapter
-                .map(|a| a as &'a dyn model_64413::ModelAdapter))
     }
 
     fn model_64414_adapter(&self) -> Option<&'a dyn model_64414::ModelAdapter> {

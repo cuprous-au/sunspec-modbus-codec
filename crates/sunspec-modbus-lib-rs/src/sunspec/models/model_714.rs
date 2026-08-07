@@ -124,6 +124,17 @@ pub enum Point {
     DcPowerScaleFactor,
     DcEnergyScaleFactor,
     TemperatureScaleFactor,
+    PrtPortType { prt_index: u16 },
+    PrtPortId { prt_index: u16 },
+    PrtPortIdString { prt_index: u16 },
+    PrtDcCurrent { prt_index: u16 },
+    PrtDcVoltage { prt_index: u16 },
+    PrtDcPower { prt_index: u16 },
+    PrtDcEnergyInjected { prt_index: u16 },
+    PrtDcEnergyAbsorbed { prt_index: u16 },
+    PrtDcPortTemperature { prt_index: u16 },
+    PrtDcPortStatus { prt_index: u16 },
+    PrtDcPortAlarm { prt_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -218,6 +229,83 @@ pub fn write_point<'a>(
                 buffer::zero(buffer, offset);
             }
         }
+        Point::PrtPortType { prt_index } => {
+            if let Some(value) = model.prt_port_type(*prt_index) {
+                buffer::write_u16(value as u16, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtPortId { prt_index } => {
+            if let Some(value) = model.prt_port_id(*prt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtPortIdString { prt_index } => {
+            if let Some(value) = model.prt_port_id_string(*prt_index) {
+                buffer::write_string(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcCurrent { prt_index } => {
+            if let Some(value) = model.prt_dc_current(*prt_index) {
+                buffer::write_i16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcVoltage { prt_index } => {
+            if let Some(value) = model.prt_dc_voltage(*prt_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcPower { prt_index } => {
+            if let Some(value) = model.prt_dc_power(*prt_index) {
+                buffer::write_i16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcEnergyInjected { prt_index } => {
+            if let Some(value) = model.prt_dc_energy_injected(*prt_index) {
+                buffer::write_u64(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcEnergyAbsorbed { prt_index } => {
+            if let Some(value) = model.prt_dc_energy_absorbed(*prt_index) {
+                buffer::write_u64(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcPortTemperature { prt_index } => {
+            if let Some(value) = model.prt_dc_port_temperature(*prt_index) {
+                buffer::write_i16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcPortStatus { prt_index } => {
+            if let Some(value) = model.prt_dc_port_status(*prt_index) {
+                buffer::write_u16(value as u16, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::PrtDcPortAlarm { prt_index } => {
+            if let Some(value) = model.prt_dc_port_alarm(*prt_index) {
+                buffer::write_u32(value, buffer, offset, limit);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
     }
 }
 
@@ -298,6 +386,115 @@ pub trait ModelAdapter {
     fn temperature_scale_factor(&self) -> Option<u16> {
         None
     }
+
+    /// Port Type
+    ///
+    /// Port type.
+    fn prt_port_type(&self, prt_index: u16) -> Option<PrtTyp> {
+        None
+    }
+
+    /// Port ID
+    ///
+    /// Port ID.
+    fn prt_port_id(&self, prt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Port ID String
+    ///
+    /// Port ID string.
+    fn prt_port_id_string(&self, prt_index: u16) -> Option<&CStr> {
+        None
+    }
+
+    /// DC Current
+    ///
+    /// DC current for the port.
+    fn prt_dc_current(&self, prt_index: u16) -> Option<i16> {
+        None
+    }
+
+    /// DC Voltage
+    ///
+    /// DC voltage for the port.
+    fn prt_dc_voltage(&self, prt_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// DC Power
+    ///
+    /// DC power for the port.
+    fn prt_dc_power(&self, prt_index: u16) -> Option<i16> {
+        None
+    }
+
+    /// DC Energy Injected
+    ///
+    /// Total cumulative DC energy injected for the port.
+    fn prt_dc_energy_injected(&self, prt_index: u16) -> Option<u64> {
+        None
+    }
+
+    /// DC Energy Absorbed
+    ///
+    /// Total cumulative DC energy absorbed for the port.
+    fn prt_dc_energy_absorbed(&self, prt_index: u16) -> Option<u64> {
+        None
+    }
+
+    /// DC Port Temperature
+    ///
+    /// DC port temperature.
+    fn prt_dc_port_temperature(&self, prt_index: u16) -> Option<i16> {
+        None
+    }
+
+    /// DC Port Status
+    ///
+    /// DC port status.
+    fn prt_dc_port_status(&self, prt_index: u16) -> Option<DcSta> {
+        None
+    }
+
+    /// DC Port Alarm
+    ///
+    /// DC port alarm.
+    fn prt_dc_port_alarm(&self, prt_index: u16) -> Option<u32> {
+        None
+    }
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum DcSta {
+    /// Off
+    Off = 0,
+    /// On
+    On = 1,
+    /// Warning
+    Warning = 2,
+    /// Error
+    Error = 3,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum PrtTyp {
+    /// Photovoltaic
+    Pv = 0,
+    /// Energy Storage System
+    Ess = 1,
+    /// Electric Vehicle
+    Ev = 2,
+    /// Generic Injecting
+    Inj = 3,
+    /// Generic Absorbing
+    Abs = 4,
+    /// Generic Bidirectional
+    Bidir = 5,
+    /// DC to DC
+    DcDc = 6,
 }
 
 #[repr(C)]
@@ -314,6 +511,17 @@ pub struct Model714CallbackAdapter {
     dc_power_scale_factor_callback: Option<extern "C" fn(*const c_void) -> u16>,
     dc_energy_scale_factor_callback: Option<extern "C" fn(*const c_void) -> u16>,
     temperature_scale_factor_callback: Option<extern "C" fn(*const c_void) -> u16>,
+    prt_port_type_callback: Option<extern "C" fn(*const c_void, u16) -> PrtTyp>,
+    prt_port_id_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    prt_port_id_string_callback: Option<extern "C" fn(*const c_void, u16) -> *const c_char>,
+    prt_dc_current_callback: Option<extern "C" fn(*const c_void, u16) -> i16>,
+    prt_dc_voltage_callback: Option<extern "C" fn(*const c_void, u16) -> u16>,
+    prt_dc_power_callback: Option<extern "C" fn(*const c_void, u16) -> i16>,
+    prt_dc_energy_injected_callback: Option<extern "C" fn(*const c_void, u16) -> u64>,
+    prt_dc_energy_absorbed_callback: Option<extern "C" fn(*const c_void, u16) -> u64>,
+    prt_dc_port_temperature_callback: Option<extern "C" fn(*const c_void, u16) -> i16>,
+    prt_dc_port_status_callback: Option<extern "C" fn(*const c_void, u16) -> DcSta>,
+    prt_dc_port_alarm_callback: Option<extern "C" fn(*const c_void, u16) -> u32>,
 }
 
 impl ModelAdapter for Model714CallbackAdapter {
@@ -404,10 +612,98 @@ impl ModelAdapter for Model714CallbackAdapter {
         self.temperature_scale_factor_callback
             .map(|callback| (callback)(self.context))
     }
+
+    /// Port Type
+    ///
+    /// Port type.
+    fn prt_port_type(&self, prt_index: u16) -> Option<PrtTyp> {
+        self.prt_port_type_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// Port ID
+    ///
+    /// Port ID.
+    fn prt_port_id(&self, prt_index: u16) -> Option<u16> {
+        self.prt_port_id_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// Port ID String
+    ///
+    /// Port ID string.
+    fn prt_port_id_string(&self, prt_index: u16) -> Option<&CStr> {
+        self.prt_port_id_string_callback
+            .map(|callback| unsafe { CStr::from_ptr((callback)(self.context, prt_index)) })
+    }
+
+    /// DC Current
+    ///
+    /// DC current for the port.
+    fn prt_dc_current(&self, prt_index: u16) -> Option<i16> {
+        self.prt_dc_current_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Voltage
+    ///
+    /// DC voltage for the port.
+    fn prt_dc_voltage(&self, prt_index: u16) -> Option<u16> {
+        self.prt_dc_voltage_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Power
+    ///
+    /// DC power for the port.
+    fn prt_dc_power(&self, prt_index: u16) -> Option<i16> {
+        self.prt_dc_power_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Energy Injected
+    ///
+    /// Total cumulative DC energy injected for the port.
+    fn prt_dc_energy_injected(&self, prt_index: u16) -> Option<u64> {
+        self.prt_dc_energy_injected_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Energy Absorbed
+    ///
+    /// Total cumulative DC energy absorbed for the port.
+    fn prt_dc_energy_absorbed(&self, prt_index: u16) -> Option<u64> {
+        self.prt_dc_energy_absorbed_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Port Temperature
+    ///
+    /// DC port temperature.
+    fn prt_dc_port_temperature(&self, prt_index: u16) -> Option<i16> {
+        self.prt_dc_port_temperature_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Port Status
+    ///
+    /// DC port status.
+    fn prt_dc_port_status(&self, prt_index: u16) -> Option<DcSta> {
+        self.prt_dc_port_status_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
+
+    /// DC Port Alarm
+    ///
+    /// DC port alarm.
+    fn prt_dc_port_alarm(&self, prt_index: u16) -> Option<u32> {
+        self.prt_dc_port_alarm_callback
+            .map(|callback| (callback)(self.context, prt_index))
+    }
 }
 
 #[repr(C)]
-pub struct Model714StatefulAdapter {
+pub struct Model714StatefulAdapter<const NUMBER_OF_PORTS: usize> {
     port_alarms: u32,
     number_of_ports: u16,
     dc_current: i16,
@@ -419,9 +715,25 @@ pub struct Model714StatefulAdapter {
     dc_power_scale_factor: u16,
     dc_energy_scale_factor: u16,
     temperature_scale_factor: u16,
+    prt: [Model714Prt; NUMBER_OF_PORTS],
 }
 
-impl ModelAdapter for Model714StatefulAdapter {
+#[repr(C)]
+pub struct Model714Prt {
+    prt_port_type: PrtTyp,
+    prt_port_id: u16,
+    prt_port_id_string: [c_char; 16],
+    prt_dc_current: i16,
+    prt_dc_voltage: u16,
+    prt_dc_power: i16,
+    prt_dc_energy_injected: u64,
+    prt_dc_energy_absorbed: u64,
+    prt_dc_port_temperature: i16,
+    prt_dc_port_status: DcSta,
+    prt_dc_port_alarm: u32,
+}
+
+impl<const NUMBER_OF_PORTS: usize> ModelAdapter for Model714StatefulAdapter<NUMBER_OF_PORTS> {
     /// Port Alarms
     ///
     /// Bitfield of ports with active alarms. Bit is 1 if port has an active alarm. Bit 0 is first port.
@@ -497,5 +809,82 @@ impl ModelAdapter for Model714StatefulAdapter {
     /// Temperature Scale Factor.
     fn temperature_scale_factor(&self) -> Option<u16> {
         Some(self.temperature_scale_factor)
+    }
+
+    /// Port Type
+    ///
+    /// Port type.
+    fn prt_port_type(&self, prt_index: u16) -> Option<PrtTyp> {
+        Some(self.prt[prt_index as usize].prt_port_type)
+    }
+
+    /// Port ID
+    ///
+    /// Port ID.
+    fn prt_port_id(&self, prt_index: u16) -> Option<u16> {
+        Some(self.prt[prt_index as usize].prt_port_id)
+    }
+
+    /// Port ID String
+    ///
+    /// Port ID string.
+    fn prt_port_id_string(&self, prt_index: u16) -> Option<&CStr> {
+        Some(unsafe { CStr::from_ptr(self.prt[prt_index as usize].prt_port_id_string.as_ptr()) })
+    }
+
+    /// DC Current
+    ///
+    /// DC current for the port.
+    fn prt_dc_current(&self, prt_index: u16) -> Option<i16> {
+        Some(self.prt[prt_index as usize].prt_dc_current)
+    }
+
+    /// DC Voltage
+    ///
+    /// DC voltage for the port.
+    fn prt_dc_voltage(&self, prt_index: u16) -> Option<u16> {
+        Some(self.prt[prt_index as usize].prt_dc_voltage)
+    }
+
+    /// DC Power
+    ///
+    /// DC power for the port.
+    fn prt_dc_power(&self, prt_index: u16) -> Option<i16> {
+        Some(self.prt[prt_index as usize].prt_dc_power)
+    }
+
+    /// DC Energy Injected
+    ///
+    /// Total cumulative DC energy injected for the port.
+    fn prt_dc_energy_injected(&self, prt_index: u16) -> Option<u64> {
+        Some(self.prt[prt_index as usize].prt_dc_energy_injected)
+    }
+
+    /// DC Energy Absorbed
+    ///
+    /// Total cumulative DC energy absorbed for the port.
+    fn prt_dc_energy_absorbed(&self, prt_index: u16) -> Option<u64> {
+        Some(self.prt[prt_index as usize].prt_dc_energy_absorbed)
+    }
+
+    /// DC Port Temperature
+    ///
+    /// DC port temperature.
+    fn prt_dc_port_temperature(&self, prt_index: u16) -> Option<i16> {
+        Some(self.prt[prt_index as usize].prt_dc_port_temperature)
+    }
+
+    /// DC Port Status
+    ///
+    /// DC port status.
+    fn prt_dc_port_status(&self, prt_index: u16) -> Option<DcSta> {
+        Some(self.prt[prt_index as usize].prt_dc_port_status)
+    }
+
+    /// DC Port Alarm
+    ///
+    /// DC port alarm.
+    fn prt_dc_port_alarm(&self, prt_index: u16) -> Option<u32> {
+        Some(self.prt[prt_index as usize].prt_dc_port_alarm)
     }
 }

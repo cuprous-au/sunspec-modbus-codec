@@ -1238,6 +1238,64 @@ typedef uint16_t AdptCrvRslt;
 #endif // __STDC_VERSION__ >= 202311L
 #endif // __cplusplus
 
+enum Pri
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  /*
+   Active Power Priority
+
+   Active power priority.
+   */
+  Pri_Active = 0,
+  /*
+   Reactive Power Priority
+
+   Reactive power priority.
+   */
+  Pri_Reactive = 1,
+  /*
+   Vendor Power Priority
+
+   Power priority is vendor specific mode.
+   */
+  Pri_Vendor = 2,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum Pri Pri;
+#else
+typedef uint16_t Pri;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum VRefAutoEna
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  /*
+   Disabled Flag
+
+   Disabled flag (Disabled = 0, Enabled = 1).
+   */
+  VRefAutoEna_Disabled = 0,
+  /*
+   Enabled Flag
+
+   Enabled flag (Disabled = 0, Enabled = 1).
+   */
+  VRefAutoEna_Enabled = 1,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum VRefAutoEna VRefAutoEna;
+#else
+typedef uint16_t VRefAutoEna;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
 enum AdptCtlRslt
 #if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
   : uint16_t
@@ -1299,6 +1357,78 @@ enum Sta
 typedef enum Sta Sta;
 #else
 typedef uint16_t Sta;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum PrtTyp
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  /*
+   Photovoltaic
+   */
+  PrtTyp_Pv = 0,
+  /*
+   Energy Storage System
+   */
+  PrtTyp_Ess = 1,
+  /*
+   Electric Vehicle
+   */
+  PrtTyp_Ev = 2,
+  /*
+   Generic Injecting
+   */
+  PrtTyp_Inj = 3,
+  /*
+   Generic Absorbing
+   */
+  PrtTyp_Abs = 4,
+  /*
+   Generic Bidirectional
+   */
+  PrtTyp_Bidir = 5,
+  /*
+   DC to DC
+   */
+  PrtTyp_DcDc = 6,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum PrtTyp PrtTyp;
+#else
+typedef uint16_t PrtTyp;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum DcSta
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  /*
+   Off
+   */
+  DcSta_Off = 0,
+  /*
+   On
+   */
+  DcSta_On = 1,
+  /*
+   Warning
+   */
+  DcSta_Warning = 2,
+  /*
+   Error
+   */
+  DcSta_Error = 3,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum DcSta DcSta;
+#else
+typedef uint16_t DcSta;
 #endif // __STDC_VERSION__ >= 202311L
 #endif // __cplusplus
 
@@ -1430,6 +1560,80 @@ enum SetInvState
 typedef enum SetInvState SetInvState;
 #else
 typedef uint16_t SetInvState;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum StrConFail
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  StrConFail_NoFailure = 0,
+  StrConFail_ButtonPushed = 1,
+  StrConFail_StrGroundFault = 2,
+  StrConFail_OutsideVoltageRange = 3,
+  StrConFail_StringNotEnabled = 4,
+  StrConFail_FuseOpen = 5,
+  StrConFail_ContactorFailure = 6,
+  StrConFail_PrechargeFailure = 7,
+  StrConFail_StringFault = 8,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum StrConFail StrConFail;
+#else
+typedef uint16_t StrConFail;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum StrDisRsn
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  StrDisRsn_None = 0,
+  StrDisRsn_Fault = 1,
+  StrDisRsn_Maintenance = 2,
+  StrDisRsn_External = 3,
+  StrDisRsn_Other = 4,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum StrDisRsn StrDisRsn;
+#else
+typedef uint16_t StrDisRsn;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum StrSetEna
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  StrSetEna_EnableString = 1,
+  StrSetEna_DisableString = 2,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum StrSetEna StrSetEna;
+#else
+typedef uint16_t StrSetEna;
+#endif // __STDC_VERSION__ >= 202311L
+#endif // __cplusplus
+
+enum StrSetCon
+#if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+  : uint16_t
+#endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
+ {
+  StrSetCon_ConnectString = 1,
+  StrSetCon_DisconnectString = 2,
+};
+#ifndef __cplusplus
+#if __STDC_VERSION__ >= 202311L
+typedef enum StrSetCon StrSetCon;
+#else
+typedef uint16_t StrSetCon;
 #endif // __STDC_VERSION__ >= 202311L
 #endif // __cplusplus
 
@@ -9998,22 +10202,22 @@ typedef struct Model704CallbackAdapter {
   uint16_t (*active_power_pct_scale_factor_callback)(const void*);
   uint16_t (*reactive_power_scale_factor_callback)(const void*);
   uint16_t (*reactive_power_pct_scale_factor_callback)(const void*);
-  uint16_t (*pfw_inj_power_factor_w_inj_callback)(const void*);
-  void (*set_pfw_inj_power_factor_w_inj_callback)(uint16_t, void*);
-  Ext (*pfw_inj_power_factor_excitation_w_inj_callback)(const void*);
-  void (*set_pfw_inj_power_factor_excitation_w_inj_callback)(Ext, void*);
-  uint16_t (*pfw_inj_rvrt_reversion_power_factor_w_inj_callback)(const void*);
-  void (*set_pfw_inj_rvrt_reversion_power_factor_w_inj_callback)(uint16_t, void*);
-  Ext (*pfw_inj_rvrt_reversion_pf_excitation_w_inj_callback)(const void*);
-  void (*set_pfw_inj_rvrt_reversion_pf_excitation_w_inj_callback)(Ext, void*);
-  uint16_t (*pfw_abs_power_factor_w_abs_callback)(const void*);
-  void (*set_pfw_abs_power_factor_w_abs_callback)(uint16_t, void*);
-  Ext (*pfw_abs_power_factor_excitation_w_abs_callback)(const void*);
-  void (*set_pfw_abs_power_factor_excitation_w_abs_callback)(Ext, void*);
-  uint16_t (*pfw_abs_rvrt_reversion_power_factor_w_abs_callback)(const void*);
-  void (*set_pfw_abs_rvrt_reversion_power_factor_w_abs_callback)(uint16_t, void*);
-  Ext (*pfw_abs_rvrt_reversion_pf_excitation_w_abs_callback)(const void*);
-  void (*set_pfw_abs_rvrt_reversion_pf_excitation_w_abs_callback)(Ext, void*);
+  uint16_t (*power_factor_w_inj_power_factor_w_inj_callback)(const void*);
+  void (*set_power_factor_w_inj_power_factor_w_inj_callback)(uint16_t, void*);
+  Ext (*power_factor_w_inj_power_factor_excitation_w_inj_callback)(const void*);
+  void (*set_power_factor_w_inj_power_factor_excitation_w_inj_callback)(Ext, void*);
+  uint16_t (*reversion_power_factor_w_inj_reversion_power_factor_w_inj_callback)(const void*);
+  void (*set_reversion_power_factor_w_inj_reversion_power_factor_w_inj_callback)(uint16_t, void*);
+  Ext (*reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback)(const void*);
+  void (*set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback)(Ext, void*);
+  uint16_t (*power_factor_w_abs_power_factor_w_abs_callback)(const void*);
+  void (*set_power_factor_w_abs_power_factor_w_abs_callback)(uint16_t, void*);
+  Ext (*power_factor_w_abs_power_factor_excitation_w_abs_callback)(const void*);
+  void (*set_power_factor_w_abs_power_factor_excitation_w_abs_callback)(Ext, void*);
+  uint16_t (*reversion_power_factor_w_abs_reversion_power_factor_w_abs_callback)(const void*);
+  void (*set_reversion_power_factor_w_abs_reversion_power_factor_w_abs_callback)(uint16_t, void*);
+  Ext (*reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback)(const void*);
+  void (*set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback)(Ext, void*);
 } Model704CallbackAdapter;
 
 typedef struct Model704StatefulAdapter {
@@ -10060,14 +10264,14 @@ typedef struct Model704StatefulAdapter {
   uint16_t active_power_pct_scale_factor;
   uint16_t reactive_power_scale_factor;
   uint16_t reactive_power_pct_scale_factor;
-  uint16_t pfw_inj_power_factor_w_inj;
-  Ext pfw_inj_power_factor_excitation_w_inj;
-  uint16_t pfw_inj_rvrt_reversion_power_factor_w_inj;
-  Ext pfw_inj_rvrt_reversion_pf_excitation_w_inj;
-  uint16_t pfw_abs_power_factor_w_abs;
-  Ext pfw_abs_power_factor_excitation_w_abs;
-  uint16_t pfw_abs_rvrt_reversion_power_factor_w_abs;
-  Ext pfw_abs_rvrt_reversion_pf_excitation_w_abs;
+  uint16_t power_factor_w_inj_power_factor_w_inj;
+  Ext power_factor_w_inj_power_factor_excitation_w_inj;
+  uint16_t reversion_power_factor_w_inj_reversion_power_factor_w_inj;
+  Ext reversion_power_factor_w_inj_reversion_pf_excitation_w_inj;
+  uint16_t power_factor_w_abs_power_factor_w_abs;
+  Ext power_factor_w_abs_power_factor_excitation_w_abs;
+  uint16_t reversion_power_factor_w_abs_reversion_power_factor_w_abs;
+  Ext reversion_power_factor_w_abs_reversion_pf_excitation_w_abs;
 } Model704StatefulAdapter;
 
 typedef struct Model705CallbackAdapter {
@@ -10087,21 +10291,27 @@ typedef struct Model705CallbackAdapter {
   uint16_t (*voltage_scale_factor_callback)(const void*);
   uint16_t (*var_scale_factor_callback)(const void*);
   uint16_t (*open_loop_scale_factor_callback)(const void*);
+  uint16_t (*crv_active_points_callback)(const void*, uint16_t);
+  void (*set_crv_active_points_callback)(uint16_t, void*, uint16_t);
+  DeptRef (*crv_dependent_reference_callback)(const void*, uint16_t);
+  void (*set_crv_dependent_reference_callback)(DeptRef, void*, uint16_t);
+  Pri (*crv_power_priority_callback)(const void*, uint16_t);
+  void (*set_crv_power_priority_callback)(Pri, void*, uint16_t);
+  uint16_t (*crv_vref_adjustment_callback)(const void*, uint16_t);
+  void (*set_crv_vref_adjustment_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*crv_current_autonomous_vref_callback)(const void*, uint16_t);
+  VRefAutoEna (*crv_autonomous_vref_enable_callback)(const void*, uint16_t);
+  void (*set_crv_autonomous_vref_enable_callback)(VRefAutoEna, void*, uint16_t);
+  uint16_t (*crv_auto_vref_time_constant_callback)(const void*, uint16_t);
+  void (*set_crv_auto_vref_time_constant_callback)(uint16_t, void*, uint16_t);
+  uint32_t (*crv_open_loop_response_time_callback)(const void*, uint16_t);
+  void (*set_crv_open_loop_response_time_callback)(uint32_t, void*, uint16_t);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  uint16_t (*pt_voltage_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_voltage_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  int16_t (*pt_reactive_power_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_reactive_power_point_callback)(int16_t, void*, uint16_t, uint16_t);
 } Model705CallbackAdapter;
-
-typedef struct Model705StatefulAdapter {
-  Ena der_volt_var_module_enable;
-  uint16_t adopt_curve_request;
-  AdptCrvRslt adopt_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint32_t reversion_timeout;
-  uint32_t reversion_time_remaining;
-  uint16_t reversion_curve;
-  uint16_t voltage_scale_factor;
-  uint16_t var_scale_factor;
-  uint16_t open_loop_scale_factor;
-} Model705StatefulAdapter;
 
 typedef struct Model706CallbackAdapter {
   void *context;
@@ -10120,21 +10330,18 @@ typedef struct Model706CallbackAdapter {
   uint16_t (*voltage_scale_factor_callback)(const void*);
   uint16_t (*watt_scale_factor_callback)(const void*);
   uint16_t (*open_loop_scale_factor_callback)(const void*);
+  uint16_t (*crv_active_points_callback)(const void*, uint16_t);
+  void (*set_crv_active_points_callback)(uint16_t, void*, uint16_t);
+  DeptRef (*crv_dependent_reference_callback)(const void*, uint16_t);
+  void (*set_crv_dependent_reference_callback)(DeptRef, void*, uint16_t);
+  uint32_t (*crv_open_loop_response_time_callback)(const void*, uint16_t);
+  void (*set_crv_open_loop_response_time_callback)(uint32_t, void*, uint16_t);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  uint16_t (*pt_voltage_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_voltage_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  int16_t (*pt_dependent_reference_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_dependent_reference_callback)(int16_t, void*, uint16_t, uint16_t);
 } Model706CallbackAdapter;
-
-typedef struct Model706StatefulAdapter {
-  Ena der_volt_watt_module_enable;
-  uint16_t adopt_curve_request;
-  AdptCrvRslt adopt_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint32_t reversion_timeout;
-  uint32_t reversion_time_remaining;
-  uint16_t reversion_curve;
-  uint16_t voltage_scale_factor;
-  uint16_t watt_scale_factor;
-  uint16_t open_loop_scale_factor;
-} Model706StatefulAdapter;
 
 typedef struct Model707CallbackAdapter {
   void *context;
@@ -10147,17 +10354,16 @@ typedef struct Model707CallbackAdapter {
   uint16_t (*stored_curve_count_callback)(const void*);
   uint16_t (*voltage_scale_factor_callback)(const void*);
   uint16_t (*time_point_scale_factor_callback)(const void*);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  uint16_t (*must_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_must_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*may_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_may_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*momentary_cessation_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_momentary_cessation_curve_crv_number_of_active_points_callback)(uint16_t,
+                                                                             void*,
+                                                                             uint16_t);
 } Model707CallbackAdapter;
-
-typedef struct Model707StatefulAdapter {
-  Ena der_trip_lv_module_enable;
-  uint16_t adopt_curve_request;
-  AdptCrvRslt adopt_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint16_t voltage_scale_factor;
-  uint16_t time_point_scale_factor;
-} Model707StatefulAdapter;
 
 typedef struct Model708CallbackAdapter {
   void *context;
@@ -10170,17 +10376,16 @@ typedef struct Model708CallbackAdapter {
   uint16_t (*stored_curve_count_callback)(const void*);
   uint16_t (*voltage_scale_factor_callback)(const void*);
   uint16_t (*time_point_scale_factor_callback)(const void*);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  uint16_t (*must_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_must_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*may_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_may_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*momentary_cessation_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_momentary_cessation_curve_crv_number_of_active_points_callback)(uint16_t,
+                                                                             void*,
+                                                                             uint16_t);
 } Model708CallbackAdapter;
-
-typedef struct Model708StatefulAdapter {
-  Ena der_trip_hv_module_enable;
-  uint16_t adopt_curve_request;
-  AdptCrvRslt adopt_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint16_t voltage_scale_factor;
-  uint16_t time_point_scale_factor;
-} Model708StatefulAdapter;
 
 typedef struct Model709CallbackAdapter {
   void *context;
@@ -10193,17 +10398,16 @@ typedef struct Model709CallbackAdapter {
   uint16_t (*stored_curve_count_callback)(const void*);
   uint16_t (*frequency_scale_factor_callback)(const void*);
   uint16_t (*time_point_scale_factor_callback)(const void*);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  uint16_t (*must_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_must_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*may_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_may_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*momentary_cessation_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_momentary_cessation_curve_crv_number_of_active_points_callback)(uint16_t,
+                                                                             void*,
+                                                                             uint16_t);
 } Model709CallbackAdapter;
-
-typedef struct Model709StatefulAdapter {
-  Ena der_trip_lf_module_enable;
-  uint16_t adopt_curve_request;
-  AdptCrvRslt adopt_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint16_t frequency_scale_factor;
-  uint16_t time_point_scale_factor;
-} Model709StatefulAdapter;
 
 typedef struct Model710CallbackAdapter {
   void *context;
@@ -10216,17 +10420,16 @@ typedef struct Model710CallbackAdapter {
   uint16_t (*stored_curve_count_callback)(const void*);
   uint16_t (*frequency_scale_factor_callback)(const void*);
   uint16_t (*time_point_scale_factor_callback)(const void*);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  uint16_t (*must_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_must_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*may_trip_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_may_trip_curve_crv_number_of_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*momentary_cessation_curve_crv_number_of_active_points_callback)(const void*, uint16_t);
+  void (*set_momentary_cessation_curve_crv_number_of_active_points_callback)(uint16_t,
+                                                                             void*,
+                                                                             uint16_t);
 } Model710CallbackAdapter;
-
-typedef struct Model710StatefulAdapter {
-  Ena der_trip_hf_module_enable;
-  uint16_t adopt_curve_request;
-  AdptCrvRslt adopt_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint16_t frequency_scale_factor;
-  uint16_t time_point_scale_factor;
-} Model710StatefulAdapter;
 
 typedef struct Model711CallbackAdapter {
   void *context;
@@ -10244,20 +10447,20 @@ typedef struct Model711CallbackAdapter {
   uint16_t (*deadband_scale_factor_callback)(const void*);
   uint16_t (*frequency_change_scale_factor_callback)(const void*);
   uint16_t (*open_loop_scale_factor_callback)(const void*);
+  uint32_t (*ctl_over_frequency_deadband_callback)(const void*, uint16_t);
+  void (*set_ctl_over_frequency_deadband_callback)(uint32_t, void*, uint16_t);
+  uint32_t (*ctl_under_frequency_deadband_callback)(const void*, uint16_t);
+  void (*set_ctl_under_frequency_deadband_callback)(uint32_t, void*, uint16_t);
+  uint16_t (*ctl_over_frequency_change_ratio_callback)(const void*, uint16_t);
+  void (*set_ctl_over_frequency_change_ratio_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*ctl_under_frequency_change_ratio_callback)(const void*, uint16_t);
+  void (*set_ctl_under_frequency_change_ratio_callback)(uint16_t, void*, uint16_t);
+  uint32_t (*ctl_open_loop_response_time_callback)(const void*, uint16_t);
+  void (*set_ctl_open_loop_response_time_callback)(uint32_t, void*, uint16_t);
+  int16_t (*ctl_minimum_active_power_callback)(const void*, uint16_t);
+  void (*set_ctl_minimum_active_power_callback)(int16_t, void*, uint16_t);
+  ReadOnly (*ctl_control_access_callback)(const void*, uint16_t);
 } Model711CallbackAdapter;
-
-typedef struct Model711StatefulAdapter {
-  Ena der_frequency_droop_module_enable;
-  uint16_t active_control_request;
-  AdptCtlRslt set_active_control_result;
-  uint16_t stored_control_count;
-  uint32_t reversion_timeout;
-  uint32_t reversion_time_left;
-  uint16_t reversion_control;
-  uint16_t deadband_scale_factor;
-  uint16_t frequency_change_scale_factor;
-  uint16_t open_loop_scale_factor;
-} Model711StatefulAdapter;
 
 typedef struct Model712CallbackAdapter {
   void *context;
@@ -10275,20 +10478,18 @@ typedef struct Model712CallbackAdapter {
   void (*set_reversion_curve_callback)(uint16_t, void*);
   uint16_t (*active_power_scale_factor_callback)(const void*);
   uint16_t (*var_scale_factor_callback)(const void*);
+  uint16_t (*crv_active_points_callback)(const void*, uint16_t);
+  void (*set_crv_active_points_callback)(uint16_t, void*, uint16_t);
+  DeptRef (*crv_dependent_reference_callback)(const void*, uint16_t);
+  void (*set_crv_dependent_reference_callback)(DeptRef, void*, uint16_t);
+  Pri (*crv_power_priority_callback)(const void*, uint16_t);
+  void (*set_crv_power_priority_callback)(Pri, void*, uint16_t);
+  ReadOnly (*crv_curve_access_callback)(const void*, uint16_t);
+  int16_t (*pt_active_power_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_active_power_point_callback)(int16_t, void*, uint16_t, uint16_t);
+  int16_t (*pt_reactive_power_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_reactive_power_point_callback)(int16_t, void*, uint16_t, uint16_t);
 } Model712CallbackAdapter;
-
-typedef struct Model712StatefulAdapter {
-  Ena der_watt_var_module_enable;
-  uint16_t active_curve_request;
-  AdptCrvRslt set_active_curve_result;
-  uint16_t number_of_points;
-  uint16_t stored_curve_count;
-  uint32_t reversion_timeout;
-  uint32_t reversion_time_left;
-  uint16_t reversion_curve;
-  uint16_t active_power_scale_factor;
-  uint16_t var_scale_factor;
-} Model712StatefulAdapter;
 
 typedef struct Model713CallbackAdapter {
   void *context;
@@ -10324,21 +10525,18 @@ typedef struct Model714CallbackAdapter {
   uint16_t (*dc_power_scale_factor_callback)(const void*);
   uint16_t (*dc_energy_scale_factor_callback)(const void*);
   uint16_t (*temperature_scale_factor_callback)(const void*);
+  PrtTyp (*prt_port_type_callback)(const void*, uint16_t);
+  uint16_t (*prt_port_id_callback)(const void*, uint16_t);
+  const char *(*prt_port_id_string_callback)(const void*, uint16_t);
+  int16_t (*prt_dc_current_callback)(const void*, uint16_t);
+  uint16_t (*prt_dc_voltage_callback)(const void*, uint16_t);
+  int16_t (*prt_dc_power_callback)(const void*, uint16_t);
+  uint64_t (*prt_dc_energy_injected_callback)(const void*, uint16_t);
+  uint64_t (*prt_dc_energy_absorbed_callback)(const void*, uint16_t);
+  int16_t (*prt_dc_port_temperature_callback)(const void*, uint16_t);
+  DcSta (*prt_dc_port_status_callback)(const void*, uint16_t);
+  uint32_t (*prt_dc_port_alarm_callback)(const void*, uint16_t);
 } Model714CallbackAdapter;
-
-typedef struct Model714StatefulAdapter {
-  uint32_t port_alarms;
-  uint16_t number_of_ports;
-  int16_t dc_current;
-  int16_t dc_power;
-  uint64_t dc_energy_injected;
-  uint64_t dc_energy_absorbed;
-  uint16_t dc_current_scale_factor;
-  uint16_t dc_voltage_scale_factor;
-  uint16_t dc_power_scale_factor;
-  uint16_t dc_energy_scale_factor;
-  uint16_t temperature_scale_factor;
-} Model714StatefulAdapter;
 
 typedef struct Model715CallbackAdapter {
   void *context;
@@ -10522,36 +10720,33 @@ typedef struct Model803CallbackAdapter {
   uint16_t (*so_h_sf_callback)(const void*);
   uint16_t (*so_c_sf_callback)(const void*);
   uint16_t (*v_sf_callback)(const void*);
+  uint16_t (*string_module_count_callback)(const void*, uint16_t);
+  uint32_t (*string_string_status_callback)(const void*, uint16_t);
+  StrConFail (*string_connection_failure_reason_callback)(const void*, uint16_t);
+  uint16_t (*string_string_state_of_charge_callback)(const void*, uint16_t);
+  uint16_t (*string_string_state_of_health_callback)(const void*, uint16_t);
+  int16_t (*string_string_current_callback)(const void*, uint16_t);
+  uint16_t (*string_max_cell_voltage_callback)(const void*, uint16_t);
+  uint16_t (*string_max_cell_voltage_module_callback)(const void*, uint16_t);
+  uint16_t (*string_min_cell_voltage_callback)(const void*, uint16_t);
+  uint16_t (*string_min_cell_voltage_module_callback)(const void*, uint16_t);
+  uint16_t (*string_average_cell_voltage_callback)(const void*, uint16_t);
+  int16_t (*string_max_module_temperature_callback)(const void*, uint16_t);
+  uint16_t (*string_max_module_temperature_module_callback)(const void*, uint16_t);
+  int16_t (*string_min_module_temperature_callback)(const void*, uint16_t);
+  uint16_t (*string_min_module_temperature_module_callback)(const void*, uint16_t);
+  int16_t (*string_average_module_temperature_callback)(const void*, uint16_t);
+  StrDisRsn (*string_disabled_reason_callback)(const void*, uint16_t);
+  uint32_t (*string_contactor_status_callback)(const void*, uint16_t);
+  uint32_t (*string_string_event_1_callback)(const void*, uint16_t);
+  uint32_t (*string_string_event_2_callback)(const void*, uint16_t);
+  uint32_t (*string_vendor_string_event_bitfield_1_callback)(const void*, uint16_t);
+  uint32_t (*string_vendor_string_event_bitfield_2_callback)(const void*, uint16_t);
+  StrSetEna (*string_enable_disable_string_callback)(const void*, uint16_t);
+  void (*set_string_enable_disable_string_callback)(StrSetEna, void*, uint16_t);
+  StrSetCon (*string_connect_disconnect_string_callback)(const void*, uint16_t);
+  void (*set_string_connect_disconnect_string_callback)(StrSetCon, void*, uint16_t);
 } Model803CallbackAdapter;
-
-typedef struct Model803StatefulAdapter {
-  uint16_t string_count;
-  uint16_t connected_string_count;
-  int16_t max_module_temperature;
-  uint16_t max_module_temperature_string;
-  uint16_t max_module_temperature_module;
-  int16_t min_module_temperature;
-  uint16_t min_module_temperature_string;
-  uint16_t min_module_temperature_module;
-  int16_t average_module_temperature;
-  uint16_t max_string_voltage;
-  uint16_t max_string_voltage_string;
-  uint16_t min_string_voltage;
-  uint16_t min_string_voltage_string;
-  uint16_t average_string_voltage;
-  int16_t max_string_current;
-  uint16_t max_string_current_string;
-  int16_t min_string_current;
-  uint16_t min_string_current_string;
-  int16_t average_string_current;
-  uint16_t battery_cell_balancing_count;
-  uint16_t cell_v_sf;
-  uint16_t mod_tmp_sf;
-  uint16_t a_sf;
-  uint16_t so_h_sf;
-  uint16_t so_c_sf;
-  uint16_t v_sf;
-} Model803StatefulAdapter;
 
 typedef struct Model804CallbackAdapter {
   void *context;
@@ -10592,45 +10787,20 @@ typedef struct Model804CallbackAdapter {
   uint16_t (*v_sf_callback)(const void*);
   uint16_t (*cell_v_sf_callback)(const void*);
   uint16_t (*mod_tmp_sf_callback)(const void*);
+  uint16_t (*lithium_ion_string_module_module_cell_count_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_module_so_c_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_module_so_h_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_max_cell_voltage_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_max_cell_voltage_cell_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_min_cell_voltage_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_min_cell_voltage_cell_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_average_cell_voltage_callback)(const void*, uint16_t);
+  int16_t (*lithium_ion_string_module_max_cell_temperature_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_max_cell_temperature_cell_callback)(const void*, uint16_t);
+  int16_t (*lithium_ion_string_module_min_cell_temperature_callback)(const void*, uint16_t);
+  uint16_t (*lithium_ion_string_module_min_cell_temperature_cell_callback)(const void*, uint16_t);
+  int16_t (*lithium_ion_string_module_average_cell_temperature_callback)(const void*, uint16_t);
 } Model804CallbackAdapter;
-
-typedef struct Model804StatefulAdapter {
-  uint16_t string_index;
-  uint16_t module_count;
-  uint32_t string_status;
-  ConFail connection_failure_reason;
-  uint16_t string_cell_balancing_count;
-  uint16_t string_state_of_charge;
-  uint16_t string_depth_of_discharge;
-  uint32_t string_cycle_count;
-  uint16_t string_state_of_health;
-  int16_t string_current;
-  uint16_t string_voltage;
-  uint16_t max_cell_voltage;
-  uint16_t max_cell_voltage_module;
-  uint16_t min_cell_voltage;
-  uint16_t min_cell_voltage_module;
-  uint16_t average_cell_voltage;
-  int16_t max_module_temperature;
-  uint16_t max_module_temperature_module;
-  int16_t min_module_temperature;
-  uint16_t min_module_temperature_module;
-  int16_t average_module_temperature;
-  uint32_t contactor_status;
-  uint32_t string_event_1;
-  uint32_t string_event_2;
-  uint32_t vendor_event_bitfield_1;
-  uint32_t vendor_event_bitfield_2;
-  uint16_t enable_disable_string;
-  SetCon connect_disconnect_string;
-  uint16_t so_c_sf;
-  uint16_t so_h_sf;
-  uint16_t do_d_sf;
-  uint16_t a_sf;
-  uint16_t v_sf;
-  uint16_t cell_v_sf;
-  uint16_t mod_tmp_sf;
-} Model804StatefulAdapter;
 
 typedef struct Model805CallbackAdapter {
   void *context;
@@ -11415,44 +11585,21 @@ typedef struct Model64410CallbackAdapter {
   void (*set_current_slew_rate_scale_factor_callback)(uint16_t, void*);
   uint16_t (*percent_scale_factor_callback)(const void*);
   void (*set_percent_scale_factor_callback)(uint16_t, void*);
+  uint16_t (*prof_active_points_callback)(const void*, uint16_t);
+  void (*set_prof_active_points_callback)(uint16_t, void*, uint16_t);
+  uint32_t (*prof_dependent_references_callback)(const void*, uint16_t);
+  void (*set_prof_dependent_references_callback)(uint32_t, void*, uint16_t);
+  uint16_t (*pt_profile_time_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_profile_time_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_voltage_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_voltage_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_power_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_power_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_current_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_current_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_irradiance_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_irradiance_point_callback)(uint16_t, void*, uint16_t, uint16_t);
 } Model64410CallbackAdapter;
-
-typedef struct Model64410StatefulAdapter {
-  uint16_t maximum_voltage;
-  uint16_t maximum_power;
-  uint16_t maximum_current;
-  Mode cv_or_cc_mode;
-  Ena power_on_off;
-  Reset reset_device;
-  uint16_t voltage_setpoint;
-  uint16_t power_setpoint;
-  uint16_t current_setpoint;
-  En50530 en50530_mode;
-  uint16_t en50530_mpp_voltage;
-  uint16_t en50530_mpp_power;
-  uint16_t irradiance_setpoint;
-  uint16_t voltage_slew_rate;
-  uint16_t power_slew_rate;
-  uint16_t current_slew_rate;
-  EnaProf enable_profile;
-  uint16_t profile_adoption_request;
-  AdptProfRslt adopt_profile_result;
-  int32_t measured_voltage;
-  int32_t measured_power;
-  int32_t measured_current;
-  char errors[64];
-  uint16_t number_of_points;
-  uint16_t stored_profile_count;
-  uint16_t power_scale_factor;
-  uint16_t voltage_scale_factor;
-  uint16_t current_scale_factor;
-  uint16_t irradiance_scale_factor;
-  uint16_t time_scale_factor;
-  uint16_t voltage_slew_rate_scale_factor;
-  uint16_t power_slew_rate_scale_factor;
-  uint16_t current_slew_rate_scale_factor;
-  uint16_t percent_scale_factor;
-} Model64410StatefulAdapter;
 
 typedef struct Model64411CallbackAdapter {
   void *context;
@@ -11520,58 +11667,27 @@ typedef struct Model64411CallbackAdapter {
   uint16_t (*frequency_slew_rate_scale_factor_callback)(const void*);
   uint16_t (*voltage_slew_rate_scale_factor_callback)(const void*);
   uint16_t (*thd_scale_factor_callback)(const void*);
+  const char *(*prof_profile_name_callback)(const void*, uint16_t);
+  void (*set_prof_profile_name_callback)(const char*, void*, uint16_t);
+  uint16_t (*prof_active_points_callback)(const void*, uint16_t);
+  void (*set_prof_active_points_callback)(uint16_t, void*, uint16_t);
+  uint16_t (*pt_profile_time_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_profile_time_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_voltage_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_voltage_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_voltage_point_phase_b_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_voltage_point_phase_b_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_voltage_point_phase_c_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_voltage_point_phase_c_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_frequency_point_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_frequency_point_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_phase_angle_a_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_phase_angle_a_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_phase_angle_b_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_phase_angle_b_callback)(uint16_t, void*, uint16_t, uint16_t);
+  uint16_t (*pt_phase_angle_c_callback)(const void*, uint16_t, uint16_t);
+  void (*set_pt_phase_angle_c_callback)(uint16_t, void*, uint16_t, uint16_t);
 } Model64411CallbackAdapter;
-
-typedef struct Model64411StatefulAdapter {
-  uint16_t active_phases;
-  uint16_t phase_angle;
-  uint16_t nominal_voltage;
-  uint16_t maximum_voltage;
-  uint16_t maximum_current;
-  uint16_t frequency;
-  Output output_state;
-  Relay relay_state;
-  Regen regeneration_state;
-  uint16_t voltage_setpoint;
-  uint16_t voltage_setpoint_phase_a;
-  uint16_t voltage_setpoint_phase_b;
-  uint16_t voltage_setpoint_phase_c;
-  uint16_t frequency_slew_rate;
-  uint16_t voltage_slew_rate;
-  int32_t measured_voltage_phase_a;
-  int32_t measured_voltage_phase_b;
-  int32_t measured_voltage_phase_c;
-  int32_t measured_frequency;
-  int32_t measured_current_phase_a;
-  int32_t measured_current_phase_b;
-  int32_t measured_current_phase_c;
-  char voltage_harmonics_phase_a[300];
-  char voltage_harmonics_phase_b[300];
-  char voltage_harmonics_phase_c[300];
-  char current_harmonics_phase_a[300];
-  char current_harmonics_phase_b[300];
-  char current_harmonics_phase_c[300];
-  char current_interharmonics_phase_a[300];
-  char current_interharmonics_phase_b[300];
-  char current_interharmonics_phase_c[300];
-  uint16_t voltage_thd_phase_a;
-  uint16_t voltage_thd_phase_b;
-  uint16_t voltage_thd_phase_c;
-  uint16_t current_thd_phase_a;
-  uint16_t current_thd_phase_b;
-  uint16_t current_thd_phase_c;
-  EnaProf enable_profile;
-  ProfRslt profile_result;
-  uint16_t stored_profile_count;
-  uint16_t max_profile_point_count;
-  uint16_t voltage_scale_factor;
-  uint16_t current_scale_factor;
-  uint16_t time_scale_factor;
-  uint16_t frequency_scale_factor;
-  uint16_t frequency_slew_rate_scale_factor;
-  uint16_t voltage_slew_rate_scale_factor;
-  uint16_t thd_scale_factor;
-} Model64411StatefulAdapter;
 
 typedef struct Model64412CallbackAdapter {
   void *context;
@@ -11714,13 +11830,10 @@ typedef struct Model64413CallbackAdapter {
   uint16_t (*iv_length_callback)(const void*);
   uint16_t (*poa_irradiance_callback)(const void*);
   uint16_t (*irr_sf_callback)(const void*);
+  float (*iv_power_callback)(const void*, uint16_t);
+  float (*iv_current_callback)(const void*, uint16_t);
+  float (*iv_voltage_callback)(const void*, uint16_t);
 } Model64413CallbackAdapter;
-
-typedef struct Model64413StatefulAdapter {
-  uint16_t iv_length;
-  uint16_t poa_irradiance;
-  uint16_t irr_sf;
-} Model64413StatefulAdapter;
 
 typedef struct Model64414CallbackAdapter {
   void *context;
@@ -11923,25 +12036,16 @@ typedef struct SunspecExternalAdapters {
   const struct Model704CallbackAdapter *model_704_callback_adapter;
   const struct Model704StatefulAdapter *model_704_stateful_adapter;
   const struct Model705CallbackAdapter *model_705_callback_adapter;
-  const struct Model705StatefulAdapter *model_705_stateful_adapter;
   const struct Model706CallbackAdapter *model_706_callback_adapter;
-  const struct Model706StatefulAdapter *model_706_stateful_adapter;
   const struct Model707CallbackAdapter *model_707_callback_adapter;
-  const struct Model707StatefulAdapter *model_707_stateful_adapter;
   const struct Model708CallbackAdapter *model_708_callback_adapter;
-  const struct Model708StatefulAdapter *model_708_stateful_adapter;
   const struct Model709CallbackAdapter *model_709_callback_adapter;
-  const struct Model709StatefulAdapter *model_709_stateful_adapter;
   const struct Model710CallbackAdapter *model_710_callback_adapter;
-  const struct Model710StatefulAdapter *model_710_stateful_adapter;
   const struct Model711CallbackAdapter *model_711_callback_adapter;
-  const struct Model711StatefulAdapter *model_711_stateful_adapter;
   const struct Model712CallbackAdapter *model_712_callback_adapter;
-  const struct Model712StatefulAdapter *model_712_stateful_adapter;
   const struct Model713CallbackAdapter *model_713_callback_adapter;
   const struct Model713StatefulAdapter *model_713_stateful_adapter;
   const struct Model714CallbackAdapter *model_714_callback_adapter;
-  const struct Model714StatefulAdapter *model_714_stateful_adapter;
   const struct Model715CallbackAdapter *model_715_callback_adapter;
   const struct Model715StatefulAdapter *model_715_stateful_adapter;
   const struct Model801CallbackAdapter *model_801_callback_adapter;
@@ -11949,9 +12053,7 @@ typedef struct SunspecExternalAdapters {
   const struct Model802CallbackAdapter *model_802_callback_adapter;
   const struct Model802StatefulAdapter *model_802_stateful_adapter;
   const struct Model803CallbackAdapter *model_803_callback_adapter;
-  const struct Model803StatefulAdapter *model_803_stateful_adapter;
   const struct Model804CallbackAdapter *model_804_callback_adapter;
-  const struct Model804StatefulAdapter *model_804_stateful_adapter;
   const struct Model805CallbackAdapter *model_805_callback_adapter;
   const struct Model805StatefulAdapter *model_805_stateful_adapter;
   const struct Model806CallbackAdapter *model_806_callback_adapter;
@@ -11975,13 +12077,10 @@ typedef struct SunspecExternalAdapters {
   const struct Model64112CallbackAdapter *model_64112_callback_adapter;
   const struct Model64112StatefulAdapter *model_64112_stateful_adapter;
   const struct Model64410CallbackAdapter *model_64410_callback_adapter;
-  const struct Model64410StatefulAdapter *model_64410_stateful_adapter;
   const struct Model64411CallbackAdapter *model_64411_callback_adapter;
-  const struct Model64411StatefulAdapter *model_64411_stateful_adapter;
   const struct Model64412CallbackAdapter *model_64412_callback_adapter;
   const struct Model64412StatefulAdapter *model_64412_stateful_adapter;
   const struct Model64413CallbackAdapter *model_64413_callback_adapter;
-  const struct Model64413StatefulAdapter *model_64413_stateful_adapter;
   const struct Model64414CallbackAdapter *model_64414_callback_adapter;
   const struct Model64414StatefulAdapter *model_64414_stateful_adapter;
   const struct Model64415CallbackAdapter *model_64415_callback_adapter;

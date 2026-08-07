@@ -57,7 +57,15 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
 }
 
 fn format_and_write(path: &Path, scope: &Scope) -> std::io::Result<()> {
-    let text = rustfmt_wrapper::rustfmt(scope.to_string()).unwrap();
+    let text_raw = scope.to_string();
+    let text = rustfmt_wrapper::rustfmt(&text_raw).unwrap_or_else(|error| {
+        println!(
+            "cargo:warning=Error formatting file {}: [{}]. File left unformatted.",
+            path.to_str().unwrap_or_default(),
+            error
+        );
+        text_raw
+    });
     fs::write(path, text)
 }
 

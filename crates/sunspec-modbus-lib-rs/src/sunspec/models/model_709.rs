@@ -88,6 +88,10 @@ pub enum Point {
     StoredCurveCount,
     FrequencyScaleFactor,
     TimePointScaleFactor,
+    CrvCurveAccess { crv_index: u16 },
+    MustTripCurveCrvNumberOfActivePoints { crv_index: u16 },
+    MayTripCurveCrvNumberOfActivePoints { crv_index: u16 },
+    MomentaryCessationCurveCrvNumberOfActivePoints { crv_index: u16 },
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
@@ -125,6 +129,32 @@ pub fn write_point<'a>(
         }
         Point::TimePointScaleFactor => {
             buffer::write_u16(model.time_point_scale_factor(), buffer);
+        }
+        Point::CrvCurveAccess { crv_index } => {
+            buffer::write_u16(model.crv_curve_access(*crv_index) as u16, buffer);
+        }
+        Point::MustTripCurveCrvNumberOfActivePoints { crv_index } => {
+            if let Some(value) = model.must_trip_curve_crv_number_of_active_points(*crv_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::MayTripCurveCrvNumberOfActivePoints { crv_index } => {
+            if let Some(value) = model.may_trip_curve_crv_number_of_active_points(*crv_index) {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
+        }
+        Point::MomentaryCessationCurveCrvNumberOfActivePoints { crv_index } => {
+            if let Some(value) =
+                model.momentary_cessation_curve_crv_number_of_active_points(*crv_index)
+            {
+                buffer::write_u16(value, buffer);
+            } else {
+                buffer::zero(buffer, offset);
+            }
         }
     }
 }
@@ -174,6 +204,52 @@ pub trait ModelAdapter {
     ///
     /// Scale factor for curve time points.
     fn time_point_scale_factor(&self) -> u16;
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly;
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in must trip curve.
+    fn must_trip_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in must trip curve.
+    fn set_must_trip_curve_crv_number_of_active_points(&mut self, value: u16, crv_index: u16) {}
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in may trip curve.
+    fn may_trip_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in may trip curve.
+    fn set_may_trip_curve_crv_number_of_active_points(&mut self, value: u16, crv_index: u16) {}
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in the momentary cessation curve.
+    fn momentary_cessation_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        None
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in the momentary cessation curve.
+    fn set_momentary_cessation_curve_crv_number_of_active_points(
+        &mut self,
+        value: u16,
+        crv_index: u16,
+    ) {
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -206,6 +282,19 @@ pub enum Ena {
     Enabled = 1,
 }
 
+#[derive(Clone, Copy)]
+#[repr(u16)]
+pub enum ReadOnly {
+    /// Read-Write Access
+    ///
+    /// Curve has read-write access.
+    Rw = 0,
+    /// Read-Only Access
+    ///
+    /// Curve has read-only access.
+    R = 1,
+}
+
 #[repr(C)]
 pub struct Model709CallbackAdapter {
     context: *mut c_void,
@@ -218,6 +307,19 @@ pub struct Model709CallbackAdapter {
     stored_curve_count_callback: extern "C" fn(*const c_void) -> u16,
     frequency_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
     time_point_scale_factor_callback: extern "C" fn(*const c_void) -> u16,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    must_trip_curve_crv_number_of_active_points_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    set_must_trip_curve_crv_number_of_active_points_callback:
+        Option<extern "C" fn(u16, *mut c_void, u16)>,
+    may_trip_curve_crv_number_of_active_points_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    set_may_trip_curve_crv_number_of_active_points_callback:
+        Option<extern "C" fn(u16, *mut c_void, u16)>,
+    momentary_cessation_curve_crv_number_of_active_points_callback:
+        Option<extern "C" fn(*const c_void, u16) -> u16>,
+    set_momentary_cessation_curve_crv_number_of_active_points_callback:
+        Option<extern "C" fn(u16, *mut c_void, u16)>,
 }
 
 impl ModelAdapter for Model709CallbackAdapter {
@@ -283,10 +385,74 @@ impl ModelAdapter for Model709CallbackAdapter {
     fn time_point_scale_factor(&self) -> u16 {
         (self.time_point_scale_factor_callback)(self.context)
     }
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly {
+        (self.crv_curve_access_callback)(self.context, crv_index)
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in must trip curve.
+    fn must_trip_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        self.must_trip_curve_crv_number_of_active_points_callback
+            .map(|callback| (callback)(self.context, crv_index))
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in must trip curve.
+    fn set_must_trip_curve_crv_number_of_active_points(&mut self, value: u16, crv_index: u16) {
+        if let Some(callback) = self.set_must_trip_curve_crv_number_of_active_points_callback {
+            (callback)(value, self.context, crv_index);
+        };
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in may trip curve.
+    fn may_trip_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        self.may_trip_curve_crv_number_of_active_points_callback
+            .map(|callback| (callback)(self.context, crv_index))
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in may trip curve.
+    fn set_may_trip_curve_crv_number_of_active_points(&mut self, value: u16, crv_index: u16) {
+        if let Some(callback) = self.set_may_trip_curve_crv_number_of_active_points_callback {
+            (callback)(value, self.context, crv_index);
+        };
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in the momentary cessation curve.
+    fn momentary_cessation_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        self.momentary_cessation_curve_crv_number_of_active_points_callback
+            .map(|callback| (callback)(self.context, crv_index))
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in the momentary cessation curve.
+    fn set_momentary_cessation_curve_crv_number_of_active_points(
+        &mut self,
+        value: u16,
+        crv_index: u16,
+    ) {
+        if let Some(callback) =
+            self.set_momentary_cessation_curve_crv_number_of_active_points_callback
+        {
+            (callback)(value, self.context, crv_index);
+        };
+    }
 }
 
 #[repr(C)]
-pub struct Model709StatefulAdapter {
+pub struct Model709StatefulAdapter<const STORED_CURVE_COUNT: usize> {
     der_trip_lf_module_enable: Ena,
     adopt_curve_request: u16,
     adopt_curve_result: AdptCrvRslt,
@@ -294,9 +460,18 @@ pub struct Model709StatefulAdapter {
     stored_curve_count: u16,
     frequency_scale_factor: u16,
     time_point_scale_factor: u16,
+    stored_curves: [Model709StoredCurves; STORED_CURVE_COUNT],
 }
 
-impl ModelAdapter for Model709StatefulAdapter {
+#[repr(C)]
+pub struct Model709StoredCurves {
+    crv_curve_access: ReadOnly,
+    must_trip_curve_crv_number_of_active_points: u16,
+    may_trip_curve_crv_number_of_active_points: u16,
+    momentary_cessation_curve_crv_number_of_active_points: u16,
+}
+
+impl<const STORED_CURVE_COUNT: usize> ModelAdapter for Model709StatefulAdapter<STORED_CURVE_COUNT> {
     /// DER Trip LF Module Enable
     ///
     /// DER low frequency trip control enable.
@@ -358,5 +533,62 @@ impl ModelAdapter for Model709StatefulAdapter {
     /// Scale factor for curve time points.
     fn time_point_scale_factor(&self) -> u16 {
         self.time_point_scale_factor
+    }
+
+    /// Curve Access
+    ///
+    /// Curve read-write access.
+    fn crv_curve_access(&self, crv_index: u16) -> ReadOnly {
+        self.stored_curves[crv_index as usize].crv_curve_access
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in must trip curve.
+    fn must_trip_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        Some(self.stored_curves[crv_index as usize].must_trip_curve_crv_number_of_active_points)
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in must trip curve.
+    fn set_must_trip_curve_crv_number_of_active_points(&mut self, value: u16, crv_index: u16) {
+        self.stored_curves[crv_index as usize].must_trip_curve_crv_number_of_active_points = value;
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in may trip curve.
+    fn may_trip_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        Some(self.stored_curves[crv_index as usize].may_trip_curve_crv_number_of_active_points)
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in may trip curve.
+    fn set_may_trip_curve_crv_number_of_active_points(&mut self, value: u16, crv_index: u16) {
+        self.stored_curves[crv_index as usize].may_trip_curve_crv_number_of_active_points = value;
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in the momentary cessation curve.
+    fn momentary_cessation_curve_crv_number_of_active_points(&self, crv_index: u16) -> Option<u16> {
+        Some(
+            self.stored_curves[crv_index as usize]
+                .momentary_cessation_curve_crv_number_of_active_points,
+        )
+    }
+
+    /// Number Of Active Points
+    ///
+    /// Number of active points in the momentary cessation curve.
+    fn set_momentary_cessation_curve_crv_number_of_active_points(
+        &mut self,
+        value: u16,
+        crv_index: u16,
+    ) {
+        self.stored_curves[crv_index as usize]
+            .momentary_cessation_curve_crv_number_of_active_points = value;
     }
 }

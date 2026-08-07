@@ -4,6 +4,8 @@ use std::path::PathBuf;
 fn main() {
     println!("cargo:rerun-if-changed=cbindgen.toml");
     println!("cargo:rerun-if-changed=src");
+    println!("cargo:rerun-if-changed=../sunspec-modbus-lib-rs/Cargo.toml");
+    println!("cargo:rerun-if-changed=../sunspec-modbus-lib-rs/src");
 
     let crate_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR is not set");
     let config_path = PathBuf::from(&crate_dir).join("cbindgen.toml");
