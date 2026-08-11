@@ -28,7 +28,7 @@ fn panic(panic_info: &PanicInfo) -> ! {
     {
         *c_char = (*char) as i8;
     }
-    unsafe { handle_panic(message.as_ptr() as *const i8) }
+    unsafe { handle_panic(c_str.as_ptr()) }
 }
 
 #[unsafe(no_mangle)]
