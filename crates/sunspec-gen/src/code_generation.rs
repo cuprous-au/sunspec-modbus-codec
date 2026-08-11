@@ -65,38 +65,63 @@ fn generate_setter(point: &ResolvedPoint) -> Function {
     func
 }
 
-fn generate_point_array(group: &ResolvedGroup, model: &ResolvedModel) -> String {
+fn generate_point_arrays(group: &ResolvedGroup, scope: &mut Scope, args: Vec<String>) {
+    let mut address_counter = 0;
+    let arg_vec: Vec<&str> = args.iter().map(|_| "u16").collect::<Vec<&str>>();
+    let group_index_args = if arg_vec.len() == 1 {
+        arg_vec.join(", ")
+    } else {
+        format!("({})", arg_vec.join(", "))
+    };
     let lines: Vec<String> = [format!(
-        "pub static POINTS: [ReadablePoint; {}] = [",
-        group.points.len()
+        "static {name_prefix}POINTS: [PointDetails<{group_index_args}>; {len}] = [",
+        name_prefix = if args.is_empty() {
+            "".to_string()
+        } else {
+            format!("{}_", group.name_short.to_uppercase())
+        },
+        len = group.points.len()
     )]
     .into_iter()
     .chain(group.points.iter().map(|point| {
-        let point_reference = if let PointValueType::StaticValue(value) = &point.value_type {
-            format!("PointReference::Static {{ value: {} }}", value)
+        let point_reference = if args.is_empty() {
+            format!("Point::{} ", point.name_pascal_case)
         } else {
             format!(
-                "PointReference::{} {{ point: Point::{} }}",
-                model.name_pascal_case, point.name_pascal_case
+                "Point::{} {{ {} }}",
+                point.name_pascal_case,
+                args.join(", "),
             )
         };
 
-        format!(
-            "    ReadablePoint {{
-        reference: {point_reference},
+        let point_def = format!(
+            "    PointDetails {{
+        point: |{group_index_args}| {point_reference},
         size: {point_size},
-        data_type: PointType::{point_type},
-        writeable: {writeable},
+        start_address: {start_address},
     }},",
+            group_index_args = if args.len() == 1 {
+                args.join(", ")
+            } else {
+                format!("({})", args.join(", "))
+            },
             point_size = point.point_type.size,
-            point_type = point.point_type.raw_type,
-            writeable = point.access == PointAccess::Rw
-        )
+            start_address = { address_counter }
+        );
+
+        address_counter += point.point_type.size;
+        point_def
     }))
     .chain(["];".to_string()])
     .collect();
 
-    lines.join("\n")
+    scope.raw(lines.join("\n"));
+
+    if let Some((_, inner_group)) = &group.repeating_child {
+        let mut inner_args = args.clone();
+        inner_args.push(format!("{}_index", inner_group.name_short));
+        generate_point_arrays(inner_group, scope, inner_args);
+    }
 }
 
 pub fn generate_point_types(models: &[ResolvedModel]) -> Scope {
@@ -128,10 +153,10 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         scope.import("crate::sunspec::models", &model.name_snake_case);
     }
 
-    scope.import("crate", "ReadablePoint");
     scope.import("crate::buffer", "ModbusBuffer");
+    scope.import("crate::buffer", "write_string");
     scope.import("crate::buffer", "write_u16");
-    scope.import("crate::sunspec::points", "PointReference");
+    scope.import("crate::cursor", "Cursor");
 
     let adapter_trait = scope
         .new_trait("SunspecAdapterProvider")
@@ -237,53 +262,55 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     }
 
     let points_fn = scope
-        .new_fn("points_array_and_offset")
+        .new_fn("read_into_buffer")
         .vis("pub")
         .generic("'a")
+        .generic("'b")
         .arg("adapters", "&'a dyn SunspecAdapterProvider<'a>")
-        .arg("address", "u16")
-        .ret("Option<(&'a [ReadablePoint], u16)>")
-        .line("let mut offset = address;");
+        .arg("buffer", "&'b mut ModbusBuffer<'b>")
+        .arg("offset", "u16")
+        .arg("limit", "u16")
+        .ret("Option<()>");
 
-    let mut header_block = Block::new("if offset < 2");
-    header_block.line("return Some((&crate::HEADER_POINTS as &'a [ReadablePoint], offset));");
+    let mut cursor_block = Block::new("let mut cursor = Cursor");
 
-    points_fn.push_block(header_block);
-    let mut else_block = Block::new("else");
-    else_block.line("offset -= 2;").after(";");
+    cursor_block
+        .line("source_offset: offset,")
+        .line("buffer_offset: 0,")
+        .line("limit")
+        .after(";");
 
-    points_fn.push_block(else_block);
+    points_fn.push_block(cursor_block);
+    points_fn.line("");
 
-    for (i, model) in models.iter().enumerate() {
+    points_fn.line("cursor.handle_static_read(");
+    points_fn.line("2,");
+    points_fn
+        .line("|offset, from, len| write_string(c\"SunS\", buffer.slice(from, len), offset, len),");
+    points_fn.line(")?;");
+
+    for model in models {
         let name = &model.name_snake_case;
 
-        let adapter_exists_condition = format!("adapters.{name}_adapter().is_some()");
-        let within_size_condition = format!("offset < {name}::SIZE");
-        let return_points =
-            format!("return Some((&{name}::POINTS as &'a [ReadablePoint], offset));");
-        if i < models.len() - 1 {
-            // Not final block, include full if/else
-            let mut outer_block = Block::new(format!("if {adapter_exists_condition}"));
-            let mut within_size_block = Block::new(format!("if {within_size_condition}"));
-            within_size_block.line(return_points);
-            let mut else_block = Block::new("else");
-            else_block.line(format!("offset -= {name}::SIZE;"));
-            outer_block.push_block(within_size_block);
-            outer_block.push_block(else_block);
-            points_fn.push_block(outer_block);
-        } else {
-            let mut block = Block::new(format!(
-                "if {adapter_exists_condition} && {within_size_condition}"
-            ));
-            block.line(return_points);
-            points_fn.push_block(block);
-        };
+        points_fn.line("cursor.handle_adapter_read(");
+        points_fn.line(format!("adapters.{name}_adapter(),"));
+        points_fn.line(format!("{name}::model_length,"));
+        points_fn.line(format!(
+            "|adapter, offset, from, len| {name}::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len),"
+        ));
+        points_fn.line(")?;");
     }
 
-    points_fn.line("None");
+    points_fn.line("cursor.handle_static_read(");
+    points_fn.line("1,");
+    points_fn.line("|_, from, len| write_u16(0xffff, buffer.slice(from, len)),");
+    points_fn.line(")?;");
 
-    let writer_fn = scope
-        .new_fn("write_point")
+    points_fn.line("Some(())");
+
+    let mut _writer_fn = Function::new("write_point");
+
+    _writer_fn
         .vis("pub")
         .generic("'a")
         .generic("'b")
@@ -317,7 +344,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         matcher.push_block(match_block);
     }
 
-    writer_fn.push_block(matcher);
+    _writer_fn.push_block(matcher);
 
     scope
 }
@@ -647,10 +674,7 @@ pub fn generate_stateful_struct(model: &ResolvedModel, scope: &mut Scope) {
 }
 
 fn add_group_variants(group: &ResolvedGroup, target_enum: &mut Enum, counters: Vec<String>) {
-    for point in group.points.iter().filter(|point| {
-        point.value_type == PointValueType::Adapter
-            || point.value_type == PointValueType::ModelLength
-    }) {
+    for point in &group.points {
         let variant = target_enum.new_variant(&point.name_pascal_case);
         for counter in &counters {
             variant.named(counter, "u16");
@@ -708,7 +732,7 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                 index_args.join(", ")
             )
         };
-        match point.value_type {
+        match &point.value_type {
             PointValueType::Adapter => {
                 let dereferenced_args: Vec<String> =
                     index_args.iter().map(|arg| format!("*{arg}")).collect();
@@ -757,13 +781,130 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                 match_block.line("buffer::write_u16(model_length(model) - 2, buffer);");
                 writer_block.push_block(match_block);
             }
-            PointValueType::StaticValue(_) => {}
+            PointValueType::StaticValue(s) => {
+                let mut match_block = Block::new(match_arm);
+
+                match_block.line(format!("buffer::write_u16({s}, buffer);"));
+                writer_block.push_block(match_block);
+            }
         }
     }
 
     if let Some((_, inner_group)) = &group.repeating_child {
         populate_model_writer(inner_group, writer_block);
     }
+}
+
+fn chain_repeating_group_iterator(
+    group: &ResolvedGroup,
+    address_offset: String,
+    indices: Vec<String>,
+) -> Vec<String> {
+    let prefix = &group.name_short;
+    let mut index_args = indices.clone();
+    index_args.push(format!("{prefix}_index"));
+
+    let index_arg_str = if index_args.len() == 1 {
+        index_args[0].clone()
+    } else {
+        format!("({})", index_args.join(", "))
+    };
+
+    let mut result = vec![
+        format!(".chain((0..{prefix}_count).flat_map(move |{prefix}_index| {{"),
+        format!("let {prefix}_address = {address_offset} + {prefix}_index * {prefix}_size;"),
+        format!("{}_POINTS.iter()", prefix.to_uppercase()),
+        format!(
+            ".map(move |p| ({prefix}_address + p.start_address, p.size, (p.point)({index_arg_str})))"
+        ),
+    ];
+
+    if let Some((_, inner_group)) = &group.repeating_child {
+        result.extend(chain_repeating_group_iterator(
+            inner_group,
+            format!("{prefix}_address"),
+            index_args,
+        ))
+    }
+    result.push("}))".to_string());
+    result
+}
+
+pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
+    let fn_def = scope
+        .new_fn("read_into_buffer")
+        .vis("pub")
+        .generic("'a")
+        .arg("model", "&dyn ModelAdapter")
+        .arg("buffer", "&mut ModbusBuffer<'a>")
+        .arg("offset", "u16")
+        .arg("limit", "u16");
+
+    fn_def.line("let until = offset + limit;");
+    fn_def.line("let mut cursor = 0;");
+    fn_def.line("");
+
+    let mut group = &model.group;
+    let mut group_stack = vec![];
+    while let Some((count_point, inner_group)) = &group.repeating_child {
+        group_stack.push((count_point, inner_group));
+        group = inner_group;
+    }
+
+    let mut child_group: Option<&ResolvedGroup> = None;
+    for (count_point, inner_group) in group_stack.iter().rev() {
+        let prefix = &inner_group.name_short;
+        let count_accessor = if count_point.mandatory == PointMandatory::M {
+            format!("model.{}()", &count_point.name_snake_case)
+        } else {
+            format!(
+                "model.{}().unwrap_or_default()",
+                &count_point.name_snake_case
+            )
+        };
+        fn_def.line(format!("let {prefix}_count = {count_accessor};"));
+        if let Some(child) = child_group {
+            fn_def.line(format!(
+                "let {prefix}_size = {static_size} + {child_prefix}_count * {child_prefix}_size;",
+                static_size = inner_group.static_size,
+                child_prefix = child.name_short
+            ));
+        } else {
+            fn_def.line(format!(
+                "let {prefix}_size = {static_size};",
+                static_size = inner_group.static_size
+            ));
+        }
+        fn_def.line("");
+
+        child_group = Some(inner_group);
+    }
+
+    fn_def.line("POINTS.iter()");
+    fn_def.line(".map(|p| (p.start_address, p.size, (p.point)(())))");
+
+    if let Some((_, inner_group)) = &model.group.repeating_child {
+        for s in
+            chain_repeating_group_iterator(inner_group, model.group.static_size.to_string(), vec![])
+        {
+            fn_def.line(s);
+        }
+    }
+
+    fn_def.line(".skip_while(|(start,size,_)| offset >= start + size)");
+    fn_def.line(".take_while(|(start,_,_)| until > *start)");
+    let mut write_block = Block::new(".for_each(|(start, size, point)|");
+    write_block
+        .line("write_point(")
+        .line("model,")
+        .line("&point,")
+        .line("buffer.slice(cursor, limit - cursor),")
+        .line("offset.saturating_sub(start),")
+        .line("until - start,")
+        .line(");")
+        .line("cursor += min(size, until - start);");
+    fn_def.push_block(write_block);
+    fn_def.line(");");
 }
 
 pub fn generate_model(model: &ResolvedModel) -> Scope {
@@ -784,8 +925,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope.import("core::ffi", "c_void");
     scope.import("crate::buffer", "self");
     scope.import("crate::buffer", "ModbusBuffer");
-    scope.import("crate::sunspec", "{PointType, ReadablePoint}");
-    scope.import("crate::sunspec::points", "PointReference");
+    scope.import("core::cmp", "min");
 
     let size: u16 = model
         .group
@@ -796,11 +936,19 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
 
     scope.raw(format!("pub const SIZE: u16 = {};", size));
 
-    scope.raw(generate_point_array(&model.group, model));
+    generate_point_arrays(&model.group, &mut scope, vec![]);
 
     let point_enum = scope.new_enum("Point").vis("pub").derive("Debug");
 
     add_group_variants(&model.group, point_enum, vec![]);
+
+    scope
+        .new_struct("PointDetails")
+        .generic("GroupIndexArgs")
+        .derive("Debug")
+        .field("point", "fn(GroupIndexArgs) -> Point")
+        .field("start_address", "u16")
+        .field("size", "u16");
 
     scope
         .new_fn("model_length")
@@ -808,6 +956,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .arg("model", "&dyn ModelAdapter")
         .ret("u16")
         .line(generate_model_length_calculator(&model.group));
+
+    generate_read_into_buffer_fn(model, &mut scope);
 
     let mut writer_block = Block::new("match point");
     populate_model_writer(&model.group, &mut writer_block);

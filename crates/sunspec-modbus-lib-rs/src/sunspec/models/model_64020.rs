@@ -1,293 +1,190 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 48;
 
-pub static POINTS: [ReadablePoint; 35] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 64020 },
+static POINTS: [PointDetails<()>; 35] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Aux0Temperature,
-        },
+    PointDetails {
+        point: |()| Point::Aux0Temperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Aux1Temperature,
-        },
+    PointDetails {
+        point: |()| Point::Aux1Temperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Aux2Temperature,
-        },
+    PointDetails {
+        point: |()| Point::Aux2Temperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Aux3Temperature,
-        },
+    PointDetails {
+        point: |()| Point::Aux3Temperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Aux4Temperature,
-        },
+    PointDetails {
+        point: |()| Point::Aux4Temperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::ProbeTemperature,
-        },
+    PointDetails {
+        point: |()| Point::ProbeTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::MainTemperature,
-        },
+    PointDetails {
+        point: |()| Point::MainTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::VoltageScaleFactorForTheSensors,
-        },
+    PointDetails {
+        point: |()| Point::VoltageScaleFactorForTheSensors,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::CurrentScaleFactorForTheSensors,
-        },
+    PointDetails {
+        point: |()| Point::CurrentScaleFactorForTheSensors,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::FrequencyScaleFactorForTheSensors,
-        },
+    PointDetails {
+        point: |()| Point::FrequencyScaleFactorForTheSensors,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor1Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor1Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor2Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor2Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor3Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor3Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor4Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor4Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor5Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor5Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor6Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor6Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor7Voltage,
-        },
+    PointDetails {
+        point: |()| Point::Sensor7Voltage,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor1Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor1Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor2Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor2Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor3Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor3Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor4Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor4Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor5Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor5Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor6Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor6Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor7Current,
-        },
+    PointDetails {
+        point: |()| Point::Sensor7Current,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Sensor8Frequency,
-        },
+    PointDetails {
+        point: |()| Point::Sensor8Frequency,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Relay1State,
-        },
+    PointDetails {
+        point: |()| Point::Relay1State,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Relay2State,
-        },
+    PointDetails {
+        point: |()| Point::Relay2State,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::Relay3State,
-        },
+    PointDetails {
+        point: |()| Point::Relay3State,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::ResetTheAccumulators,
-        },
+    PointDetails {
+        point: |()| Point::ResetTheAccumulators,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::ResetTheSystem,
-        },
+    PointDetails {
+        point: |()| Point::ResetTheSystem,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::RepeatingSerialNumber,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingSerialNumber,
         size: 9,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 32,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::RepeatingFirmwareVersion,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingFirmwareVersion,
         size: 6,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 41,
     },
-    ReadablePoint {
-        reference: PointReference::Model64020 {
-            point: Point::RepeatingHardwareVersion,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingHardwareVersion,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 47,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     Aux0Temperature,
     Aux1Temperature,
@@ -324,8 +221,41 @@ pub enum Point {
     RepeatingHardwareVersion,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     48
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -336,6 +266,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(64020, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

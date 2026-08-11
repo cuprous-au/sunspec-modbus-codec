@@ -1,105 +1,75 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 13;
 
-pub static POINTS: [ReadablePoint; 12] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 7 },
+static POINTS: [PointDetails<()>; 12] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::RequestSequence,
-        },
+    PointDetails {
+        point: |()| Point::RequestSequence,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::Status,
-        },
+    PointDetails {
+        point: |()| Point::Status,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::Timestamp,
-        },
+    PointDetails {
+        point: |()| Point::Timestamp,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::Milliseconds,
-        },
+    PointDetails {
+        point: |()| Point::Milliseconds,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::Sequence,
-        },
+    PointDetails {
+        point: |()| Point::Sequence,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::Alarm,
-        },
+    PointDetails {
+        point: |()| Point::Alarm,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 0 },
+    PointDetails {
+        point: |()| Point::Rsrvd,
         size: 1,
-        data_type: PointType::Pad,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::Algorithm,
-        },
+    PointDetails {
+        point: |()| Point::Algorithm,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 { point: Point::N },
+    PointDetails {
+        point: |()| Point::N,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model7 {
-            point: Point::RepeatingDs,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingDs,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 12,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     RequestSequence,
     Status,
@@ -107,13 +77,47 @@ pub enum Point {
     Milliseconds,
     Sequence,
     Alarm,
+    Rsrvd,
     Algorithm,
     N,
     RepeatingDs,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     13
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -124,6 +128,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(7, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }
@@ -144,6 +151,9 @@ pub fn write_point<'a>(
         }
         Point::Alarm => {
             buffer::write_u16(model.alarm() as u16, buffer);
+        }
+        Point::Rsrvd => {
+            buffer::write_u16(0, buffer);
         }
         Point::Algorithm => {
             buffer::write_u16(model.algorithm() as u16, buffer);

@@ -1,219 +1,145 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 26;
 
-pub static POINTS: [ReadablePoint; 26] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 123 },
+static POINTS: [PointDetails<()>; 26] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::ConnWinTms,
-        },
+    PointDetails {
+        point: |()| Point::ConnWinTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::ConnRvrtTms,
-        },
+    PointDetails {
+        point: |()| Point::ConnRvrtTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 { point: Point::Conn },
+    PointDetails {
+        point: |()| Point::Conn,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPct,
-        },
+    PointDetails {
+        point: |()| Point::WMaxLimPct,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctWinTms,
-        },
+    PointDetails {
+        point: |()| Point::WMaxLimPctWinTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctRvrtTms,
-        },
+    PointDetails {
+        point: |()| Point::WMaxLimPctRvrtTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctRmpTms,
-        },
+    PointDetails {
+        point: |()| Point::WMaxLimPctRmpTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimEna,
-        },
+    PointDetails {
+        point: |()| Point::WMaxLimEna,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSet,
-        },
+    PointDetails {
+        point: |()| Point::OutPfSet,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetWinTms,
-        },
+    PointDetails {
+        point: |()| Point::OutPfSetWinTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetRvrtTms,
-        },
+    PointDetails {
+        point: |()| Point::OutPfSetRvrtTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetRmpTms,
-        },
+    PointDetails {
+        point: |()| Point::OutPfSetRmpTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetEna,
-        },
+    PointDetails {
+        point: |()| Point::OutPfSetEna,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArWMaxPct,
-        },
+    PointDetails {
+        point: |()| Point::VArWMaxPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArMaxPct,
-        },
+    PointDetails {
+        point: |()| Point::VArMaxPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArAvalPct,
-        },
+    PointDetails {
+        point: |()| Point::VArAvalPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctWinTms,
-        },
+    PointDetails {
+        point: |()| Point::VArPctWinTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctRvrtTms,
-        },
+    PointDetails {
+        point: |()| Point::VArPctRvrtTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctRmpTms,
-        },
+    PointDetails {
+        point: |()| Point::VArPctRmpTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctMod,
-        },
+    PointDetails {
+        point: |()| Point::VArPctMod,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctEna,
-        },
+    PointDetails {
+        point: |()| Point::VArPctEna,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::WMaxLimPctSf,
-        },
+    PointDetails {
+        point: |()| Point::WMaxLimPctSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::OutPfSetSf,
-        },
+    PointDetails {
+        point: |()| Point::OutPfSetSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model123 {
-            point: Point::VArPctSf,
-        },
+    PointDetails {
+        point: |()| Point::VArPctSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 25,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     ConnWinTms,
     ConnRvrtTms,
@@ -241,8 +167,41 @@ pub enum Point {
     VArPctSf,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     26
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -253,6 +212,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(123, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

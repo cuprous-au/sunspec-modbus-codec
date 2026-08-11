@@ -1,259 +1,170 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 48;
 
-pub static POINTS: [ReadablePoint; 31] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 805 },
+static POINTS: [PointDetails<()>; 31] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::StringIndex,
-        },
+    PointDetails {
+        point: |()| Point::StringIndex,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::ModuleIndex,
-        },
+    PointDetails {
+        point: |()| Point::ModuleIndex,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::ModuleCellCount,
-        },
+    PointDetails {
+        point: |()| Point::ModuleCellCount,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::ModuleSoC,
-        },
+    PointDetails {
+        point: |()| Point::ModuleSoC,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::DepthOfDischarge,
-        },
+    PointDetails {
+        point: |()| Point::DepthOfDischarge,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::ModuleSoH,
-        },
+    PointDetails {
+        point: |()| Point::ModuleSoH,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::CycleCount,
-        },
+    PointDetails {
+        point: |()| Point::CycleCount,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::ModuleVoltage,
-        },
+    PointDetails {
+        point: |()| Point::ModuleVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MaxCellVoltage,
-        },
+    PointDetails {
+        point: |()| Point::MaxCellVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MaxCellVoltageCell,
-        },
+    PointDetails {
+        point: |()| Point::MaxCellVoltageCell,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MinCellVoltage,
-        },
+    PointDetails {
+        point: |()| Point::MinCellVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MinCellVoltageCell,
-        },
+    PointDetails {
+        point: |()| Point::MinCellVoltageCell,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::AverageCellVoltage,
-        },
+    PointDetails {
+        point: |()| Point::AverageCellVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MaxCellTemperature,
-        },
+    PointDetails {
+        point: |()| Point::MaxCellTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MaxCellTemperatureCell,
-        },
+    PointDetails {
+        point: |()| Point::MaxCellTemperatureCell,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MinCellTemperature,
-        },
+    PointDetails {
+        point: |()| Point::MinCellTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::MinCellTemperatureCell,
-        },
+    PointDetails {
+        point: |()| Point::MinCellTemperatureCell,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::AverageCellTemperature,
-        },
+    PointDetails {
+        point: |()| Point::AverageCellTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::BalancedCellCount,
-        },
+    PointDetails {
+        point: |()| Point::BalancedCellCount,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::SerialNumber,
-        },
+    PointDetails {
+        point: |()| Point::SerialNumber,
         size: 16,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::SoCSf,
-        },
+    PointDetails {
+        point: |()| Point::SoCSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 38,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::SoHSf,
-        },
+    PointDetails {
+        point: |()| Point::SoHSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 39,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::DoDSf,
-        },
+    PointDetails {
+        point: |()| Point::DoDSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 { point: Point::VSf },
+    PointDetails {
+        point: |()| Point::VSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 41,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::CellVSf,
-        },
+    PointDetails {
+        point: |()| Point::CellVSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 42,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::TmpSf,
-        },
+    PointDetails {
+        point: |()| Point::TmpSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 43,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::LithiumIonModuleCellCellVoltage,
-        },
+    PointDetails {
+        point: |()| Point::LithiumIonModuleCellCellVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 44,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::LithiumIonModuleCellCellTemperature,
-        },
+    PointDetails {
+        point: |()| Point::LithiumIonModuleCellCellTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 45,
     },
-    ReadablePoint {
-        reference: PointReference::Model805 {
-            point: Point::LithiumIonModuleCellCellStatus,
-        },
+    PointDetails {
+        point: |()| Point::LithiumIonModuleCellCellStatus,
         size: 2,
-        data_type: PointType::Bitfield32,
-        writeable: false,
+        start_address: 46,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     StringIndex,
     ModuleIndex,
@@ -286,8 +197,41 @@ pub enum Point {
     LithiumIonModuleCellCellStatus,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     48
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -298,6 +242,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(805, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

@@ -1,259 +1,175 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 32;
 
-pub static POINTS: [ReadablePoint; 32] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 121 },
+static POINTS: [PointDetails<()>; 32] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 { point: Point::WMax },
+    PointDetails {
+        point: |()| Point::WMax,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 { point: Point::VRef },
+    PointDetails {
+        point: |()| Point::VRef,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VRefOfs,
-        },
+    PointDetails {
+        point: |()| Point::VRefOfs,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 { point: Point::VMax },
+    PointDetails {
+        point: |()| Point::VMax,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 { point: Point::VMin },
+    PointDetails {
+        point: |()| Point::VMin,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VaMax,
-        },
+    PointDetails {
+        point: |()| Point::VaMax,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VArMaxQ1,
-        },
+    PointDetails {
+        point: |()| Point::VArMaxQ1,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VArMaxQ2,
-        },
+    PointDetails {
+        point: |()| Point::VArMaxQ2,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VArMaxQ3,
-        },
+    PointDetails {
+        point: |()| Point::VArMaxQ3,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VArMaxQ4,
-        },
+    PointDetails {
+        point: |()| Point::VArMaxQ4,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 { point: Point::WGra },
+    PointDetails {
+        point: |()| Point::WGra,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::PfMinQ1,
-        },
+    PointDetails {
+        point: |()| Point::PfMinQ1,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::PfMinQ2,
-        },
+    PointDetails {
+        point: |()| Point::PfMinQ2,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::PfMinQ3,
-        },
+    PointDetails {
+        point: |()| Point::PfMinQ3,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::PfMinQ4,
-        },
+    PointDetails {
+        point: |()| Point::PfMinQ4,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VArAct,
-        },
+    PointDetails {
+        point: |()| Point::VArAct,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::ClcTotVa,
-        },
+    PointDetails {
+        point: |()| Point::ClcTotVa,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::MaxRmpRte,
-        },
+    PointDetails {
+        point: |()| Point::MaxRmpRte,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::EcpNomHz,
-        },
+    PointDetails {
+        point: |()| Point::EcpNomHz,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::ConnPh,
-        },
+    PointDetails {
+        point: |()| Point::ConnPh,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::WMaxSf,
-        },
+    PointDetails {
+        point: |()| Point::WMaxSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VRefSf,
-        },
+    PointDetails {
+        point: |()| Point::VRefSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VRefOfsSf,
-        },
+    PointDetails {
+        point: |()| Point::VRefOfsSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VMinMaxSf,
-        },
+    PointDetails {
+        point: |()| Point::VMinMaxSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VaMaxSf,
-        },
+    PointDetails {
+        point: |()| Point::VaMaxSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::VArMaxSf,
-        },
+    PointDetails {
+        point: |()| Point::VArMaxSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::WGraSf,
-        },
+    PointDetails {
+        point: |()| Point::WGraSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::PfMinSf,
-        },
+    PointDetails {
+        point: |()| Point::PfMinSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::MaxRmpRteSf,
-        },
+    PointDetails {
+        point: |()| Point::MaxRmpRteSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model121 {
-            point: Point::EcpNomHzSf,
-        },
+    PointDetails {
+        point: |()| Point::EcpNomHzSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 31,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     WMax,
     VRef,
@@ -287,8 +203,41 @@ pub enum Point {
     EcpNomHzSf,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     32
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -299,6 +248,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(121, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

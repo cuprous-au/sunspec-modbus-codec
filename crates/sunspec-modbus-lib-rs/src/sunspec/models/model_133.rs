@@ -1,326 +1,216 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 68;
 
-pub static POINTS: [ReadablePoint; 39] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 133 },
+static POINTS: [PointDetails<()>; 39] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::ActSchd,
-        },
+    PointDetails {
+        point: |()| Point::ActSchd,
         size: 2,
-        data_type: PointType::Bitfield32,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::ModEna,
-        },
+    PointDetails {
+        point: |()| Point::ModEna,
         size: 1,
-        data_type: PointType::Bitfield16,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::NSchd,
-        },
+    PointDetails {
+        point: |()| Point::NSchd,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 { point: Point::NPts },
+    PointDetails {
+        point: |()| Point::NPts,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 0 },
+    PointDetails {
+        point: |()| Point::Pad,
         size: 1,
-        data_type: PointType::Pad,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingActPts,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingActPts,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingStrTms,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingStrTms,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingRepPer,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingRepPer,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingSchdTyp,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingSchdTyp,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingXTyp,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingXTyp,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingXSf,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingXSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingYTyp,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingYTyp,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingYSf,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingYSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX1,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX1,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY1,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY1,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX2,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX2,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY2,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY2,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX3,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX3,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY3,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY3,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX4,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX4,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY4,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY4,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX5,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX5,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 33,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY5,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY5,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 35,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX6,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX6,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 37,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY6,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY6,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 39,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX7,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX7,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 41,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY7,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY7,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 43,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX8,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX8,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 45,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY8,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY8,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 47,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX9,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX9,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 49,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY9,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY9,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 51,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingX10,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingX10,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 53,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingY10,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingY10,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 55,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingNam,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingNam,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 57,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingWinTms,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingWinTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 65,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingRmpTms,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingRmpTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 66,
     },
-    ReadablePoint {
-        reference: PointReference::Model133 {
-            point: Point::RepeatingActIndx,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingActIndx,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 67,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     ActSchd,
     ModEna,
     NSchd,
     NPts,
+    Pad,
     RepeatingActPts,
     RepeatingStrTms,
     RepeatingRepPer,
@@ -355,8 +245,41 @@ pub enum Point {
     RepeatingActIndx,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     68
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -367,6 +290,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(133, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }
@@ -381,6 +307,9 @@ pub fn write_point<'a>(
         }
         Point::NPts => {
             buffer::write_u16(model.n_pts(), buffer);
+        }
+        Point::Pad => {
+            buffer::write_u16(0, buffer);
         }
         Point::RepeatingActPts => {
             buffer::write_u16(model.repeating_act_pts(), buffer);

@@ -1,101 +1,70 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 88;
 
-pub static POINTS: [ReadablePoint; 11] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 64414 },
+static POINTS: [PointDetails<()>; 11] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::TimeOffset,
-        },
+    PointDetails {
+        point: |()| Point::TimeOffset,
         size: 10,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::Temperature,
-        },
+    PointDetails {
+        point: |()| Point::Temperature,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::GridModelSource,
-        },
+    PointDetails {
+        point: |()| Point::GridModelSource,
         size: 32,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::IrradianceModelSource,
-        },
+    PointDetails {
+        point: |()| Point::IrradianceModelSource,
         size: 32,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 46,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::Irradiance,
-        },
+    PointDetails {
+        point: |()| Point::Irradiance,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: true,
+        start_address: 78,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::GridVoltageA,
-        },
+    PointDetails {
+        point: |()| Point::GridVoltageA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: true,
+        start_address: 80,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::GridVoltageB,
-        },
+    PointDetails {
+        point: |()| Point::GridVoltageB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: true,
+        start_address: 82,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::GridVoltageC,
-        },
+    PointDetails {
+        point: |()| Point::GridVoltageC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: true,
+        start_address: 84,
     },
-    ReadablePoint {
-        reference: PointReference::Model64414 {
-            point: Point::GridFrequency,
-        },
+    PointDetails {
+        point: |()| Point::GridFrequency,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: true,
+        start_address: 86,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     TimeOffset,
     Temperature,
@@ -108,8 +77,41 @@ pub enum Point {
     GridFrequency,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     88
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -120,6 +122,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(64414, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

@@ -1,489 +1,325 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 63;
 
-pub static POINTS: [ReadablePoint; 62] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 4 },
+static POINTS: [PointDetails<()>; 62] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::RequestSequence,
-        },
+    PointDetails {
+        point: |()| Point::RequestSequence,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Status,
-        },
+    PointDetails {
+        point: |()| Point::Status,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::X },
+    PointDetails {
+        point: |()| Point::X,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Value1,
-        },
+    PointDetails {
+        point: |()| Point::Value1,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val2 },
+    PointDetails {
+        point: |()| Point::Val2,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val3 },
+    PointDetails {
+        point: |()| Point::Val3,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val4 },
+    PointDetails {
+        point: |()| Point::Val4,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val5 },
+    PointDetails {
+        point: |()| Point::Val5,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val6 },
+    PointDetails {
+        point: |()| Point::Val6,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val7 },
+    PointDetails {
+        point: |()| Point::Val7,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val8 },
+    PointDetails {
+        point: |()| Point::Val8,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::Val9 },
+    PointDetails {
+        point: |()| Point::Val9,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val10,
-        },
+    PointDetails {
+        point: |()| Point::Val10,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val11,
-        },
+    PointDetails {
+        point: |()| Point::Val11,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val12,
-        },
+    PointDetails {
+        point: |()| Point::Val12,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val13,
-        },
+    PointDetails {
+        point: |()| Point::Val13,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val14,
-        },
+    PointDetails {
+        point: |()| Point::Val14,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val15,
-        },
+    PointDetails {
+        point: |()| Point::Val15,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val16,
-        },
+    PointDetails {
+        point: |()| Point::Val16,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val17,
-        },
+    PointDetails {
+        point: |()| Point::Val17,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val18,
-        },
+    PointDetails {
+        point: |()| Point::Val18,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val19,
-        },
+    PointDetails {
+        point: |()| Point::Val19,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val20,
-        },
+    PointDetails {
+        point: |()| Point::Val20,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val21,
-        },
+    PointDetails {
+        point: |()| Point::Val21,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val22,
-        },
+    PointDetails {
+        point: |()| Point::Val22,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val23,
-        },
+    PointDetails {
+        point: |()| Point::Val23,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val24,
-        },
+    PointDetails {
+        point: |()| Point::Val24,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val25,
-        },
+    PointDetails {
+        point: |()| Point::Val25,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val26,
-        },
+    PointDetails {
+        point: |()| Point::Val26,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val27,
-        },
+    PointDetails {
+        point: |()| Point::Val27,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val28,
-        },
+    PointDetails {
+        point: |()| Point::Val28,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 32,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val29,
-        },
+    PointDetails {
+        point: |()| Point::Val29,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 33,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val30,
-        },
+    PointDetails {
+        point: |()| Point::Val30,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 34,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val31,
-        },
+    PointDetails {
+        point: |()| Point::Val31,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 35,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val32,
-        },
+    PointDetails {
+        point: |()| Point::Val32,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 36,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val33,
-        },
+    PointDetails {
+        point: |()| Point::Val33,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 37,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val34,
-        },
+    PointDetails {
+        point: |()| Point::Val34,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 38,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val35,
-        },
+    PointDetails {
+        point: |()| Point::Val35,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 39,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val36,
-        },
+    PointDetails {
+        point: |()| Point::Val36,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val37,
-        },
+    PointDetails {
+        point: |()| Point::Val37,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 41,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val38,
-        },
+    PointDetails {
+        point: |()| Point::Val38,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 42,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val39,
-        },
+    PointDetails {
+        point: |()| Point::Val39,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 43,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val40,
-        },
+    PointDetails {
+        point: |()| Point::Val40,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 44,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val41,
-        },
+    PointDetails {
+        point: |()| Point::Val41,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 45,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val42,
-        },
+    PointDetails {
+        point: |()| Point::Val42,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 46,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val43,
-        },
+    PointDetails {
+        point: |()| Point::Val43,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 47,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val44,
-        },
+    PointDetails {
+        point: |()| Point::Val44,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 48,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val45,
-        },
+    PointDetails {
+        point: |()| Point::Val45,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 49,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val46,
-        },
+    PointDetails {
+        point: |()| Point::Val46,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 50,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val47,
-        },
+    PointDetails {
+        point: |()| Point::Val47,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 51,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val48,
-        },
+    PointDetails {
+        point: |()| Point::Val48,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 52,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val49,
-        },
+    PointDetails {
+        point: |()| Point::Val49,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 53,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Val50,
-        },
+    PointDetails {
+        point: |()| Point::Val50,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 54,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Timestamp,
-        },
+    PointDetails {
+        point: |()| Point::Timestamp,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 55,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Milliseconds,
-        },
+    PointDetails {
+        point: |()| Point::Milliseconds,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 57,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Sequence,
-        },
+    PointDetails {
+        point: |()| Point::Sequence,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 58,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Alarm,
-        },
+    PointDetails {
+        point: |()| Point::Alarm,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 59,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::Algorithm,
-        },
+    PointDetails {
+        point: |()| Point::Algorithm,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 60,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 { point: Point::N },
+    PointDetails {
+        point: |()| Point::N,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 61,
     },
-    ReadablePoint {
-        reference: PointReference::Model4 {
-            point: Point::RepeatingDs,
-        },
+    PointDetails {
+        point: |()| Point::RepeatingDs,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 62,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     RequestSequence,
     Status,
@@ -547,8 +383,41 @@ pub enum Point {
     RepeatingDs,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     63
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -559,6 +428,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(4, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

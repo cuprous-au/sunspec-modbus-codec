@@ -1,435 +1,281 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 67;
 
-pub static POINTS: [ReadablePoint; 53] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 704 },
+static POINTS: [PointDetails<()>; 53] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 65 },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorEnableWInjEnable,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorEnableWInjEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorReversionEnableWInj,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorReversionEnableWInj,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PfReversionTimeWInj,
-        },
+    PointDetails {
+        point: |()| Point::PfReversionTimeWInj,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PfReversionTimeRemWInj,
-        },
+    PointDetails {
+        point: |()| Point::PfReversionTimeRemWInj,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorEnableWAbsEnable,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorEnableWAbsEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorReversionEnableWAbs,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorReversionEnableWAbs,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PfReversionTimeWAbs,
-        },
+    PointDetails {
+        point: |()| Point::PfReversionTimeWAbs,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PfReversionTimeRemWAbs,
-        },
+    PointDetails {
+        point: |()| Point::PfReversionTimeRemWAbs,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::LimitMaxPowerPctEnable,
-        },
+    PointDetails {
+        point: |()| Point::LimitMaxPowerPctEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::LimitMaxPowerPctSetpoint,
-        },
+    PointDetails {
+        point: |()| Point::LimitMaxPowerPctSetpoint,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionLimitMaxPowerPct,
-        },
+    PointDetails {
+        point: |()| Point::ReversionLimitMaxPowerPct,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionLimitMaxPowerPctEnable,
-        },
+    PointDetails {
+        point: |()| Point::ReversionLimitMaxPowerPctEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::LimitMaxPowerPctReversionTime,
-        },
+    PointDetails {
+        point: |()| Point::LimitMaxPowerPctReversionTime,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::LimitMaxPowerPctRevTimeRem,
-        },
+    PointDetails {
+        point: |()| Point::LimitMaxPowerPctRevTimeRem,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerEnable,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerMode,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerMode,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerSetpointW,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerSetpointW,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionActivePowerW,
-        },
+    PointDetails {
+        point: |()| Point::ReversionActivePowerW,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerSetpointPct,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerSetpointPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionActivePowerPct,
-        },
+    PointDetails {
+        point: |()| Point::ReversionActivePowerPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionActivePowerEnable,
-        },
+    PointDetails {
+        point: |()| Point::ReversionActivePowerEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerReversionTime,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerReversionTime,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerRevTimeRem,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerRevTimeRem,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 33,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerEnable,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 35,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerMode,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerMode,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 36,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerPriority,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerPriority,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 37,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerSetpointVars,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerSetpointVars,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 38,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionReactivePowerVars,
-        },
+    PointDetails {
+        point: |()| Point::ReversionReactivePowerVars,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: true,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerSetpointPct,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerSetpointPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 42,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionReactivePowerPct,
-        },
+    PointDetails {
+        point: |()| Point::ReversionReactivePowerPct,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: true,
+        start_address: 43,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionReactivePowerEnable,
-        },
+    PointDetails {
+        point: |()| Point::ReversionReactivePowerEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 44,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerReversionTime,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerReversionTime,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 45,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerRevTimeRem,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerRevTimeRem,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 47,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::NormalRampRate,
-        },
+    PointDetails {
+        point: |()| Point::NormalRampRate,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 49,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::NormalRampRateReference,
-        },
+    PointDetails {
+        point: |()| Point::NormalRampRateReference,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 50,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerRampRate,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerRampRate,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 51,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::AntiIslandingEnable,
-        },
+    PointDetails {
+        point: |()| Point::AntiIslandingEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 52,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 53,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::LimitMaxPowerScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::LimitMaxPowerScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 54,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 55,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ActivePowerPctScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::ActivePowerPctScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 56,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 57,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReactivePowerPctScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::ReactivePowerPctScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 58,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorWInjPowerFactorWInj,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorWInjPowerFactorWInj,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 59,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorWInjPowerFactorExcitationWInj,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorWInjPowerFactorExcitationWInj,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 60,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionPowerFactorWInjReversionPowerFactorWInj,
-        },
+    PointDetails {
+        point: |()| Point::ReversionPowerFactorWInjReversionPowerFactorWInj,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 61,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionPowerFactorWInjReversionPfExcitationWInj,
-        },
+    PointDetails {
+        point: |()| Point::ReversionPowerFactorWInjReversionPfExcitationWInj,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 62,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorWAbsPowerFactorWAbs,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorWAbsPowerFactorWAbs,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 63,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::PowerFactorWAbsPowerFactorExcitationWAbs,
-        },
+    PointDetails {
+        point: |()| Point::PowerFactorWAbsPowerFactorExcitationWAbs,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 64,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionPowerFactorWAbsReversionPowerFactorWAbs,
-        },
+    PointDetails {
+        point: |()| Point::ReversionPowerFactorWAbsReversionPowerFactorWAbs,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 65,
     },
-    ReadablePoint {
-        reference: PointReference::Model704 {
-            point: Point::ReversionPowerFactorWAbsReversionPfExcitationWAbs,
-        },
+    PointDetails {
+        point: |()| Point::ReversionPowerFactorWAbsReversionPfExcitationWAbs,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 66,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
+    ModelLength,
     PowerFactorEnableWInjEnable,
     PowerFactorReversionEnableWInj,
     PfReversionTimeWInj,
@@ -483,8 +329,41 @@ pub enum Point {
     ReversionPowerFactorWAbsReversionPfExcitationWAbs,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     67
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -495,6 +374,12 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(704, buffer);
+        }
+        Point::ModelLength => {
+            buffer::write_u16(65, buffer);
+        }
         Point::PowerFactorEnableWInjEnable => {
             if let Some(value) = model.power_factor_enable_w_inj_enable() {
                 buffer::write_u16(value as u16, buffer);

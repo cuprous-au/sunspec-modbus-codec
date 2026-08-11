@@ -1,5 +1,6 @@
 use codegen::Scope;
 use glob::glob;
+use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
@@ -11,7 +12,7 @@ use crate::sunspec_schema::SunspecModel;
 mod code_generation;
 mod model_resolution;
 mod sunspec_schema;
-const EXCLUDED_MODELS: [&str; 8] = [
+const EXCLUDED_MODELS: [&str; 10] = [
     "model_9",
     "model_14",
     "model_302",
@@ -19,6 +20,8 @@ const EXCLUDED_MODELS: [&str; 8] = [
     "model_304",
     "model_601",
     "model_702",
+    "model_803",
+    "model_804",
     "model_63002",
 ];
 
@@ -58,7 +61,12 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
 
 fn format_and_write(path: &Path, scope: &Scope) -> std::io::Result<()> {
     let text_raw = scope.to_string();
-    let text = rustfmt_wrapper::rustfmt(&text_raw).unwrap_or_else(|error| {
+    
+    let rustfmt_config: Config = Config {
+        edition: Some(Edition::Edition2024),
+        ..Default::default()
+    };
+    let text = rustfmt_wrapper::rustfmt_config(rustfmt_config, &text_raw).unwrap_or_else(|error| {
         println!(
             "cargo:warning=Error formatting file {}: [{}]. File left unformatted.",
             path.to_str().unwrap_or_default(),

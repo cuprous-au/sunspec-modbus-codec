@@ -14,7 +14,6 @@ pub type DocLines = Vec<String>;
 
 #[derive(Clone)]
 pub struct ResolvedType {
-    pub raw_type: String,
     pub rust_type: String,
     pub c_type: String,
     pub size: u16,
@@ -166,7 +165,6 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     };
 
     ResolvedType {
-        raw_type: point.type_.to_string().to_pascal_case(),
         rust_type,
         c_type,
         size: point.size as u16,
@@ -198,7 +196,11 @@ pub fn resolve_point(
         })
         .unwrap_or(point.name.clone());
 
-    let name = format!("{} {}", name_prefix.clone().get_or_insert_default(), main_name);
+    let name = format!(
+        "{} {}",
+        name_prefix.clone().get_or_insert_default(),
+        main_name
+    );
 
     let doc = [
         point.label.as_ref(),
@@ -281,7 +283,9 @@ pub fn resolve_group(
     let root_points: Vec<ResolvedPoint> = group
         .points
         .iter()
-        .flat_map(|point| resolve_point(point, features, block_indices.clone(), name_prefix.clone()))
+        .flat_map(|point| {
+            resolve_point(point, features, block_indices.clone(), name_prefix.clone())
+        })
         .collect();
 
     let top_level_points = top_level_points_opt.unwrap_or(&root_points);
@@ -321,7 +325,7 @@ pub fn resolve_group(
                         Some(top_level_points),
                         features,
                         child_block_indices,
-                        Some(g.name.clone())
+                        Some(g.name.clone()),
                     )),
                 )
             })

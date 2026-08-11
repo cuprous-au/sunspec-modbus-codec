@@ -1,165 +1,110 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 30;
 
-pub static POINTS: [ReadablePoint; 19] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 160 },
+static POINTS: [PointDetails<()>; 19] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::CurrentScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::CurrentScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::VoltageScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::VoltageScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::PowerScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::PowerScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::EnergyScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::EnergyScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::GlobalEvents,
-        },
+    PointDetails {
+        point: |()| Point::GlobalEvents,
         size: 2,
-        data_type: PointType::Bitfield32,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::NumberOfModules,
-        },
+    PointDetails {
+        point: |()| Point::NumberOfModules,
         size: 1,
-        data_type: PointType::Count,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::TimestampPeriod,
-        },
+    PointDetails {
+        point: |()| Point::TimestampPeriod,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleInputId,
-        },
+    PointDetails {
+        point: |()| Point::ModuleInputId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleInputIdString,
-        },
+    PointDetails {
+        point: |()| Point::ModuleInputIdString,
         size: 8,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleDcCurrent,
-        },
+    PointDetails {
+        point: |()| Point::ModuleDcCurrent,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleDcVoltage,
-        },
+    PointDetails {
+        point: |()| Point::ModuleDcVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleDcPower,
-        },
+    PointDetails {
+        point: |()| Point::ModuleDcPower,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleLifetimeEnergy,
-        },
+    PointDetails {
+        point: |()| Point::ModuleLifetimeEnergy,
         size: 2,
-        data_type: PointType::Acc32,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleTimestamp,
-        },
+    PointDetails {
+        point: |()| Point::ModuleTimestamp,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleTemperature,
-        },
+    PointDetails {
+        point: |()| Point::ModuleTemperature,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleOperatingState,
-        },
+    PointDetails {
+        point: |()| Point::ModuleOperatingState,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model160 {
-            point: Point::ModuleModuleEvents,
-        },
+    PointDetails {
+        point: |()| Point::ModuleModuleEvents,
         size: 2,
-        data_type: PointType::Bitfield32,
-        writeable: false,
+        start_address: 28,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     CurrentScaleFactor,
     VoltageScaleFactor,
@@ -180,8 +125,41 @@ pub enum Point {
     ModuleModuleEvents,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     30
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -192,6 +170,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(160, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

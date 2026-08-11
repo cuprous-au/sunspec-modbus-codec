@@ -1,117 +1,122 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 15;
 
-pub static POINTS: [ReadablePoint; 13] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 706 },
+static POINTS: [PointDetails<()>; 13] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::DerVoltWattModuleEnable,
-        },
+    PointDetails {
+        point: |()| Point::DerVoltWattModuleEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::AdoptCurveRequest,
-        },
+    PointDetails {
+        point: |()| Point::AdoptCurveRequest,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::AdoptCurveResult,
-        },
+    PointDetails {
+        point: |()| Point::AdoptCurveResult,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::NumberOfPoints,
-        },
+    PointDetails {
+        point: |()| Point::NumberOfPoints,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::StoredCurveCount,
-        },
+    PointDetails {
+        point: |()| Point::StoredCurveCount,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::ReversionTimeout,
-        },
+    PointDetails {
+        point: |()| Point::ReversionTimeout,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::ReversionTimeRemaining,
-        },
+    PointDetails {
+        point: |()| Point::ReversionTimeRemaining,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::ReversionCurve,
+    PointDetails {
+        point: |()| Point::ReversionCurve,
+        size: 1,
+        start_address: 11,
+    },
+    PointDetails {
+        point: |()| Point::VoltageScaleFactor,
+        size: 1,
+        start_address: 12,
+    },
+    PointDetails {
+        point: |()| Point::WattScaleFactor,
+        size: 1,
+        start_address: 13,
+    },
+    PointDetails {
+        point: |()| Point::OpenLoopScaleFactor,
+        size: 1,
+        start_address: 14,
+    },
+];
+
+static CRV_POINTS: [PointDetails<u16>; 4] = [
+    PointDetails {
+        point: |crv_index| Point::CrvActivePoints { crv_index },
+        size: 1,
+        start_address: 0,
+    },
+    PointDetails {
+        point: |crv_index| Point::CrvDependentReference { crv_index },
+        size: 1,
+        start_address: 1,
+    },
+    PointDetails {
+        point: |crv_index| Point::CrvOpenLoopResponseTime { crv_index },
+        size: 2,
+        start_address: 2,
+    },
+    PointDetails {
+        point: |crv_index| Point::CrvCurveAccess { crv_index },
+        size: 1,
+        start_address: 4,
+    },
+];
+
+static PT_POINTS: [PointDetails<(u16, u16)>; 2] = [
+    PointDetails {
+        point: |(crv_index, pt_index)| Point::PtVoltagePoint {
+            crv_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::VoltageScaleFactor,
+    PointDetails {
+        point: |(crv_index, pt_index)| Point::PtDependentReference {
+            crv_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::WattScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model706 {
-            point: Point::OpenLoopScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 1,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     DerVoltWattModuleEnable,
     AdoptCurveRequest,
@@ -132,8 +137,63 @@ pub enum Point {
     PtDependentReference { crv_index: u16, pt_index: u16 },
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     15 + model.stored_curve_count() * (5 + model.number_of_points() * (2))
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    let pt_count = model.number_of_points();
+    let pt_size = 2;
+
+    let crv_count = model.stored_curve_count();
+    let crv_size = 5 + pt_count * pt_size;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .chain((0..crv_count).flat_map(move |crv_index| {
+            let crv_address = 15 + crv_index * crv_size;
+            CRV_POINTS
+                .iter()
+                .map(move |p| (crv_address + p.start_address, p.size, (p.point)(crv_index)))
+                .chain((0..pt_count).flat_map(move |pt_index| {
+                    let pt_address = crv_address + pt_index * pt_size;
+                    PT_POINTS.iter().map(move |p| {
+                        (
+                            pt_address + p.start_address,
+                            p.size,
+                            (p.point)((crv_index, pt_index)),
+                        )
+                    })
+                }))
+        }))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -144,6 +204,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(706, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

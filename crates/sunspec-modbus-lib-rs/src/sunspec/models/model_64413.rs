@@ -1,53 +1,58 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 5;
 
-pub static POINTS: [ReadablePoint; 5] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 64413 },
+static POINTS: [PointDetails<()>; 5] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::IvLength,
-        },
+    PointDetails {
+        point: |()| Point::IvLength,
         size: 1,
-        data_type: PointType::Count,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::PoaIrradiance,
-        },
+    PointDetails {
+        point: |()| Point::PoaIrradiance,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model64413 {
-            point: Point::IrrSf,
-        },
+    PointDetails {
+        point: |()| Point::IrrSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 4,
+    },
+];
+
+static IV_POINTS: [PointDetails<u16>; 3] = [
+    PointDetails {
+        point: |iv_index| Point::IvPower { iv_index },
+        size: 2,
+        start_address: 0,
+    },
+    PointDetails {
+        point: |iv_index| Point::IvCurrent { iv_index },
+        size: 2,
+        start_address: 2,
+    },
+    PointDetails {
+        point: |iv_index| Point::IvVoltage { iv_index },
+        size: 2,
+        start_address: 4,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     IvLength,
     PoaIrradiance,
@@ -57,8 +62,50 @@ pub enum Point {
     IvVoltage { iv_index: u16 },
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     5 + model.iv_length().unwrap_or(0) * (6)
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    let iv_count = model.iv_length().unwrap_or_default();
+    let iv_size = 6;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .chain((0..iv_count).flat_map(move |iv_index| {
+            let iv_address = 5 + iv_index * iv_size;
+            IV_POINTS
+                .iter()
+                .map(move |p| (iv_address + p.start_address, p.size, (p.point)(iv_index)))
+        }))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -69,6 +116,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(64413, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

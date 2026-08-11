@@ -1,445 +1,290 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 62;
 
-pub static POINTS: [ReadablePoint; 55] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 130 },
+static POINTS: [PointDetails<()>; 55] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::ActCrv,
-        },
+    PointDetails {
+        point: |()| Point::ActCrv,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::ModEna,
-        },
+    PointDetails {
+        point: |()| Point::ModEna,
         size: 1,
-        data_type: PointType::Bitfield16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::WinTms,
-        },
+    PointDetails {
+        point: |()| Point::WinTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::RvrtTms,
-        },
+    PointDetails {
+        point: |()| Point::RvrtTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::RmpTms,
-        },
+    PointDetails {
+        point: |()| Point::RmpTms,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 { point: Point::NCrv },
+    PointDetails {
+        point: |()| Point::NCrv,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 { point: Point::NPt },
+    PointDetails {
+        point: |()| Point::NPt,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::TmsSf,
-        },
+    PointDetails {
+        point: |()| Point::TmsSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 { point: Point::VSf },
+    PointDetails {
+        point: |()| Point::VSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 0 },
+    PointDetails {
+        point: |()| Point::Pad,
         size: 1,
-        data_type: PointType::Pad,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveActPt,
-        },
+    PointDetails {
+        point: |()| Point::CurveActPt,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms1,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms1,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV1,
-        },
+    PointDetails {
+        point: |()| Point::CurveV1,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms2,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms2,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV2,
-        },
+    PointDetails {
+        point: |()| Point::CurveV2,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms3,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms3,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV3,
-        },
+    PointDetails {
+        point: |()| Point::CurveV3,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms4,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms4,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV4,
-        },
+    PointDetails {
+        point: |()| Point::CurveV4,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms5,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms5,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV5,
-        },
+    PointDetails {
+        point: |()| Point::CurveV5,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms6,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms6,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV6,
-        },
+    PointDetails {
+        point: |()| Point::CurveV6,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms7,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms7,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV7,
-        },
+    PointDetails {
+        point: |()| Point::CurveV7,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms8,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms8,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV8,
-        },
+    PointDetails {
+        point: |()| Point::CurveV8,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms9,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms9,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV9,
-        },
+    PointDetails {
+        point: |()| Point::CurveV9,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms10,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms10,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV10,
-        },
+    PointDetails {
+        point: |()| Point::CurveV10,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 32,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms11,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms11,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 33,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV11,
-        },
+    PointDetails {
+        point: |()| Point::CurveV11,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 34,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms12,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms12,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 35,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV12,
-        },
+    PointDetails {
+        point: |()| Point::CurveV12,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 36,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms13,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms13,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 37,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV13,
-        },
+    PointDetails {
+        point: |()| Point::CurveV13,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 38,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms14,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms14,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 39,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV14,
-        },
+    PointDetails {
+        point: |()| Point::CurveV14,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms15,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms15,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 41,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV15,
-        },
+    PointDetails {
+        point: |()| Point::CurveV15,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 42,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms16,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms16,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 43,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV16,
-        },
+    PointDetails {
+        point: |()| Point::CurveV16,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 44,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms17,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms17,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 45,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV17,
-        },
+    PointDetails {
+        point: |()| Point::CurveV17,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 46,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms18,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms18,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 47,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV18,
-        },
+    PointDetails {
+        point: |()| Point::CurveV18,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 48,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms19,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms19,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 49,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV19,
-        },
+    PointDetails {
+        point: |()| Point::CurveV19,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 50,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveTms20,
-        },
+    PointDetails {
+        point: |()| Point::CurveTms20,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 51,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveV20,
-        },
+    PointDetails {
+        point: |()| Point::CurveV20,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 52,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveCrvNam,
-        },
+    PointDetails {
+        point: |()| Point::CurveCrvNam,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 53,
     },
-    ReadablePoint {
-        reference: PointReference::Model130 {
-            point: Point::CurveReadOnly,
-        },
+    PointDetails {
+        point: |()| Point::CurveReadOnly,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 61,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     ActCrv,
     ModEna,
@@ -450,6 +295,7 @@ pub enum Point {
     NPt,
     TmsSf,
     VSf,
+    Pad,
     CurveActPt,
     CurveTms1,
     CurveV1,
@@ -495,8 +341,41 @@ pub enum Point {
     CurveReadOnly,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     62
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -507,6 +386,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(130, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }
@@ -548,6 +430,9 @@ pub fn write_point<'a>(
         }
         Point::VSf => {
             buffer::write_u16(model.v_sf(), buffer);
+        }
+        Point::Pad => {
+            buffer::write_u16(0, buffer);
         }
         Point::CurveActPt => {
             buffer::write_u16(model.curve_act_pt(), buffer);

@@ -3,6 +3,7 @@ use std::{
     future,
     io::{self},
     net::SocketAddr,
+    sync::Arc,
 };
 use sunspec_modbus_lib_rs::{
     ModbusRequest, handle_request,
@@ -18,28 +19,30 @@ use tokio_modbus::{
     server::tcp::{Server, accept_tcp_connection},
 };
 
-struct MyInverter {}
+struct MyInverter {
+    pub amp_value: u16,
+}
 impl model_1::ModelAdapter for MyInverter {
     fn manufacturer(&self) -> &CStr {
-        &c"Cuprous"
+        c"Cuprous"
     }
 
     fn model(&self) -> &CStr {
-        &c"Inverter 1"
+        c"Inverter 1"
     }
 
     fn serial_number(&self) -> &CStr {
-        &c"I-1"
+        c"I-1"
     }
 
     fn options(&self) -> Option<&CStr> {
-        Some(&c"opt_a_b_c")
+        Some(c"opt_a_b_c")
     }
 }
 
 impl model_103::ModelAdapter for MyInverter {
     fn amps(&self) -> u16 {
-        102
+        self.amp_value
     }
 
     fn amps_phase_a(&self) -> u16 {
@@ -119,38 +122,42 @@ impl model_103::ModelAdapter for MyInverter {
     }
 }
 
-struct ExampleService<'a> {
-    inverter: &'a MyInverter,
+struct ExampleService {
+    inverter: Arc<MyInverter>,
 }
 
-impl<'a> tokio_modbus::server::Service for ExampleService<'a> {
-    type Request = Request<'a>;
+impl tokio_modbus::server::Service for ExampleService {
+    type Request = Request<'static>;
     type Response = Response;
     type Exception = ExceptionCode;
     type Future = future::Ready<Result<Self::Response, Self::Exception>>;
 
     fn call(&self, req: Self::Request) -> Self::Future {
         let adapters = SunspecAdapters {
-            model_1_adapter: Some(self.inverter),
-            model_103_adapter: Some(self.inverter),
+            model_1_adapter: Some(self.inverter.as_ref()),
+            model_103_adapter: Some(self.inverter.as_ref()),
             ..Default::default()
         };
         let res = match req {
             Request::ReadHoldingRegisters(addr, cnt) => {
-                println!("{} -> {}", addr, cnt);
+                println!("{} -> {} ({} words)", addr, addr + cnt, cnt);
+
                 let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
-                let res = handle_request(
+                match handle_request(
                     &adapters,
                     ModbusRequest::ReadRegister(addr, cnt),
                     &mut response_buffer as &mut [u16],
-                );
+                ) {
+                    Ok(_) => {
+                        for word in &response_buffer {
+                            print!("{:x} ", word);
+                        }
+                        println!(";");
 
-                for word in &response_buffer {
-                    print!("{:x} ", word);
+                        Ok(Response::ReadHoldingRegisters(response_buffer.into()))
+                    }
+                    Err(code) => Err(ExceptionCode::new(code as u8)),
                 }
-                println!(";");
-
-                Ok(Response::ReadHoldingRegisters(response_buffer.into()))
             }
             _ => {
                 println!(
@@ -175,9 +182,16 @@ async fn server_context(socket_addr: SocketAddr) -> io::Result<()> {
     let listener = TcpListener::bind(socket_addr).await?;
     let server = Server::new(listener);
 
-    let inverter = &MyInverter {};
+    let mut inverter = Arc::new(MyInverter { amp_value: 0 });
 
-    let new_service = |_socket_addr| Ok(Some(ExampleService { inverter: inverter }));
+    Arc::get_mut(&mut inverter).unwrap().amp_value = 32;
+
+    let new_service = |_socket_addr| {
+        Ok(Some(ExampleService {
+            inverter: inverter.clone(),
+        }))
+    };
+
     let on_connected = |stream, socket_addr| async move {
         accept_tcp_connection(stream, socket_addr, new_service)
     };

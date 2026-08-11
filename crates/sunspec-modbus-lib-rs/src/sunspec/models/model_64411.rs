@@ -1,413 +1,345 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 1398;
 
-pub static POINTS: [ReadablePoint; 50] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 64411 },
+static POINTS: [PointDetails<()>; 50] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ActivePhases,
-        },
+    PointDetails {
+        point: |()| Point::ActivePhases,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::PhaseAngle,
-        },
+    PointDetails {
+        point: |()| Point::PhaseAngle,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::NominalVoltage,
-        },
+    PointDetails {
+        point: |()| Point::NominalVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MaximumVoltage,
-        },
+    PointDetails {
+        point: |()| Point::MaximumVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MaximumCurrent,
-        },
+    PointDetails {
+        point: |()| Point::MaximumCurrent,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::Frequency,
-        },
+    PointDetails {
+        point: |()| Point::Frequency,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::OutputState,
-        },
+    PointDetails {
+        point: |()| Point::OutputState,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::RelayState,
-        },
+    PointDetails {
+        point: |()| Point::RelayState,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::RegenerationState,
-        },
+    PointDetails {
+        point: |()| Point::RegenerationState,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpoint,
-        },
+    PointDetails {
+        point: |()| Point::VoltageSetpoint,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpointPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::VoltageSetpointPhaseA,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpointPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::VoltageSetpointPhaseB,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSetpointPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::VoltageSetpointPhaseC,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::FrequencySlewRate,
-        },
+    PointDetails {
+        point: |()| Point::FrequencySlewRate,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSlewRate,
-        },
+    PointDetails {
+        point: |()| Point::VoltageSlewRate,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredVoltagePhaseA,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredVoltagePhaseA,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredVoltagePhaseB,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredVoltagePhaseB,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredVoltagePhaseC,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredVoltagePhaseC,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredFrequency,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredFrequency,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredCurrentPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredCurrentPhaseA,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredCurrentPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredCurrentPhaseB,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MeasuredCurrentPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::MeasuredCurrentPhaseC,
         size: 2,
-        data_type: PointType::Int32,
-        writeable: false,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageHarmonicsPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::VoltageHarmonicsPhaseA,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageHarmonicsPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::VoltageHarmonicsPhaseB,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 181,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageHarmonicsPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::VoltageHarmonicsPhaseC,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 331,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentHarmonicsPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::CurrentHarmonicsPhaseA,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 481,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentHarmonicsPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::CurrentHarmonicsPhaseB,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 631,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentHarmonicsPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::CurrentHarmonicsPhaseC,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 781,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentInterharmonicsPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::CurrentInterharmonicsPhaseA,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 931,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentInterharmonicsPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::CurrentInterharmonicsPhaseB,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 1081,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentInterharmonicsPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::CurrentInterharmonicsPhaseC,
         size: 150,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 1231,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageThdPhaseA,
+    PointDetails {
+        point: |()| Point::VoltageThdPhaseA,
+        size: 1,
+        start_address: 1381,
+    },
+    PointDetails {
+        point: |()| Point::VoltageThdPhaseB,
+        size: 1,
+        start_address: 1382,
+    },
+    PointDetails {
+        point: |()| Point::VoltageThdPhaseC,
+        size: 1,
+        start_address: 1383,
+    },
+    PointDetails {
+        point: |()| Point::CurrentThdPhaseA,
+        size: 1,
+        start_address: 1384,
+    },
+    PointDetails {
+        point: |()| Point::CurrentThdPhaseB,
+        size: 1,
+        start_address: 1385,
+    },
+    PointDetails {
+        point: |()| Point::CurrentThdPhaseC,
+        size: 1,
+        start_address: 1386,
+    },
+    PointDetails {
+        point: |()| Point::EnableProfile,
+        size: 1,
+        start_address: 1387,
+    },
+    PointDetails {
+        point: |()| Point::ProfileResult,
+        size: 1,
+        start_address: 1388,
+    },
+    PointDetails {
+        point: |()| Point::StoredProfileCount,
+        size: 1,
+        start_address: 1389,
+    },
+    PointDetails {
+        point: |()| Point::MaxProfilePointCount,
+        size: 1,
+        start_address: 1390,
+    },
+    PointDetails {
+        point: |()| Point::VoltageScaleFactor,
+        size: 1,
+        start_address: 1391,
+    },
+    PointDetails {
+        point: |()| Point::CurrentScaleFactor,
+        size: 1,
+        start_address: 1392,
+    },
+    PointDetails {
+        point: |()| Point::TimeScaleFactor,
+        size: 1,
+        start_address: 1393,
+    },
+    PointDetails {
+        point: |()| Point::FrequencyScaleFactor,
+        size: 1,
+        start_address: 1394,
+    },
+    PointDetails {
+        point: |()| Point::FrequencySlewRateScaleFactor,
+        size: 1,
+        start_address: 1395,
+    },
+    PointDetails {
+        point: |()| Point::VoltageSlewRateScaleFactor,
+        size: 1,
+        start_address: 1396,
+    },
+    PointDetails {
+        point: |()| Point::ThdScaleFactor,
+        size: 1,
+        start_address: 1397,
+    },
+];
+
+static PROF_POINTS: [PointDetails<u16>; 2] = [
+    PointDetails {
+        point: |prof_index| Point::ProfProfileName { prof_index },
+        size: 32,
+        start_address: 0,
+    },
+    PointDetails {
+        point: |prof_index| Point::ProfActivePoints { prof_index },
+        size: 1,
+        start_address: 32,
+    },
+];
+
+static PT_POINTS: [PointDetails<(u16, u16)>; 8] = [
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtProfileTime {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageThdPhaseB,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtVoltagePoint {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageThdPhaseC,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtVoltagePointPhaseB {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentThdPhaseA,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtVoltagePointPhaseC {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentThdPhaseB,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtFrequencyPoint {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentThdPhaseC,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtPhaseAngleA {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::EnableProfile,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtPhaseAngleB {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ProfileResult,
+    PointDetails {
+        point: |(prof_index, pt_index)| Point::PtPhaseAngleC {
+            prof_index,
+            pt_index,
         },
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::StoredProfileCount,
-        },
-        size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::MaxProfilePointCount,
-        },
-        size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::CurrentScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::TimeScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::FrequencyScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::FrequencySlewRateScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::VoltageSlewRateScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
-    },
-    ReadablePoint {
-        reference: PointReference::Model64411 {
-            point: Point::ThdScaleFactor,
-        },
-        size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 7,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     ActivePhases,
     PhaseAngle,
@@ -469,8 +401,69 @@ pub enum Point {
     PtPhaseAngleC { prof_index: u16, pt_index: u16 },
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     1398 + model.stored_profile_count() * (33 + model.max_profile_point_count() * (8))
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    let pt_count = model.max_profile_point_count();
+    let pt_size = 8;
+
+    let prof_count = model.stored_profile_count();
+    let prof_size = 33 + pt_count * pt_size;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .chain((0..prof_count).flat_map(move |prof_index| {
+            let prof_address = 1398 + prof_index * prof_size;
+            PROF_POINTS
+                .iter()
+                .map(move |p| {
+                    (
+                        prof_address + p.start_address,
+                        p.size,
+                        (p.point)(prof_index),
+                    )
+                })
+                .chain((0..pt_count).flat_map(move |pt_index| {
+                    let pt_address = prof_address + pt_index * pt_size;
+                    PT_POINTS.iter().map(move |p| {
+                        (
+                            pt_address + p.start_address,
+                            p.size,
+                            (p.point)((prof_index, pt_index)),
+                        )
+                    })
+                }))
+        }))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -481,6 +474,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(64411, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

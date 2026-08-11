@@ -1,109 +1,113 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 14;
 
-pub static POINTS: [ReadablePoint; 12] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 711 },
+static POINTS: [PointDetails<()>; 12] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::DerFrequencyDroopModuleEnable,
-        },
+    PointDetails {
+        point: |()| Point::DerFrequencyDroopModuleEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::ActiveControlRequest,
-        },
+    PointDetails {
+        point: |()| Point::ActiveControlRequest,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::SetActiveControlResult,
-        },
+    PointDetails {
+        point: |()| Point::SetActiveControlResult,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::StoredControlCount,
-        },
+    PointDetails {
+        point: |()| Point::StoredControlCount,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::ReversionTimeout,
-        },
+    PointDetails {
+        point: |()| Point::ReversionTimeout,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::ReversionTimeLeft,
-        },
+    PointDetails {
+        point: |()| Point::ReversionTimeLeft,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::ReversionControl,
-        },
+    PointDetails {
+        point: |()| Point::ReversionControl,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::DeadbandScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::DeadbandScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::FrequencyChangeScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::FrequencyChangeScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model711 {
-            point: Point::OpenLoopScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::OpenLoopScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 13,
+    },
+];
+
+static CTL_POINTS: [PointDetails<u16>; 7] = [
+    PointDetails {
+        point: |ctl_index| Point::CtlOverFrequencyDeadband { ctl_index },
+        size: 2,
+        start_address: 0,
+    },
+    PointDetails {
+        point: |ctl_index| Point::CtlUnderFrequencyDeadband { ctl_index },
+        size: 2,
+        start_address: 2,
+    },
+    PointDetails {
+        point: |ctl_index| Point::CtlOverFrequencyChangeRatio { ctl_index },
+        size: 1,
+        start_address: 4,
+    },
+    PointDetails {
+        point: |ctl_index| Point::CtlUnderFrequencyChangeRatio { ctl_index },
+        size: 1,
+        start_address: 5,
+    },
+    PointDetails {
+        point: |ctl_index| Point::CtlOpenLoopResponseTime { ctl_index },
+        size: 2,
+        start_address: 6,
+    },
+    PointDetails {
+        point: |ctl_index| Point::CtlMinimumActivePower { ctl_index },
+        size: 1,
+        start_address: 8,
+    },
+    PointDetails {
+        point: |ctl_index| Point::CtlControlAccess { ctl_index },
+        size: 1,
+        start_address: 9,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     DerFrequencyDroopModuleEnable,
     ActiveControlRequest,
@@ -124,8 +128,50 @@ pub enum Point {
     CtlControlAccess { ctl_index: u16 },
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     14 + model.stored_control_count() * (10)
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    let ctl_count = model.stored_control_count();
+    let ctl_size = 10;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .chain((0..ctl_count).flat_map(move |ctl_index| {
+            let ctl_address = 14 + ctl_index * ctl_size;
+            CTL_POINTS
+                .iter()
+                .map(move |p| (ctl_address + p.start_address, p.size, (p.point)(ctl_index)))
+        }))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -136,6 +182,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(711, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

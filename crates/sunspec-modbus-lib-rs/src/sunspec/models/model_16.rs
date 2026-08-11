@@ -1,107 +1,80 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 54;
 
-pub static POINTS: [ReadablePoint; 13] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 16 },
+static POINTS: [PointDetails<()>; 13] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 { point: Point::Name },
+    PointDetails {
+        point: |()| Point::Name,
         size: 4,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Config,
-        },
+    PointDetails {
+        point: |()| Point::Config,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Control,
-        },
+    PointDetails {
+        point: |()| Point::Control,
         size: 1,
-        data_type: PointType::Bitfield16,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Address,
-        },
+    PointDetails {
+        point: |()| Point::Address,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Netmask,
-        },
+    PointDetails {
+        point: |()| Point::Netmask,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::Gateway,
-        },
+    PointDetails {
+        point: |()| Point::Gateway,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 { point: Point::Dns1 },
+    PointDetails {
+        point: |()| Point::Dns1,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 32,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 { point: Point::Dns2 },
+    PointDetails {
+        point: |()| Point::Dns2,
         size: 8,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 { point: Point::Mac },
+    PointDetails {
+        point: |()| Point::Mac,
         size: 4,
-        data_type: PointType::Eui48,
-        writeable: false,
+        start_address: 48,
     },
-    ReadablePoint {
-        reference: PointReference::Model16 {
-            point: Point::LinkControl,
-        },
+    PointDetails {
+        point: |()| Point::LinkControl,
         size: 1,
-        data_type: PointType::Bitfield16,
-        writeable: true,
+        start_address: 52,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 0 },
+    PointDetails {
+        point: |()| Point::Pad,
         size: 1,
-        data_type: PointType::Pad,
-        writeable: false,
+        start_address: 53,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     Name,
     Config,
@@ -113,10 +86,44 @@ pub enum Point {
     Dns2,
     Mac,
     LinkControl,
+    Pad,
+}
+
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     54
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -127,6 +134,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(16, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }
@@ -183,6 +193,9 @@ pub fn write_point<'a>(
             } else {
                 buffer::zero(buffer, offset);
             }
+        }
+        Point::Pad => {
+            buffer::write_u16(0, buffer);
         }
     }
 }

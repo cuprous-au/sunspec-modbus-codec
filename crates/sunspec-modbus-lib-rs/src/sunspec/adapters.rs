@@ -1,21 +1,20 @@
-use crate::buffer::{write_u16, ModbusBuffer};
+use crate::buffer::{ModbusBuffer, write_string, write_u16};
+use crate::cursor::Cursor;
 use crate::sunspec::models::{
-    model_1, model_10, model_101, model_102, model_103, model_11, model_111, model_112, model_113,
-    model_12, model_120, model_121, model_122, model_123, model_124, model_125, model_126,
-    model_127, model_128, model_129, model_13, model_130, model_131, model_132, model_133,
-    model_134, model_135, model_136, model_137, model_138, model_139, model_140, model_141,
-    model_142, model_143, model_144, model_145, model_15, model_16, model_160, model_17, model_18,
-    model_19, model_2, model_201, model_202, model_203, model_204, model_211, model_212, model_213,
-    model_214, model_220, model_3, model_305, model_306, model_307, model_308, model_4, model_401,
-    model_402, model_403, model_404, model_5, model_501, model_502, model_6, model_63001,
+    model_1, model_2, model_3, model_4, model_5, model_6, model_7, model_8, model_10, model_11,
+    model_12, model_13, model_15, model_16, model_17, model_18, model_19, model_101, model_102,
+    model_103, model_111, model_112, model_113, model_120, model_121, model_122, model_123,
+    model_124, model_125, model_126, model_127, model_128, model_129, model_130, model_131,
+    model_132, model_133, model_134, model_135, model_136, model_137, model_138, model_139,
+    model_140, model_141, model_142, model_143, model_144, model_145, model_160, model_201,
+    model_202, model_203, model_204, model_211, model_212, model_213, model_214, model_220,
+    model_305, model_306, model_307, model_308, model_401, model_402, model_403, model_404,
+    model_501, model_502, model_701, model_703, model_704, model_705, model_706, model_707,
+    model_708, model_709, model_710, model_711, model_712, model_713, model_714, model_715,
+    model_801, model_802, model_805, model_806, model_807, model_808, model_809, model_63001,
     model_64001, model_64020, model_64101, model_64111, model_64112, model_64410, model_64411,
-    model_64412, model_64413, model_64414, model_64415, model_7, model_701, model_703, model_704,
-    model_705, model_706, model_707, model_708, model_709, model_710, model_711, model_712,
-    model_713, model_714, model_715, model_8, model_801, model_802, model_803, model_804,
-    model_805, model_806, model_807, model_808, model_809,
+    model_64412, model_64413, model_64414, model_64415,
 };
-use crate::sunspec::points::PointReference;
-use crate::ReadablePoint;
 
 pub trait SunspecAdapterProvider<'a> {
     fn model_1_adapter(&self) -> Option<&'a dyn model_1::ModelAdapter>;
@@ -188,10 +187,6 @@ pub trait SunspecAdapterProvider<'a> {
 
     fn model_802_adapter(&self) -> Option<&'a dyn model_802::ModelAdapter>;
 
-    fn model_803_adapter(&self) -> Option<&'a dyn model_803::ModelAdapter>;
-
-    fn model_804_adapter(&self) -> Option<&'a dyn model_804::ModelAdapter>;
-
     fn model_805_adapter(&self) -> Option<&'a dyn model_805::ModelAdapter>;
 
     fn model_806_adapter(&self) -> Option<&'a dyn model_806::ModelAdapter>;
@@ -314,8 +309,6 @@ pub struct SunspecAdapters<'a> {
     pub model_715_adapter: Option<&'a dyn model_715::ModelAdapter>,
     pub model_801_adapter: Option<&'a dyn model_801::ModelAdapter>,
     pub model_802_adapter: Option<&'a dyn model_802::ModelAdapter>,
-    pub model_803_adapter: Option<&'a dyn model_803::ModelAdapter>,
-    pub model_804_adapter: Option<&'a dyn model_804::ModelAdapter>,
     pub model_805_adapter: Option<&'a dyn model_805::ModelAdapter>,
     pub model_806_adapter: Option<&'a dyn model_806::ModelAdapter>,
     pub model_807_adapter: Option<&'a dyn model_807::ModelAdapter>,
@@ -676,14 +669,6 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecAdapters<'a> {
         self.model_802_adapter
     }
 
-    fn model_803_adapter(&self) -> Option<&'a dyn model_803::ModelAdapter> {
-        self.model_803_adapter
-    }
-
-    fn model_804_adapter(&self) -> Option<&'a dyn model_804::ModelAdapter> {
-        self.model_804_adapter
-    }
-
     fn model_805_adapter(&self) -> Option<&'a dyn model_805::ModelAdapter> {
         self.model_805_adapter
     }
@@ -916,8 +901,6 @@ pub struct SunspecExternalAdapters<'a> {
     pub model_801_stateful_adapter: Option<&'a model_801::Model801StatefulAdapter>,
     pub model_802_callback_adapter: Option<&'a model_802::Model802CallbackAdapter>,
     pub model_802_stateful_adapter: Option<&'a model_802::Model802StatefulAdapter>,
-    pub model_803_callback_adapter: Option<&'a model_803::Model803CallbackAdapter>,
-    pub model_804_callback_adapter: Option<&'a model_804::Model804CallbackAdapter>,
     pub model_805_callback_adapter: Option<&'a model_805::Model805CallbackAdapter>,
     pub model_805_stateful_adapter: Option<&'a model_805::Model805StatefulAdapter>,
     pub model_806_callback_adapter: Option<&'a model_806::Model806CallbackAdapter>,
@@ -1605,16 +1588,6 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
                 .map(|a| a as &'a dyn model_802::ModelAdapter))
     }
 
-    fn model_803_adapter(&self) -> Option<&'a dyn model_803::ModelAdapter> {
-        self.model_803_callback_adapter
-            .map(|a| a as &'a dyn model_803::ModelAdapter)
-    }
-
-    fn model_804_adapter(&self) -> Option<&'a dyn model_804::ModelAdapter> {
-        self.model_804_callback_adapter
-            .map(|a| a as &'a dyn model_804::ModelAdapter)
-    }
-
     fn model_805_adapter(&self) -> Option<&'a dyn model_805::ModelAdapter> {
         self.model_805_callback_adapter
             .map(|a| a as &'a dyn model_805::ModelAdapter)
@@ -1743,1687 +1716,735 @@ impl<'a> SunspecAdapterProvider<'a> for SunspecExternalAdapters<'a> {
     }
 }
 
-pub fn points_array_and_offset<'a>(
+pub fn read_into_buffer<'a, 'b>(
     adapters: &'a dyn SunspecAdapterProvider<'a>,
-    address: u16,
-) -> Option<(&'a [ReadablePoint], u16)> {
-    let mut offset = address;
-    if offset < 2 {
-        return Some((&crate::HEADER_POINTS as &'a [ReadablePoint], offset));
-    } else {
-        offset -= 2;
-    };
-    if adapters.model_1_adapter().is_some() {
-        if offset < model_1::SIZE {
-            return Some((&model_1::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_1::SIZE;
-        }
-    }
-    if adapters.model_2_adapter().is_some() {
-        if offset < model_2::SIZE {
-            return Some((&model_2::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_2::SIZE;
-        }
-    }
-    if adapters.model_3_adapter().is_some() {
-        if offset < model_3::SIZE {
-            return Some((&model_3::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_3::SIZE;
-        }
-    }
-    if adapters.model_4_adapter().is_some() {
-        if offset < model_4::SIZE {
-            return Some((&model_4::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_4::SIZE;
-        }
-    }
-    if adapters.model_5_adapter().is_some() {
-        if offset < model_5::SIZE {
-            return Some((&model_5::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_5::SIZE;
-        }
-    }
-    if adapters.model_6_adapter().is_some() {
-        if offset < model_6::SIZE {
-            return Some((&model_6::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_6::SIZE;
-        }
-    }
-    if adapters.model_7_adapter().is_some() {
-        if offset < model_7::SIZE {
-            return Some((&model_7::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_7::SIZE;
-        }
-    }
-    if adapters.model_8_adapter().is_some() {
-        if offset < model_8::SIZE {
-            return Some((&model_8::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_8::SIZE;
-        }
-    }
-    if adapters.model_10_adapter().is_some() {
-        if offset < model_10::SIZE {
-            return Some((&model_10::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_10::SIZE;
-        }
-    }
-    if adapters.model_11_adapter().is_some() {
-        if offset < model_11::SIZE {
-            return Some((&model_11::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_11::SIZE;
-        }
-    }
-    if adapters.model_12_adapter().is_some() {
-        if offset < model_12::SIZE {
-            return Some((&model_12::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_12::SIZE;
-        }
-    }
-    if adapters.model_13_adapter().is_some() {
-        if offset < model_13::SIZE {
-            return Some((&model_13::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_13::SIZE;
-        }
-    }
-    if adapters.model_15_adapter().is_some() {
-        if offset < model_15::SIZE {
-            return Some((&model_15::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_15::SIZE;
-        }
-    }
-    if adapters.model_16_adapter().is_some() {
-        if offset < model_16::SIZE {
-            return Some((&model_16::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_16::SIZE;
-        }
-    }
-    if adapters.model_17_adapter().is_some() {
-        if offset < model_17::SIZE {
-            return Some((&model_17::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_17::SIZE;
-        }
-    }
-    if adapters.model_18_adapter().is_some() {
-        if offset < model_18::SIZE {
-            return Some((&model_18::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_18::SIZE;
-        }
-    }
-    if adapters.model_19_adapter().is_some() {
-        if offset < model_19::SIZE {
-            return Some((&model_19::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_19::SIZE;
-        }
-    }
-    if adapters.model_101_adapter().is_some() {
-        if offset < model_101::SIZE {
-            return Some((&model_101::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_101::SIZE;
-        }
-    }
-    if adapters.model_102_adapter().is_some() {
-        if offset < model_102::SIZE {
-            return Some((&model_102::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_102::SIZE;
-        }
-    }
-    if adapters.model_103_adapter().is_some() {
-        if offset < model_103::SIZE {
-            return Some((&model_103::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_103::SIZE;
-        }
-    }
-    if adapters.model_111_adapter().is_some() {
-        if offset < model_111::SIZE {
-            return Some((&model_111::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_111::SIZE;
-        }
-    }
-    if adapters.model_112_adapter().is_some() {
-        if offset < model_112::SIZE {
-            return Some((&model_112::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_112::SIZE;
-        }
-    }
-    if adapters.model_113_adapter().is_some() {
-        if offset < model_113::SIZE {
-            return Some((&model_113::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_113::SIZE;
-        }
-    }
-    if adapters.model_120_adapter().is_some() {
-        if offset < model_120::SIZE {
-            return Some((&model_120::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_120::SIZE;
-        }
-    }
-    if adapters.model_121_adapter().is_some() {
-        if offset < model_121::SIZE {
-            return Some((&model_121::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_121::SIZE;
-        }
-    }
-    if adapters.model_122_adapter().is_some() {
-        if offset < model_122::SIZE {
-            return Some((&model_122::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_122::SIZE;
-        }
-    }
-    if adapters.model_123_adapter().is_some() {
-        if offset < model_123::SIZE {
-            return Some((&model_123::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_123::SIZE;
-        }
-    }
-    if adapters.model_124_adapter().is_some() {
-        if offset < model_124::SIZE {
-            return Some((&model_124::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_124::SIZE;
-        }
-    }
-    if adapters.model_125_adapter().is_some() {
-        if offset < model_125::SIZE {
-            return Some((&model_125::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_125::SIZE;
-        }
-    }
-    if adapters.model_126_adapter().is_some() {
-        if offset < model_126::SIZE {
-            return Some((&model_126::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_126::SIZE;
-        }
-    }
-    if adapters.model_127_adapter().is_some() {
-        if offset < model_127::SIZE {
-            return Some((&model_127::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_127::SIZE;
-        }
-    }
-    if adapters.model_128_adapter().is_some() {
-        if offset < model_128::SIZE {
-            return Some((&model_128::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_128::SIZE;
-        }
-    }
-    if adapters.model_129_adapter().is_some() {
-        if offset < model_129::SIZE {
-            return Some((&model_129::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_129::SIZE;
-        }
-    }
-    if adapters.model_130_adapter().is_some() {
-        if offset < model_130::SIZE {
-            return Some((&model_130::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_130::SIZE;
-        }
-    }
-    if adapters.model_131_adapter().is_some() {
-        if offset < model_131::SIZE {
-            return Some((&model_131::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_131::SIZE;
-        }
-    }
-    if adapters.model_132_adapter().is_some() {
-        if offset < model_132::SIZE {
-            return Some((&model_132::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_132::SIZE;
-        }
-    }
-    if adapters.model_133_adapter().is_some() {
-        if offset < model_133::SIZE {
-            return Some((&model_133::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_133::SIZE;
-        }
-    }
-    if adapters.model_134_adapter().is_some() {
-        if offset < model_134::SIZE {
-            return Some((&model_134::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_134::SIZE;
-        }
-    }
-    if adapters.model_135_adapter().is_some() {
-        if offset < model_135::SIZE {
-            return Some((&model_135::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_135::SIZE;
-        }
-    }
-    if adapters.model_136_adapter().is_some() {
-        if offset < model_136::SIZE {
-            return Some((&model_136::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_136::SIZE;
-        }
-    }
-    if adapters.model_137_adapter().is_some() {
-        if offset < model_137::SIZE {
-            return Some((&model_137::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_137::SIZE;
-        }
-    }
-    if adapters.model_138_adapter().is_some() {
-        if offset < model_138::SIZE {
-            return Some((&model_138::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_138::SIZE;
-        }
-    }
-    if adapters.model_139_adapter().is_some() {
-        if offset < model_139::SIZE {
-            return Some((&model_139::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_139::SIZE;
-        }
-    }
-    if adapters.model_140_adapter().is_some() {
-        if offset < model_140::SIZE {
-            return Some((&model_140::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_140::SIZE;
-        }
-    }
-    if adapters.model_141_adapter().is_some() {
-        if offset < model_141::SIZE {
-            return Some((&model_141::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_141::SIZE;
-        }
-    }
-    if adapters.model_142_adapter().is_some() {
-        if offset < model_142::SIZE {
-            return Some((&model_142::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_142::SIZE;
-        }
-    }
-    if adapters.model_143_adapter().is_some() {
-        if offset < model_143::SIZE {
-            return Some((&model_143::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_143::SIZE;
-        }
-    }
-    if adapters.model_144_adapter().is_some() {
-        if offset < model_144::SIZE {
-            return Some((&model_144::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_144::SIZE;
-        }
-    }
-    if adapters.model_145_adapter().is_some() {
-        if offset < model_145::SIZE {
-            return Some((&model_145::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_145::SIZE;
-        }
-    }
-    if adapters.model_160_adapter().is_some() {
-        if offset < model_160::SIZE {
-            return Some((&model_160::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_160::SIZE;
-        }
-    }
-    if adapters.model_201_adapter().is_some() {
-        if offset < model_201::SIZE {
-            return Some((&model_201::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_201::SIZE;
-        }
-    }
-    if adapters.model_202_adapter().is_some() {
-        if offset < model_202::SIZE {
-            return Some((&model_202::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_202::SIZE;
-        }
-    }
-    if adapters.model_203_adapter().is_some() {
-        if offset < model_203::SIZE {
-            return Some((&model_203::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_203::SIZE;
-        }
-    }
-    if adapters.model_204_adapter().is_some() {
-        if offset < model_204::SIZE {
-            return Some((&model_204::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_204::SIZE;
-        }
-    }
-    if adapters.model_211_adapter().is_some() {
-        if offset < model_211::SIZE {
-            return Some((&model_211::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_211::SIZE;
-        }
-    }
-    if adapters.model_212_adapter().is_some() {
-        if offset < model_212::SIZE {
-            return Some((&model_212::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_212::SIZE;
-        }
-    }
-    if adapters.model_213_adapter().is_some() {
-        if offset < model_213::SIZE {
-            return Some((&model_213::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_213::SIZE;
-        }
-    }
-    if adapters.model_214_adapter().is_some() {
-        if offset < model_214::SIZE {
-            return Some((&model_214::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_214::SIZE;
-        }
-    }
-    if adapters.model_220_adapter().is_some() {
-        if offset < model_220::SIZE {
-            return Some((&model_220::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_220::SIZE;
-        }
-    }
-    if adapters.model_305_adapter().is_some() {
-        if offset < model_305::SIZE {
-            return Some((&model_305::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_305::SIZE;
-        }
-    }
-    if adapters.model_306_adapter().is_some() {
-        if offset < model_306::SIZE {
-            return Some((&model_306::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_306::SIZE;
-        }
-    }
-    if adapters.model_307_adapter().is_some() {
-        if offset < model_307::SIZE {
-            return Some((&model_307::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_307::SIZE;
-        }
-    }
-    if adapters.model_308_adapter().is_some() {
-        if offset < model_308::SIZE {
-            return Some((&model_308::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_308::SIZE;
-        }
-    }
-    if adapters.model_401_adapter().is_some() {
-        if offset < model_401::SIZE {
-            return Some((&model_401::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_401::SIZE;
-        }
-    }
-    if adapters.model_402_adapter().is_some() {
-        if offset < model_402::SIZE {
-            return Some((&model_402::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_402::SIZE;
-        }
-    }
-    if adapters.model_403_adapter().is_some() {
-        if offset < model_403::SIZE {
-            return Some((&model_403::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_403::SIZE;
-        }
-    }
-    if adapters.model_404_adapter().is_some() {
-        if offset < model_404::SIZE {
-            return Some((&model_404::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_404::SIZE;
-        }
-    }
-    if adapters.model_501_adapter().is_some() {
-        if offset < model_501::SIZE {
-            return Some((&model_501::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_501::SIZE;
-        }
-    }
-    if adapters.model_502_adapter().is_some() {
-        if offset < model_502::SIZE {
-            return Some((&model_502::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_502::SIZE;
-        }
-    }
-    if adapters.model_701_adapter().is_some() {
-        if offset < model_701::SIZE {
-            return Some((&model_701::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_701::SIZE;
-        }
-    }
-    if adapters.model_703_adapter().is_some() {
-        if offset < model_703::SIZE {
-            return Some((&model_703::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_703::SIZE;
-        }
-    }
-    if adapters.model_704_adapter().is_some() {
-        if offset < model_704::SIZE {
-            return Some((&model_704::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_704::SIZE;
-        }
-    }
-    if adapters.model_705_adapter().is_some() {
-        if offset < model_705::SIZE {
-            return Some((&model_705::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_705::SIZE;
-        }
-    }
-    if adapters.model_706_adapter().is_some() {
-        if offset < model_706::SIZE {
-            return Some((&model_706::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_706::SIZE;
-        }
-    }
-    if adapters.model_707_adapter().is_some() {
-        if offset < model_707::SIZE {
-            return Some((&model_707::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_707::SIZE;
-        }
-    }
-    if adapters.model_708_adapter().is_some() {
-        if offset < model_708::SIZE {
-            return Some((&model_708::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_708::SIZE;
-        }
-    }
-    if adapters.model_709_adapter().is_some() {
-        if offset < model_709::SIZE {
-            return Some((&model_709::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_709::SIZE;
-        }
-    }
-    if adapters.model_710_adapter().is_some() {
-        if offset < model_710::SIZE {
-            return Some((&model_710::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_710::SIZE;
-        }
-    }
-    if adapters.model_711_adapter().is_some() {
-        if offset < model_711::SIZE {
-            return Some((&model_711::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_711::SIZE;
-        }
-    }
-    if adapters.model_712_adapter().is_some() {
-        if offset < model_712::SIZE {
-            return Some((&model_712::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_712::SIZE;
-        }
-    }
-    if adapters.model_713_adapter().is_some() {
-        if offset < model_713::SIZE {
-            return Some((&model_713::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_713::SIZE;
-        }
-    }
-    if adapters.model_714_adapter().is_some() {
-        if offset < model_714::SIZE {
-            return Some((&model_714::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_714::SIZE;
-        }
-    }
-    if adapters.model_715_adapter().is_some() {
-        if offset < model_715::SIZE {
-            return Some((&model_715::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_715::SIZE;
-        }
-    }
-    if adapters.model_801_adapter().is_some() {
-        if offset < model_801::SIZE {
-            return Some((&model_801::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_801::SIZE;
-        }
-    }
-    if adapters.model_802_adapter().is_some() {
-        if offset < model_802::SIZE {
-            return Some((&model_802::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_802::SIZE;
-        }
-    }
-    if adapters.model_803_adapter().is_some() {
-        if offset < model_803::SIZE {
-            return Some((&model_803::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_803::SIZE;
-        }
-    }
-    if adapters.model_804_adapter().is_some() {
-        if offset < model_804::SIZE {
-            return Some((&model_804::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_804::SIZE;
-        }
-    }
-    if adapters.model_805_adapter().is_some() {
-        if offset < model_805::SIZE {
-            return Some((&model_805::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_805::SIZE;
-        }
-    }
-    if adapters.model_806_adapter().is_some() {
-        if offset < model_806::SIZE {
-            return Some((&model_806::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_806::SIZE;
-        }
-    }
-    if adapters.model_807_adapter().is_some() {
-        if offset < model_807::SIZE {
-            return Some((&model_807::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_807::SIZE;
-        }
-    }
-    if adapters.model_808_adapter().is_some() {
-        if offset < model_808::SIZE {
-            return Some((&model_808::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_808::SIZE;
-        }
-    }
-    if adapters.model_809_adapter().is_some() {
-        if offset < model_809::SIZE {
-            return Some((&model_809::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_809::SIZE;
-        }
-    }
-    if adapters.model_63001_adapter().is_some() {
-        if offset < model_63001::SIZE {
-            return Some((&model_63001::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_63001::SIZE;
-        }
-    }
-    if adapters.model_64001_adapter().is_some() {
-        if offset < model_64001::SIZE {
-            return Some((&model_64001::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64001::SIZE;
-        }
-    }
-    if adapters.model_64020_adapter().is_some() {
-        if offset < model_64020::SIZE {
-            return Some((&model_64020::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64020::SIZE;
-        }
-    }
-    if adapters.model_64101_adapter().is_some() {
-        if offset < model_64101::SIZE {
-            return Some((&model_64101::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64101::SIZE;
-        }
-    }
-    if adapters.model_64111_adapter().is_some() {
-        if offset < model_64111::SIZE {
-            return Some((&model_64111::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64111::SIZE;
-        }
-    }
-    if adapters.model_64112_adapter().is_some() {
-        if offset < model_64112::SIZE {
-            return Some((&model_64112::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64112::SIZE;
-        }
-    }
-    if adapters.model_64410_adapter().is_some() {
-        if offset < model_64410::SIZE {
-            return Some((&model_64410::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64410::SIZE;
-        }
-    }
-    if adapters.model_64411_adapter().is_some() {
-        if offset < model_64411::SIZE {
-            return Some((&model_64411::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64411::SIZE;
-        }
-    }
-    if adapters.model_64412_adapter().is_some() {
-        if offset < model_64412::SIZE {
-            return Some((&model_64412::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64412::SIZE;
-        }
-    }
-    if adapters.model_64413_adapter().is_some() {
-        if offset < model_64413::SIZE {
-            return Some((&model_64413::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64413::SIZE;
-        }
-    }
-    if adapters.model_64414_adapter().is_some() {
-        if offset < model_64414::SIZE {
-            return Some((&model_64414::POINTS as &'a [ReadablePoint], offset));
-        } else {
-            offset -= model_64414::SIZE;
-        }
-    }
-    if adapters.model_64415_adapter().is_some() && offset < model_64415::SIZE {
-        return Some((&model_64415::POINTS as &'a [ReadablePoint], offset));
-    }
-    None
-}
-
-pub fn write_point<'a, 'b>(
-    adapters: &'a dyn SunspecAdapterProvider<'a>,
-    point_ref: &PointReference,
-    buffer: ModbusBuffer<'b>,
+    buffer: &'b mut ModbusBuffer<'b>,
     offset: u16,
     limit: u16,
-) {
-    match point_ref {
-        PointReference::Static { value } => write_u16(*value, buffer),
-        PointReference::Model1 { point } => {
-            model_1::write_point(
-                adapters.model_1_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model2 { point } => {
-            model_2::write_point(
-                adapters.model_2_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model3 { point } => {
-            model_3::write_point(
-                adapters.model_3_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model4 { point } => {
-            model_4::write_point(
-                adapters.model_4_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model5 { point } => {
-            model_5::write_point(
-                adapters.model_5_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model6 { point } => {
-            model_6::write_point(
-                adapters.model_6_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model7 { point } => {
-            model_7::write_point(
-                adapters.model_7_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model8 { point } => {
-            model_8::write_point(
-                adapters.model_8_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model10 { point } => {
-            model_10::write_point(
-                adapters.model_10_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model11 { point } => {
-            model_11::write_point(
-                adapters.model_11_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model12 { point } => {
-            model_12::write_point(
-                adapters.model_12_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model13 { point } => {
-            model_13::write_point(
-                adapters.model_13_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model15 { point } => {
-            model_15::write_point(
-                adapters.model_15_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model16 { point } => {
-            model_16::write_point(
-                adapters.model_16_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model17 { point } => {
-            model_17::write_point(
-                adapters.model_17_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model18 { point } => {
-            model_18::write_point(
-                adapters.model_18_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model19 { point } => {
-            model_19::write_point(
-                adapters.model_19_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model101 { point } => {
-            model_101::write_point(
-                adapters.model_101_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model102 { point } => {
-            model_102::write_point(
-                adapters.model_102_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model103 { point } => {
-            model_103::write_point(
-                adapters.model_103_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model111 { point } => {
-            model_111::write_point(
-                adapters.model_111_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model112 { point } => {
-            model_112::write_point(
-                adapters.model_112_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model113 { point } => {
-            model_113::write_point(
-                adapters.model_113_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model120 { point } => {
-            model_120::write_point(
-                adapters.model_120_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model121 { point } => {
-            model_121::write_point(
-                adapters.model_121_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model122 { point } => {
-            model_122::write_point(
-                adapters.model_122_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model123 { point } => {
-            model_123::write_point(
-                adapters.model_123_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model124 { point } => {
-            model_124::write_point(
-                adapters.model_124_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model125 { point } => {
-            model_125::write_point(
-                adapters.model_125_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model126 { point } => {
-            model_126::write_point(
-                adapters.model_126_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model127 { point } => {
-            model_127::write_point(
-                adapters.model_127_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model128 { point } => {
-            model_128::write_point(
-                adapters.model_128_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model129 { point } => {
-            model_129::write_point(
-                adapters.model_129_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model130 { point } => {
-            model_130::write_point(
-                adapters.model_130_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model131 { point } => {
-            model_131::write_point(
-                adapters.model_131_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model132 { point } => {
-            model_132::write_point(
-                adapters.model_132_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model133 { point } => {
-            model_133::write_point(
-                adapters.model_133_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model134 { point } => {
-            model_134::write_point(
-                adapters.model_134_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model135 { point } => {
-            model_135::write_point(
-                adapters.model_135_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model136 { point } => {
-            model_136::write_point(
-                adapters.model_136_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model137 { point } => {
-            model_137::write_point(
-                adapters.model_137_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model138 { point } => {
-            model_138::write_point(
-                adapters.model_138_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model139 { point } => {
-            model_139::write_point(
-                adapters.model_139_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model140 { point } => {
-            model_140::write_point(
-                adapters.model_140_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model141 { point } => {
-            model_141::write_point(
-                adapters.model_141_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model142 { point } => {
-            model_142::write_point(
-                adapters.model_142_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model143 { point } => {
-            model_143::write_point(
-                adapters.model_143_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model144 { point } => {
-            model_144::write_point(
-                adapters.model_144_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model145 { point } => {
-            model_145::write_point(
-                adapters.model_145_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model160 { point } => {
-            model_160::write_point(
-                adapters.model_160_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model201 { point } => {
-            model_201::write_point(
-                adapters.model_201_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model202 { point } => {
-            model_202::write_point(
-                adapters.model_202_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model203 { point } => {
-            model_203::write_point(
-                adapters.model_203_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model204 { point } => {
-            model_204::write_point(
-                adapters.model_204_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model211 { point } => {
-            model_211::write_point(
-                adapters.model_211_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model212 { point } => {
-            model_212::write_point(
-                adapters.model_212_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model213 { point } => {
-            model_213::write_point(
-                adapters.model_213_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model214 { point } => {
-            model_214::write_point(
-                adapters.model_214_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model220 { point } => {
-            model_220::write_point(
-                adapters.model_220_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model305 { point } => {
-            model_305::write_point(
-                adapters.model_305_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model306 { point } => {
-            model_306::write_point(
-                adapters.model_306_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model307 { point } => {
-            model_307::write_point(
-                adapters.model_307_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model308 { point } => {
-            model_308::write_point(
-                adapters.model_308_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model401 { point } => {
-            model_401::write_point(
-                adapters.model_401_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model402 { point } => {
-            model_402::write_point(
-                adapters.model_402_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model403 { point } => {
-            model_403::write_point(
-                adapters.model_403_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model404 { point } => {
-            model_404::write_point(
-                adapters.model_404_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model501 { point } => {
-            model_501::write_point(
-                adapters.model_501_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model502 { point } => {
-            model_502::write_point(
-                adapters.model_502_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model701 { point } => {
-            model_701::write_point(
-                adapters.model_701_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model703 { point } => {
-            model_703::write_point(
-                adapters.model_703_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model704 { point } => {
-            model_704::write_point(
-                adapters.model_704_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model705 { point } => {
-            model_705::write_point(
-                adapters.model_705_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model706 { point } => {
-            model_706::write_point(
-                adapters.model_706_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model707 { point } => {
-            model_707::write_point(
-                adapters.model_707_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model708 { point } => {
-            model_708::write_point(
-                adapters.model_708_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model709 { point } => {
-            model_709::write_point(
-                adapters.model_709_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model710 { point } => {
-            model_710::write_point(
-                adapters.model_710_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model711 { point } => {
-            model_711::write_point(
-                adapters.model_711_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model712 { point } => {
-            model_712::write_point(
-                adapters.model_712_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model713 { point } => {
-            model_713::write_point(
-                adapters.model_713_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model714 { point } => {
-            model_714::write_point(
-                adapters.model_714_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model715 { point } => {
-            model_715::write_point(
-                adapters.model_715_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model801 { point } => {
-            model_801::write_point(
-                adapters.model_801_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model802 { point } => {
-            model_802::write_point(
-                adapters.model_802_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model803 { point } => {
-            model_803::write_point(
-                adapters.model_803_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model804 { point } => {
-            model_804::write_point(
-                adapters.model_804_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model805 { point } => {
-            model_805::write_point(
-                adapters.model_805_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model806 { point } => {
-            model_806::write_point(
-                adapters.model_806_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model807 { point } => {
-            model_807::write_point(
-                adapters.model_807_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model808 { point } => {
-            model_808::write_point(
-                adapters.model_808_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model809 { point } => {
-            model_809::write_point(
-                adapters.model_809_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model63001 { point } => {
-            model_63001::write_point(
-                adapters.model_63001_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64001 { point } => {
-            model_64001::write_point(
-                adapters.model_64001_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64020 { point } => {
-            model_64020::write_point(
-                adapters.model_64020_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64101 { point } => {
-            model_64101::write_point(
-                adapters.model_64101_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64111 { point } => {
-            model_64111::write_point(
-                adapters.model_64111_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64112 { point } => {
-            model_64112::write_point(
-                adapters.model_64112_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64410 { point } => {
-            model_64410::write_point(
-                adapters.model_64410_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64411 { point } => {
-            model_64411::write_point(
-                adapters.model_64411_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64412 { point } => {
-            model_64412::write_point(
-                adapters.model_64412_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64413 { point } => {
-            model_64413::write_point(
-                adapters.model_64413_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64414 { point } => {
-            model_64414::write_point(
-                adapters.model_64414_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-        PointReference::Model64415 { point } => {
-            model_64415::write_point(
-                adapters.model_64415_adapter().unwrap(),
-                point,
-                buffer,
-                offset,
-                limit,
-            );
-        }
-    }
+) -> Option<()> {
+    let mut cursor = Cursor {
+        source_offset: offset,
+        buffer_offset: 0,
+        limit,
+    };
+
+    cursor.handle_static_read(2, |offset, from, len| {
+        write_string(c"SunS", buffer.slice(from, len), offset, len)
+    })?;
+    cursor.handle_adapter_read(
+        adapters.model_1_adapter(),
+        model_1::model_length,
+        |adapter, offset, from, len| {
+            model_1::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_2_adapter(),
+        model_2::model_length,
+        |adapter, offset, from, len| {
+            model_2::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_3_adapter(),
+        model_3::model_length,
+        |adapter, offset, from, len| {
+            model_3::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_4_adapter(),
+        model_4::model_length,
+        |adapter, offset, from, len| {
+            model_4::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_5_adapter(),
+        model_5::model_length,
+        |adapter, offset, from, len| {
+            model_5::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_6_adapter(),
+        model_6::model_length,
+        |adapter, offset, from, len| {
+            model_6::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_7_adapter(),
+        model_7::model_length,
+        |adapter, offset, from, len| {
+            model_7::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_8_adapter(),
+        model_8::model_length,
+        |adapter, offset, from, len| {
+            model_8::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_10_adapter(),
+        model_10::model_length,
+        |adapter, offset, from, len| {
+            model_10::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_11_adapter(),
+        model_11::model_length,
+        |adapter, offset, from, len| {
+            model_11::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_12_adapter(),
+        model_12::model_length,
+        |adapter, offset, from, len| {
+            model_12::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_13_adapter(),
+        model_13::model_length,
+        |adapter, offset, from, len| {
+            model_13::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_15_adapter(),
+        model_15::model_length,
+        |adapter, offset, from, len| {
+            model_15::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_16_adapter(),
+        model_16::model_length,
+        |adapter, offset, from, len| {
+            model_16::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_17_adapter(),
+        model_17::model_length,
+        |adapter, offset, from, len| {
+            model_17::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_18_adapter(),
+        model_18::model_length,
+        |adapter, offset, from, len| {
+            model_18::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_19_adapter(),
+        model_19::model_length,
+        |adapter, offset, from, len| {
+            model_19::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_101_adapter(),
+        model_101::model_length,
+        |adapter, offset, from, len| {
+            model_101::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_102_adapter(),
+        model_102::model_length,
+        |adapter, offset, from, len| {
+            model_102::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_103_adapter(),
+        model_103::model_length,
+        |adapter, offset, from, len| {
+            model_103::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_111_adapter(),
+        model_111::model_length,
+        |adapter, offset, from, len| {
+            model_111::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_112_adapter(),
+        model_112::model_length,
+        |adapter, offset, from, len| {
+            model_112::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_113_adapter(),
+        model_113::model_length,
+        |adapter, offset, from, len| {
+            model_113::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_120_adapter(),
+        model_120::model_length,
+        |adapter, offset, from, len| {
+            model_120::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_121_adapter(),
+        model_121::model_length,
+        |adapter, offset, from, len| {
+            model_121::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_122_adapter(),
+        model_122::model_length,
+        |adapter, offset, from, len| {
+            model_122::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_123_adapter(),
+        model_123::model_length,
+        |adapter, offset, from, len| {
+            model_123::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_124_adapter(),
+        model_124::model_length,
+        |adapter, offset, from, len| {
+            model_124::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_125_adapter(),
+        model_125::model_length,
+        |adapter, offset, from, len| {
+            model_125::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_126_adapter(),
+        model_126::model_length,
+        |adapter, offset, from, len| {
+            model_126::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_127_adapter(),
+        model_127::model_length,
+        |adapter, offset, from, len| {
+            model_127::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_128_adapter(),
+        model_128::model_length,
+        |adapter, offset, from, len| {
+            model_128::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_129_adapter(),
+        model_129::model_length,
+        |adapter, offset, from, len| {
+            model_129::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_130_adapter(),
+        model_130::model_length,
+        |adapter, offset, from, len| {
+            model_130::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_131_adapter(),
+        model_131::model_length,
+        |adapter, offset, from, len| {
+            model_131::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_132_adapter(),
+        model_132::model_length,
+        |adapter, offset, from, len| {
+            model_132::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_133_adapter(),
+        model_133::model_length,
+        |adapter, offset, from, len| {
+            model_133::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_134_adapter(),
+        model_134::model_length,
+        |adapter, offset, from, len| {
+            model_134::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_135_adapter(),
+        model_135::model_length,
+        |adapter, offset, from, len| {
+            model_135::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_136_adapter(),
+        model_136::model_length,
+        |adapter, offset, from, len| {
+            model_136::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_137_adapter(),
+        model_137::model_length,
+        |adapter, offset, from, len| {
+            model_137::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_138_adapter(),
+        model_138::model_length,
+        |adapter, offset, from, len| {
+            model_138::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_139_adapter(),
+        model_139::model_length,
+        |adapter, offset, from, len| {
+            model_139::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_140_adapter(),
+        model_140::model_length,
+        |adapter, offset, from, len| {
+            model_140::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_141_adapter(),
+        model_141::model_length,
+        |adapter, offset, from, len| {
+            model_141::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_142_adapter(),
+        model_142::model_length,
+        |adapter, offset, from, len| {
+            model_142::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_143_adapter(),
+        model_143::model_length,
+        |adapter, offset, from, len| {
+            model_143::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_144_adapter(),
+        model_144::model_length,
+        |adapter, offset, from, len| {
+            model_144::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_145_adapter(),
+        model_145::model_length,
+        |adapter, offset, from, len| {
+            model_145::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_160_adapter(),
+        model_160::model_length,
+        |adapter, offset, from, len| {
+            model_160::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_201_adapter(),
+        model_201::model_length,
+        |adapter, offset, from, len| {
+            model_201::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_202_adapter(),
+        model_202::model_length,
+        |adapter, offset, from, len| {
+            model_202::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_203_adapter(),
+        model_203::model_length,
+        |adapter, offset, from, len| {
+            model_203::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_204_adapter(),
+        model_204::model_length,
+        |adapter, offset, from, len| {
+            model_204::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_211_adapter(),
+        model_211::model_length,
+        |adapter, offset, from, len| {
+            model_211::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_212_adapter(),
+        model_212::model_length,
+        |adapter, offset, from, len| {
+            model_212::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_213_adapter(),
+        model_213::model_length,
+        |adapter, offset, from, len| {
+            model_213::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_214_adapter(),
+        model_214::model_length,
+        |adapter, offset, from, len| {
+            model_214::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_220_adapter(),
+        model_220::model_length,
+        |adapter, offset, from, len| {
+            model_220::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_305_adapter(),
+        model_305::model_length,
+        |adapter, offset, from, len| {
+            model_305::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_306_adapter(),
+        model_306::model_length,
+        |adapter, offset, from, len| {
+            model_306::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_307_adapter(),
+        model_307::model_length,
+        |adapter, offset, from, len| {
+            model_307::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_308_adapter(),
+        model_308::model_length,
+        |adapter, offset, from, len| {
+            model_308::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_401_adapter(),
+        model_401::model_length,
+        |adapter, offset, from, len| {
+            model_401::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_402_adapter(),
+        model_402::model_length,
+        |adapter, offset, from, len| {
+            model_402::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_403_adapter(),
+        model_403::model_length,
+        |adapter, offset, from, len| {
+            model_403::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_404_adapter(),
+        model_404::model_length,
+        |adapter, offset, from, len| {
+            model_404::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_501_adapter(),
+        model_501::model_length,
+        |adapter, offset, from, len| {
+            model_501::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_502_adapter(),
+        model_502::model_length,
+        |adapter, offset, from, len| {
+            model_502::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_701_adapter(),
+        model_701::model_length,
+        |adapter, offset, from, len| {
+            model_701::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_703_adapter(),
+        model_703::model_length,
+        |adapter, offset, from, len| {
+            model_703::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_704_adapter(),
+        model_704::model_length,
+        |adapter, offset, from, len| {
+            model_704::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_705_adapter(),
+        model_705::model_length,
+        |adapter, offset, from, len| {
+            model_705::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_706_adapter(),
+        model_706::model_length,
+        |adapter, offset, from, len| {
+            model_706::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_707_adapter(),
+        model_707::model_length,
+        |adapter, offset, from, len| {
+            model_707::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_708_adapter(),
+        model_708::model_length,
+        |adapter, offset, from, len| {
+            model_708::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_709_adapter(),
+        model_709::model_length,
+        |adapter, offset, from, len| {
+            model_709::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_710_adapter(),
+        model_710::model_length,
+        |adapter, offset, from, len| {
+            model_710::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_711_adapter(),
+        model_711::model_length,
+        |adapter, offset, from, len| {
+            model_711::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_712_adapter(),
+        model_712::model_length,
+        |adapter, offset, from, len| {
+            model_712::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_713_adapter(),
+        model_713::model_length,
+        |adapter, offset, from, len| {
+            model_713::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_714_adapter(),
+        model_714::model_length,
+        |adapter, offset, from, len| {
+            model_714::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_715_adapter(),
+        model_715::model_length,
+        |adapter, offset, from, len| {
+            model_715::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_801_adapter(),
+        model_801::model_length,
+        |adapter, offset, from, len| {
+            model_801::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_802_adapter(),
+        model_802::model_length,
+        |adapter, offset, from, len| {
+            model_802::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_805_adapter(),
+        model_805::model_length,
+        |adapter, offset, from, len| {
+            model_805::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_806_adapter(),
+        model_806::model_length,
+        |adapter, offset, from, len| {
+            model_806::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_807_adapter(),
+        model_807::model_length,
+        |adapter, offset, from, len| {
+            model_807::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_808_adapter(),
+        model_808::model_length,
+        |adapter, offset, from, len| {
+            model_808::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_809_adapter(),
+        model_809::model_length,
+        |adapter, offset, from, len| {
+            model_809::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_63001_adapter(),
+        model_63001::model_length,
+        |adapter, offset, from, len| {
+            model_63001::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64001_adapter(),
+        model_64001::model_length,
+        |adapter, offset, from, len| {
+            model_64001::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64020_adapter(),
+        model_64020::model_length,
+        |adapter, offset, from, len| {
+            model_64020::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64101_adapter(),
+        model_64101::model_length,
+        |adapter, offset, from, len| {
+            model_64101::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64111_adapter(),
+        model_64111::model_length,
+        |adapter, offset, from, len| {
+            model_64111::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64112_adapter(),
+        model_64112::model_length,
+        |adapter, offset, from, len| {
+            model_64112::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64410_adapter(),
+        model_64410::model_length,
+        |adapter, offset, from, len| {
+            model_64410::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64411_adapter(),
+        model_64411::model_length,
+        |adapter, offset, from, len| {
+            model_64411::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64412_adapter(),
+        model_64412::model_length,
+        |adapter, offset, from, len| {
+            model_64412::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64413_adapter(),
+        model_64413::model_length,
+        |adapter, offset, from, len| {
+            model_64413::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64414_adapter(),
+        model_64414::model_length,
+        |adapter, offset, from, len| {
+            model_64414::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_adapter_read(
+        adapters.model_64415_adapter(),
+        model_64415::model_length,
+        |adapter, offset, from, len| {
+            model_64415::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len)
+        },
+    )?;
+    cursor.handle_static_read(1, |_, from, len| write_u16(0xffff, buffer.slice(from, len)))?;
+    Some(())
 }

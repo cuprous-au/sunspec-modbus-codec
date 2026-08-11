@@ -1,203 +1,140 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 25;
 
-pub static POINTS: [ReadablePoint; 25] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 64111 },
+static POINTS: [PointDetails<()>; 25] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::PortNumber,
-        },
+    PointDetails {
+        point: |()| Point::PortNumber,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 { point: Point::VSf },
+    PointDetails {
+        point: |()| Point::VSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 { point: Point::ASf },
+    PointDetails {
+        point: |()| Point::ASf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 { point: Point::PSf },
+    PointDetails {
+        point: |()| Point::PSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 { point: Point::AhSf },
+    PointDetails {
+        point: |()| Point::AhSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::KwhSf,
-        },
+    PointDetails {
+        point: |()| Point::KwhSf,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::BatteryVoltage,
-        },
+    PointDetails {
+        point: |()| Point::BatteryVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::ArrayVoltage,
-        },
+    PointDetails {
+        point: |()| Point::ArrayVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::OutputCurrent,
-        },
+    PointDetails {
+        point: |()| Point::OutputCurrent,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::ArrayCurrent,
-        },
+    PointDetails {
+        point: |()| Point::ArrayCurrent,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::OperatingState,
-        },
+    PointDetails {
+        point: |()| Point::OperatingState,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::OutputWattage,
-        },
+    PointDetails {
+        point: |()| Point::OutputWattage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::TodaySMinimumBatteryVoltage,
-        },
+    PointDetails {
+        point: |()| Point::TodaySMinimumBatteryVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::TodaySMaximumBatteryVoltage,
-        },
+    PointDetails {
+        point: |()| Point::TodaySMaximumBatteryVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 { point: Point::Voc },
+    PointDetails {
+        point: |()| Point::Voc,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::TodaySMaximumVoc,
-        },
+    PointDetails {
+        point: |()| Point::TodaySMaximumVoc,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::TodaySKWh,
-        },
+    PointDetails {
+        point: |()| Point::TodaySKWh,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::TodaySAh,
-        },
+    PointDetails {
+        point: |()| Point::TodaySAh,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::LifetimeKWh,
-        },
+    PointDetails {
+        point: |()| Point::LifetimeKWh,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::LifetimeKAh,
-        },
+    PointDetails {
+        point: |()| Point::LifetimeKAh,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::LifetimeMaximumOutputWattage,
-        },
+    PointDetails {
+        point: |()| Point::LifetimeMaximumOutputWattage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::LifetimeMaximumBatteryVoltage,
-        },
+    PointDetails {
+        point: |()| Point::LifetimeMaximumBatteryVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model64111 {
-            point: Point::LifetimeMaximumVocVoltage,
-        },
+    PointDetails {
+        point: |()| Point::LifetimeMaximumVocVoltage,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 24,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     PortNumber,
     VSf,
@@ -224,8 +161,41 @@ pub enum Point {
     LifetimeMaximumVocVoltage,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     25
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -236,6 +206,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(64111, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

@@ -1,101 +1,75 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 32;
 
-pub static POINTS: [ReadablePoint; 12] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 19 },
+static POINTS: [PointDetails<()>; 12] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Name },
+    PointDetails {
+        point: |()| Point::Name,
         size: 4,
-        data_type: PointType::String,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Rate },
+    PointDetails {
+        point: |()| Point::Rate,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 { point: Point::Bits },
+    PointDetails {
+        point: |()| Point::Bits,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::Parity,
-        },
+    PointDetails {
+        point: |()| Point::Parity,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::Duplex,
-        },
+    PointDetails {
+        point: |()| Point::Duplex,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::FlowControl,
-        },
+    PointDetails {
+        point: |()| Point::FlowControl,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::Authentication,
-        },
+    PointDetails {
+        point: |()| Point::Authentication,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::Username,
-        },
+    PointDetails {
+        point: |()| Point::Username,
         size: 12,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model19 {
-            point: Point::Password,
-        },
+    PointDetails {
+        point: |()| Point::Password,
         size: 6,
-        data_type: PointType::String,
-        writeable: false,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 0 },
+    PointDetails {
+        point: |()| Point::Pad,
         size: 1,
-        data_type: PointType::Pad,
-        writeable: false,
+        start_address: 31,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     Name,
     Rate,
@@ -106,10 +80,44 @@ pub enum Point {
     Authentication,
     Username,
     Password,
+    Pad,
+}
+
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     32
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -120,6 +128,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(19, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }
@@ -173,6 +184,9 @@ pub fn write_point<'a>(
             } else {
                 buffer::zero(buffer, offset);
             }
+        }
+        Point::Pad => {
+            buffer::write_u16(0, buffer);
         }
     }
 }

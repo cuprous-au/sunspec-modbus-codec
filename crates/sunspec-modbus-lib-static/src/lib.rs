@@ -1,9 +1,5 @@
 #![no_std]
-use core::{
-    ffi::c_char,
-    panic::PanicInfo,
-    slice,
-};
+use core::{ffi::c_char, panic::PanicInfo, slice};
 
 use sunspec_modbus_lib_rs::{
     ModbusRequest, handle_request, sunspec::adapters::SunspecExternalAdapters,

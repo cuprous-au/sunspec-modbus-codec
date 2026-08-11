@@ -1,373 +1,240 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 45;
 
-pub static POINTS: [ReadablePoint; 45] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 64412 },
+static POINTS: [PointDetails<()>; 45] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::DaManipulation,
-        },
+    PointDetails {
+        point: |()| Point::DaManipulation,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::FalsifyDeviceIdentity,
-        },
+    PointDetails {
+        point: |()| Point::FalsifyDeviceIdentity,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasPAlwaysNameplate,
-        },
+    PointDetails {
+        point: |()| Point::MeasPAlwaysNameplate,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasQAlwaysMinimum,
-        },
+    PointDetails {
+        point: |()| Point::MeasQAlwaysMinimum,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasQAlwaysMaximum,
-        },
+    PointDetails {
+        point: |()| Point::MeasQAlwaysMaximum,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasQAlwaysZero,
-        },
+    PointDetails {
+        point: |()| Point::MeasQAlwaysZero,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasZeroP,
-        },
+    PointDetails {
+        point: |()| Point::MeasZeroP,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasInvertQ,
-        },
+    PointDetails {
+        point: |()| Point::MeasInvertQ,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 9,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowV,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowV,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasHighV,
-        },
+    PointDetails {
+        point: |()| Point::MeasHighV,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowL1V,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowL1V,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasHighL1V,
-        },
+    PointDetails {
+        point: |()| Point::MeasHighL1V,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 13,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowF,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowF,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasHighF,
-        },
+    PointDetails {
+        point: |()| Point::MeasHighF,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowAmps,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowAmps,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasHighAmps,
-        },
+    PointDetails {
+        point: |()| Point::MeasHighAmps,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasHighS,
-        },
+    PointDetails {
+        point: |()| Point::MeasHighS,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowS,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowS,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 19,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasHighQ,
-        },
+    PointDetails {
+        point: |()| Point::MeasHighQ,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowQ,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowQ,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 21,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowPf,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowPf,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::MeasLowReversedPf,
-        },
+    PointDetails {
+        point: |()| Point::MeasLowReversedPf,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 23,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateHighP,
-        },
+    PointDetails {
+        point: |()| Point::NameplateHighP,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowP,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowP,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 25,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateHighS,
-        },
+    PointDetails {
+        point: |()| Point::NameplateHighS,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowS,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowS,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 27,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateHighQ,
-        },
+    PointDetails {
+        point: |()| Point::NameplateHighQ,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowQ,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowQ,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 29,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateHighNomV,
-        },
+    PointDetails {
+        point: |()| Point::NameplateHighNomV,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowNomV,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowNomV,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 31,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowAmps,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowAmps,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 32,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowVarmaxinj,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowVarmaxinj,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 33,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowVarmaxabs,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowVarmaxabs,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 34,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::NameplateLowPf,
-        },
+    PointDetails {
+        point: |()| Point::NameplateLowPf,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 35,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsHighNomV,
-        },
+    PointDetails {
+        point: |()| Point::SettingsHighNomV,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 36,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsLowAmps,
-        },
+    PointDetails {
+        point: |()| Point::SettingsLowAmps,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 37,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsHighP,
-        },
+    PointDetails {
+        point: |()| Point::SettingsHighP,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 38,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsLowP,
-        },
+    PointDetails {
+        point: |()| Point::SettingsLowP,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 39,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsHighVaMax,
-        },
+    PointDetails {
+        point: |()| Point::SettingsHighVaMax,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsHighVarmaxinj,
-        },
+    PointDetails {
+        point: |()| Point::SettingsHighVarmaxinj,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 41,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::SettingsHighVarmaxabs,
-        },
+    PointDetails {
+        point: |()| Point::SettingsHighVarmaxabs,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 42,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::ChangeCommonModelId,
-        },
+    PointDetails {
+        point: |()| Point::ChangeCommonModelId,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 43,
     },
-    ReadablePoint {
-        reference: PointReference::Model64412 {
-            point: Point::ChangeCommonModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ChangeCommonModelLength,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 44,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     DaManipulation,
     FalsifyDeviceIdentity,
@@ -414,8 +281,41 @@ pub enum Point {
     ChangeCommonModelLength,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     45
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -426,6 +326,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(64412, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

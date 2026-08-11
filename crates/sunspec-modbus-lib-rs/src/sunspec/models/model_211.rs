@@ -1,515 +1,335 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 126;
 
-pub static POINTS: [ReadablePoint; 64] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 211 },
+static POINTS: [PointDetails<()>; 64] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 { point: Point::Amps },
+    PointDetails {
+        point: |()| Point::Amps,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::AmpsPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::AmpsPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::AmpsPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::AmpsPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::AmpsPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::AmpsPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 8,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VoltageLn,
-        },
+    PointDetails {
+        point: |()| Point::VoltageLn,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 10,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PhaseVoltageAn,
-        },
+    PointDetails {
+        point: |()| Point::PhaseVoltageAn,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 12,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PhaseVoltageBn,
-        },
+    PointDetails {
+        point: |()| Point::PhaseVoltageBn,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 14,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PhaseVoltageCn,
-        },
+    PointDetails {
+        point: |()| Point::PhaseVoltageCn,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VoltageLl,
-        },
+    PointDetails {
+        point: |()| Point::VoltageLl,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PhaseVoltageAb,
-        },
+    PointDetails {
+        point: |()| Point::PhaseVoltageAb,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 20,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PhaseVoltageBc,
-        },
+    PointDetails {
+        point: |()| Point::PhaseVoltageBc,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 22,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PhaseVoltageCa,
-        },
+    PointDetails {
+        point: |()| Point::PhaseVoltageCa,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 24,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 { point: Point::Hz },
+    PointDetails {
+        point: |()| Point::Hz,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 26,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::Watts,
-        },
+    PointDetails {
+        point: |()| Point::Watts,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 28,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::WattsPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::WattsPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 30,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::WattsPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::WattsPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 32,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::WattsPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::WattsPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 34,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 { point: Point::Va },
+    PointDetails {
+        point: |()| Point::Va,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 36,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VaPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::VaPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 38,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VaPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::VaPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 40,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VaPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::VaPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 42,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 { point: Point::Var },
+    PointDetails {
+        point: |()| Point::Var,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 44,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VarPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::VarPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 46,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VarPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::VarPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 48,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::VarPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::VarPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 50,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 { point: Point::Pf },
+    PointDetails {
+        point: |()| Point::Pf,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 52,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PfPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::PfPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 54,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PfPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::PfPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 56,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::PfPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::PfPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 58,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursExported,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursExported,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 60,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursExportedPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursExportedPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 62,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursExportedPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursExportedPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 64,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursExportedPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursExportedPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 66,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursImported,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursImported,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 68,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursImportedPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursImportedPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 70,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursImportedPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursImportedPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 72,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalWattHoursImportedPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalWattHoursImportedPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 74,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursExported,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursExported,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 76,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursExportedPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursExportedPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 78,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursExportedPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursExportedPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 80,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursExportedPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursExportedPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 82,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursImported,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursImported,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 84,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursImportedPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursImportedPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 86,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursImportedPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursImportedPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 88,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVaHoursImportedPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalVaHoursImportedPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 90,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVarHoursImportedQ1,
-        },
+    PointDetails {
+        point: |()| Point::TotalVarHoursImportedQ1,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 92,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ1PhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ1PhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 94,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ1PhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ1PhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 96,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ1PhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ1PhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 98,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ2,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ2,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 100,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ2PhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ2PhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 102,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ2PhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ2PhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 104,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursImportedQ2PhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursImportedQ2PhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 106,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ3,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ3,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 108,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ3PhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ3PhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 110,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ3PhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ3PhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 112,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ3PhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ3PhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 114,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ4,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ4,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 116,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ4ImportedPhaseA,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ4ImportedPhaseA,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 118,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ4ImportedPhaseB,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ4ImportedPhaseB,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 120,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::TotalVArHoursExportedQ4ImportedPhaseC,
-        },
+    PointDetails {
+        point: |()| Point::TotalVArHoursExportedQ4ImportedPhaseC,
         size: 2,
-        data_type: PointType::Float32,
-        writeable: false,
+        start_address: 122,
     },
-    ReadablePoint {
-        reference: PointReference::Model211 {
-            point: Point::Events,
-        },
+    PointDetails {
+        point: |()| Point::Events,
         size: 2,
-        data_type: PointType::Bitfield32,
-        writeable: false,
+        start_address: 124,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     Amps,
     AmpsPhaseA,
@@ -575,8 +395,41 @@ pub enum Point {
     Events,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     126
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -587,6 +440,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(211, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

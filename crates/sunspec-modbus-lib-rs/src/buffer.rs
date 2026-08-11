@@ -1,7 +1,4 @@
-use core::{
-    ffi::CStr,
-    net::Ipv4Addr,
-};
+use core::{ffi::CStr, net::Ipv4Addr};
 
 #[derive(Clone, Copy)]
 pub enum ModbusWordByteOrder {
@@ -20,6 +17,14 @@ impl<'a> ModbusBuffer<'a> {
             buffer: &mut self.buffer[word_offset as usize..(word_offset + length) as usize],
             byte_order: self.byte_order,
         }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.buffer.is_empty()
+    }
+
+    pub fn len(&self) -> u16 {
+        self.buffer.len() as u16
     }
 }
 
@@ -81,21 +86,11 @@ pub fn write_f64<'a>(value: f64, buffer: ModbusBuffer<'a>, offset: u16, limit: u
     write_bytes(&value.to_be_bytes(), buffer, offset, limit)
 }
 
-pub fn write_ipv4_addr<'a>(
-    value: Ipv4Addr,
-    buffer: ModbusBuffer<'a>,
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_ipv4_addr<'a>(value: Ipv4Addr, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     write_bytes(&value.octets(), buffer, offset, limit)
 }
 
-pub fn write_ipv6_addr<'a>(
-    value: &[u16; 8],
-    buffer: ModbusBuffer<'a>,
-    offset: u16,
-    limit: u16,
-) {
+pub fn write_ipv6_addr<'a>(value: &[u16; 8], buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
     value
         .iter()
         .skip(offset as usize)

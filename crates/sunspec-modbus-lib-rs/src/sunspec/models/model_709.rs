@@ -1,85 +1,83 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 9;
 
-pub static POINTS: [ReadablePoint; 9] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 709 },
+static POINTS: [PointDetails<()>; 9] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::DerTripLfModuleEnable,
-        },
+    PointDetails {
+        point: |()| Point::DerTripLfModuleEnable,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::AdoptCurveRequest,
-        },
+    PointDetails {
+        point: |()| Point::AdoptCurveRequest,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::AdoptCurveResult,
-        },
+    PointDetails {
+        point: |()| Point::AdoptCurveResult,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::NumberOfPoints,
-        },
+    PointDetails {
+        point: |()| Point::NumberOfPoints,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::StoredCurveCount,
-        },
+    PointDetails {
+        point: |()| Point::StoredCurveCount,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::FrequencyScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::FrequencyScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model709 {
-            point: Point::TimePointScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::TimePointScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 8,
+    },
+];
+
+static CRV_POINTS: [PointDetails<u16>; 4] = [
+    PointDetails {
+        point: |crv_index| Point::CrvCurveAccess { crv_index },
+        size: 1,
+        start_address: 0,
+    },
+    PointDetails {
+        point: |crv_index| Point::MustTripCurveCrvNumberOfActivePoints { crv_index },
+        size: 1,
+        start_address: 1,
+    },
+    PointDetails {
+        point: |crv_index| Point::MayTripCurveCrvNumberOfActivePoints { crv_index },
+        size: 1,
+        start_address: 2,
+    },
+    PointDetails {
+        point: |crv_index| Point::MomentaryCessationCurveCrvNumberOfActivePoints { crv_index },
+        size: 1,
+        start_address: 3,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     DerTripLfModuleEnable,
     AdoptCurveRequest,
@@ -94,8 +92,50 @@ pub enum Point {
     MomentaryCessationCurveCrvNumberOfActivePoints { crv_index: u16 },
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     9 + model.stored_curve_count() * (4)
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    let crv_count = model.stored_curve_count();
+    let crv_size = 4;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .chain((0..crv_count).flat_map(move |crv_index| {
+            let crv_address = 9 + crv_index * crv_size;
+            CRV_POINTS
+                .iter()
+                .map(move |p| (crv_address + p.start_address, p.size, (p.point)(crv_index)))
+        }))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -106,6 +146,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(709, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

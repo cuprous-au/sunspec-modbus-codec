@@ -1,117 +1,138 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
-use core::ffi::{c_char, c_void, CStr};
+use core::cmp::min;
+use core::ffi::{CStr, c_char, c_void};
 
 pub const SIZE: u16 = 20;
 
-pub static POINTS: [ReadablePoint; 13] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 714 },
+static POINTS: [PointDetails<()>; 13] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::ModelLength,
-        },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::PortAlarms,
-        },
+    PointDetails {
+        point: |()| Point::PortAlarms,
         size: 2,
-        data_type: PointType::Bitfield32,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::NumberOfPorts,
-        },
+    PointDetails {
+        point: |()| Point::NumberOfPorts,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 4,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcCurrent,
-        },
+    PointDetails {
+        point: |()| Point::DcCurrent,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcPower,
-        },
+    PointDetails {
+        point: |()| Point::DcPower,
         size: 1,
-        data_type: PointType::Int16,
-        writeable: false,
+        start_address: 6,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcEnergyInjected,
-        },
+    PointDetails {
+        point: |()| Point::DcEnergyInjected,
         size: 4,
-        data_type: PointType::Uint64,
-        writeable: false,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcEnergyAbsorbed,
-        },
+    PointDetails {
+        point: |()| Point::DcEnergyAbsorbed,
         size: 4,
-        data_type: PointType::Uint64,
-        writeable: false,
+        start_address: 11,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcCurrentScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::DcCurrentScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 15,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcVoltageScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::DcVoltageScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 16,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcPowerScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::DcPowerScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 17,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::DcEnergyScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::DcEnergyScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 18,
     },
-    ReadablePoint {
-        reference: PointReference::Model714 {
-            point: Point::TemperatureScaleFactor,
-        },
+    PointDetails {
+        point: |()| Point::TemperatureScaleFactor,
         size: 1,
-        data_type: PointType::Sunssf,
-        writeable: false,
+        start_address: 19,
+    },
+];
+
+static PRT_POINTS: [PointDetails<u16>; 11] = [
+    PointDetails {
+        point: |prt_index| Point::PrtPortType { prt_index },
+        size: 1,
+        start_address: 0,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtPortId { prt_index },
+        size: 1,
+        start_address: 1,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtPortIdString { prt_index },
+        size: 8,
+        start_address: 2,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcCurrent { prt_index },
+        size: 1,
+        start_address: 10,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcVoltage { prt_index },
+        size: 1,
+        start_address: 11,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcPower { prt_index },
+        size: 1,
+        start_address: 12,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcEnergyInjected { prt_index },
+        size: 4,
+        start_address: 13,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcEnergyAbsorbed { prt_index },
+        size: 4,
+        start_address: 17,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcPortTemperature { prt_index },
+        size: 1,
+        start_address: 21,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcPortStatus { prt_index },
+        size: 1,
+        start_address: 22,
+    },
+    PointDetails {
+        point: |prt_index| Point::PrtDcPortAlarm { prt_index },
+        size: 2,
+        start_address: 23,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
     ModelLength,
     PortAlarms,
     NumberOfPorts,
@@ -137,8 +158,50 @@ pub enum Point {
     PrtDcPortAlarm { prt_index: u16 },
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     20 + model.number_of_ports().unwrap_or(0) * (25)
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    let prt_count = model.number_of_ports().unwrap_or_default();
+    let prt_size = 25;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .chain((0..prt_count).flat_map(move |prt_index| {
+            let prt_address = 20 + prt_index * prt_size;
+            PRT_POINTS
+                .iter()
+                .map(move |p| (prt_address + p.start_address, p.size, (p.point)(prt_index)))
+        }))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -149,6 +212,9 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(714, buffer);
+        }
         Point::ModelLength => {
             buffer::write_u16(model_length(model) - 2, buffer);
         }

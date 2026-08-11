@@ -1,67 +1,51 @@
 use crate::buffer::{self, ModbusBuffer};
-use crate::sunspec::points::PointReference;
-use crate::sunspec::{PointType, ReadablePoint};
+use core::cmp::min;
 use core::ffi::c_void;
 
 pub const SIZE: u16 = 9;
 
-pub static POINTS: [ReadablePoint; 7] = [
-    ReadablePoint {
-        reference: PointReference::Static { value: 715 },
+static POINTS: [PointDetails<()>; 7] = [
+    PointDetails {
+        point: |()| Point::ModelId,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 0,
     },
-    ReadablePoint {
-        reference: PointReference::Static { value: 7 },
+    PointDetails {
+        point: |()| Point::ModelLength,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: false,
+        start_address: 1,
     },
-    ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::ControlMode,
-        },
+    PointDetails {
+        point: |()| Point::ControlMode,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: false,
+        start_address: 2,
     },
-    ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::DerHeartbeat,
-        },
+    PointDetails {
+        point: |()| Point::DerHeartbeat,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: false,
+        start_address: 3,
     },
-    ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::ControllerHeartbeat,
-        },
+    PointDetails {
+        point: |()| Point::ControllerHeartbeat,
         size: 2,
-        data_type: PointType::Uint32,
-        writeable: true,
+        start_address: 5,
     },
-    ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::AlarmReset,
-        },
+    PointDetails {
+        point: |()| Point::AlarmReset,
         size: 1,
-        data_type: PointType::Uint16,
-        writeable: true,
+        start_address: 7,
     },
-    ReadablePoint {
-        reference: PointReference::Model715 {
-            point: Point::Operation,
-        },
+    PointDetails {
+        point: |()| Point::Operation,
         size: 1,
-        data_type: PointType::Enum16,
-        writeable: true,
+        start_address: 8,
     },
 ];
 
 #[derive(Debug)]
 pub enum Point {
+    ModelId,
+    ModelLength,
     ControlMode,
     DerHeartbeat,
     ControllerHeartbeat,
@@ -69,8 +53,41 @@ pub enum Point {
     Operation,
 }
 
+#[derive(Debug)]
+struct PointDetails<GroupIndexArgs> {
+    point: fn(GroupIndexArgs) -> Point,
+    start_address: u16,
+    size: u16,
+}
+
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
     9
+}
+
+pub fn read_into_buffer<'a>(
+    model: &dyn ModelAdapter,
+    buffer: &mut ModbusBuffer<'a>,
+    offset: u16,
+    limit: u16,
+) {
+    let until = offset + limit;
+    let mut cursor = 0;
+
+    POINTS
+        .iter()
+        .map(|p| (p.start_address, p.size, (p.point)(())))
+        .skip_while(|(start, size, _)| offset >= start + size)
+        .take_while(|(start, _, _)| until > *start)
+        .for_each(|(start, size, point)| {
+            write_point(
+                model,
+                &point,
+                buffer.slice(cursor, limit - cursor),
+                offset.saturating_sub(start),
+                until - start,
+            );
+            cursor += min(size, until - start);
+        });
 }
 
 pub fn write_point<'a>(
@@ -81,6 +98,12 @@ pub fn write_point<'a>(
     limit: u16,
 ) {
     match point {
+        Point::ModelId => {
+            buffer::write_u16(715, buffer);
+        }
+        Point::ModelLength => {
+            buffer::write_u16(7, buffer);
+        }
         Point::ControlMode => {
             if let Some(value) = model.control_mode() {
                 buffer::write_u16(value as u16, buffer);
