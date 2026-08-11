@@ -9,12 +9,25 @@ unsafe extern "C" {
     pub fn handle_panic(message: *const c_char) -> !;
 }
 
+const MAX_PANIC_MESSAGE_LENGTH: usize = 128;
+
 #[panic_handler]
 fn panic(panic_info: &PanicInfo) -> ! {
     let message = panic_info
         .message()
         .as_str()
         .unwrap_or("Unknown Rust panic");
+
+    let mut c_str = [0_i8; MAX_PANIC_MESSAGE_LENGTH + 1];
+
+    for (char, c_char) in message
+        .as_bytes()
+        .iter()
+        .take(MAX_PANIC_MESSAGE_LENGTH)
+        .zip(c_str.iter_mut())
+    {
+        *c_char = (*char) as i8;
+    }
     unsafe { handle_panic(message.as_ptr() as *const i8) }
 }
 

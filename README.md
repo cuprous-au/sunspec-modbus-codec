@@ -38,4 +38,11 @@ This is the core rust crate that provides serialisation and deserialisation of S
 adapters.
 
 # sunspec-modbus-lib-static
-This wraps a subset of the `sunspec-modbus-lib-rs` crate in a stable FFI-safe interface to allow its usage from C. 
+This wraps a subset of the `sunspec-modbus-lib-rs` crate in a stable FFI-safe interface to allow its usage from C.
+
+An example can be compiled and executed using the following steps:
+```sh
+cargo build --release
+cc crates/sunspec-modbus-lib-static/examples/libmodbus.c -o ./target/example-libmodbus.o -lmodbus -L./target/release -lsunspec_modbus_lib_static
+./target/example-libmodbus.o
+```
