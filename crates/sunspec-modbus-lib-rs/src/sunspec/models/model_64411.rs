@@ -484,266 +484,266 @@ pub fn write_point<'a>(
             if let Some(value) = model.active_phases() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseAngle => {
             if let Some(value) = model.phase_angle() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NominalVoltage => {
             if let Some(value) = model.nominal_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaximumVoltage => {
             if let Some(value) = model.maximum_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaximumCurrent => {
             if let Some(value) = model.maximum_current() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Frequency => {
             if let Some(value) = model.frequency() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::OutputState => {
             if let Some(value) = model.output_state() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RelayState => {
             if let Some(value) = model.relay_state() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RegenerationState => {
             if let Some(value) = model.regeneration_state() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSetpoint => {
             if let Some(value) = model.voltage_setpoint() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSetpointPhaseA => {
             if let Some(value) = model.voltage_setpoint_phase_a() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSetpointPhaseB => {
             if let Some(value) = model.voltage_setpoint_phase_b() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSetpointPhaseC => {
             if let Some(value) = model.voltage_setpoint_phase_c() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::FrequencySlewRate => {
             if let Some(value) = model.frequency_slew_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSlewRate => {
             if let Some(value) = model.voltage_slew_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MeasuredVoltagePhaseA => {
             if let Some(value) = model.measured_voltage_phase_a() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredVoltagePhaseB => {
             if let Some(value) = model.measured_voltage_phase_b() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredVoltagePhaseC => {
             if let Some(value) = model.measured_voltage_phase_c() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredFrequency => {
             if let Some(value) = model.measured_frequency() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredCurrentPhaseA => {
             if let Some(value) = model.measured_current_phase_a() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredCurrentPhaseB => {
             if let Some(value) = model.measured_current_phase_b() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredCurrentPhaseC => {
             if let Some(value) = model.measured_current_phase_c() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::VoltageHarmonicsPhaseA => {
             if let Some(value) = model.voltage_harmonics_phase_a() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::VoltageHarmonicsPhaseB => {
             if let Some(value) = model.voltage_harmonics_phase_b() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::VoltageHarmonicsPhaseC => {
             if let Some(value) = model.voltage_harmonics_phase_c() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::CurrentHarmonicsPhaseA => {
             if let Some(value) = model.current_harmonics_phase_a() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::CurrentHarmonicsPhaseB => {
             if let Some(value) = model.current_harmonics_phase_b() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::CurrentHarmonicsPhaseC => {
             if let Some(value) = model.current_harmonics_phase_c() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::CurrentInterharmonicsPhaseA => {
             if let Some(value) = model.current_interharmonics_phase_a() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::CurrentInterharmonicsPhaseB => {
             if let Some(value) = model.current_interharmonics_phase_b() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::CurrentInterharmonicsPhaseC => {
             if let Some(value) = model.current_interharmonics_phase_c() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 150);
             }
         }
         Point::VoltageThdPhaseA => {
             if let Some(value) = model.voltage_thd_phase_a() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageThdPhaseB => {
             if let Some(value) = model.voltage_thd_phase_b() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageThdPhaseC => {
             if let Some(value) = model.voltage_thd_phase_c() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurrentThdPhaseA => {
             if let Some(value) = model.current_thd_phase_a() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurrentThdPhaseB => {
             if let Some(value) = model.current_thd_phase_b() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurrentThdPhaseC => {
             if let Some(value) = model.current_thd_phase_c() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EnableProfile => {
             if let Some(value) = model.enable_profile() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ProfileResult => {
@@ -780,7 +780,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.prof_profile_name(*prof_index) {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 32);
             }
         }
         Point::ProfActivePoints { prof_index } => {
@@ -793,7 +793,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_profile_time(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtVoltagePoint {
@@ -803,7 +803,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_voltage_point(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtVoltagePointPhaseB {
@@ -813,7 +813,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_voltage_point_phase_b(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtVoltagePointPhaseC {
@@ -823,7 +823,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_voltage_point_phase_c(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtFrequencyPoint {
@@ -833,7 +833,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_frequency_point(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtPhaseAngleA {
@@ -843,7 +843,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_phase_angle_a(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtPhaseAngleB {
@@ -853,7 +853,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_phase_angle_b(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtPhaseAngleC {
@@ -863,7 +863,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_phase_angle_c(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

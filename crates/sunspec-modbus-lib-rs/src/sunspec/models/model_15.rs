@@ -156,84 +156,84 @@ pub fn write_point<'a>(
             if let Some(value) = model.clear() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::InputCount => {
             if let Some(value) = model.input_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::InputUnicastCount => {
             if let Some(value) = model.input_unicast_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::InputNonUnicastCount => {
             if let Some(value) = model.input_non_unicast_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::InputDiscardedCount => {
             if let Some(value) = model.input_discarded_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::InputErrorCount => {
             if let Some(value) = model.input_error_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::InputUnknownCount => {
             if let Some(value) = model.input_unknown_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OutputCount => {
             if let Some(value) = model.output_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OutputUnicastCount => {
             if let Some(value) = model.output_unicast_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OutputNonUnicastCount => {
             if let Some(value) = model.output_non_unicast_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OutputDiscardedCount => {
             if let Some(value) = model.output_discarded_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OutputErrorCount => {
             if let Some(value) = model.output_error_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Pad => {

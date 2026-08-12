@@ -129,28 +129,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.mac() {
                 buffer::write_eui48(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::Name => {
             if let Some(value) = model.name() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::Control => {
             if let Some(value) = model.control() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ForcedSpeed => {
             if let Some(value) = model.forced_speed() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

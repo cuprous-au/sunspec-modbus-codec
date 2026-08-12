@@ -222,14 +222,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.conn_win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ConnRvrtTms => {
             if let Some(value) = model.conn_rvrt_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Conn => {
@@ -242,21 +242,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.w_max_lim_pct_win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WMaxLimPctRvrtTms => {
             if let Some(value) = model.w_max_lim_pct_rvrt_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WMaxLimPctRmpTms => {
             if let Some(value) = model.w_max_lim_pct_rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WMaxLimEna => {
@@ -269,21 +269,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.out_pf_set_win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::OutPfSetRvrtTms => {
             if let Some(value) = model.out_pf_set_rvrt_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::OutPfSetRmpTms => {
             if let Some(value) = model.out_pf_set_rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::OutPfSetEna => {
@@ -293,49 +293,49 @@ pub fn write_point<'a>(
             if let Some(value) = model.v_ar_w_max_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArMaxPct => {
             if let Some(value) = model.v_ar_max_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArAvalPct => {
             if let Some(value) = model.v_ar_aval_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArPctWinTms => {
             if let Some(value) = model.v_ar_pct_win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArPctRvrtTms => {
             if let Some(value) = model.v_ar_pct_rvrt_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArPctRmpTms => {
             if let Some(value) = model.v_ar_pct_rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArPctMod => {
             if let Some(value) = model.v_ar_pct_mod() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArPctEna => {
@@ -351,7 +351,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.v_ar_pct_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

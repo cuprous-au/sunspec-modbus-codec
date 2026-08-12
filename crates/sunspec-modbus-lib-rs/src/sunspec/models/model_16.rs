@@ -144,7 +144,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.name() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::Config => {
@@ -163,35 +163,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.gateway() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::Dns1 => {
             if let Some(value) = model.dns1() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::Dns2 => {
             if let Some(value) = model.dns2() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::Mac => {
             if let Some(value) = model.mac() {
                 buffer::write_eui48(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::LinkControl => {
             if let Some(value) = model.link_control() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Pad => {

@@ -729,7 +729,7 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                         point.point_type.writer_function_name
                     ));
                     let mut else_block = Block::new("else");
-                    else_block.line("buffer::zero(buffer, offset);");
+                    else_block.line(format!("buffer::zero(buffer, {});", point.size));
 
                     match_block.push_block(some_block);
                     match_block.push_block(else_block);

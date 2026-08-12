@@ -195,7 +195,7 @@ static PROF_POINTS: [PointDetails<u16>; 2] = [
     },
     PointDetails {
         point: |prof_index| Point::ProfDependentReferences { prof_index },
-        size: 2,
+        size: 1,
         start_address: 1,
     },
 ];
@@ -298,7 +298,7 @@ struct PointDetails<GroupIndexArgs> {
 }
 
 pub fn model_length(model: &dyn ModelAdapter) -> u16 {
-    70 + model.stored_profile_count() * (3 + model.number_of_points() * (5))
+    70 + model.stored_profile_count() * (2 + model.number_of_points() * (5))
 }
 
 pub fn read_into_buffer<'a>(
@@ -314,7 +314,7 @@ pub fn read_into_buffer<'a>(
     let pt_size = 5;
 
     let prof_count = model.stored_profile_count();
-    let prof_size = 3 + pt_count * pt_size;
+    let prof_size = 2 + pt_count * pt_size;
 
     POINTS
         .iter()
@@ -373,126 +373,126 @@ pub fn write_point<'a>(
             if let Some(value) = model.maximum_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaximumPower => {
             if let Some(value) = model.maximum_power() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaximumCurrent => {
             if let Some(value) = model.maximum_current() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CvOrCcMode => {
             if let Some(value) = model.cv_or_cc_mode() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerOnOff => {
             if let Some(value) = model.power_on_off() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ResetDevice => {
             if let Some(value) = model.reset_device() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSetpoint => {
             if let Some(value) = model.voltage_setpoint() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerSetpoint => {
             if let Some(value) = model.power_setpoint() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurrentSetpoint => {
             if let Some(value) = model.current_setpoint() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::En50530Mode => {
             if let Some(value) = model.en50530_mode() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::En50530MppVoltage => {
             if let Some(value) = model.en50530_mpp_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::En50530MppPower => {
             if let Some(value) = model.en50530_mpp_power() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::IrradianceSetpoint => {
             if let Some(value) = model.irradiance_setpoint() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageSlewRate => {
             if let Some(value) = model.voltage_slew_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerSlewRate => {
             if let Some(value) = model.power_slew_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurrentSlewRate => {
             if let Some(value) = model.current_slew_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EnableProfile => {
             if let Some(value) = model.enable_profile() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ProfileAdoptionRequest => {
             if let Some(value) = model.profile_adoption_request() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AdoptProfileResult => {
@@ -502,28 +502,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.measured_voltage() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredPower => {
             if let Some(value) = model.measured_power() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::MeasuredCurrent => {
             if let Some(value) = model.measured_current() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Errors => {
             if let Some(value) = model.errors() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 32);
             }
         }
         Point::NumberOfPoints => {
@@ -577,7 +577,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_profile_time(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtVoltagePoint {
@@ -587,7 +587,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_voltage_point(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtPowerPoint {
@@ -597,7 +597,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_power_point(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtCurrentPoint {
@@ -607,7 +607,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_current_point(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtIrradiancePoint {
@@ -617,7 +617,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_irradiance_point(*prof_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

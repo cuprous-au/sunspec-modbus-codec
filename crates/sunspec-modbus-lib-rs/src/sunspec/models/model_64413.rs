@@ -126,42 +126,42 @@ pub fn write_point<'a>(
             if let Some(value) = model.iv_length() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PoaIrradiance => {
             if let Some(value) = model.poa_irradiance() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::IrrSf => {
             if let Some(value) = model.irr_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::IvPower { iv_index } => {
             if let Some(value) = model.iv_power(*iv_index) {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::IvCurrent { iv_index } => {
             if let Some(value) = model.iv_current(*iv_index) {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::IvVoltage { iv_index } => {
             if let Some(value) = model.iv_voltage(*iv_index) {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

@@ -108,35 +108,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.control_mode() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DerHeartbeat => {
             if let Some(value) = model.der_heartbeat() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ControllerHeartbeat => {
             if let Some(value) = model.controller_heartbeat() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::AlarmReset => {
             if let Some(value) = model.alarm_reset() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Operation => {
             if let Some(value) = model.operation() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

@@ -229,21 +229,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.reversion_timeout() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionTimeRemaining => {
             if let Some(value) = model.reversion_time_remaining() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionCurve => {
             if let Some(value) = model.reversion_curve() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageScaleFactor => {
@@ -265,7 +265,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.crv_open_loop_response_time(*crv_index) {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::CrvCurveAccess { crv_index } => {
@@ -278,7 +278,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_voltage_point(*crv_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtDependentReference {
@@ -288,7 +288,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_dependent_reference(*crv_index, *pt_index) {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

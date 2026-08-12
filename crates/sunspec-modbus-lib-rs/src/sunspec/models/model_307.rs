@@ -144,77 +144,77 @@ pub fn write_point<'a>(
             if let Some(value) = model.ambient_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RelativeHumidity => {
             if let Some(value) = model.relative_humidity() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::BarometricPressure => {
             if let Some(value) = model.barometric_pressure() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WindSpeed => {
             if let Some(value) = model.wind_speed() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WindDirection => {
             if let Some(value) = model.wind_direction() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Rainfall => {
             if let Some(value) = model.rainfall() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SnowDepth => {
             if let Some(value) = model.snow_depth() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrecipitationType => {
             if let Some(value) = model.precipitation_type() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ElectricField => {
             if let Some(value) = model.electric_field() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SurfaceWetness => {
             if let Some(value) = model.surface_wetness() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SoilWetness => {
             if let Some(value) = model.soil_wetness() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

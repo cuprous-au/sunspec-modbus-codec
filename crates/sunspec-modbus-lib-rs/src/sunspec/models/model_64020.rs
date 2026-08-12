@@ -276,35 +276,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.aux_0_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Aux1Temperature => {
             if let Some(value) = model.aux_1_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Aux2Temperature => {
             if let Some(value) = model.aux_2_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Aux3Temperature => {
             if let Some(value) = model.aux_3_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Aux4Temperature => {
             if let Some(value) = model.aux_4_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ProbeTemperature => {
@@ -326,140 +326,140 @@ pub fn write_point<'a>(
             if let Some(value) = model.sensor1_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor2Voltage => {
             if let Some(value) = model.sensor2_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor3Voltage => {
             if let Some(value) = model.sensor3_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor4Voltage => {
             if let Some(value) = model.sensor4_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor5Voltage => {
             if let Some(value) = model.sensor5_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor6Voltage => {
             if let Some(value) = model.sensor6_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor7Voltage => {
             if let Some(value) = model.sensor7_voltage() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor1Current => {
             if let Some(value) = model.sensor1_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor2Current => {
             if let Some(value) = model.sensor2_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor3Current => {
             if let Some(value) = model.sensor3_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor4Current => {
             if let Some(value) = model.sensor4_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor5Current => {
             if let Some(value) = model.sensor5_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor6Current => {
             if let Some(value) = model.sensor6_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor7Current => {
             if let Some(value) = model.sensor7_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor8Frequency => {
             if let Some(value) = model.sensor8_frequency() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Relay1State => {
             if let Some(value) = model.relay_1_state() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Relay2State => {
             if let Some(value) = model.relay_2_state() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Relay3State => {
             if let Some(value) = model.relay_3_state() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ResetTheAccumulators => {
             if let Some(value) = model.reset_the_accumulators() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ResetTheSystem => {
             if let Some(value) = model.reset_the_system() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RepeatingSerialNumber => {

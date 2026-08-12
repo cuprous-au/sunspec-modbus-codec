@@ -426,21 +426,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RvrtTms => {
             if let Some(value) = model.rvrt_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RmpTms => {
             if let Some(value) = model.rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NCrv => {
@@ -459,7 +459,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.rmp_inc_dec_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveActPt => {
@@ -478,294 +478,294 @@ pub fn write_point<'a>(
             if let Some(value) = model.curve_v2() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr2 => {
             if let Some(value) = model.curve_v_ar2() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV3 => {
             if let Some(value) = model.curve_v3() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr3 => {
             if let Some(value) = model.curve_v_ar3() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV4 => {
             if let Some(value) = model.curve_v4() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr4 => {
             if let Some(value) = model.curve_v_ar4() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV5 => {
             if let Some(value) = model.curve_v5() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr5 => {
             if let Some(value) = model.curve_v_ar5() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV6 => {
             if let Some(value) = model.curve_v6() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr6 => {
             if let Some(value) = model.curve_v_ar6() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV7 => {
             if let Some(value) = model.curve_v7() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr7 => {
             if let Some(value) = model.curve_v_ar7() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV8 => {
             if let Some(value) = model.curve_v8() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr8 => {
             if let Some(value) = model.curve_v_ar8() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV9 => {
             if let Some(value) = model.curve_v9() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr9 => {
             if let Some(value) = model.curve_v_ar9() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV10 => {
             if let Some(value) = model.curve_v10() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr10 => {
             if let Some(value) = model.curve_v_ar10() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV11 => {
             if let Some(value) = model.curve_v11() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr11 => {
             if let Some(value) = model.curve_v_ar11() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV12 => {
             if let Some(value) = model.curve_v12() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr12 => {
             if let Some(value) = model.curve_v_ar12() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV13 => {
             if let Some(value) = model.curve_v13() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr13 => {
             if let Some(value) = model.curve_v_ar13() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV14 => {
             if let Some(value) = model.curve_v14() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr14 => {
             if let Some(value) = model.curve_v_ar14() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV15 => {
             if let Some(value) = model.curve_v15() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr15 => {
             if let Some(value) = model.curve_v_ar15() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV16 => {
             if let Some(value) = model.curve_v16() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr16 => {
             if let Some(value) = model.curve_v_ar16() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV17 => {
             if let Some(value) = model.curve_v17() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr17 => {
             if let Some(value) = model.curve_v_ar17() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV18 => {
             if let Some(value) = model.curve_v18() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr18 => {
             if let Some(value) = model.curve_v_ar18() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV19 => {
             if let Some(value) = model.curve_v19() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr19 => {
             if let Some(value) = model.curve_v_ar19() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveV20 => {
             if let Some(value) = model.curve_v20() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveVAr20 => {
             if let Some(value) = model.curve_v_ar20() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveCrvNam => {
             if let Some(value) = model.curve_crv_nam() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::CurveRmpTms => {
             if let Some(value) = model.curve_rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveRmpDecTmm => {
             if let Some(value) = model.curve_rmp_dec_tmm() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveRmpIncTmm => {
             if let Some(value) = model.curve_rmp_inc_tmm() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CurveReadOnly => {

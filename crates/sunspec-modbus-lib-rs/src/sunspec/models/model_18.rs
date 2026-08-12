@@ -108,35 +108,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.name() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::Imei => {
             if let Some(value) = model.imei() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Apn => {
             if let Some(value) = model.apn() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::Number => {
             if let Some(value) = model.number() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 6);
             }
         }
         Point::Pin => {
             if let Some(value) = model.pin() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 6);
             }
         }
     }

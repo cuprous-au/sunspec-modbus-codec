@@ -390,7 +390,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_module_voltage_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinModuleVoltage => {
@@ -400,7 +400,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.min_module_voltage_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AverageModuleVoltage => {
@@ -410,49 +410,49 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxCellVoltageModule => {
             if let Some(value) = model.max_cell_voltage_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxCellVoltageStack => {
             if let Some(value) = model.max_cell_voltage_stack() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltage => {
             if let Some(value) = model.min_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltageModule => {
             if let Some(value) = model.min_cell_voltage_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltageStack => {
             if let Some(value) = model.min_cell_voltage_stack() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AverageCellVoltage => {
             if let Some(value) = model.average_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxTemperature => {
@@ -462,7 +462,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_temperature_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinTemperature => {
@@ -472,7 +472,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.min_temperature_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AverageTemperature => {
@@ -530,56 +530,56 @@ pub fn write_point<'a>(
             if let Some(value) = model.module_maximum_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleMaxCellVoltageCell => {
             if let Some(value) = model.module_max_cell_voltage_cell() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleMinimumCellVoltage => {
             if let Some(value) = model.module_minimum_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleMinCellVoltageCell => {
             if let Some(value) = model.module_min_cell_voltage_cell() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleAverageCellVoltage => {
             if let Some(value) = model.module_average_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleAnolyteTemperature => {
             if let Some(value) = model.module_anolyte_temperature() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleCatholyteTemperature => {
             if let Some(value) = model.module_catholyte_temperature() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleContactorStatus => {
             if let Some(value) = model.module_contactor_status() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ModuleModuleEvent1 => {
@@ -592,28 +592,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.module_connection_failure_reason() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleEnableDisableModule => {
             if let Some(value) = model.module_enable_disable_module() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleConnectDisconnectModule => {
             if let Some(value) = model.module_connect_disconnect_module() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleDisabledReason => {
             if let Some(value) = model.module_disabled_reason() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

@@ -129,7 +129,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.sig_type() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sig => {
@@ -139,21 +139,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RvtTms => {
             if let Some(value) = model.rvt_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RmpTms => {
             if let Some(value) = model.rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SigSf => {

@@ -120,49 +120,49 @@ pub fn write_point<'a>(
             if let Some(value) = model.eltek_country_code() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EltekFeedingPhase => {
             if let Some(value) = model.eltek_feeding_phase() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EltekApdMethod => {
             if let Some(value) = model.eltek_apd_method() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EltekApdPowerRef => {
             if let Some(value) = model.eltek_apd_power_ref() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EltekRpsMethod => {
             if let Some(value) = model.eltek_rps_method() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EltekRpsQRef => {
             if let Some(value) = model.eltek_rps_q_ref() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EltekRpsCosPhiRef => {
             if let Some(value) = model.eltek_rps_cos_phi_ref() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

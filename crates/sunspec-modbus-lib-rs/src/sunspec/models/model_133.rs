@@ -345,147 +345,147 @@ pub fn write_point<'a>(
             if let Some(value) = model.repeating_x2() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY2 => {
             if let Some(value) = model.repeating_y2() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX3 => {
             if let Some(value) = model.repeating_x3() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY3 => {
             if let Some(value) = model.repeating_y3() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX4 => {
             if let Some(value) = model.repeating_x4() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY4 => {
             if let Some(value) = model.repeating_y4() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX5 => {
             if let Some(value) = model.repeating_x5() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY5 => {
             if let Some(value) = model.repeating_y5() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX6 => {
             if let Some(value) = model.repeating_x6() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY6 => {
             if let Some(value) = model.repeating_y6() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX7 => {
             if let Some(value) = model.repeating_x7() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY7 => {
             if let Some(value) = model.repeating_y7() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX8 => {
             if let Some(value) = model.repeating_x8() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY8 => {
             if let Some(value) = model.repeating_y8() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX9 => {
             if let Some(value) = model.repeating_x9() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY9 => {
             if let Some(value) = model.repeating_y9() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingX10 => {
             if let Some(value) = model.repeating_x10() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingY10 => {
             if let Some(value) = model.repeating_y10() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RepeatingNam => {
             if let Some(value) = model.repeating_nam() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::RepeatingWinTms => {
             if let Some(value) = model.repeating_win_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RepeatingRmpTms => {
             if let Some(value) = model.repeating_rmp_tms() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RepeatingActIndx => {

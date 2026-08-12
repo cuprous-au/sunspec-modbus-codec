@@ -108,35 +108,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.log_event_mode_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::HttpMessageModeEnable => {
             if let Some(value) = model.http_message_mode_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Comm004Certificate => {
             if let Some(value) = model.comm_004_certificate() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SubscribedResourceUrl => {
             if let Some(value) = model.subscribed_resource_url() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 64);
             }
         }
         Point::SubscribtionEnable => {
             if let Some(value) = model.subscribtion_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

@@ -207,119 +207,119 @@ pub fn write_point<'a>(
             if let Some(value) = model.act_wh() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ActVAh => {
             if let Some(value) = model.act_v_ah() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ActVArhQ1 => {
             if let Some(value) = model.act_v_arh_q1() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ActVArhQ2 => {
             if let Some(value) = model.act_v_arh_q2() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ActVArhQ3 => {
             if let Some(value) = model.act_v_arh_q3() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ActVArhQ4 => {
             if let Some(value) = model.act_v_arh_q4() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::VArAval => {
             if let Some(value) = model.v_ar_aval() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VArAvalSf => {
             if let Some(value) = model.v_ar_aval_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WAval => {
             if let Some(value) = model.w_aval() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WAvalSf => {
             if let Some(value) = model.w_aval_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::StSetLimMsk => {
             if let Some(value) = model.st_set_lim_msk() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::StActCtl => {
             if let Some(value) = model.st_act_ctl() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TmSrc => {
             if let Some(value) = model.tm_src() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::Tms => {
             if let Some(value) = model.tms() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::RtSt => {
             if let Some(value) = model.rt_st() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Ris => {
             if let Some(value) = model.ris() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RisSf => {
             if let Some(value) = model.ris_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

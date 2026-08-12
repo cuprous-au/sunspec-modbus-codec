@@ -285,56 +285,56 @@ pub fn write_point<'a>(
             if let Some(value) = model.wh_rtg() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WhRtgSf => {
             if let Some(value) = model.wh_rtg_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AhrRtg => {
             if let Some(value) = model.ahr_rtg() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AhrRtgSf => {
             if let Some(value) = model.ahr_rtg_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxChaRte => {
             if let Some(value) = model.max_cha_rte() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxChaRteSf => {
             if let Some(value) = model.max_cha_rte_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxDisChaRte => {
             if let Some(value) = model.max_dis_cha_rte() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxDisChaRteSf => {
             if let Some(value) = model.max_dis_cha_rte_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Pad => {

@@ -126,14 +126,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.options() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::Version => {
             if let Some(value) = model.version() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::SerialNumber => {
@@ -143,7 +143,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.device_address() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Pad => {

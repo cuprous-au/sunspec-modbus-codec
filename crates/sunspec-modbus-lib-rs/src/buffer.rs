@@ -67,7 +67,10 @@ pub fn write_u128<'a>(value: u128, buffer: ModbusBuffer<'a>, offset: u16, limit:
 }
 
 pub fn write_i16<'a>(value: i16, buffer: ModbusBuffer<'a>) {
-    buffer.buffer[0] = value.to_ne_bytes();
+    buffer.buffer[0] = match buffer.byte_order {
+        ModbusWordByteOrder::BigEndian => value.to_be_bytes(),
+        ModbusWordByteOrder::System => value.to_ne_bytes(),
+    }
 }
 
 pub fn write_i32<'a>(value: i32, buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {
@@ -96,7 +99,12 @@ pub fn write_ipv6_addr<'a>(value: &[u16; 8], buffer: ModbusBuffer<'a>, offset: u
         .skip(offset as usize)
         .take(limit as usize)
         .zip(buffer.buffer)
-        .for_each(|(v, buf_word)| *buf_word = v.to_ne_bytes());
+        .for_each(|(v, buf_word)| {
+            *buf_word = match buffer.byte_order {
+                ModbusWordByteOrder::BigEndian => v.to_be_bytes(),
+                ModbusWordByteOrder::System => v.to_ne_bytes(),
+            }
+        });
 }
 
 pub fn write_eui48<'a>(value: &[u8; 6], buffer: ModbusBuffer<'a>, offset: u16, limit: u16) {

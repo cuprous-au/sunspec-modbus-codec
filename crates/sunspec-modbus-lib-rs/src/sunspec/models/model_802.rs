@@ -426,35 +426,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.self_discharge_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NameplateMaxSoC => {
             if let Some(value) = model.nameplate_max_so_c() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NameplateMinSoC => {
             if let Some(value) = model.nameplate_min_so_c() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxReservePercent => {
             if let Some(value) = model.max_reserve_percent() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinReservePercent => {
             if let Some(value) = model.min_reserve_percent() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::StateOfCharge => {
@@ -464,28 +464,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.depth_of_discharge() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::StateOfHealth => {
             if let Some(value) = model.state_of_health() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CycleCount => {
             if let Some(value) = model.cycle_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ChargeStatus => {
             if let Some(value) = model.charge_status() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ControlMode => {
@@ -495,14 +495,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.battery_heartbeat() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ControllerHeartbeat => {
             if let Some(value) = model.controller_heartbeat() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AlarmReset => {
@@ -518,14 +518,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.vendor_battery_bank_state() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WarrantyDate => {
             if let Some(value) = model.warranty_date() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::BatteryEvent1Bitfield => {
@@ -547,63 +547,63 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_battery_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinBatteryVoltage => {
             if let Some(value) = model.min_battery_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxCellVoltage => {
             if let Some(value) = model.max_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxCellVoltageString => {
             if let Some(value) = model.max_cell_voltage_string() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxCellVoltageModule => {
             if let Some(value) = model.max_cell_voltage_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltage => {
             if let Some(value) = model.min_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltageString => {
             if let Some(value) = model.min_cell_voltage_string() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltageModule => {
             if let Some(value) = model.min_cell_voltage_module() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AverageCellVoltage => {
             if let Some(value) = model.average_cell_voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalDcCurrent => {
@@ -613,14 +613,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_charge_current() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MaxDischargeCurrent => {
             if let Some(value) = model.max_discharge_current() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalPower => {
@@ -630,14 +630,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.inverter_state_request() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::BatteryPowerRequest => {
             if let Some(value) = model.battery_power_request() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Operation => {
@@ -659,7 +659,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.dis_cha_rte_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SoCSf => {
@@ -669,14 +669,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.do_d_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SoHSf => {
             if let Some(value) = model.so_h_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VSf => {
@@ -695,7 +695,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.w_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

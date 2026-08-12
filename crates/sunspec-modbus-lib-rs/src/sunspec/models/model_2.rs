@@ -150,7 +150,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.vendor_status() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EventCode => {
@@ -160,28 +160,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.vendor_event_code() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Control => {
             if let Some(value) = model.control() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VendorControl => {
             if let Some(value) = model.vendor_control() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ControlValue => {
             if let Some(value) = model.control_value() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

@@ -132,63 +132,63 @@ pub fn write_point<'a>(
             if let Some(value) = model.time_offset() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 10);
             }
         }
         Point::Temperature => {
             if let Some(value) = model.temperature() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::GridModelSource => {
             if let Some(value) = model.grid_model_source() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 32);
             }
         }
         Point::IrradianceModelSource => {
             if let Some(value) = model.irradiance_model_source() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 32);
             }
         }
         Point::Irradiance => {
             if let Some(value) = model.irradiance() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::GridVoltageA => {
             if let Some(value) = model.grid_voltage_a() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::GridVoltageB => {
             if let Some(value) = model.grid_voltage_b() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::GridVoltageC => {
             if let Some(value) = model.grid_voltage_c() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::GridFrequency => {
             if let Some(value) = model.grid_frequency() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

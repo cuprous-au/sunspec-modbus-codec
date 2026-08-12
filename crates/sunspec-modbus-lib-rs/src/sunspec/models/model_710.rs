@@ -180,14 +180,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.must_trip_curve_crv_number_of_active_points(*crv_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MayTripCurveCrvNumberOfActivePoints { crv_index } => {
             if let Some(value) = model.may_trip_curve_crv_number_of_active_points(*crv_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MomentaryCessationCurveCrvNumberOfActivePoints { crv_index } => {
@@ -196,7 +196,7 @@ pub fn write_point<'a>(
             {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

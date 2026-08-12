@@ -259,21 +259,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.reversion_timeout() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionTimeRemaining => {
             if let Some(value) = model.reversion_time_remaining() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionCurve => {
             if let Some(value) = model.reversion_curve() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageScaleFactor => {
@@ -295,42 +295,42 @@ pub fn write_point<'a>(
             if let Some(value) = model.crv_power_priority(*crv_index) {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CrvVrefAdjustment { crv_index } => {
             if let Some(value) = model.crv_vref_adjustment(*crv_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CrvCurrentAutonomousVref { crv_index } => {
             if let Some(value) = model.crv_current_autonomous_vref(*crv_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CrvAutonomousVrefEnable { crv_index } => {
             if let Some(value) = model.crv_autonomous_vref_enable(*crv_index) {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CrvAutoVrefTimeConstant { crv_index } => {
             if let Some(value) = model.crv_auto_vref_time_constant(*crv_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CrvOpenLoopResponseTime { crv_index } => {
             if let Some(value) = model.crv_open_loop_response_time(*crv_index) {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::CrvCurveAccess { crv_index } => {
@@ -343,7 +343,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_voltage_point(*crv_index, *pt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PtReactivePowerPoint {
@@ -353,7 +353,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.pt_reactive_power_point(*crv_index, *pt_index) {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

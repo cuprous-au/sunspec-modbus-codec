@@ -177,14 +177,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.dc_ahr_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcvSf => {
             if let Some(value) = model.dcv_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Rating => {
@@ -200,7 +200,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.vendor_event() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Amps => {
@@ -210,21 +210,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.amp_hours() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Voltage => {
             if let Some(value) = model.voltage() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Temp => {
             if let Some(value) = model.temp() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::StringId => {
@@ -237,7 +237,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.string_input_event_vendor() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::StringAmps => {
@@ -247,7 +247,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.string_amp_hours() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

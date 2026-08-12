@@ -516,14 +516,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.amps_phase_b() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AmpsPhaseC => {
             if let Some(value) = model.amps_phase_c() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ASf => {
@@ -533,56 +533,56 @@ pub fn write_point<'a>(
             if let Some(value) = model.voltage_ln() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageAn => {
             if let Some(value) = model.phase_voltage_an() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageBn => {
             if let Some(value) = model.phase_voltage_bn() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageCn => {
             if let Some(value) = model.phase_voltage_cn() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageLl => {
             if let Some(value) = model.voltage_ll() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageAb => {
             if let Some(value) = model.phase_voltage_ab() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageBc => {
             if let Some(value) = model.phase_voltage_bc() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageCa => {
             if let Some(value) = model.phase_voltage_ca() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VSf => {
@@ -595,7 +595,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.hz_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Watts => {
@@ -605,21 +605,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.watts_phase_a() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WattsPhaseB => {
             if let Some(value) = model.watts_phase_b() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WattsPhaseC => {
             if let Some(value) = model.watts_phase_c() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WSf => {
@@ -629,105 +629,105 @@ pub fn write_point<'a>(
             if let Some(value) = model.va() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaPhaseA => {
             if let Some(value) = model.va_phase_a() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaPhaseB => {
             if let Some(value) = model.va_phase_b() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaPhaseC => {
             if let Some(value) = model.va_phase_c() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaSf => {
             if let Some(value) = model.va_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Var => {
             if let Some(value) = model.var() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarPhaseA => {
             if let Some(value) = model.var_phase_a() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarPhaseB => {
             if let Some(value) = model.var_phase_b() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarPhaseC => {
             if let Some(value) = model.var_phase_c() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarSf => {
             if let Some(value) = model.var_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Pf => {
             if let Some(value) = model.pf() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfPhaseA => {
             if let Some(value) = model.pf_phase_a() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfPhaseB => {
             if let Some(value) = model.pf_phase_b() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfPhaseC => {
             if let Some(value) = model.pf_phase_c() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfSf => {
             if let Some(value) = model.pf_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalWattHoursExported => {
@@ -737,21 +737,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.total_watt_hours_exported_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalWattHoursExportedPhaseB => {
             if let Some(value) = model.total_watt_hours_exported_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalWattHoursExportedPhaseC => {
             if let Some(value) = model.total_watt_hours_exported_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalWattHoursImported => {
@@ -761,21 +761,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.total_watt_hours_imported_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalWattHoursImportedPhaseB => {
             if let Some(value) = model.total_watt_hours_imported_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalWattHoursImportedPhaseC => {
             if let Some(value) = model.total_watt_hours_imported_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotWhSf => {
@@ -785,182 +785,182 @@ pub fn write_point<'a>(
             if let Some(value) = model.total_va_hours_exported() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursExportedPhaseA => {
             if let Some(value) = model.total_va_hours_exported_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursExportedPhaseB => {
             if let Some(value) = model.total_va_hours_exported_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursExportedPhaseC => {
             if let Some(value) = model.total_va_hours_exported_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursImported => {
             if let Some(value) = model.total_va_hours_imported() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursImportedPhaseA => {
             if let Some(value) = model.total_va_hours_imported_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursImportedPhaseB => {
             if let Some(value) = model.total_va_hours_imported_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVaHoursImportedPhaseC => {
             if let Some(value) = model.total_va_hours_imported_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotVAhSf => {
             if let Some(value) = model.tot_v_ah_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalVarHoursImportedQ1 => {
             if let Some(value) = model.total_var_hours_imported_q1() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ1PhaseA => {
             if let Some(value) = model.total_v_ar_hours_imported_q1_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ1PhaseB => {
             if let Some(value) = model.total_v_ar_hours_imported_q1_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ1PhaseC => {
             if let Some(value) = model.total_v_ar_hours_imported_q1_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ2 => {
             if let Some(value) = model.total_v_ar_hours_imported_q2() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ2PhaseA => {
             if let Some(value) = model.total_v_ar_hours_imported_q2_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ2PhaseB => {
             if let Some(value) = model.total_v_ar_hours_imported_q2_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursImportedQ2PhaseC => {
             if let Some(value) = model.total_v_ar_hours_imported_q2_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ3 => {
             if let Some(value) = model.total_v_ar_hours_exported_q3() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ3PhaseA => {
             if let Some(value) = model.total_v_ar_hours_exported_q3_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ3PhaseB => {
             if let Some(value) = model.total_v_ar_hours_exported_q3_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ3PhaseC => {
             if let Some(value) = model.total_v_ar_hours_exported_q3_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ4 => {
             if let Some(value) = model.total_v_ar_hours_exported_q4() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ4ImportedPhaseA => {
             if let Some(value) = model.total_v_ar_hours_exported_q4_imported_phase_a() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ4ImportedPhaseB => {
             if let Some(value) = model.total_v_ar_hours_exported_q4_imported_phase_b() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalVArHoursExportedQ4ImportedPhaseC => {
             if let Some(value) = model.total_v_ar_hours_exported_q4_imported_phase_c() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotVArhSf => {
             if let Some(value) = model.tot_v_arh_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Events => {

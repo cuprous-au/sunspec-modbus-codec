@@ -288,245 +288,245 @@ pub fn write_point<'a>(
             if let Some(value) = model.command_code() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::HardwareRevision => {
             if let Some(value) = model.hardware_revision() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RsFwRevision => {
             if let Some(value) = model.rs_fw_revision() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::OsFwRevision => {
             if let Some(value) = model.os_fw_revision() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ProductRevision => {
             if let Some(value) = model.product_revision() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::BootCount => {
             if let Some(value) = model.boot_count() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DipSwitches => {
             if let Some(value) = model.dip_switches() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NumDetectedSensors => {
             if let Some(value) = model.num_detected_sensors() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NumCommunicatingSensors => {
             if let Some(value) = model.num_communicating_sensors() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SystemStatus => {
             if let Some(value) = model.system_status() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SystemConfiguration => {
             if let Some(value) = model.system_configuration() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::LedBlinkThreshold => {
             if let Some(value) = model.led_blink_threshold() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::LedOnThreshold => {
             if let Some(value) = model.led_on_threshold() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Reserved => {
             if let Some(value) = model.reserved() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::LocationString => {
             if let Some(value) = model.location_string() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 16);
             }
         }
         Point::Sensor1UnitId => {
             if let Some(value) = model.sensor_1_unit_id() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor1Address => {
             if let Some(value) = model.sensor_1_address() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor1OsVersion => {
             if let Some(value) = model.sensor_1_os_version() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor1ProductVersion => {
             if let Some(value) = model.sensor_1_product_version() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Sensor1SerialNum => {
             if let Some(value) = model.sensor_1_serial_num() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 5);
             }
         }
         Point::Sensor2UnitId => {
             if let Some(value) = model.sensor_2_unit_id() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor2Address => {
             if let Some(value) = model.sensor_2_address() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor2OsVersion => {
             if let Some(value) = model.sensor_2_os_version() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor2ProductVersion => {
             if let Some(value) = model.sensor_2_product_version() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Sensor2SerialNum => {
             if let Some(value) = model.sensor_2_serial_num() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 5);
             }
         }
         Point::Sensor3UnitId => {
             if let Some(value) = model.sensor_3_unit_id() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor3Address => {
             if let Some(value) = model.sensor_3_address() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor3OsVersion => {
             if let Some(value) = model.sensor_3_os_version() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor3ProductVersion => {
             if let Some(value) = model.sensor_3_product_version() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Sensor3SerialNum => {
             if let Some(value) = model.sensor_3_serial_num() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 5);
             }
         }
         Point::Sensor4UnitId => {
             if let Some(value) = model.sensor_4_unit_id() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor4Address => {
             if let Some(value) = model.sensor_4_address() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor4OsVersion => {
             if let Some(value) = model.sensor_4_os_version() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Sensor4ProductVersion => {
             if let Some(value) = model.sensor_4_product_version() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Sensor4SerialNum => {
             if let Some(value) = model.sensor_4_serial_num() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 5);
             }
         }
     }

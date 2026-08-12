@@ -261,28 +261,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.module_so_c() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DepthOfDischarge => {
             if let Some(value) = model.depth_of_discharge() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ModuleSoH => {
             if let Some(value) = model.module_so_h() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CycleCount => {
             if let Some(value) = model.cycle_count() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ModuleVoltage => {
@@ -295,7 +295,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_cell_voltage_cell() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellVoltage => {
@@ -305,7 +305,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.min_cell_voltage_cell() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AverageCellVoltage => {
@@ -318,7 +318,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.max_cell_temperature_cell() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::MinCellTemperature => {
@@ -328,7 +328,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.min_cell_temperature_cell() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AverageCellTemperature => {
@@ -338,35 +338,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.balanced_cell_count() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SerialNumber => {
             if let Some(value) = model.serial_number() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 16);
             }
         }
         Point::SoCSf => {
             if let Some(value) = model.so_c_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::SoHSf => {
             if let Some(value) = model.so_h_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DoDSf => {
             if let Some(value) = model.do_d_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VSf => {
@@ -388,7 +388,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.lithium_ion_module_cell_cell_status() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

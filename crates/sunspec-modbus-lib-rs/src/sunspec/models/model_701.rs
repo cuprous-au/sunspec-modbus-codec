@@ -501,483 +501,483 @@ pub fn write_point<'a>(
             if let Some(value) = model.operating_state() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::InverterState => {
             if let Some(value) = model.inverter_state() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::GridConnectionState => {
             if let Some(value) = model.grid_connection_state() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AlarmBitfield => {
             if let Some(value) = model.alarm_bitfield() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::DerOperationalCharacteristics => {
             if let Some(value) = model.der_operational_characteristics() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ActivePower => {
             if let Some(value) = model.active_power() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ApparentPower => {
             if let Some(value) = model.apparent_power() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePower => {
             if let Some(value) = model.reactive_power() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactor => {
             if let Some(value) = model.power_factor() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalAcCurrent => {
             if let Some(value) = model.total_ac_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageLl => {
             if let Some(value) = model.voltage_ll() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageLn => {
             if let Some(value) = model.voltage_ln() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Frequency => {
             if let Some(value) = model.frequency() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TotalEnergyInjected => {
             if let Some(value) = model.total_energy_injected() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalEnergyAbsorbed => {
             if let Some(value) = model.total_energy_absorbed() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalReactiveEnergyInj => {
             if let Some(value) = model.total_reactive_energy_inj() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalReactiveEnergyAbs => {
             if let Some(value) = model.total_reactive_energy_abs() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::AmbientTemperature => {
             if let Some(value) = model.ambient_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CabinetTemperature => {
             if let Some(value) = model.cabinet_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::HeatSinkTemperature => {
             if let Some(value) = model.heat_sink_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TransformerTemperature => {
             if let Some(value) = model.transformer_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::IgbtMosfetTemperature => {
             if let Some(value) = model.igbt_mosfet_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::OtherTemperature => {
             if let Some(value) = model.other_temperature() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WattsL1 => {
             if let Some(value) = model.watts_l1() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaL1 => {
             if let Some(value) = model.va_l1() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarL1 => {
             if let Some(value) = model.var_l1() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfL1 => {
             if let Some(value) = model.pf_l1() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AmpsL1 => {
             if let Some(value) = model.amps_l1() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageL1L2 => {
             if let Some(value) = model.phase_voltage_l1_l2() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageL1N => {
             if let Some(value) = model.phase_voltage_l1_n() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalWattHoursInjL1 => {
             if let Some(value) = model.total_watt_hours_inj_l1() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalWattHoursAbsL1 => {
             if let Some(value) = model.total_watt_hours_abs_l1() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalVarHoursInjL1 => {
             if let Some(value) = model.total_var_hours_inj_l1() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalVarHoursAbsL1 => {
             if let Some(value) = model.total_var_hours_abs_l1() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::WattsL2 => {
             if let Some(value) = model.watts_l2() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaL2 => {
             if let Some(value) = model.va_l2() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarL2 => {
             if let Some(value) = model.var_l2() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfL2 => {
             if let Some(value) = model.pf_l2() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AmpsL2 => {
             if let Some(value) = model.amps_l2() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageL2L3 => {
             if let Some(value) = model.phase_voltage_l2_l3() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageL2N => {
             if let Some(value) = model.phase_voltage_l2_n() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalWattHoursInjL2 => {
             if let Some(value) = model.total_watt_hours_inj_l2() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalWattHoursAbsL2 => {
             if let Some(value) = model.total_watt_hours_abs_l2() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalVarHoursInjL2 => {
             if let Some(value) = model.total_var_hours_inj_l2() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalVarHoursAbsL2 => {
             if let Some(value) = model.total_var_hours_abs_l2() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::WattsL3 => {
             if let Some(value) = model.watts_l3() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VaL3 => {
             if let Some(value) = model.va_l3() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VarL3 => {
             if let Some(value) = model.var_l3() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfL3 => {
             if let Some(value) = model.pf_l3() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AmpsL3 => {
             if let Some(value) = model.amps_l3() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageL3L1 => {
             if let Some(value) = model.phase_voltage_l3_l1() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhaseVoltageL3N => {
             if let Some(value) = model.phase_voltage_l3_n() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TotalWattHoursInjL3 => {
             if let Some(value) = model.total_watt_hours_inj_l3() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalWattHoursAbsL3 => {
             if let Some(value) = model.total_watt_hours_abs_l3() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalVarHoursInjL3 => {
             if let Some(value) = model.total_var_hours_inj_l3() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::TotalVarHoursAbsL3 => {
             if let Some(value) = model.total_var_hours_abs_l3() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ThrottlingInPct => {
             if let Some(value) = model.throttling_in_pct() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ThrottleSourceInformation => {
             if let Some(value) = model.throttle_source_information() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::CurrentScaleFactor => {
             if let Some(value) = model.current_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::VoltageScaleFactor => {
             if let Some(value) = model.voltage_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::FrequencyScaleFactor => {
             if let Some(value) = model.frequency_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActivePowerScaleFactor => {
             if let Some(value) = model.active_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorScaleFactor => {
             if let Some(value) = model.power_factor_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ApparentPowerScaleFactor => {
             if let Some(value) = model.apparent_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerScaleFactor => {
             if let Some(value) = model.reactive_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActiveEnergyScaleFactor => {
             if let Some(value) = model.active_energy_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactiveEnergyScaleFactor => {
             if let Some(value) = model.reactive_energy_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TemperatureScaleFactor => {
             if let Some(value) = model.temperature_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ManufacturerAlarmInfo => {
             if let Some(value) = model.manufacturer_alarm_info() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 32);
             }
         }
     }

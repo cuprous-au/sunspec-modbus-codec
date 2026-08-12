@@ -105,14 +105,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.interface_control() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PhysicalAccessType => {
             if let Some(value) = model.physical_access_type() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Pad => {

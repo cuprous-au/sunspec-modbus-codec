@@ -222,154 +222,154 @@ pub fn write_point<'a>(
             if let Some(value) = model.port_alarms() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::NumberOfPorts => {
             if let Some(value) = model.number_of_ports() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcCurrent => {
             if let Some(value) = model.dc_current() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcPower => {
             if let Some(value) = model.dc_power() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcEnergyInjected => {
             if let Some(value) = model.dc_energy_injected() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::DcEnergyAbsorbed => {
             if let Some(value) = model.dc_energy_absorbed() {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::DcCurrentScaleFactor => {
             if let Some(value) = model.dc_current_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcVoltageScaleFactor => {
             if let Some(value) = model.dc_voltage_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcPowerScaleFactor => {
             if let Some(value) = model.dc_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DcEnergyScaleFactor => {
             if let Some(value) = model.dc_energy_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::TemperatureScaleFactor => {
             if let Some(value) = model.temperature_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtPortType { prt_index } => {
             if let Some(value) = model.prt_port_type(*prt_index) {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtPortId { prt_index } => {
             if let Some(value) = model.prt_port_id(*prt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtPortIdString { prt_index } => {
             if let Some(value) = model.prt_port_id_string(*prt_index) {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 8);
             }
         }
         Point::PrtDcCurrent { prt_index } => {
             if let Some(value) = model.prt_dc_current(*prt_index) {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtDcVoltage { prt_index } => {
             if let Some(value) = model.prt_dc_voltage(*prt_index) {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtDcPower { prt_index } => {
             if let Some(value) = model.prt_dc_power(*prt_index) {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtDcEnergyInjected { prt_index } => {
             if let Some(value) = model.prt_dc_energy_injected(*prt_index) {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::PrtDcEnergyAbsorbed { prt_index } => {
             if let Some(value) = model.prt_dc_energy_absorbed(*prt_index) {
                 buffer::write_u64(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::PrtDcPortTemperature { prt_index } => {
             if let Some(value) = model.prt_dc_port_temperature(*prt_index) {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtDcPortStatus { prt_index } => {
             if let Some(value) = model.prt_dc_port_status(*prt_index) {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PrtDcPortAlarm { prt_index } => {
             if let Some(value) = model.prt_dc_port_alarm(*prt_index) {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

@@ -126,56 +126,56 @@ pub fn write_point<'a>(
             if let Some(value) = model.ramp_up_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NomRmpDnRte => {
             if let Some(value) = model.nom_rmp_dn_rte() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EmergencyRampUpRate => {
             if let Some(value) = model.emergency_ramp_up_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EmergencyRampDownRate => {
             if let Some(value) = model.emergency_ramp_down_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ConnectRampUpRate => {
             if let Some(value) = model.connect_ramp_up_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ConnectRampDownRate => {
             if let Some(value) = model.connect_ramp_down_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DefaultRampRate => {
             if let Some(value) = model.default_ramp_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RampRateScaleFactor => {
             if let Some(value) = model.ramp_rate_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

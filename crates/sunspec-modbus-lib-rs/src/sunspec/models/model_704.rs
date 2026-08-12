@@ -384,322 +384,322 @@ pub fn write_point<'a>(
             if let Some(value) = model.power_factor_enable_w_inj_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorReversionEnableWInj => {
             if let Some(value) = model.power_factor_reversion_enable_w_inj() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfReversionTimeWInj => {
             if let Some(value) = model.pf_reversion_time_w_inj() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PfReversionTimeRemWInj => {
             if let Some(value) = model.pf_reversion_time_rem_w_inj() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PowerFactorEnableWAbsEnable => {
             if let Some(value) = model.power_factor_enable_w_abs_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorReversionEnableWAbs => {
             if let Some(value) = model.power_factor_reversion_enable_w_abs() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PfReversionTimeWAbs => {
             if let Some(value) = model.pf_reversion_time_w_abs() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PfReversionTimeRemWAbs => {
             if let Some(value) = model.pf_reversion_time_rem_w_abs() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::LimitMaxPowerPctEnable => {
             if let Some(value) = model.limit_max_power_pct_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::LimitMaxPowerPctSetpoint => {
             if let Some(value) = model.limit_max_power_pct_setpoint() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionLimitMaxPowerPct => {
             if let Some(value) = model.reversion_limit_max_power_pct() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionLimitMaxPowerPctEnable => {
             if let Some(value) = model.reversion_limit_max_power_pct_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::LimitMaxPowerPctReversionTime => {
             if let Some(value) = model.limit_max_power_pct_reversion_time() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::LimitMaxPowerPctRevTimeRem => {
             if let Some(value) = model.limit_max_power_pct_rev_time_rem() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ActivePowerEnable => {
             if let Some(value) = model.active_power_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActivePowerMode => {
             if let Some(value) = model.active_power_mode() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActivePowerSetpointW => {
             if let Some(value) = model.active_power_setpoint_w() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionActivePowerW => {
             if let Some(value) = model.reversion_active_power_w() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ActivePowerSetpointPct => {
             if let Some(value) = model.active_power_setpoint_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionActivePowerPct => {
             if let Some(value) = model.reversion_active_power_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionActivePowerEnable => {
             if let Some(value) = model.reversion_active_power_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActivePowerReversionTime => {
             if let Some(value) = model.active_power_reversion_time() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ActivePowerRevTimeRem => {
             if let Some(value) = model.active_power_rev_time_rem() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReactivePowerEnable => {
             if let Some(value) = model.reactive_power_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerMode => {
             if let Some(value) = model.reactive_power_mode() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerPriority => {
             if let Some(value) = model.reactive_power_priority() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerSetpointVars => {
             if let Some(value) = model.reactive_power_setpoint_vars() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionReactivePowerVars => {
             if let Some(value) = model.reversion_reactive_power_vars() {
                 buffer::write_i32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReactivePowerSetpointPct => {
             if let Some(value) = model.reactive_power_setpoint_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionReactivePowerPct => {
             if let Some(value) = model.reversion_reactive_power_pct() {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionReactivePowerEnable => {
             if let Some(value) = model.reversion_reactive_power_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerReversionTime => {
             if let Some(value) = model.reactive_power_reversion_time() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReactivePowerRevTimeRem => {
             if let Some(value) = model.reactive_power_rev_time_rem() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::NormalRampRate => {
             if let Some(value) = model.normal_ramp_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::NormalRampRateReference => {
             if let Some(value) = model.normal_ramp_rate_reference() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerRampRate => {
             if let Some(value) = model.reactive_power_ramp_rate() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::AntiIslandingEnable => {
             if let Some(value) = model.anti_islanding_enable() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorScaleFactor => {
             if let Some(value) = model.power_factor_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::LimitMaxPowerScaleFactor => {
             if let Some(value) = model.limit_max_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActivePowerScaleFactor => {
             if let Some(value) = model.active_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ActivePowerPctScaleFactor => {
             if let Some(value) = model.active_power_pct_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerScaleFactor => {
             if let Some(value) = model.reactive_power_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReactivePowerPctScaleFactor => {
             if let Some(value) = model.reactive_power_pct_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorWInjPowerFactorWInj => {
             if let Some(value) = model.power_factor_w_inj_power_factor_w_inj() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorWInjPowerFactorExcitationWInj => {
             if let Some(value) = model.power_factor_w_inj_power_factor_excitation_w_inj() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionPowerFactorWInjReversionPowerFactorWInj => {
             if let Some(value) = model.reversion_power_factor_w_inj_reversion_power_factor_w_inj() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionPowerFactorWInjReversionPfExcitationWInj => {
@@ -707,28 +707,28 @@ pub fn write_point<'a>(
             {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorWAbsPowerFactorWAbs => {
             if let Some(value) = model.power_factor_w_abs_power_factor_w_abs() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::PowerFactorWAbsPowerFactorExcitationWAbs => {
             if let Some(value) = model.power_factor_w_abs_power_factor_excitation_w_abs() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionPowerFactorWAbsReversionPowerFactorWAbs => {
             if let Some(value) = model.reversion_power_factor_w_abs_reversion_power_factor_w_abs() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::ReversionPowerFactorWAbsReversionPfExcitationWAbs => {
@@ -736,7 +736,7 @@ pub fn write_point<'a>(
             {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

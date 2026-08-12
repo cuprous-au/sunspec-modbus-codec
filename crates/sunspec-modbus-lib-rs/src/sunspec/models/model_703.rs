@@ -144,77 +144,77 @@ pub fn write_point<'a>(
             if let Some(value) = model.permit_enter_service() {
                 buffer::write_u16(value as u16, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EnterServiceVoltageHigh => {
             if let Some(value) = model.enter_service_voltage_high() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EnterServiceVoltageLow => {
             if let Some(value) = model.enter_service_voltage_low() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::EnterServiceFrequencyHigh => {
             if let Some(value) = model.enter_service_frequency_high() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::EnterServiceFrequencyLow => {
             if let Some(value) = model.enter_service_frequency_low() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::EnterServiceDelayTime => {
             if let Some(value) = model.enter_service_delay_time() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::EnterServiceRandomDelay => {
             if let Some(value) = model.enter_service_random_delay() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::EnterServiceRampTime => {
             if let Some(value) = model.enter_service_ramp_time() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::EnterServiceDelayRemaining => {
             if let Some(value) = model.enter_service_delay_remaining() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::VoltageScaleFactor => {
             if let Some(value) = model.voltage_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::FrequencyScaleFactor => {
             if let Some(value) = model.frequency_scale_factor() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
     }

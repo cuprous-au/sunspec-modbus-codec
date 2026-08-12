@@ -153,28 +153,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.hz_stop_w_gra() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::WGraSf => {
             if let Some(value) = model.w_gra_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::HzStrStopSf => {
             if let Some(value) = model.hz_str_stop_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::RmpIncDecSf => {
             if let Some(value) = model.rmp_inc_dec_sf() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Pad => {

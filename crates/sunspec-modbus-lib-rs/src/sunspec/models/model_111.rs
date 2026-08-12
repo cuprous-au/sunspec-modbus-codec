@@ -270,35 +270,35 @@ pub fn write_point<'a>(
             if let Some(value) = model.amps_phase_b() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::AmpsPhaseC => {
             if let Some(value) = model.amps_phase_c() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PhaseVoltageAb => {
             if let Some(value) = model.phase_voltage_ab() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PhaseVoltageBc => {
             if let Some(value) = model.phase_voltage_bc() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PhaseVoltageCa => {
             if let Some(value) = model.phase_voltage_ca() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PhaseVoltageAn => {
@@ -308,14 +308,14 @@ pub fn write_point<'a>(
             if let Some(value) = model.phase_voltage_bn() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::PhaseVoltageCn => {
             if let Some(value) = model.phase_voltage_cn() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Watts => {
@@ -328,21 +328,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.va() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::VAr => {
             if let Some(value) = model.v_ar() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::Pf => {
             if let Some(value) = model.pf() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::WattHours => {
@@ -352,21 +352,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.dc_amps() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::DcVoltage => {
             if let Some(value) = model.dc_voltage() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::DcWatts => {
             if let Some(value) = model.dc_watts() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::CabinetTemperature => {
@@ -376,21 +376,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.heat_sink_temperature() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::TransformerTemperature => {
             if let Some(value) = model.transformer_temperature() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OtherTemperature => {
             if let Some(value) = model.other_temperature() {
                 buffer::write_f32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::OperatingState => {
@@ -400,7 +400,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.vendor_operating_state() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::Event1 => {
@@ -413,28 +413,28 @@ pub fn write_point<'a>(
             if let Some(value) = model.vendor_event_bitfield_1() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::VendorEventBitfield2 => {
             if let Some(value) = model.vendor_event_bitfield_2() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::VendorEventBitfield3 => {
             if let Some(value) = model.vendor_event_bitfield_3() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::VendorEventBitfield4 => {
             if let Some(value) = model.vendor_event_bitfield_4() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
     }

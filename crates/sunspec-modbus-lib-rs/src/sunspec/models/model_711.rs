@@ -204,21 +204,21 @@ pub fn write_point<'a>(
             if let Some(value) = model.reversion_timeout() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionTimeLeft => {
             if let Some(value) = model.reversion_time_left() {
                 buffer::write_u32(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 2);
             }
         }
         Point::ReversionControl => {
             if let Some(value) = model.reversion_control() {
                 buffer::write_u16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::DeadbandScaleFactor => {
@@ -264,7 +264,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.ctl_minimum_active_power(*ctl_index) {
                 buffer::write_i16(value, buffer);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 1);
             }
         }
         Point::CtlControlAccess { ctl_index } => {

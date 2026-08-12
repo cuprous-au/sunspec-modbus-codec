@@ -174,7 +174,7 @@ pub fn write_point<'a>(
             if let Some(value) = model.name() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 4);
             }
         }
         Point::ConfigStatus => {
@@ -199,56 +199,56 @@ pub fn write_point<'a>(
             if let Some(value) = model.cidr() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 20);
             }
         }
         Point::Gateway => {
             if let Some(value) = model.gateway() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 20);
             }
         }
         Point::Dns1 => {
             if let Some(value) = model.dns1() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 20);
             }
         }
         Point::Dns2 => {
             if let Some(value) = model.dns2() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 20);
             }
         }
         Point::Ntp1 => {
             if let Some(value) = model.ntp1() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 20);
             }
         }
         Point::Ntp2 => {
             if let Some(value) = model.ntp2() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 20);
             }
         }
         Point::Domain => {
             if let Some(value) = model.domain() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 12);
             }
         }
         Point::HostName => {
             if let Some(value) = model.host_name() {
                 buffer::write_string(value, buffer, offset, limit);
             } else {
-                buffer::zero(buffer, offset);
+                buffer::zero(buffer, 12);
             }
         }
         Point::Pad => {
