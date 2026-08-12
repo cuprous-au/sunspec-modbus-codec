@@ -25,26 +25,26 @@ const char *serial_number_callback()
     return static_content2;
 };
 
-const uint16_t zero_callback_u16()
+uint16_t zero_callback_u16()
 {
     printf("zero callback - u16");
     return 0;
 };
 
-const uint32_t zero_callback_u32()
+uint32_t zero_callback_u32()
 {
     return 0;
 };
 
-const int16_t zero_callback_i16()
+int16_t zero_callback_i16()
 {
     return 0;
 };
 
-const void noop_callback() {
+void noop_callback() {
 };
 
-const void handle_panic(const char* message) {
+void handle_panic(const char* message) {
     fprintf(stderr, "Panic from rust lib: %s", message);
     exit(1);
 };
@@ -57,37 +57,37 @@ typedef struct BatteryState
     SetInvState inverter_state;
 } BatteryState;
 
-const uint32_t cycle_count_callback(const void *self)
+uint32_t cycle_count_callback(const void *self)
 {
     return (*(struct BatteryState *)self).cycle_count;
 }
 
-const uint16_t alarm_reset_callback(const void *self)
+uint16_t alarm_reset_callback(const void *self)
 {
     return (*(struct BatteryState *)self).alarm_reset;
 }
 
-const SetOp operation_callback(const void *self)
+SetOp operation_callback(const void *self)
 {
     return (*(struct BatteryState *)self).operation;
 }
 
-const SetInvState inverter_state_callback(const void *self)
+SetInvState inverter_state_callback(const void *self)
 {
     return (*(struct BatteryState *)self).inverter_state;
 }
 
-const void set_alarm_reset_callback(uint16_t value, void *self)
+void set_alarm_reset_callback(uint16_t value, void *self)
 {
     (*(struct BatteryState *)self).alarm_reset = value;
 }
 
-const void set_operation_callback(SetOp value, void *self)
+void set_operation_callback(SetOp value, void *self)
 {
     (*(struct BatteryState *)self).operation = value;
 }
 
-const void set_inverter_state_callback(SetInvState value, void *self)
+void set_inverter_state_callback(SetInvState value, void *self)
 {
     (*(struct BatteryState *)self).inverter_state = value;
 }

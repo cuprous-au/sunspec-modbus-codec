@@ -6,6 +6,10 @@ edition = "2024"
 [lib]
 crate-type = ["staticlib"]
 
+[features]
+default = ["std"]
+std = []
+
 [dependencies]
 sunspec-modbus-lib-rs = { path = "../sunspec-modbus-lib-rs" }
 

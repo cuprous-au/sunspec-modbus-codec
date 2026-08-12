@@ -28,10 +28,10 @@ This crate is responsible for generating the content of the `src/sunspec` direct
 described below. It sources the latest Sunspec MOBDBUS model definitions from https://github.com/sunspec/models, and generates
 adapter definitions for each model.
 
-The codegen step can be triggered in isolation by running:
-```sh
-cargo run -p sunspec-gen
-```
+> For development purposes of this crate, the codegen step can be triggered in isolation by running:
+> ```sh
+> cargo run -p sunspec-gen
+> ```
 
 # sunspec-modbus-lib-rs
 This is the core rust crate that provides serialisation and deserialisation of Sunspec MODBUS models from a collection of
@@ -40,9 +40,20 @@ adapters.
 # sunspec-modbus-lib-static
 This wraps a subset of the `sunspec-modbus-lib-rs` crate in a stable FFI-safe interface to allow its usage from C.
 
+First, declare a path to where libmodbus lives e.g.
+```sh
+LIBMODBUS_PREFIX=/opt/homebrew/opt/libmodbus
+```
+
 An example can be compiled and executed using the following steps:
 ```sh
-cargo build --release
-cc crates/sunspec-modbus-lib-static/examples/libmodbus.c -o ./target/example-libmodbus.o -lmodbus -L./target/release -lsunspec_modbus_lib_static
+cargo build --release -p sunspec-modbus-lib-static --no-default-features
+cc crates/sunspec-modbus-lib-static/examples/libmodbus.c \
+  -I"$LIBMODBUS_PREFIX/include" \
+  -L"$LIBMODBUS_PREFIX/lib" \
+  -o ./target/example-libmodbus.o \
+  -lmodbus \
+  -L./target/release \
+  -lsunspec_modbus_lib_static
 ./target/example-libmodbus.o
 ```

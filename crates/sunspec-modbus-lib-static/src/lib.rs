@@ -1,16 +1,23 @@
-#![no_std]
-use core::{ffi::c_char, panic::PanicInfo, slice};
+#![cfg_attr(not(feature = "std"), no_std)]
+
+use core::slice;
+
+#[cfg(not(feature = "std"))]
+use core::{ffi::c_char, panic::PanicInfo};
 
 use sunspec_modbus_lib_rs::{
     ModbusRequest, handle_request, sunspec::adapters::SunspecExternalAdapters,
 };
 
+#[cfg(not(feature = "std"))]
 unsafe extern "C" {
     pub fn handle_panic(message: *const c_char) -> !;
 }
 
+#[cfg(not(feature = "std"))]
 const MAX_PANIC_MESSAGE_LENGTH: usize = 128;
 
+#[cfg(not(feature = "std"))]
 #[panic_handler]
 fn panic(panic_info: &PanicInfo) -> ! {
     let message = panic_info
