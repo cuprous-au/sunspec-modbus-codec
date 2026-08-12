@@ -375,7 +375,9 @@ pub fn resolve_group(
 }
 
 pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
-    let model_number: u16 = file_name[6..].parse().unwrap();
+    let model_number: u16 = file_name[6..].parse().expect(
+        "Unable to extract model number from name (expected name in structure model_X.json)",
+    );
     let mut features: HashSet<CodegenFeature> = HashSet::new();
     let group = resolve_group(&model.group, None, &mut features, vec![], None);
 

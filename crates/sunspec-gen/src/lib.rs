@@ -26,7 +26,9 @@ const EXCLUDED_MODELS: [&str; 10] = [
 ];
 
 fn model_name_from_path(path: &Path) -> &str {
-    path.file_prefix().and_then(OsStr::to_str).unwrap()
+    path.file_prefix()
+        .and_then(OsStr::to_str)
+        .expect("Failed to convert Sunspec model JSON file name to string")
 }
 
 fn is_included_model(path: &Path) -> bool {
@@ -35,15 +37,16 @@ fn is_included_model(path: &Path) -> bool {
 
 fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
     let mut vec: Vec<ResolvedModel> = glob(model_glob)
-        .unwrap()
+        .expect("Failed to find Sunspec model JSON files by glob pattern")
         .filter(|entry| match entry {
             Ok(path) => is_included_model(path),
             Err(_) => true,
         })
         .flat_map(|entry| match entry {
             Ok(path) => {
-                let json = fs::read_to_string(&path).unwrap();
-                let model: SunspecModel = serde_json::from_str(&json).unwrap();
+                let json = fs::read_to_string(&path).expect("Failed to read model JSON to string");
+                let model: SunspecModel =
+                    serde_json::from_str(&json).expect("Failed to parse Sunspec model as JSON");
                 let model_name = model_name_from_path(path.as_path());
                 Some(resolve_model(&model, model_name.to_string()))
             }
@@ -59,9 +62,9 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
     vec
 }
 
-fn format_and_write(path: &Path, scope: &Scope) -> std::io::Result<()> {
+fn format_and_write(path: &Path, scope: &Scope) {
     let text_raw = scope.to_string();
-    
+
     let rustfmt_config: Config = Config {
         edition: Some(Edition::Edition2024),
         ..Default::default()
@@ -74,7 +77,7 @@ fn format_and_write(path: &Path, scope: &Scope) -> std::io::Result<()> {
         );
         text_raw
     });
-    fs::write(path, text)
+    fs::write(path, text).expect("Failed to write generated source to file");
 }
 
 pub fn generate() {
@@ -83,8 +86,11 @@ pub fn generate() {
     let src_path = format!("{project_root}/../sunspec-modbus-lib-rs/src/sunspec");
     let generated_src_dir = Path::new(&src_path);
 
-    fs::remove_dir_all(generated_src_dir).unwrap();
-    fs::create_dir_all(generated_src_dir.join("models")).unwrap();
+    fs::remove_dir_all(generated_src_dir).unwrap_or_else(|_| {
+        println!("Generated source directory doesn't exist, no need to remove it.")
+    });
+    fs::create_dir_all(generated_src_dir.join("models"))
+        .expect("Failed to create generated source directories");
 
     let models = collect_models(&model_glob);
 
@@ -94,23 +100,19 @@ pub fn generate() {
                 .join("models")
                 .join(format!("{}.rs", model.name_snake_case)),
             &generate_model(model),
-        )
-        .unwrap();
+        );
     }
 
     format_and_write(
         &generated_src_dir.join("points.rs"),
         &generate_point_types(&models),
-    )
-    .unwrap();
+    );
     format_and_write(
         &generated_src_dir.join("adapters.rs"),
         &generate_adapter_structs(&models),
-    )
-    .unwrap();
+    );
     format_and_write(
         &generated_src_dir.join("models.rs"),
         &generate_models_mod(&models),
-    )
-    .unwrap();
+    );
 }

@@ -307,45 +307,6 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     points_fn.line(")?;");
 
     points_fn.line("Some(())");
-
-    let mut _writer_fn = Function::new("write_point");
-
-    _writer_fn
-        .vis("pub")
-        .generic("'a")
-        .generic("'b")
-        .arg("adapters", "&'a dyn SunspecAdapterProvider<'a>")
-        .arg("point_ref", "&PointReference")
-        .arg("buffer", "ModbusBuffer<'b>")
-        .arg("offset", "u16")
-        .arg("limit", "u16");
-
-    let mut matcher = Block::new("match point_ref");
-    matcher.line("PointReference::Static { value } => write_u16(*value, buffer),");
-    for model in models {
-        let mut match_block = Block::new(format!(
-            "PointReference::{} {{ point }} =>",
-            model.name_pascal_case
-        ));
-
-        match_block
-            .line(format!("{}::write_point(", &model.name_snake_case))
-            .line(format!(
-                "adapters.{}_adapter().unwrap(),",
-                &model.name_snake_case
-            ))
-            .line("point,")
-            .line("buffer,")
-            .line("offset,")
-            .line("limit,")
-            .line(");")
-            .after(",");
-
-        matcher.push_block(match_block);
-    }
-
-    _writer_fn.push_block(matcher);
-
     scope
 }
 

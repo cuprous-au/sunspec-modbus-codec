@@ -172,7 +172,9 @@ impl tokio_modbus::server::Service for ExampleService {
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
-    let socket_addr = "127.0.0.1:5502".parse().unwrap();
+    let socket_addr = "127.0.0.1:5502"
+        .parse()
+        .expect("Failed to parse socked address");
 
     server_context(socket_addr).await
 }
@@ -184,7 +186,9 @@ async fn server_context(socket_addr: SocketAddr) -> io::Result<()> {
 
     let mut inverter = Arc::new(MyInverter { amp_value: 0 });
 
-    Arc::get_mut(&mut inverter).unwrap().amp_value = 32;
+    Arc::get_mut(&mut inverter)
+        .expect("Failed to get mutable reference to data structure")
+        .amp_value = 32;
 
     let new_service = |_socket_addr| {
         Ok(Some(ExampleService {
