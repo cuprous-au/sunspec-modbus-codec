@@ -870,7 +870,6 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     scope.import("core::ffi", "c_void");
-    scope.import("crate::buffer", "self");
     scope.import("crate::buffer", "ModbusBuffer");
     scope.import("core::cmp", "min");
 
