@@ -1,6 +1,6 @@
 /// A mutable handle to support stepping through a u16 indexed target for some range of values.
 ///
-/// Once the target has been fully traversed, further calls are treated as a no-op, short circuiting any unnecessary
+/// Once the target has been fully traversed, further calls are treated as a no-op, short-circuiting any unnecessary
 /// logic.
 pub struct Cursor {
     /// Number of words to skip from the source
@@ -19,7 +19,7 @@ impl Cursor {
     pub fn new(source_offset: u16, limit: u16) -> Self {
         Self {
             source_offset,
-            target_offset: Some(0),
+            target_offset: if limit > 0 { Some(0) } else { None },
             limit,
         }
     }
@@ -27,10 +27,10 @@ impl Cursor {
     /// Provide a handler that represents a fixed size source block.
     ///
     /// - If the target has already been fully traversed, this is a no-op.
-    /// - If the remaining source offset is greater than the size of this block, that much is subtracted from the source 
+    /// - If the remaining source offset is greater than the size of this block, that much is subtracted from the source
     ///   offset with no further action.
-    /// - Otherwise, the handler is invoked with the source/target offsets and number of words to be written, and the
-    ///   cursor then advances accordingly.
+    /// - Otherwise, the handler is invoked with the source offset within this block, the current target offset, and the
+    ///   remaining target length (`self.limit - target_offset`), and the cursor then advances accordingly.
     pub fn visit_source_block<F>(&mut self, size: u16, handler: F)
     where
         F: FnOnce(u16, u16, u16),
@@ -74,6 +74,6 @@ impl Cursor {
             self.visit_source_block(size, |offset, buffer_offset, limit| {
                 handler(ctx, offset, buffer_offset, limit)
             });
-        };
+        }
     }
 }
