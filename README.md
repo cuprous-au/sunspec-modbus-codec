@@ -23,9 +23,9 @@ However, many devices have no operating system and quite often in support of ser
 In this instance, the library could be used along with implementations of Rust's embedded-hal IO library.
 
 ## Crates
-# sunspec-gen
+### sunspec-gen
 This crate is responsible for generating the content of the `src/sunspec` directory of the `sunspec-modbus-lib-rs` crate
-described below. It sources the latest Sunspec MOBDBUS model definitions from https://github.com/sunspec/models, and generates
+described below. It sources the latest Sunspec MODBUS model definitions from https://github.com/sunspec/models, and generates
 adapter definitions for each model.
 
 > For development purposes of this crate, the codegen step can be triggered in isolation by running:
@@ -33,11 +33,11 @@ adapter definitions for each model.
 > cargo run -p sunspec-gen
 > ```
 
-# sunspec-modbus-lib-rs
+### sunspec-modbus-lib-rs
 This is the core rust crate that provides serialisation and deserialisation of Sunspec MODBUS models from a collection of
 adapters.
 
-# sunspec-modbus-lib-static
+### sunspec-modbus-lib-static
 This wraps a subset of the `sunspec-modbus-lib-rs` crate in a stable FFI-safe interface to allow its usage from C.
 
 First, declare a path to where libmodbus lives e.g.

@@ -1,9 +1,8 @@
-#include <stdio.h>
-
+#include <errno.h>
 #include <modbus/modbus.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
+
 #include "../sunspec_modbus_codec.h"
 
 const char *manufacturer_callback()

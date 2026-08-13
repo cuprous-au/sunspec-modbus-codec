@@ -25,7 +25,7 @@ fn panic(panic_info: &PanicInfo) -> ! {
         .as_str()
         .unwrap_or("Unknown Rust panic");
 
-    let mut c_str = [0_i8; MAX_PANIC_MESSAGE_LENGTH + 1];
+    let mut c_str = [0; MAX_PANIC_MESSAGE_LENGTH + 1];
 
     for (char, c_char) in message
         .as_bytes()
@@ -33,7 +33,7 @@ fn panic(panic_info: &PanicInfo) -> ! {
         .take(MAX_PANIC_MESSAGE_LENGTH)
         .zip(c_str.iter_mut())
     {
-        *c_char = (*char) as i8;
+        *c_char = (*char) as c_char;
     }
     unsafe { handle_panic(c_str.as_ptr()) }
 }
