@@ -1,0 +1,17 @@
+[package]
+name = "sunspec-modbus-lib-rs"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["lib"]
+
+[dependencies]
+bytemuck = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["time"] }
+tokio-modbus = { workspace = true, default-features = false, features = ["tcp-server"] }
+
+[build-dependencies]
+sunspec-gen = { path = "../sunspec-gen" }

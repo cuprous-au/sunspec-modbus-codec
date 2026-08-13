@@ -15,13 +15,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
+        with:
+          submodules: true
       - name: Install Rust
         run: |
           rustup toolchain install stable --profile minimal
       - uses: Swatinem/rust-cache@v2
       - name: Format, lint and test
         run: |
+          cargo build
           cargo fmt -- --check
           cargo clippy --tests --verbose -- -D warnings
           cargo test --workspace --exclude system-tests --verbose

@@ -1,0 +1,22 @@
+language = "C"
+pragma_once = true
+include_guard = "SUNSPEC_MODBUS_CODEC_H"
+cpp_compat = true
+include_version = true
+documentation = true
+documentation_style = "c"
+
+style = "both"
+sort_by = "Name"
+usize_is_size_t = true
+
+[parse]
+parse_deps = true
+clean = true
+include = ["sunspec-modbus-lib-rs"]
+
+[export]
+item_types = ["functions", "typedefs", "structs", "enums"]
+
+[enum]
+prefix_with_name = true

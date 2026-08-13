@@ -1,0 +1,4 @@
+{
+  "title": "SunspecSchema",
+  "$ref": "models/json/schema.json"
+}
