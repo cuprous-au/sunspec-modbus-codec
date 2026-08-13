@@ -27,6 +27,8 @@ pub enum ModbusException {
     GatewayTargetDevice = 0x0B,
 }
 
+const STARTING_REGISTER_OFFSET: u16 = 40000;
+
 pub fn handle_request<'a, R: Into<ModbusRequest>, B: Into<ModbusBuffer<'a>>>(
     adapter_provider: &'a dyn SunspecAdapterProvider<'a>,
     request: R,
@@ -35,8 +37,13 @@ pub fn handle_request<'a, R: Into<ModbusRequest>, B: Into<ModbusBuffer<'a>>>(
     let mut buffer = response_buffer.into();
     match request.into() {
         ReadRegister(address, count) => {
-            if address >= 40000 {
-                read_into_buffer(adapter_provider, &mut buffer, address - 40000, count);
+            if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
+                read_into_buffer(
+                    adapter_provider,
+                    &mut buffer,
+                    address - STARTING_REGISTER_OFFSET,
+                    count,
+                );
                 Ok(())
             } else {
                 Err(ModbusException::IllegalDataAddress)
