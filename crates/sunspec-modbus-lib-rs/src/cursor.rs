@@ -31,7 +31,7 @@ impl Cursor {
     ///   offset with no further action.
     /// - Otherwise, the handler is invoked with the source offset within this block, the current target offset, and the
     ///   remaining target length (`self.limit - target_offset`), and the cursor then advances accordingly.
-    pub fn visit_source_block<F>(&mut self, size: u16, handler: F)
+    pub fn visit_source_block<F>(&mut self, size: u16, handler: F) -> Option<u16>
     where
         F: FnOnce(u16, u16, u16),
     {
@@ -54,17 +54,20 @@ impl Cursor {
                 self.source_offset -= size;
             }
         }
+        
+        self.target_offset
     }
 
     /// Invokes [Self::visit_source_block] if the provided context is non-empty.
-    /// 
+    ///
     /// If the context is None, this method has no impact, and doesn't impact the source or target offsets in any way.
     pub fn visit_optional_source_block<A: ?Sized, F>(
         &mut self,
         ctx_opt: Option<&A>,
         get_size: fn(&A) -> u16,
         handler: F,
-    ) where
+    ) -> Option<u16>
+    where
         F: FnOnce(&A, u16, u16, u16),
     {
         if self.target_offset.is_some()
@@ -73,7 +76,9 @@ impl Cursor {
             let size = get_size(ctx);
             self.visit_source_block(size, |offset, buffer_offset, limit| {
                 handler(ctx, offset, buffer_offset, limit)
-            });
+            })
+        } else {
+            self.target_offset
         }
     }
 }

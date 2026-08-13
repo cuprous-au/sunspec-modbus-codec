@@ -38,12 +38,16 @@ pub fn handle_request<'a, R: Into<ModbusRequest>, B: Into<ModbusBuffer<'a>>>(
     match request.into() {
         ReadRegister(address, count) => {
             if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
-                read_into_buffer(
+                if let Some(remainder_offset) = read_into_buffer(
                     adapter_provider,
-                    &mut buffer,
+                    &mut buffer.slice(0, count),
                     address - STARTING_REGISTER_OFFSET,
                     count,
-                );
+                ) {
+                    buffer
+                        .slice(remainder_offset, count - remainder_offset)
+                        .fill(&[0xff, 0xff])
+                }
                 Ok(())
             } else {
                 Err(ModbusException::IllegalDataAddress)
