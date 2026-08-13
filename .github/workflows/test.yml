@@ -22,6 +22,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Format, lint and test
         run: |
+          cargo build
           cargo fmt -- --check
           cargo clippy --tests --verbose -- -D warnings
           cargo test --workspace --exclude system-tests --verbose
