@@ -269,44 +269,34 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         .arg("adapters", "&'a dyn SunspecAdapterProvider<'a>")
         .arg("buffer", "&'b mut ModbusBuffer<'b>")
         .arg("offset", "u16")
-        .arg("limit", "u16")
-        .ret("Option<()>");
+        .arg("limit", "u16");
 
-    let mut cursor_block = Block::new("let mut cursor = Cursor");
-
-    cursor_block
-        .line("source_offset: offset,")
-        .line("buffer_offset: 0,")
-        .line("limit")
-        .after(";");
-
-    points_fn.push_block(cursor_block);
+    points_fn.line("let mut cursor = Cursor::new(offset, limit);");
     points_fn.line("");
 
-    points_fn.line("cursor.handle_static_read(");
+    points_fn.line("cursor.visit_source_block(");
     points_fn.line("2,");
     points_fn
         .line("|offset, from, len| write_string(c\"SunS\", buffer.slice(from, len), offset, len),");
-    points_fn.line(")?;");
+    points_fn.line(");");
 
     for model in models {
         let name = &model.name_snake_case;
 
-        points_fn.line("cursor.handle_adapter_read(");
+        points_fn.line("cursor.visit_optional_source_block(");
         points_fn.line(format!("adapters.{name}_adapter(),"));
         points_fn.line(format!("{name}::model_length,"));
         points_fn.line(format!(
             "|adapter, offset, from, len| {name}::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len),"
         ));
-        points_fn.line(")?;");
+        points_fn.line(");");
     }
 
-    points_fn.line("cursor.handle_static_read(");
+    points_fn.line("cursor.visit_source_block(");
     points_fn.line("1,");
     points_fn.line("|_, from, len| write_u16(0xffff, buffer.slice(from, len)),");
-    points_fn.line(")?;");
+    points_fn.line(");");
 
-    points_fn.line("Some(())");
     scope
 }
 
