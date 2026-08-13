@@ -337,8 +337,8 @@ pub fn resolve_group(
         .into_iter()
         .chain(groups.iter().flat_map(|g| {
             g.points.iter().cloned().map(|p| ResolvedPoint {
-                name_pascal_case: format!("{}{}", &g.name_pascal_case, &p.name_pascal_case),
-                name_snake_case: format!("{}_{}", &g.name_snake_case, &p.name_snake_case),
+                name_pascal_case: format!("{}{}", g.name_pascal_case, p.name_pascal_case),
+                name_snake_case: format!("{}_{}", g.name_snake_case, p.name_snake_case),
                 ..p
             })
         }))

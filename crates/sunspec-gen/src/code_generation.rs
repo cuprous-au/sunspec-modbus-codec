@@ -53,7 +53,7 @@ fn generate_getter(point: &ResolvedPoint) -> Function {
 }
 
 fn generate_setter(point: &ResolvedPoint) -> Function {
-    let mut func = Function::new(format!("set_{}", &point.name_snake_case));
+    let mut func = Function::new(format!("set_{}", point.name_snake_case));
 
     if point.mandatory == PointMandatory::M {
         func.body = None;
@@ -328,7 +328,7 @@ fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Stru
         .filter(|point| point.value_type == PointValueType::Adapter)
     {
         let c_type = if point.point_type.array_length.is_some() {
-            format!("*const {}", &point.point_type.c_type)
+            format!("*const {}", point.point_type.c_type)
         } else {
             point.point_type.c_type.clone()
         };
@@ -497,7 +497,7 @@ pub fn populate_stateful_struct(
         .filter(|point| point.value_type == PointValueType::Adapter)
     {
         let c_type = if let Some(array_length) = point.point_type.array_length {
-            format!("[{}; {}]", &point.point_type.c_type, array_length)
+            format!("[{}; {}]", point.point_type.c_type, array_length)
         } else {
             point.point_type.c_type.clone()
         };
@@ -816,11 +816,11 @@ pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
     for (count_point, inner_group) in group_stack.iter().rev() {
         let prefix = &inner_group.name_short;
         let count_accessor = if count_point.mandatory == PointMandatory::M {
-            format!("model.{}()", &count_point.name_snake_case)
+            format!("model.{}()", count_point.name_snake_case)
         } else {
             format!(
                 "model.{}().unwrap_or_default()",
-                &count_point.name_snake_case
+                count_point.name_snake_case
             )
         };
         fn_def.line(format!("let {prefix}_count = {count_accessor};"));
