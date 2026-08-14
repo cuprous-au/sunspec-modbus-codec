@@ -275,8 +275,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
 
     points_fn.line("cursor.visit_source_block(");
     points_fn.line("2,");
-    points_fn
-        .line("|offset, from, len| buffer.slice(from, len).write_string(c\"SunS\", offset),");
+    points_fn.line("|offset, from, len| buffer.slice(from, len).write_string(c\"SunS\", offset),");
     points_fn.line(")?;");
 
     for model in models {

@@ -54,7 +54,7 @@ impl Cursor {
                 self.source_offset -= size;
             }
         }
-        
+
         self.target_offset
     }
 
