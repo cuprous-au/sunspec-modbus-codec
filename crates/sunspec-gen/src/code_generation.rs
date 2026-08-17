@@ -154,8 +154,6 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     }
 
     scope.import("crate::buffer", "ModbusBuffer");
-    scope.import("crate::buffer", "write_string");
-    scope.import("crate::buffer", "write_u16");
     scope.import("crate::cursor", "Cursor");
 
     let adapter_trait = scope
@@ -270,43 +268,31 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         .arg("buffer", "&'b mut ModbusBuffer<'b>")
         .arg("offset", "u16")
         .arg("limit", "u16")
-        .ret("Option<()>");
+        .ret("Option<u16>");
 
-    let mut cursor_block = Block::new("let mut cursor = Cursor");
-
-    cursor_block
-        .line("source_offset: offset,")
-        .line("buffer_offset: 0,")
-        .line("limit")
-        .after(";");
-
-    points_fn.push_block(cursor_block);
+    points_fn.line("let mut cursor = Cursor::new(offset, limit);");
     points_fn.line("");
 
-    points_fn.line("cursor.handle_static_read(");
+    points_fn.line("cursor.visit_source_block(");
     points_fn.line("2,");
-    points_fn
-        .line("|offset, from, len| write_string(c\"SunS\", buffer.slice(from, len), offset, len),");
+    points_fn.line("|offset, from, len| buffer.slice(from, len).write_string(c\"SunS\", offset),");
     points_fn.line(")?;");
 
     for model in models {
         let name = &model.name_snake_case;
 
-        points_fn.line("cursor.handle_adapter_read(");
+        points_fn.line("cursor.visit_optional_source_block(");
         points_fn.line(format!("adapters.{name}_adapter(),"));
         points_fn.line(format!("{name}::model_length,"));
         points_fn.line(format!(
-            "|adapter, offset, from, len| {name}::read_into_buffer(adapter, &mut buffer.slice(from, len), offset, len),"
+            "|adapter, offset, from, len| {name}::read_into_buffer(adapter, &mut buffer.slice(from, len), offset),"
         ));
         points_fn.line(")?;");
     }
+    points_fn.line("");
 
-    points_fn.line("cursor.handle_static_read(");
-    points_fn.line("1,");
-    points_fn.line("|_, from, len| write_u16(0xffff, buffer.slice(from, len)),");
-    points_fn.line(")?;");
+    points_fn.line("cursor.target_offset");
 
-    points_fn.line("Some(())");
     scope
 }
 
@@ -703,9 +689,9 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                     dereferenced_args.join(", ")
                 );
                 let rest_args = if point.point_type.writer_allow_offset {
-                    ", buffer, offset, limit"
+                    ", offset"
                 } else {
-                    ", buffer"
+                    ""
                 };
 
                 let value_cast = point
@@ -718,18 +704,18 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                 if point.mandatory == PointMandatory::M {
                     match_block
                         .line(format!(
-                            "buffer::{}({value_reader}{value_cast}{rest_args});",
+                            "buffer.{}({value_reader}{value_cast}{rest_args});",
                             point.point_type.writer_function_name
                         ))
                         .after(",");
                 } else {
                     let mut some_block = Block::new(format!("if let Some(value) = {value_reader}"));
                     some_block.line(format!(
-                        "buffer::{}(value{value_cast}{rest_args});",
+                        "buffer.{}(value{value_cast}{rest_args});",
                         point.point_type.writer_function_name
                     ));
                     let mut else_block = Block::new("else");
-                    else_block.line(format!("buffer::zero(buffer, {});", point.size));
+                    else_block.line("buffer.zero();");
 
                     match_block.push_block(some_block);
                     match_block.push_block(else_block);
@@ -739,13 +725,13 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
             PointValueType::ModelLength => {
                 let mut match_block = Block::new(match_arm);
 
-                match_block.line("buffer::write_u16(model_length(model) - 2, buffer);");
+                match_block.line("buffer.write_u16(model_length(model) - 2);");
                 writer_block.push_block(match_block);
             }
             PointValueType::StaticValue(s) => {
                 let mut match_block = Block::new(match_arm);
 
-                match_block.line(format!("buffer::write_u16({s}, buffer);"));
+                match_block.line(format!("buffer.write_u16({s});"));
                 writer_block.push_block(match_block);
             }
         }
@@ -798,10 +784,9 @@ pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
         .generic("'a")
         .arg("model", "&dyn ModelAdapter")
         .arg("buffer", "&mut ModbusBuffer<'a>")
-        .arg("offset", "u16")
-        .arg("limit", "u16");
+        .arg("offset", "u16");
 
-    fn_def.line("let until = offset + limit;");
+    fn_def.line("let until = offset + buffer.len();");
     fn_def.line("let mut cursor = 0;");
     fn_def.line("");
 
@@ -859,7 +844,7 @@ pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
         .line("write_point(")
         .line("model,")
         .line("&point,")
-        .line("buffer.slice(cursor, limit - cursor),")
+        .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
         .line("offset.saturating_sub(start),")
         .line("until - start,")
         .line(");")
@@ -884,7 +869,6 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     scope.import("core::ffi", "c_void");
-    scope.import("crate::buffer", "self");
     scope.import("crate::buffer", "ModbusBuffer");
     scope.import("core::cmp", "min");
 
@@ -929,7 +913,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .vis("pub")
         .arg("model", "&dyn ModelAdapter")
         .arg("point", "&Point")
-        .arg("buffer", "ModbusBuffer<'a>")
+        .arg("buffer", "&mut ModbusBuffer<'a>")
         .arg("offset", "u16")
         .arg("limit", "u16")
         .push_block(writer_block);
