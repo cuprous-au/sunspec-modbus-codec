@@ -47,7 +47,7 @@ fn panic(panic_info: &PanicInfo) -> ! {
 ///   `length * 2` bytes.
 /// - Both pointers must remain valid for the duration of this call.
 pub unsafe extern "C" fn sunspec_service_handle_request(
-    adapters: *const SunspecExternalAdapters,
+    adapters: *mut SunspecExternalAdapters,
     address: u16,
     length: u16,
     response_buffer: *mut u8,
@@ -58,7 +58,7 @@ pub unsafe extern "C" fn sunspec_service_handle_request(
     if response_buffer.is_null() {
         return -1;
     }
-    let adapter_ref = unsafe { &*adapters };
+    let adapter_ref = unsafe { &mut *adapters };
     let buf = unsafe { slice::from_raw_parts_mut(response_buffer, (length as usize) * 2) };
 
     match handle_request(

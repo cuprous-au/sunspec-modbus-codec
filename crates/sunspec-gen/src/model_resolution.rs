@@ -18,8 +18,9 @@ pub struct ResolvedType {
     pub c_type: String,
     pub size: u16,
     pub writer_function_name: String,
+    pub reader_function_name: String,
     pub writer_allow_offset: bool,
-    pub writer_value_cast: Option<String>,
+    pub enum_repr: Option<String>,
     pub array_length: Option<i64>,
     pub cast_from_c: Option<fn(&str) -> String>,
 }
@@ -149,18 +150,22 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     };
 
     let writer_function_name = format!("write_{}", base_type.to_snake_case());
+    let reader_function_name = match point.type_ {
+        PointType::String => format!("read_{}::<{}>", base_type.to_snake_case(), point.size * 2),
+        _ => format!("read_{}", base_type.to_snake_case())
+    };
 
     let writer_allow_offset = base_type != "u16" && base_type != "i16";
-
-    let writer_value_cast = match point.type_ {
-        _ if is_enum => Some(format!(" as {}", base_type)),
-        _ => None,
-    };
 
     let cast_from_c: Option<fn(&str) -> String> = match point.type_ {
         PointType::String => Some(cast_string_from_c),
         PointType::Eui48 => Some(cast_eui48_from_c),
         PointType::Ipv6addr => Some(cast_ipv6_from_c),
+        _ => None,
+    };
+
+    let enum_repr: Option<String> = match point.type_ {
+        _ if is_enum => Some(base_type),
         _ => None,
     };
 
@@ -170,8 +175,9 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         size: point.size as u16,
         array_length,
         writer_function_name,
+        reader_function_name,
         writer_allow_offset,
-        writer_value_cast,
+        enum_repr,
         cast_from_c,
     }
 }

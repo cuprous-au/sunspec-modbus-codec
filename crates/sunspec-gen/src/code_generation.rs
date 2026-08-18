@@ -10,8 +10,9 @@ fn doc_text(parts: &DocLines) -> String {
     parts.join("\n\n")
 }
 
-fn generate_enum(resolved_enum: &ResolvedEnum) -> Enum {
-    let mut enum_def = Enum::new(&resolved_enum.name_pascal_case);
+fn generate_enum(resolved_enum: &ResolvedEnum, scope: &mut Scope) {
+    let enum_name = &resolved_enum.name_pascal_case;
+    let enum_def = scope.new_enum(enum_name);
 
     enum_def
         .vis("pub")
@@ -26,7 +27,23 @@ fn generate_enum(resolved_enum: &ResolvedEnum) -> Enum {
             .doc(doc_text(&value.doc));
     }
 
-    enum_def
+    let enum_impl = scope.new_impl(enum_name);
+
+    let fn_impl = enum_impl
+        .new_fn("from_repr")
+        .arg("repr", &resolved_enum.discriminant_type)
+        .ret(format!("Option<{enum_name}>"));
+
+    let mut repr_match = Block::new("match repr");
+    for value in &resolved_enum.values {
+        repr_match.line(format!(
+            "{} => Some({enum_name}::{}),",
+            value.discriminant, value.name_pascal_case,
+        ));
+    }
+    repr_match.line("_ => None");
+
+    fn_impl.push_block(repr_match);
 }
 
 fn option_unless_mandatory(point: &ResolvedPoint) -> Type {
@@ -124,28 +141,6 @@ fn generate_point_arrays(group: &ResolvedGroup, scope: &mut Scope, args: Vec<Str
     }
 }
 
-pub fn generate_point_types(models: &[ResolvedModel]) -> Scope {
-    let mut scope = Scope::new();
-
-    for model in models {
-        scope.import("crate::sunspec::models", &model.name_snake_case);
-    }
-
-    let point_reference_enum = scope.new_enum("PointReference").vis("pub").derive("Debug");
-
-    for model in models {
-        point_reference_enum
-            .new_variant(&model.name_pascal_case)
-            .named("point", format!("{}::Point", model.name_snake_case));
-    }
-
-    point_reference_enum
-        .new_variant("Static")
-        .named("value", "u16");
-
-    scope
-}
-
 pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     let mut scope: Scope = Scope::new();
 
@@ -155,6 +150,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
 
     scope.import("crate::buffer", "ModbusBuffer");
     scope.import("crate::cursor", "Cursor");
+    scope.import("crate", "RegisterAction");
 
     let adapter_trait = scope
         .new_trait("SunspecAdapterProvider")
@@ -163,9 +159,9 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     for model in models {
         adapter_trait
             .new_fn(format!("{}_adapter", model.name_snake_case))
-            .arg_ref_self()
+            .arg_mut_self()
             .ret(format!(
-                "Option<&'a dyn {}::ModelAdapter>",
+                "Option<&mut (dyn {}::ModelAdapter + 'a)>",
                 model.name_snake_case
             ));
     }
@@ -180,7 +176,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         trait_struct
             .field(
                 format!("pub {}_adapter", model.name_snake_case),
-                format!("Option<&'a dyn {}::ModelAdapter>", model.name_snake_case),
+                format!("Option<&'a mut dyn {}::ModelAdapter>", model.name_snake_case),
             )
             .vis("pub");
     }
@@ -193,12 +189,12 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     for model in models {
         trait_struct_impl
             .new_fn(format!("{}_adapter", model.name_snake_case))
-            .arg_ref_self()
+            .arg_mut_self()
             .ret(format!(
-                "Option<&'a dyn {}::ModelAdapter>",
+                "Option<&mut (dyn {}::ModelAdapter + 'a)>",
                 model.name_snake_case
             ))
-            .line(format!("self.{}_adapter", model.name_snake_case));
+            .line(format!("self.{}_adapter.as_deref_mut()", model.name_snake_case));
     }
 
     let c_struct = scope
@@ -212,7 +208,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
             .field(
                 format!("pub {}_callback_adapter", model.name_snake_case),
                 format!(
-                    "Option<&'a {}::{}CallbackAdapter>",
+                    "Option<&'a mut {}::{}CallbackAdapter>",
                     model.name_snake_case, model.name_pascal_case
                 ),
             )
@@ -224,7 +220,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
                 .field(
                     format!("pub {}_stateful_adapter", model.name_snake_case),
                     format!(
-                        "Option<&'a {}::{}StatefulAdapter>",
+                        "Option<&'a mut {}::{}StatefulAdapter>",
                         model.name_snake_case, model.name_pascal_case
                     ),
                 )
@@ -240,43 +236,49 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     for model in models {
         let impl_fn = c_struct_impl
             .new_fn(format!("{}_adapter", model.name_snake_case))
-            .arg_ref_self()
+            .arg_mut_self()
             .ret(format!(
-                "Option<&'a dyn {}::ModelAdapter>",
+                "Option<&mut (dyn {}::ModelAdapter + 'a)>",
                 model.name_snake_case
             ))
-            .line(format!("self.{}_callback_adapter", model.name_snake_case))
             .line(format!(
-                ".map(|a| a as &'a dyn {}::ModelAdapter)",
+                "self.{}_callback_adapter.as_deref_mut()",
+                model.name_snake_case
+            ))
+            .line(format!(
+                ".map(|a| a as &mut (dyn {}::ModelAdapter + 'a))",
                 model.name_snake_case
             ));
 
         if model.group.repeating_child.is_none() {
             impl_fn.line(format!(
-                ".or(self.{}_stateful_adapter.map(|a| a as &'a dyn {}::ModelAdapter))",
+                ".or_else(|| self.{}_stateful_adapter.as_deref_mut().map(|a| a as &mut (dyn {}::ModelAdapter + 'a)))",
                 model.name_snake_case, model.name_snake_case,
             ));
         }
     }
 
     let points_fn = scope
-        .new_fn("read_into_buffer")
+        .new_fn("traverse_adapters")
         .vis("pub")
         .generic("'a")
         .generic("'b")
-        .arg("adapters", "&'a dyn SunspecAdapterProvider<'a>")
+        .arg("adapters", "&mut dyn SunspecAdapterProvider<'a>")
         .arg("buffer", "&'b mut ModbusBuffer<'b>")
         .arg("offset", "u16")
         .arg("limit", "u16")
+        .arg("action", "RegisterAction")
         .ret("Option<u16>");
 
     points_fn.line("let mut cursor = Cursor::new(offset, limit);");
     points_fn.line("");
 
-    points_fn.line("cursor.visit_source_block(");
-    points_fn.line("2,");
-    points_fn.line("|offset, from, len| buffer.slice(from, len).write_string(c\"SunS\", offset),");
-    points_fn.line(")?;");
+
+    let mut suns_prefix_block = Block::new("cursor.visit_source_block(2, |offset, from, len|");
+    let mut prefix_read = Block::new("if matches!(action, RegisterAction::ReadToBuffer)");
+    prefix_read.line("buffer.slice(from, len).write_string(c\"SunS\", offset);");
+    suns_prefix_block.push_block(prefix_read).line("Ok(())").after(")?;");
+    points_fn.push_block(suns_prefix_block);
 
     for model in models {
         let name = &model.name_snake_case;
@@ -285,7 +287,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         points_fn.line(format!("adapters.{name}_adapter(),"));
         points_fn.line(format!("{name}::model_length,"));
         points_fn.line(format!(
-            "|adapter, offset, from, len| {name}::read_into_buffer(adapter, &mut buffer.slice(from, len), offset),"
+            "|adapter, offset, from, len| {name}::traverse_points(adapter, &mut buffer.slice(from, len), offset, &action),"
         ));
         points_fn.line(")?;");
     }
@@ -696,7 +698,9 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
 
                 let value_cast = point
                     .point_type
-                    .writer_value_cast
+                    .enum_repr
+                    .as_ref()
+                    .map(|ty| format!(" as {ty}"))
                     .clone()
                     .unwrap_or_default();
 
@@ -742,6 +746,71 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
     }
 }
 
+fn populate_model_reader(group: &ResolvedGroup, reader_block: &mut Block) {
+    for point in group.points.iter() {
+        let index_args: Vec<String> = point
+            .block_indices
+            .iter()
+            .map(|block_index| block_index.index_name.clone())
+            .collect();
+        let match_arm = if index_args.is_empty() {
+            format!("Point::{} =>", point.name_pascal_case)
+        } else {
+            format!(
+                "Point::{} {{ {} }} =>",
+                point.name_pascal_case,
+                index_args.join(", ")
+            )
+        };
+        if point.value_type == PointValueType::Adapter && point.access == PointAccess::Rw {
+            let dereferenced_args: Vec<String> =
+                index_args.iter().map(|arg| format!("*{arg}")).collect();
+            let rest_args = if dereferenced_args.is_empty() {
+                "".to_string()
+            } else {
+                format!(", {}", dereferenced_args.join(", "))
+            };
+
+            let mut match_block = Block::new(match_arm);
+            match_block.line(format!(
+                "let value = buffer.{}()?;",
+                point.point_type.reader_function_name
+            ));
+
+            let parsed_value_name = if point.point_type.enum_repr.is_some() {
+                match_block.line(format!(
+                    "let enum_value = {}::from_repr(value).ok_or(ModbusException::IllegalDataValue)?;",
+                    point.point_type.rust_type
+                ));
+                "enum_value"
+            } else if point.point_type.rust_type == "&CStr" {
+                match_block.line(
+                    "let str_value = CStr::from_bytes_with_nul(&value).map_err(|_| ModbusException::IllegalDataValue)?;");
+                "str_value"
+            } else {
+                "value"
+            };
+
+            match_block
+                .line(format!(
+                    "model.set_{}({parsed_value_name}{rest_args});",
+                    point.name_snake_case
+                ))
+                .line("Ok(())")
+                .after(",");
+            reader_block.push_block(match_block);
+        }
+    }
+
+    if let Some((_, inner_group)) = &group.repeating_child {
+        populate_model_reader(inner_group, reader_block);
+    } else {
+        let mut unmatched_block = Block::new("_ =>");
+        unmatched_block.line("Err(ModbusException::IllegalDataAddress)");
+        reader_block.push_block(unmatched_block);
+    }
+}
+
 fn chain_repeating_group_iterator(
     group: &ResolvedGroup,
     address_offset: String,
@@ -777,14 +846,16 @@ fn chain_repeating_group_iterator(
     result
 }
 
-pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
+pub fn generate_traverse_points_fn(model: &ResolvedModel, scope: &mut Scope) {
     let fn_def = scope
-        .new_fn("read_into_buffer")
+        .new_fn("traverse_points")
         .vis("pub")
         .generic("'a")
-        .arg("model", "&dyn ModelAdapter")
+        .arg("model", "&mut dyn ModelAdapter")
         .arg("buffer", "&mut ModbusBuffer<'a>")
-        .arg("offset", "u16");
+        .arg("offset", "u16")
+        .arg("action", "&RegisterAction")
+        .ret("Result<(), ModbusException>");
 
     fn_def.line("let until = offset + buffer.len();");
     fn_def.line("let mut cursor = 0;");
@@ -826,7 +897,7 @@ pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
         child_group = Some(inner_group);
     }
 
-    fn_def.line("POINTS.iter()");
+    fn_def.line("let iter = POINTS.iter()");
     fn_def.line(".map(|p| (p.start_address, p.size, (p.point)(())))");
 
     if let Some((_, inner_group)) = &model.group.repeating_child {
@@ -838,19 +909,43 @@ pub fn generate_read_into_buffer_fn(model: &ResolvedModel, scope: &mut Scope) {
     }
 
     fn_def.line(".skip_while(|(start,size,_)| offset >= start + size)");
-    fn_def.line(".take_while(|(start,_,_)| until > *start)");
-    let mut write_block = Block::new(".for_each(|(start, size, point)|");
-    write_block
+    fn_def.line(".take_while(|(start,_,_)| until > *start);");
+    fn_def.line("");
+    let mut point_block = Block::new("for (start, size, point) in iter");
+    point_block.line("let point_offset = offset.saturating_sub(start);");
+    let mut action_block = Block::new("match action");
+    let mut read_to_buffer = Block::new("RegisterAction::ReadToBuffer =>");
+    read_to_buffer
         .line("write_point(")
         .line("model,")
         .line("&point,")
         .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
-        .line("offset.saturating_sub(start),")
-        .line("until - start,")
+        .line("point_offset,")
         .line(");")
-        .line("cursor += min(size, until - start);");
-    fn_def.push_block(write_block);
-    fn_def.line(");");
+        .after(",");
+    
+    let mut set_from_buffer = Block::new("RegisterAction::SetFromBuffer =>");
+
+    let mut offset_guard = Block::new("if point_offset > 0");
+    offset_guard.line("return Err(ModbusException::IllegalDataAddress)");
+
+    set_from_buffer.push_block(offset_guard);
+
+    set_from_buffer
+        .line("read_point(")
+        .line("model,")
+        .line("&point,")
+        .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
+        .line(")?;")
+        .after(",");
+
+    action_block.push_block(read_to_buffer);
+    action_block.push_block(set_from_buffer);
+    point_block.push_block(action_block);
+    point_block.line("cursor += min(size, until - start);");
+    fn_def.push_block(point_block);
+    fn_def.line("");
+    fn_def.line("Ok(())");
 }
 
 pub fn generate_model(model: &ResolvedModel) -> Scope {
@@ -870,6 +965,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
 
     scope.import("core::ffi", "c_void");
     scope.import("crate::buffer", "ModbusBuffer");
+    scope.import("crate", "RegisterAction");
+    scope.import("crate", "ModbusException");
     scope.import("core::cmp", "min");
 
     let size: u16 = model
@@ -902,7 +999,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .ret("u16")
         .line(generate_model_length_calculator(&model.group));
 
-    generate_read_into_buffer_fn(model, &mut scope);
+    generate_traverse_points_fn(model, &mut scope);
 
     let mut writer_block = Block::new("match point");
     populate_model_writer(&model.group, &mut writer_block);
@@ -915,8 +1012,20 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .arg("point", "&Point")
         .arg("buffer", "&mut ModbusBuffer<'a>")
         .arg("offset", "u16")
-        .arg("limit", "u16")
         .push_block(writer_block);
+
+    let mut reader_block = Block::new("match point");
+    populate_model_reader(&model.group, &mut reader_block);
+
+    scope
+        .new_fn("read_point")
+        .generic("'a")
+        .vis("pub")
+        .arg("model", "&mut dyn ModelAdapter")
+        .arg("point", "&Point")
+        .arg("buffer", "&ModbusBuffer<'a>")
+        .ret("Result<(), ModbusException>")
+        .push_block(reader_block);
 
     let root_trait = scope.new_trait("ModelAdapter").vis("pub");
 
@@ -925,7 +1034,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     for enum_type in &model.group.enums {
-        scope.push_enum(generate_enum(enum_type));
+        generate_enum(enum_type, &mut scope);
     }
 
     generate_callback_struct(model, &mut scope);

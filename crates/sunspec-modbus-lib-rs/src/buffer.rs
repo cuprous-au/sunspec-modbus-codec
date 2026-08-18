@@ -1,4 +1,10 @@
-use core::{ffi::CStr, net::Ipv4Addr};
+use core::{
+    ffi::{CStr, c_char},
+    net::Ipv4Addr,
+    ops::{Add, Shl},
+};
+
+use crate::ModbusException;
 
 #[derive(Clone, Copy)]
 pub enum ModbusWordByteOrder {
@@ -25,6 +31,14 @@ impl<'a> ModbusBuffer<'a> {
 
     pub fn len(&self) -> u16 {
         self.buffer.len() as u16
+    }
+
+    pub fn fill(self: &mut ModbusBuffer<'a>, word: &[u8; 2]) {
+        self.buffer.fill(order_bytes(word, self.byte_order))
+    }
+
+    pub fn zero(self: &mut ModbusBuffer<'a>) {
+        self.buffer.fill([0, 0]);
     }
 
     pub fn write_u16(self: &mut ModbusBuffer<'a>, value: u16) {
@@ -95,14 +109,6 @@ impl<'a> ModbusBuffer<'a> {
         self.write_bytes(str.to_bytes_with_nul(), offset);
     }
 
-    pub fn fill(self: &mut ModbusBuffer<'a>, word: &[u8; 2]) {
-        self.buffer.fill(order_bytes(word, self.byte_order))
-    }
-
-    pub fn zero(self: &mut ModbusBuffer<'a>) {
-        self.buffer.fill([0, 0]);
-    }
-
     pub fn write_bytes(self: &mut ModbusBuffer<'a>, bytes: &[u8], offset: u16) {
         let (chunks, remainder) = bytes.as_chunks();
 
@@ -114,6 +120,150 @@ impl<'a> ModbusBuffer<'a> {
             .skip(offset as usize)
             .zip(self.buffer.iter_mut())
             .for_each(|(chunk, buf_word)| *buf_word = order_bytes(chunk, self.byte_order));
+    }
+
+    pub fn read_integer<A>(self: &ModbusBuffer<'a>, len: u16) -> Result<A, ModbusException>
+    where
+        A: Shl<usize, Output = A> + Add<A, Output = A> + Default + From<u8>,
+    {
+        if self.len() != len {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            Ok(self
+                .buffer
+                .iter()
+                .flat_map(|word| order_bytes(word, self.byte_order))
+                .fold(A::default(), |acc: A, byte: u8| acc + (A::from(byte) << 8)))
+        }
+    }
+
+    pub fn read_u16(self: &ModbusBuffer<'a>) -> Result<u16, ModbusException> {
+        if self.len() != 1 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            Ok(match self.byte_order {
+                ModbusWordByteOrder::BigEndian => u16::from_be_bytes(self.buffer[0]),
+                ModbusWordByteOrder::System => u16::from_ne_bytes(self.buffer[0]),
+            })
+        }
+    }
+
+    pub fn read_u32(self: &ModbusBuffer<'a>) -> Result<u32, ModbusException> {
+        self.read_integer(2)
+    }
+
+    pub fn read_u64(self: &ModbusBuffer<'a>) -> Result<u64, ModbusException> {
+        self.read_integer(4)
+    }
+
+    pub fn read_u128(self: &ModbusBuffer<'a>) -> Result<u128, ModbusException> {
+        self.read_integer(8)
+    }
+
+    pub fn read_i16(self: &ModbusBuffer<'a>) -> Result<i16, ModbusException> {
+        if self.len() != 1 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            Ok(match self.byte_order {
+                ModbusWordByteOrder::BigEndian => i16::from_be_bytes(self.buffer[0]),
+                ModbusWordByteOrder::System => i16::from_ne_bytes(self.buffer[0]),
+            })
+        }
+    }
+
+    pub fn read_i32(self: &ModbusBuffer<'a>) -> Result<i32, ModbusException> {
+        self.read_integer(2)
+    }
+
+    pub fn read_i64(self: &ModbusBuffer<'a>) -> Result<i64, ModbusException> {
+        self.read_integer(4)
+    }
+
+    pub fn read_f32(self: &ModbusBuffer<'a>) -> Result<f32, ModbusException> {
+        if self.len() != 2 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            let mut bytes = [0; 4];
+            self.buffer
+                .iter()
+                .flat_map(|word| order_bytes(word, self.byte_order))
+                .zip(bytes.iter_mut())
+                .for_each(|(a, b)| *b = a);
+            Ok(f32::from_be_bytes(bytes))
+        }
+    }
+
+    pub fn read_f64(self: &ModbusBuffer<'a>) -> Result<f64, ModbusException> {
+        if self.len() != 4 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            let mut bytes = [0; 8];
+            self.buffer
+                .iter()
+                .flat_map(|word| order_bytes(word, self.byte_order))
+                .zip(bytes.iter_mut())
+                .for_each(|(a, b)| *b = a);
+            Ok(f64::from_be_bytes(bytes))
+        }
+    }
+
+    pub fn read_ipv4_addr(self: &ModbusBuffer<'a>) -> Result<Ipv4Addr, ModbusException> {
+        if self.len() != 2 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            let mut bytes = [0; 4];
+            self.buffer
+                .iter()
+                .flat_map(|word| order_bytes(word, self.byte_order))
+                .zip(bytes.iter_mut())
+                .for_each(|(a, b)| *b = a);
+            Ok(Ipv4Addr::from_octets(bytes))
+        }
+    }
+
+    pub fn read_ipv6_addr(self: &ModbusBuffer<'a>) -> Result<[u16; 8], ModbusException> {
+        if self.len() != 8 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            let mut words = [0; 8];
+            self.buffer.iter().zip(words.iter_mut()).for_each(|(a, b)| {
+                *b = match self.byte_order {
+                    ModbusWordByteOrder::BigEndian => u16::from_be_bytes(*a),
+                    ModbusWordByteOrder::System => u16::from_ne_bytes(*a),
+                }
+            });
+            Ok(words)
+        }
+    }
+
+    pub fn read_eui48(self: &ModbusBuffer<'a>) -> Result<[u8; 6], ModbusException> {
+        if self.len() != 6 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            let mut bytes = [0; 6];
+            self.buffer
+                .iter()
+                .flat_map(|word| order_bytes(word, self.byte_order))
+                .zip(bytes.iter_mut())
+                .for_each(|(a, b)| *b = a);
+            Ok(bytes)
+        }
+    }
+
+    pub fn read_string<const N: usize>(
+        self: &ModbusBuffer<'a>,
+    ) -> Result<[u8; N], ModbusException> {
+        if self.len() * 2 != N as u16 {
+            Err(ModbusException::IllegalDataAddress)
+        } else {
+            let mut str = [0; N];
+            self.buffer
+                .iter()
+                .flat_map(|word| order_bytes(word, self.byte_order))
+                .zip(str.iter_mut())
+                .for_each(|(a, b)| *b = a as u8);
+            Ok(str)
+        }
     }
 }
 

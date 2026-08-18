@@ -4,7 +4,7 @@ use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
-    generate_adapter_structs, generate_model, generate_models_mod, generate_point_types,
+    generate_adapter_structs, generate_model, generate_models_mod,
 };
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::sunspec_schema::SunspecModel;
@@ -105,10 +105,6 @@ pub fn generate() {
         );
     }
 
-    format_and_write(
-        &generated_src_dir.join("points.rs"),
-        &generate_point_types(&models),
-    );
     format_and_write(
         &generated_src_dir.join("adapters.rs"),
         &generate_adapter_structs(&models),
