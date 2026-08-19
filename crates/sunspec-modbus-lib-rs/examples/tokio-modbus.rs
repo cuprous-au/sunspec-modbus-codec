@@ -5,7 +5,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    c_char_array, read_register, sunspec::{
+    c_char_array, read_registers, sunspec::{
         adapters::SunspecAdapters,
         models::{model_1::Model1StatefulAdapter, model_103},
     }, write_multiple_registers, write_single_register,
@@ -140,10 +140,9 @@ impl tokio_modbus::server::Service for ExampleService {
                 println!("{} -> {} ({} words)", addr, addr + cnt, cnt);
 
                 let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
-                match read_register(
+                match read_registers(
                     &adapters,
                     addr,
-                    cnt,
                     &mut response_buffer as &mut [u16],
                 ) {
                     Ok(_) => {

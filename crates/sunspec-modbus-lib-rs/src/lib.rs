@@ -25,13 +25,14 @@ pub enum ModbusException {
 
 const STARTING_REGISTER_OFFSET: u16 = 40000;
 
-pub fn read_register<'a, 'b, B: Into<WritableRegisterBuffer<'b>>>(
+pub fn read_registers<'a, 'b, B: Into<WritableRegisterBuffer<'b>>>(
     adapter_provider: &dyn SunspecAdapterProvider<'a>,
     address: u16,
-    count: u16,
     response_buffer: B,
 ) -> Result<(), ModbusException> {
     let mut buffer = response_buffer.into();
+    let count = buffer.len();
+
     if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
         if let Some(remainder_offset) = traverse_adapters_read(
             adapter_provider,
@@ -111,7 +112,7 @@ use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulA
 
         let mut init_buf = [0_u8; WORDS_TO_READ as usize * 2];
 
-        read_register(&adapters, STARTING_REGISTER_OFFSET, WORDS_TO_READ, init_buf.as_mut_slice())?;
+        read_registers(&adapters, STARTING_REGISTER_OFFSET, init_buf.as_mut_slice())?;
 
         assert_eq!(&init_buf[..4], b"SunS");
         assert_eq!(u16::from_be_bytes(init_buf[4..6].try_into().expect("Unexpected slice length")), 1);
@@ -129,7 +130,7 @@ use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulA
 
         let mut after_buf = [0_u8; 40];
 
-        read_register(&adapters, STARTING_REGISTER_OFFSET + 52, 20, after_buf.as_mut_slice())?;
+        read_registers(&adapters, STARTING_REGISTER_OFFSET + 52, after_buf.as_mut_slice())?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));
         assert_eq!(u16::from_be_bytes(after_buf[32..34].try_into().expect("Unexpected slice length")), 1234);
