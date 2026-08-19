@@ -187,7 +187,10 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         trait_struct
             .field(
                 format!("pub {}_adapter", model.name_snake_case),
-                format!("Option<&'a mut dyn {}::ModelAdapter>", model.name_snake_case),
+                format!(
+                    "Option<&'a mut dyn {}::ModelAdapter>",
+                    model.name_snake_case
+                ),
             )
             .vis("pub");
     }
@@ -205,7 +208,10 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
                 "Option<&mut (dyn {}::ModelAdapter + 'a)>",
                 model.name_snake_case
             ))
-            .line(format!("self.{}_adapter.as_deref_mut()", model.name_snake_case));
+            .line(format!(
+                "self.{}_adapter.as_deref_mut()",
+                model.name_snake_case
+            ));
 
         trait_struct_impl
             .new_fn(format!("{}_adapter_ref", model.name_snake_case))

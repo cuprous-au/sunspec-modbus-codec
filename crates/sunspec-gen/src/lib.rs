@@ -3,9 +3,7 @@ use glob::glob;
 use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
-use crate::code_generation::{
-    generate_adapter_structs, generate_model, generate_models_mod,
-};
+use crate::code_generation::{generate_adapter_structs, generate_model, generate_models_mod};
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::sunspec_schema::SunspecModel;
 

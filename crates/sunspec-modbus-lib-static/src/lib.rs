@@ -5,7 +5,9 @@ use core::slice;
 #[cfg(not(feature = "std"))]
 use core::{ffi::c_char, panic::PanicInfo};
 
-use sunspec_modbus_lib_rs::{read_registers, sunspec::adapters::SunspecExternalAdapters, write_multiple_registers};
+use sunspec_modbus_lib_rs::{
+    read_registers, sunspec::adapters::SunspecExternalAdapters, write_multiple_registers,
+};
 
 #[cfg(not(feature = "std"))]
 unsafe extern "C" {

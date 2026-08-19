@@ -5,10 +5,12 @@ use std::{
     sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    c_char_array, read_registers, sunspec::{
+    c_char_array, read_registers,
+    sunspec::{
         adapters::SunspecAdapters,
         models::{model_1::Model1StatefulAdapter, model_103},
-    }, write_multiple_registers, write_single_register,
+    },
+    write_multiple_registers, write_single_register,
 };
 use tokio::net::TcpListener;
 
@@ -140,11 +142,7 @@ impl tokio_modbus::server::Service for ExampleService {
                 println!("{} -> {} ({} words)", addr, addr + cnt, cnt);
 
                 let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
-                match read_registers(
-                    &adapters,
-                    addr,
-                    &mut response_buffer as &mut [u16],
-                ) {
+                match read_registers(&adapters, addr, &mut response_buffer as &mut [u16]) {
                     Ok(_) => {
                         for word in &response_buffer {
                             print!("{:x} ", word);

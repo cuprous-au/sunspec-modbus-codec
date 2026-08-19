@@ -88,7 +88,7 @@ pub fn write_single_register<'a>(
 mod tests {
     use core::ffi::CStr;
 
-use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulAdapter};
+    use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulAdapter};
 
     use super::*;
 
@@ -115,25 +115,58 @@ use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulA
         read_registers(&adapters, STARTING_REGISTER_OFFSET, init_buf.as_mut_slice())?;
 
         assert_eq!(&init_buf[..4], b"SunS");
-        assert_eq!(u16::from_be_bytes(init_buf[4..6].try_into().expect("Unexpected slice length")), 1);
-        assert_eq!(u16::from_be_bytes(init_buf[6..8].try_into().expect("Unexpected slice length")), 66);
+        assert_eq!(
+            u16::from_be_bytes(init_buf[4..6].try_into().expect("Unexpected slice length")),
+            1
+        );
+        assert_eq!(
+            u16::from_be_bytes(init_buf[6..8].try_into().expect("Unexpected slice length")),
+            66
+        );
         assert_eq!(CStr::from_bytes_until_nul(&init_buf[8..40]), Ok(c"Cuprous"));
-        assert_eq!(CStr::from_bytes_until_nul(&init_buf[40..72]), Ok(c"Inverter 1"));
-        assert_eq!(CStr::from_bytes_until_nul(&init_buf[72..88]), Ok(c"opt_a_b_c"));
-        assert_eq!(CStr::from_bytes_until_nul(&init_buf[88..104]),  Ok(c"v0.1"));
+        assert_eq!(
+            CStr::from_bytes_until_nul(&init_buf[40..72]),
+            Ok(c"Inverter 1")
+        );
+        assert_eq!(
+            CStr::from_bytes_until_nul(&init_buf[72..88]),
+            Ok(c"opt_a_b_c")
+        );
+        assert_eq!(CStr::from_bytes_until_nul(&init_buf[88..104]), Ok(c"v0.1"));
         assert_eq!(CStr::from_bytes_until_nul(&init_buf[104..136]), Ok(c"I-1"));
-        assert_eq!(u16::from_be_bytes(init_buf[136..138].try_into().expect("Unexpected slice length")), 0);
+        assert_eq!(
+            u16::from_be_bytes(
+                init_buf[136..138]
+                    .try_into()
+                    .expect("Unexpected slice length")
+            ),
+            0
+        );
 
         write_single_register(&mut adapters, STARTING_REGISTER_OFFSET + 68, 1234)?;
 
-        assert_eq!(adapters.model_1_adapter.as_ref().unwrap().device_address(), Some(1234));
+        assert_eq!(
+            adapters.model_1_adapter.as_ref().unwrap().device_address(),
+            Some(1234)
+        );
 
         let mut after_buf = [0_u8; 40];
 
-        read_registers(&adapters, STARTING_REGISTER_OFFSET + 52, after_buf.as_mut_slice())?;
+        read_registers(
+            &adapters,
+            STARTING_REGISTER_OFFSET + 52,
+            after_buf.as_mut_slice(),
+        )?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));
-        assert_eq!(u16::from_be_bytes(after_buf[32..34].try_into().expect("Unexpected slice length")), 1234);
+        assert_eq!(
+            u16::from_be_bytes(
+                after_buf[32..34]
+                    .try_into()
+                    .expect("Unexpected slice length")
+            ),
+            1234
+        );
         Ok(())
     }
 }

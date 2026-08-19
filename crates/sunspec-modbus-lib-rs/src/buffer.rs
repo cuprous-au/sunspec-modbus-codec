@@ -167,7 +167,10 @@ impl<'a> ReadableRegisterBuffer<'a> {
         self.buffer.len() as u16
     }
 
-    pub fn read_integer<A>(self: &ReadableRegisterBuffer<'a>, len: u16) -> Result<A, ModbusException>
+    pub fn read_integer<A>(
+        self: &ReadableRegisterBuffer<'a>,
+        len: u16,
+    ) -> Result<A, ModbusException>
     where
         A: Shl<usize, Output = A> + Add<A, Output = A> + Default + From<u8>,
     {
