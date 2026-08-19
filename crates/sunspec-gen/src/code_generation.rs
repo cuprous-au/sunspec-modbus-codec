@@ -31,6 +31,7 @@ fn generate_enum(resolved_enum: &ResolvedEnum, scope: &mut Scope) {
 
     let fn_impl = enum_impl
         .new_fn("from_repr")
+        .vis("pub")
         .arg("repr", &resolved_enum.discriminant_type)
         .ret(format!("Option<{enum_name}>"));
 
@@ -361,7 +362,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     suns_prefix_skip_block.line("Ok(())").after(");");
     write_fn.push_block(suns_prefix_skip_block);
 
-    for model in models {
+    for model in models.iter().filter(|m| m.group.writable) {
         let name = &model.name_snake_case;
 
         write_fn.line("cursor.visit_optional_source_block(");
@@ -1024,7 +1025,7 @@ fn generate_traverse_points_fn(
     match direction {
         TraverseDirection::Read => {
             point_block
-                .line("write_point(")
+                .line("write_point_to_buffer(")
                 .line("model,")
                 .line("&point,")
                 .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
@@ -1037,7 +1038,7 @@ fn generate_traverse_points_fn(
             point_block.push_block(offset_guard);
 
             point_block
-                .line("read_point(")
+                .line("read_point_from_buffer(")
                 .line("model,")
                 .line("&point,")
                 .line("&buffer.slice(cursor, min(size, until - cursor)),")
@@ -1112,7 +1113,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     populate_model_writer(&model.group, &mut writer_block);
 
     scope
-        .new_fn("write_point")
+        .new_fn("write_point_to_buffer")
         .generic("'a")
         .vis("pub")
         .arg("model", "&dyn ModelAdapter")
@@ -1121,18 +1122,23 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .arg("offset", "u16")
         .push_block(writer_block);
 
-    let mut reader_block = Block::new("match point");
-    populate_model_reader(&model.group, &mut reader_block);
-
-    scope
-        .new_fn("read_point")
+    let reader_fn = scope
+        .new_fn("read_point_from_buffer")
         .generic("'a")
         .vis("pub")
         .arg("model", "&mut dyn ModelAdapter")
         .arg("point", "&Point")
         .arg("buffer", "&ReadableRegisterBuffer<'a>")
-        .ret("Result<(), ModbusException>")
-        .push_block(reader_block);
+        .ret("Result<(), ModbusException>");
+
+    if model.group.writable {
+        let mut reader_block = Block::new("match point");
+        populate_model_reader(&model.group, &mut reader_block);
+
+        reader_fn.push_block(reader_block);
+    } else {
+        reader_fn.line("Err(ModbusException::IllegalDataAddress)");
+    }
 
     let root_trait = scope.new_trait("ModelAdapter").vis("pub");
 

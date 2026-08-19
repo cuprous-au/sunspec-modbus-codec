@@ -83,6 +83,7 @@ pub struct ResolvedGroup {
     pub points: Vec<ResolvedPoint>,
     pub enums: Vec<ResolvedEnum>,
     pub repeating_child: Option<(ResolvedPoint, Box<ResolvedGroup>)>,
+    pub writable: bool,
 }
 
 fn cast_string_from_c(value: &str) -> String {
@@ -368,6 +369,9 @@ pub fn resolve_group(
 
     let name = group.label.as_ref().unwrap_or(&group.name);
 
+    let writable = repeating_child.iter().any(|(_, g)| g.writable)
+        || points.iter().any(|p| p.access == PointAccess::Rw);
+
     ResolvedGroup {
         name_pascal_case: name.to_pascal_case(),
         name_snake_case: name.to_snake_case(),
@@ -376,6 +380,7 @@ pub fn resolve_group(
         points,
         enums,
         repeating_child,
+        writable,
     }
 }
 
