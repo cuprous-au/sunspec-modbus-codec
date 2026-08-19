@@ -102,14 +102,13 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         | PointType::Acc16
         | PointType::Bitfield16
         | PointType::Pad
-        | PointType::Sunssf
         | PointType::Count
         | PointType::Enum16 => "u16".to_string(),
         PointType::Uint32 | PointType::Acc32 | PointType::Bitfield32 | PointType::Enum32 => {
             "u32".to_string()
         }
         PointType::Uint64 | PointType::Acc64 | PointType::Bitfield64 => "u64".to_string(),
-        PointType::Int16 => "i16".to_string(),
+        PointType::Int16 | PointType::Sunssf => "i16".to_string(),
         PointType::Int32 => "i32".to_string(),
         PointType::Int64 => "i64".to_string(),
         PointType::Float32 => "f32".to_string(),
@@ -152,7 +151,7 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     let writer_function_name = format!("write_{}", base_type.to_snake_case());
     let reader_function_name = match point.type_ {
         PointType::String => format!("read_{}::<{}>", base_type.to_snake_case(), point.size * 2),
-        _ => format!("read_{}", base_type.to_snake_case())
+        _ => format!("read_{}", base_type.to_snake_case()),
     };
 
     let writer_allow_offset = base_type != "u16" && base_type != "i16";

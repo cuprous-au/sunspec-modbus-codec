@@ -1,15 +1,14 @@
 use std::{
-    ffi::CStr,
     future,
     io::{self},
     net::SocketAddr,
-    sync::Arc,
+    sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    ModbusRequest, handle_request,
+    ModbusRequest, c_char_array, handle_request,
     sunspec::{
         adapters::SunspecAdapters,
-        models::{model_1, model_103},
+        models::{model_1::Model1StatefulAdapter, model_103},
     },
 };
 use tokio::net::TcpListener;
@@ -19,28 +18,11 @@ use tokio_modbus::{
     server::tcp::{Server, accept_tcp_connection},
 };
 
-struct MyInverter {
+struct InverterModel {
     pub amp_value: u16,
+    pub voltages: [u16; 3],
 }
-impl model_1::ModelAdapter for MyInverter {
-    fn manufacturer(&self) -> &CStr {
-        c"Cuprous"
-    }
-
-    fn model(&self) -> &CStr {
-        c"Inverter 1"
-    }
-
-    fn serial_number(&self) -> &CStr {
-        c"I-1"
-    }
-
-    fn options(&self) -> Option<&CStr> {
-        Some(c"opt_a_b_c")
-    }
-}
-
-impl model_103::ModelAdapter for MyInverter {
+impl model_103::ModelAdapter for InverterModel {
     fn amps(&self) -> u16 {
         self.amp_value
     }
@@ -57,56 +39,56 @@ impl model_103::ModelAdapter for MyInverter {
         1
     }
 
-    fn a_sf(&self) -> u16 {
-        1
+    fn a_sf(&self) -> i16 {
+        -1
     }
 
     fn phase_voltage_an(&self) -> u16 {
-        1
+        self.voltages[0]
     }
 
     fn phase_voltage_bn(&self) -> u16 {
-        1
+        self.voltages[1]
     }
 
     fn phase_voltage_cn(&self) -> u16 {
-        1
+        self.voltages[2]
     }
 
-    fn v_sf(&self) -> u16 {
-        1
+    fn v_sf(&self) -> i16 {
+        -1
     }
 
     fn watts(&self) -> i16 {
         1
     }
 
-    fn w_sf(&self) -> u16 {
+    fn w_sf(&self) -> i16 {
         1
     }
 
     fn hz(&self) -> u16 {
-        1
+        1234
     }
 
-    fn hz_sf(&self) -> u16 {
-        1
+    fn hz_sf(&self) -> i16 {
+        -2
     }
 
     fn watt_hours(&self) -> u32 {
         1
     }
 
-    fn wh_sf(&self) -> u16 {
-        1
+    fn wh_sf(&self) -> i16 {
+        0
     }
 
     fn cabinet_temperature(&self) -> i16 {
         1
     }
 
-    fn tmp_sf(&self) -> u16 {
-        1
+    fn tmp_sf(&self) -> i16 {
+        0
     }
 
     fn operating_state(&self) -> model_103::St {
@@ -123,7 +105,8 @@ impl model_103::ModelAdapter for MyInverter {
 }
 
 struct ExampleService {
-    inverter: Arc<MyInverter>,
+    common_model: Arc<Mutex<Model1StatefulAdapter>>,
+    inverter: Arc<Mutex<InverterModel>>,
 }
 
 impl tokio_modbus::server::Service for ExampleService {
@@ -133,18 +116,33 @@ impl tokio_modbus::server::Service for ExampleService {
     type Future = future::Ready<Result<Self::Response, Self::Exception>>;
 
     fn call(&self, req: Self::Request) -> Self::Future {
-        let adapters = SunspecAdapters {
-            model_1_adapter: Some(self.inverter.as_ref()),
-            model_103_adapter: Some(self.inverter.as_ref()),
+        let mut common_model = self
+            .common_model
+            .lock()
+            .expect("Failed to get mutable reference to common model");
+        let mut inverter_model = self
+            .inverter
+            .lock()
+            .expect("Failed to get mutable reference to inverter model");
+
+        inverter_model.voltages = [
+            rand::random_range(2300..2500),
+            rand::random_range(2300..2500),
+            rand::random_range(2300..2500),
+        ];
+        let mut adapters = SunspecAdapters {
+            model_1_adapter: Some(&mut *common_model),
+            model_103_adapter: Some(&mut *inverter_model),
             ..Default::default()
         };
+        println!("Handling {req:?}");
         let res = match req {
             Request::ReadHoldingRegisters(addr, cnt) => {
                 println!("{} -> {} ({} words)", addr, addr + cnt, cnt);
 
                 let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
                 match handle_request(
-                    &adapters,
+                    &mut adapters,
                     ModbusRequest::ReadRegister(addr, cnt),
                     &mut response_buffer as &mut [u16],
                 ) {
@@ -155,6 +153,20 @@ impl tokio_modbus::server::Service for ExampleService {
                         println!(";");
 
                         Ok(Response::ReadHoldingRegisters(response_buffer.into()))
+                    }
+                    Err(code) => Err(ExceptionCode::new(code as u8)),
+                }
+            }
+            Request::WriteMultipleRegisters(addr, mut buffer) => {
+                let buf = buffer.to_mut();
+                let mut slice = buf.clone().into_boxed_slice();
+                match handle_request(
+                    &mut adapters,
+                    ModbusRequest::WriteMultipleRegisters(addr, buf.len() as u16),
+                    &mut slice as &mut [u16],
+                ) {
+                    Ok(_) => {
+                        Ok(Response::WriteMultipleRegisters(addr, buffer.len() as u16))
                     }
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }
@@ -184,14 +196,23 @@ async fn server_context(socket_addr: SocketAddr) -> io::Result<()> {
     let listener = TcpListener::bind(socket_addr).await?;
     let server = Server::new(listener);
 
-    let mut inverter = Arc::new(MyInverter { amp_value: 0 });
+    let common_model = Arc::new(Mutex::new(Model1StatefulAdapter {
+        manufacturer: c_char_array!("Cuprous"),
+        model: c_char_array!("Inverter 1"),
+        serial_number: c_char_array!("I-1"),
+        options: c_char_array!("opt_a_b_c"),
+        version: c_char_array!("v0.1"),
+        device_address: 0,
+    }));
 
-    Arc::get_mut(&mut inverter)
-        .expect("Failed to get mutable reference to data structure")
-        .amp_value = 32;
+    let inverter = Arc::new(Mutex::new(InverterModel {
+        amp_value: 0,
+        voltages: [0, 0, 0],
+    }));
 
     let new_service = |_socket_addr| {
         Ok(Some(ExampleService {
+            common_model: common_model.clone(),
             inverter: inverter.clone(),
         }))
     };

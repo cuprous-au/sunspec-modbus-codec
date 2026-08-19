@@ -489,7 +489,7 @@ pub fn populate_stateful_struct(
         } else {
             point.point_type.c_type.clone()
         };
-        stateful_struct.field(&point.name_snake_case, c_type);
+        stateful_struct.field(format!("pub {}", point.name_snake_case), c_type);
     }
 
     if let Some((_, inner_group)) = &group.repeating_child {
@@ -497,7 +497,7 @@ pub fn populate_stateful_struct(
         if let Some((array_len, inner_generics)) = generics.split_first() {
             let generic_str = inner_generics.join(", ");
             stateful_struct.field(
-                &inner_group.name_snake_case,
+                format!("pub {}", inner_group.name_snake_case),
                 format!("[{name}<{generic_str}>; {array_len}]"),
             );
             populate_stateful_struct(

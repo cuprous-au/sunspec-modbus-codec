@@ -1,6 +1,8 @@
 #![no_std]
 pub mod buffer;
 pub mod cursor;
+#[macro_use]
+pub mod macros;
 pub mod sunspec;
 
 use crate::{
