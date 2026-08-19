@@ -5,9 +5,7 @@ use core::slice;
 #[cfg(not(feature = "std"))]
 use core::{ffi::c_char, panic::PanicInfo};
 
-use sunspec_modbus_lib_rs::{
-    ModbusRequest, handle_request, sunspec::adapters::SunspecExternalAdapters,
-};
+use sunspec_modbus_lib_rs::{read_register, sunspec::adapters::SunspecExternalAdapters};
 
 #[cfg(not(feature = "std"))]
 unsafe extern "C" {
@@ -58,14 +56,10 @@ pub unsafe extern "C" fn sunspec_service_handle_request(
     if response_buffer.is_null() {
         return -1;
     }
-    let adapter_ref = unsafe { &mut *adapters };
+    let adapter_ref = unsafe { &*adapters };
     let buf = unsafe { slice::from_raw_parts_mut(response_buffer, (length as usize) * 2) };
 
-    match handle_request(
-        adapter_ref,
-        ModbusRequest::ReadRegister(address, length),
-        buf,
-    ) {
+    match read_register(adapter_ref, address, length, buf) {
         Ok(()) => 0,
         Err(_) => -2,
     }

@@ -37,7 +37,13 @@ mod tests {
 
     #[test]
     fn fills_array_exactly() {
-        let array: [c_char; 3] = c_char_array!("abc");
-        assert_eq!(array, [b'a' as c_char, b'b' as c_char, b'c' as c_char]);
+        let array: [c_char; 4] = c_char_array!("abc");
+        assert_eq!(array, [b'a' as c_char, b'b' as c_char, b'c' as c_char, 0]);
+    }
+
+    #[test]
+    #[should_panic(expected = "string does not fit in array")]
+    fn errors_if_length_equal() {
+        let _array: [c_char; 3] = c_char_array!("abc");
     }
 }

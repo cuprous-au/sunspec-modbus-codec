@@ -201,10 +201,8 @@ int main(void)
                 uint16_t length = req[10] << 8 | req[11];
 
                 printf("Function %d, addr %d, len %d\n", function_code, address, length);
-                if (function_code == 3)
+                if (function_code == MODBUS_FC_READ_HOLDING_REGISTERS)
                 {
-                    // Only holding register reads are supported at this point;
-
                     // Reuse request buffer, copying values from initial request
                     int bytes = (length) * 2;
 
@@ -226,12 +224,19 @@ int main(void)
 
                     modbus_send_raw_request_tid(ctx, res, bytes + 3, tid);
                     modbus_flush(ctx);
-                }
-                else
-                {
-                    if (modbus_reply(ctx, req, rc, map) == -1)
+
                     {
-                        break;
+                        if (modbus_reply(ctx, req, rc, map) == -1)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (function_code == MODBUS_FC_WRITE_MULTIPLE_REGISTERS)
+                {
+                    for (int i = 0; i < length + 3; i++)
+                    {
+                        printf("%02x ", res[i]);
                     }
                 }
             }

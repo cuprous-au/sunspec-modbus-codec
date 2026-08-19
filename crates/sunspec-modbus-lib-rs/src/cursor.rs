@@ -107,6 +107,29 @@ impl<E: Clone> Cursor<E> {
             self.target_offset
         }
     }
+
+    /// Shared-reference counterpart to [Self::visit_optional_source_block], for traversals that
+    /// only need read access to the context.
+    pub fn visit_optional_source_block_ref<A: ?Sized, F>(
+        &mut self,
+        ctx_opt: Option<&A>,
+        get_size: fn(&A) -> u16,
+        handler: F,
+    ) -> Option<u16>
+    where
+        F: FnOnce(&A, u16, u16, u16) -> Result<(), E>,
+    {
+        if self.target_offset.is_some()
+            && let Some(ctx) = ctx_opt
+        {
+            let size = get_size(ctx);
+            self.visit_source_block(size, |offset, buffer_offset, limit| {
+                handler(ctx, offset, buffer_offset, limit)
+            })
+        } else {
+            self.target_offset
+        }
+    }
 }
 
 #[cfg(test)]

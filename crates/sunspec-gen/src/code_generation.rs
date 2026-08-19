@@ -148,9 +148,12 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         scope.import("crate::sunspec::models", &model.name_snake_case);
     }
 
-    scope.import("crate::buffer", "ModbusBuffer");
+    scope.import("crate::buffer", "WritableRegisterBuffer");
+    scope.import("crate::buffer", "ReadableRegisterBuffer");
     scope.import("crate::cursor", "Cursor");
-    scope.import("crate", "RegisterAction");
+    scope.import("crate::cursor", "CursorResult");
+    scope.import("crate", "ModbusException");
+    scope.import("core::convert", "Infallible");
 
     let adapter_trait = scope
         .new_trait("SunspecAdapterProvider")
@@ -162,6 +165,14 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
             .arg_mut_self()
             .ret(format!(
                 "Option<&mut (dyn {}::ModelAdapter + 'a)>",
+                model.name_snake_case
+            ));
+
+        adapter_trait
+            .new_fn(format!("{}_adapter_ref", model.name_snake_case))
+            .arg_ref_self()
+            .ret(format!(
+                "Option<&(dyn {}::ModelAdapter + 'a)>",
                 model.name_snake_case
             ));
     }
@@ -195,6 +206,15 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
                 model.name_snake_case
             ))
             .line(format!("self.{}_adapter.as_deref_mut()", model.name_snake_case));
+
+        trait_struct_impl
+            .new_fn(format!("{}_adapter_ref", model.name_snake_case))
+            .arg_ref_self()
+            .ret(format!(
+                "Option<&(dyn {}::ModelAdapter + 'a)>",
+                model.name_snake_case
+            ))
+            .line(format!("self.{}_adapter.as_deref()", model.name_snake_case));
     }
 
     let c_struct = scope
@@ -256,44 +276,103 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
                 model.name_snake_case, model.name_snake_case,
             ));
         }
+
+        let ref_impl_fn = c_struct_impl
+            .new_fn(format!("{}_adapter_ref", model.name_snake_case))
+            .arg_ref_self()
+            .ret(format!(
+                "Option<&(dyn {}::ModelAdapter + 'a)>",
+                model.name_snake_case
+            ))
+            .line(format!(
+                "self.{}_callback_adapter.as_deref()",
+                model.name_snake_case
+            ))
+            .line(format!(
+                ".map(|a| a as &(dyn {}::ModelAdapter + 'a))",
+                model.name_snake_case
+            ));
+
+        if model.group.repeating_child.is_none() {
+            ref_impl_fn.line(format!(
+                ".or_else(|| self.{}_stateful_adapter.as_deref().map(|a| a as &(dyn {}::ModelAdapter + 'a)))",
+                model.name_snake_case, model.name_snake_case,
+            ));
+        }
     }
 
-    let points_fn = scope
-        .new_fn("traverse_adapters")
+    let read_fn = scope
+        .new_fn("traverse_adapters_read")
         .vis("pub")
         .generic("'a")
         .generic("'b")
-        .arg("adapters", "&mut dyn SunspecAdapterProvider<'a>")
-        .arg("buffer", "&'b mut ModbusBuffer<'b>")
+        .arg("adapters", "&dyn SunspecAdapterProvider<'a>")
+        .arg("buffer", "&'b mut WritableRegisterBuffer<'b>")
         .arg("offset", "u16")
         .arg("limit", "u16")
-        .arg("action", "RegisterAction")
         .ret("Option<u16>");
 
-    points_fn.line("let mut cursor = Cursor::new(offset, limit);");
-    points_fn.line("");
-
+    read_fn.line("let mut cursor: Cursor<Infallible> = Cursor::new(offset, limit);");
+    read_fn.line("");
 
     let mut suns_prefix_block = Block::new("cursor.visit_source_block(2, |offset, from, len|");
-    let mut prefix_read = Block::new("if matches!(action, RegisterAction::ReadToBuffer)");
-    prefix_read.line("buffer.slice(from, len).write_string(c\"SunS\", offset);");
-    suns_prefix_block.push_block(prefix_read).line("Ok(())").after(")?;");
-    points_fn.push_block(suns_prefix_block);
+    suns_prefix_block
+        .line("buffer.slice(from, len).write_string(c\"SunS\", offset);")
+        .line("Ok(())")
+        .after(")?;");
+    read_fn.push_block(suns_prefix_block);
 
     for model in models {
         let name = &model.name_snake_case;
 
-        points_fn.line("cursor.visit_optional_source_block(");
-        points_fn.line(format!("adapters.{name}_adapter(),"));
-        points_fn.line(format!("{name}::model_length,"));
-        points_fn.line(format!(
-            "|adapter, offset, from, len| {name}::traverse_points(adapter, &mut buffer.slice(from, len), offset, &action),"
+        read_fn.line("cursor.visit_optional_source_block_ref(");
+        read_fn.line(format!("adapters.{name}_adapter_ref(),"));
+        read_fn.line(format!("{name}::model_length,"));
+        read_fn.line(format!(
+            "|adapter, offset, from, len| {{ {name}::traverse_points_read(adapter, &mut buffer.slice(from, len), offset); Ok(()) }},"
         ));
-        points_fn.line(")?;");
+        read_fn.line(")?;");
     }
-    points_fn.line("");
+    read_fn.line("");
 
-    points_fn.line("cursor.target_offset");
+    read_fn.line("cursor.target_offset");
+
+    let write_fn = scope
+        .new_fn("traverse_adapters_write")
+        .vis("pub")
+        .generic("'a")
+        .generic("'b")
+        .arg("adapters", "&mut dyn SunspecAdapterProvider<'a>")
+        .arg("buffer", "&'b ReadableRegisterBuffer<'b>")
+        .arg("offset", "u16")
+        .arg("limit", "u16")
+        .ret("Result<Option<u16>, ModbusException>");
+
+    write_fn.line("let mut cursor = Cursor::new(offset, limit);");
+    write_fn.line("");
+
+    let mut suns_prefix_skip_block = Block::new("cursor.visit_source_block(2, |_, _, _|");
+    suns_prefix_skip_block.line("Ok(())").after(");");
+    write_fn.push_block(suns_prefix_skip_block);
+
+    for model in models {
+        let name = &model.name_snake_case;
+
+        write_fn.line("cursor.visit_optional_source_block(");
+        write_fn.line(format!("adapters.{name}_adapter(),"));
+        write_fn.line(format!("{name}::model_length,"));
+        write_fn.line(format!(
+            "|adapter, offset, from, len| {name}::traverse_points_write(adapter, &buffer.slice(from, len), offset),"
+        ));
+        write_fn.line(");");
+    }
+    write_fn.line("");
+
+    let mut result_match = Block::new("match cursor.result()");
+    result_match.line("CursorResult::Complete => Ok(None),");
+    result_match.line("CursorResult::Incomplete(offset) => Ok(Some(offset)),");
+    result_match.line("CursorResult::Error(e) => Err(e),");
+    write_fn.push_block(result_match);
 
     scope
 }
@@ -846,16 +925,38 @@ fn chain_repeating_group_iterator(
     result
 }
 
-pub fn generate_traverse_points_fn(model: &ResolvedModel, scope: &mut Scope) {
-    let fn_def = scope
-        .new_fn("traverse_points")
-        .vis("pub")
-        .generic("'a")
-        .arg("model", "&mut dyn ModelAdapter")
-        .arg("buffer", "&mut ModbusBuffer<'a>")
-        .arg("offset", "u16")
-        .arg("action", "&RegisterAction")
-        .ret("Result<(), ModbusException>");
+enum TraverseDirection {
+    Read,
+    Write,
+}
+
+fn generate_traverse_points_fn(
+    model: &ResolvedModel,
+    scope: &mut Scope,
+    direction: TraverseDirection,
+) {
+    let fn_name = match direction {
+        TraverseDirection::Read => "traverse_points_read",
+        TraverseDirection::Write => "traverse_points_write",
+    };
+
+    let fn_def = scope.new_fn(fn_name).vis("pub").generic("'a");
+
+    match direction {
+        TraverseDirection::Read => {
+            fn_def
+                .arg("model", "&dyn ModelAdapter")
+                .arg("buffer", "&mut WritableRegisterBuffer<'a>")
+                .arg("offset", "u16");
+        }
+        TraverseDirection::Write => {
+            fn_def
+                .arg("model", "&mut dyn ModelAdapter")
+                .arg("buffer", "&ReadableRegisterBuffer<'a>")
+                .arg("offset", "u16")
+                .ret("Result<(), ModbusException>");
+        }
+    }
 
     fn_def.line("let until = offset + buffer.len();");
     fn_def.line("let mut cursor = 0;");
@@ -913,39 +1014,38 @@ pub fn generate_traverse_points_fn(model: &ResolvedModel, scope: &mut Scope) {
     fn_def.line("");
     let mut point_block = Block::new("for (start, size, point) in iter");
     point_block.line("let point_offset = offset.saturating_sub(start);");
-    let mut action_block = Block::new("match action");
-    let mut read_to_buffer = Block::new("RegisterAction::ReadToBuffer =>");
-    read_to_buffer
-        .line("write_point(")
-        .line("model,")
-        .line("&point,")
-        .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
-        .line("point_offset,")
-        .line(");")
-        .after(",");
-    
-    let mut set_from_buffer = Block::new("RegisterAction::SetFromBuffer =>");
 
-    let mut offset_guard = Block::new("if point_offset > 0");
-    offset_guard.line("return Err(ModbusException::IllegalDataAddress)");
+    match direction {
+        TraverseDirection::Read => {
+            point_block
+                .line("write_point(")
+                .line("model,")
+                .line("&point,")
+                .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
+                .line("point_offset,")
+                .line(");");
+        }
+        TraverseDirection::Write => {
+            let mut offset_guard = Block::new("if point_offset > 0");
+            offset_guard.line("return Err(ModbusException::IllegalDataAddress)");
+            point_block.push_block(offset_guard);
 
-    set_from_buffer.push_block(offset_guard);
+            point_block
+                .line("read_point(")
+                .line("model,")
+                .line("&point,")
+                .line("&buffer.slice(cursor, min(size, until - cursor)),")
+                .line(")?;");
+        }
+    }
 
-    set_from_buffer
-        .line("read_point(")
-        .line("model,")
-        .line("&point,")
-        .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
-        .line(")?;")
-        .after(",");
-
-    action_block.push_block(read_to_buffer);
-    action_block.push_block(set_from_buffer);
-    point_block.push_block(action_block);
     point_block.line("cursor += min(size, until - start);");
     fn_def.push_block(point_block);
-    fn_def.line("");
-    fn_def.line("Ok(())");
+
+    if matches!(direction, TraverseDirection::Write) {
+        fn_def.line("");
+        fn_def.line("Ok(())");
+    }
 }
 
 pub fn generate_model(model: &ResolvedModel) -> Scope {
@@ -964,8 +1064,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     scope.import("core::ffi", "c_void");
-    scope.import("crate::buffer", "ModbusBuffer");
-    scope.import("crate", "RegisterAction");
+    scope.import("crate::buffer", "WritableRegisterBuffer");
+    scope.import("crate::buffer", "ReadableRegisterBuffer");
     scope.import("crate", "ModbusException");
     scope.import("core::cmp", "min");
 
@@ -999,7 +1099,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .ret("u16")
         .line(generate_model_length_calculator(&model.group));
 
-    generate_traverse_points_fn(model, &mut scope);
+    generate_traverse_points_fn(model, &mut scope, TraverseDirection::Read);
+    generate_traverse_points_fn(model, &mut scope, TraverseDirection::Write);
 
     let mut writer_block = Block::new("match point");
     populate_model_writer(&model.group, &mut writer_block);
@@ -1010,7 +1111,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .vis("pub")
         .arg("model", "&dyn ModelAdapter")
         .arg("point", "&Point")
-        .arg("buffer", "&mut ModbusBuffer<'a>")
+        .arg("buffer", "&mut WritableRegisterBuffer<'a>")
         .arg("offset", "u16")
         .push_block(writer_block);
 
@@ -1023,7 +1124,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .vis("pub")
         .arg("model", "&mut dyn ModelAdapter")
         .arg("point", "&Point")
-        .arg("buffer", "&ModbusBuffer<'a>")
+        .arg("buffer", "&ReadableRegisterBuffer<'a>")
         .ret("Result<(), ModbusException>")
         .push_block(reader_block);
 

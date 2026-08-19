@@ -5,11 +5,10 @@ use std::{
     sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    ModbusRequest, c_char_array, handle_request,
-    sunspec::{
+    c_char_array, read_register, sunspec::{
         adapters::SunspecAdapters,
         models::{model_1::Model1StatefulAdapter, model_103},
-    },
+    }, write_multiple_registers, write_single_register,
 };
 use tokio::net::TcpListener;
 
@@ -141,9 +140,10 @@ impl tokio_modbus::server::Service for ExampleService {
                 println!("{} -> {} ({} words)", addr, addr + cnt, cnt);
 
                 let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
-                match handle_request(
-                    &mut adapters,
-                    ModbusRequest::ReadRegister(addr, cnt),
+                match read_register(
+                    &adapters,
+                    addr,
+                    cnt,
                     &mut response_buffer as &mut [u16],
                 ) {
                     Ok(_) => {
@@ -157,17 +157,16 @@ impl tokio_modbus::server::Service for ExampleService {
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }
             }
-            Request::WriteMultipleRegisters(addr, mut buffer) => {
-                let buf = buffer.to_mut();
-                let mut slice = buf.clone().into_boxed_slice();
-                match handle_request(
-                    &mut adapters,
-                    ModbusRequest::WriteMultipleRegisters(addr, buf.len() as u16),
-                    &mut slice as &mut [u16],
-                ) {
-                    Ok(_) => {
-                        Ok(Response::WriteMultipleRegisters(addr, buffer.len() as u16))
-                    }
+            Request::WriteMultipleRegisters(addr, buffer) => {
+                let len = buffer.len() as u16;
+                match write_multiple_registers(&mut adapters, addr, buffer.as_ref()) {
+                    Ok(_) => Ok(Response::WriteMultipleRegisters(addr, len)),
+                    Err(code) => Err(ExceptionCode::new(code as u8)),
+                }
+            }
+            Request::WriteSingleRegister(addr, value) => {
+                match write_single_register(&mut adapters, addr, value) {
+                    Ok(_) => Ok(Response::WriteSingleRegister(addr, value)),
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }
             }
