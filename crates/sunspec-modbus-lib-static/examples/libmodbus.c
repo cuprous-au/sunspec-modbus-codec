@@ -30,7 +30,7 @@ uint16_t read_u16(const void *ctx)
 
 void update_u16(uint16_t value, void *ctx)
 {
-    printf("Updating value - %d\n", value);
+    printf("Updating value - %u\n", value);
     *(uint16_t*)ctx = value;
 };
 
@@ -114,7 +114,7 @@ int main(void)
         modbus_free(ctx);
         return 1;
     }
-    uint16_t device_address;
+    uint16_t device_address = 0;
     struct Model1CallbackAdapter sunspec_common_adapter = {
         .context = &device_address,
         .manufacturer_callback = manufacturer_callback,

@@ -1021,6 +1021,7 @@ fn generate_traverse_points_fn(
     fn_def.line("");
     let mut point_block = Block::new("for (start, size, point) in iter");
     point_block.line("let point_offset = offset.saturating_sub(start);");
+    point_block.line("let word_count = min(size - point_offset, buffer.len() - cursor);");
 
     match direction {
         TraverseDirection::Read => {
@@ -1028,7 +1029,7 @@ fn generate_traverse_points_fn(
                 .line("write_point_to_buffer(")
                 .line("model,")
                 .line("&point,")
-                .line("&mut buffer.slice(cursor, min(size, until - cursor)),")
+                .line("&mut buffer.slice(cursor, word_count),")
                 .line("point_offset,")
                 .line(");");
         }
@@ -1041,12 +1042,12 @@ fn generate_traverse_points_fn(
                 .line("read_point_from_buffer(")
                 .line("model,")
                 .line("&point,")
-                .line("&buffer.slice(cursor, min(size, until - cursor)),")
+                .line("&buffer.slice(cursor, word_count),")
                 .line(")?;");
         }
     }
 
-    point_block.line("cursor += min(size, until - start);");
+    point_block.line("cursor += word_count;");
     fn_def.push_block(point_block);
 
     if matches!(direction, TraverseDirection::Write) {

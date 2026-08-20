@@ -181,7 +181,7 @@ impl<'a> ReadableRegisterBuffer<'a> {
                 .buffer
                 .iter()
                 .flat_map(|word| order_bytes(word, self.byte_order))
-                .fold(A::default(), |acc: A, byte: u8| acc + (A::from(byte) << 8)))
+                .fold(A::default(), |acc: A, byte: u8| (acc << 8) + A::from(byte)))
         }
     }
 
@@ -285,7 +285,7 @@ impl<'a> ReadableRegisterBuffer<'a> {
     }
 
     pub fn read_eui48(self: &ReadableRegisterBuffer<'a>) -> Result<[u8; 6], ModbusException> {
-        if self.len() != 6 {
+        if self.len() != 3 {
             Err(ModbusException::IllegalDataAddress)
         } else {
             let mut bytes = [0; 6];

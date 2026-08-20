@@ -58,13 +58,17 @@ pub fn write_multiple_registers<'a, 'b, B: Into<ReadableRegisterBuffer<'b>>>(
     let buffer = request_buffer.into();
     let count = buffer.len();
 
-    traverse_adapters_write(
-        adapter_provider,
-        &buffer,
-        address - STARTING_REGISTER_OFFSET,
-        count,
-    )?;
-    Ok(())
+    if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
+        traverse_adapters_write(
+            adapter_provider,
+            &buffer,
+            address - STARTING_REGISTER_OFFSET,
+            count,
+        )?;
+        Ok(())
+    } else {
+        Err(ModbusException::IllegalDataAddress)
+    }
 }
 
 pub fn write_single_register<'a>(
@@ -75,13 +79,17 @@ pub fn write_single_register<'a>(
     let words: [u16; 1] = [value];
     let buffer = ReadableRegisterBuffer::from(&words[..]);
 
-    traverse_adapters_write(
-        adapter_provider,
-        &buffer,
-        address - STARTING_REGISTER_OFFSET,
-        1,
-    )?;
-    Ok(())
+    if address >= STARTING_REGISTER_OFFSET {
+        traverse_adapters_write(
+            adapter_provider,
+            &buffer,
+            address - STARTING_REGISTER_OFFSET,
+            1,
+        )?;
+        Ok(())
+    } else {
+        Err(ModbusException::IllegalDataAddress)
+    }
 }
 
 #[cfg(test)]
