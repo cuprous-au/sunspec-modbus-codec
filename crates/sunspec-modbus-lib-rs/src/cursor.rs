@@ -4,7 +4,7 @@ use core::cmp::min;
 ///
 /// Once the target has been fully traversed, further calls are treated as a no-op, short-circuiting any unnecessary
 /// logic.
-pub struct Cursor {
+pub struct Cursor<E> {
     /// Number of words to skip from the source
     ///
     /// Any blocks of data that fall before this offset are skipped entirely, and these handlers are not invoked at all.
@@ -15,19 +15,38 @@ pub struct Cursor {
     pub target_offset: Option<u16>,
     /// The total number of words to be traversed
     pub limit: u16,
+    // Any error that may have been encountered, terminating the traversal early
+    pub error: Option<E>,
 }
 
-impl Cursor {
+pub enum CursorResult<E: Clone> {
+    Complete,
+    Incomplete(u16),
+    Error(E),
+}
+
+impl<E: Clone> Cursor<E> {
     pub fn new(source_offset: u16, limit: u16) -> Self {
         Self {
             source_offset,
             target_offset: if limit > 0 { Some(0) } else { None },
             limit,
+            error: None,
         }
     }
 
     pub fn is_exhausted(&self) -> bool {
         self.target_offset.is_none()
+    }
+
+    pub fn result(&self) -> CursorResult<E> {
+        if let Some(e) = &self.error {
+            CursorResult::Error(e.clone())
+        } else if let Some(offset) = self.target_offset {
+            CursorResult::Incomplete(offset)
+        } else {
+            CursorResult::Complete
+        }
     }
 
     /// Provide a handler that represents a fixed size source block.
@@ -39,20 +58,24 @@ impl Cursor {
     ///   remaining target length (`self.limit - target_offset`), and the cursor then advances accordingly.
     pub fn visit_source_block<F>(&mut self, size: u16, handler: F) -> Option<u16>
     where
-        F: FnOnce(u16, u16, u16),
+        F: FnOnce(u16, u16, u16) -> Result<(), E>,
     {
         if let Some(target_offset) = self.target_offset {
             if self.source_offset < size {
                 let limit = min(self.limit - target_offset, size - self.source_offset);
-                handler(self.source_offset, target_offset, limit);
 
-                let new_offset = target_offset + limit;
-                self.target_offset = if new_offset < self.limit {
-                    Some(new_offset)
+                if let Err(e) = handler(self.source_offset, target_offset, limit) {
+                    self.error = Some(e);
+                    self.target_offset = None;
                 } else {
-                    None
-                };
-                self.source_offset = 0;
+                    let new_offset = target_offset + limit;
+                    self.target_offset = if new_offset < self.limit {
+                        Some(new_offset)
+                    } else {
+                        None
+                    };
+                    self.source_offset = 0;
+                }
             } else {
                 self.source_offset -= size;
             }
@@ -66,12 +89,35 @@ impl Cursor {
     /// If the context is None, this method has no impact, and doesn't impact the source or target offsets in any way.
     pub fn visit_optional_source_block<A: ?Sized, F>(
         &mut self,
+        ctx_opt: Option<&mut A>,
+        get_size: fn(&A) -> u16,
+        handler: F,
+    ) -> Option<u16>
+    where
+        F: FnOnce(&mut A, u16, u16, u16) -> Result<(), E>,
+    {
+        if self.target_offset.is_some()
+            && let Some(ctx) = ctx_opt
+        {
+            let size = get_size(ctx);
+            self.visit_source_block(size, |offset, buffer_offset, limit| {
+                handler(ctx, offset, buffer_offset, limit)
+            })
+        } else {
+            self.target_offset
+        }
+    }
+
+    /// Shared-reference counterpart to [Self::visit_optional_source_block], for traversals that
+    /// only need read access to the context.
+    pub fn visit_optional_source_block_ref<A: ?Sized, F>(
+        &mut self,
         ctx_opt: Option<&A>,
         get_size: fn(&A) -> u16,
         handler: F,
     ) -> Option<u16>
     where
-        F: FnOnce(&A, u16, u16, u16),
+        F: FnOnce(&A, u16, u16, u16) -> Result<(), E>,
     {
         if self.target_offset.is_some()
             && let Some(ctx) = ctx_opt
@@ -92,9 +138,12 @@ mod tests {
 
     use super::*;
 
+    #[derive(Clone)]
+    struct TestError;
+
     #[test]
     fn test_empty_cursor() {
-        assert!(Cursor::new(5, 0).is_exhausted());
+        assert!(Cursor::<TestError>::new(5, 0).is_exhausted());
     }
 
     #[test]
@@ -115,19 +164,21 @@ mod tests {
                 source_offset,
                 target_offset,
                 limit,
-            })
+            });
+            Ok(())
         };
 
-        let visit_with_context = |ctx: &&'static str, source_offset, target_offset, limit| {
+        let visit_with_context = |ctx: &mut &'static str, source_offset, target_offset, limit| {
             *last_visit_args.borrow_mut() = Some(VisitArguments {
                 context: Some(ctx),
                 source_offset,
                 target_offset,
                 limit,
-            })
+            });
+            Ok(())
         };
 
-        let mut cursor = Cursor::new(24, 20);
+        let mut cursor: Cursor<TestError> = Cursor::new(24, 20);
 
         // An initial static block of 10
         assert_eq!(
@@ -152,7 +203,7 @@ mod tests {
         // A present optional block
         assert_eq!(
             cursor.visit_optional_source_block(
-                Some(&"initial opt block"),
+                Some(&mut "initial opt block"),
                 |_| 10,
                 visit_with_context
             ),
@@ -166,7 +217,7 @@ mod tests {
         // First visited block
         assert_eq!(
             cursor.visit_optional_source_block(
-                Some(&"second opt block"),
+                Some(&mut "second opt block"),
                 |_| 10,
                 visit_with_context
             ),
@@ -199,7 +250,7 @@ mod tests {
         // Middle visited block
         assert_eq!(
             cursor.visit_optional_source_block(
-                Some(&"third opt block"),
+                Some(&mut "third opt block"),
                 |_| 10,
                 visit_with_context
             ),
@@ -219,7 +270,7 @@ mod tests {
         // Final visited block
         assert_eq!(
             cursor.visit_optional_source_block(
-                Some(&"fourth opt block"),
+                Some(&mut "fourth opt block"),
                 |_| 10,
                 visit_with_context
             ),
@@ -239,7 +290,7 @@ mod tests {
         // Any subsequent block won't be visited
         assert_eq!(
             cursor.visit_optional_source_block(
-                Some(&"fifth opt block"),
+                Some(&mut "fifth opt block"),
                 |_| 10,
                 visit_with_context
             ),

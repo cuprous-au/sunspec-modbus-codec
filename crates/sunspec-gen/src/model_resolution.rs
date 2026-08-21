@@ -18,8 +18,9 @@ pub struct ResolvedType {
     pub c_type: String,
     pub size: u16,
     pub writer_function_name: String,
+    pub reader_function_name: String,
     pub writer_allow_offset: bool,
-    pub writer_value_cast: Option<String>,
+    pub enum_repr: Option<String>,
     pub array_length: Option<i64>,
     pub cast_from_c: Option<fn(&str) -> String>,
 }
@@ -82,6 +83,7 @@ pub struct ResolvedGroup {
     pub points: Vec<ResolvedPoint>,
     pub enums: Vec<ResolvedEnum>,
     pub repeating_child: Option<(ResolvedPoint, Box<ResolvedGroup>)>,
+    pub writable: bool,
 }
 
 fn cast_string_from_c(value: &str) -> String {
@@ -101,14 +103,13 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         | PointType::Acc16
         | PointType::Bitfield16
         | PointType::Pad
-        | PointType::Sunssf
         | PointType::Count
         | PointType::Enum16 => "u16".to_string(),
         PointType::Uint32 | PointType::Acc32 | PointType::Bitfield32 | PointType::Enum32 => {
             "u32".to_string()
         }
         PointType::Uint64 | PointType::Acc64 | PointType::Bitfield64 => "u64".to_string(),
-        PointType::Int16 => "i16".to_string(),
+        PointType::Int16 | PointType::Sunssf => "i16".to_string(),
         PointType::Int32 => "i32".to_string(),
         PointType::Int64 => "i64".to_string(),
         PointType::Float32 => "f32".to_string(),
@@ -149,18 +150,22 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     };
 
     let writer_function_name = format!("write_{}", base_type.to_snake_case());
+    let reader_function_name = match point.type_ {
+        PointType::String => format!("read_{}::<{}>", base_type.to_snake_case(), point.size * 2),
+        _ => format!("read_{}", base_type.to_snake_case()),
+    };
 
     let writer_allow_offset = base_type != "u16" && base_type != "i16";
-
-    let writer_value_cast = match point.type_ {
-        _ if is_enum => Some(format!(" as {}", base_type)),
-        _ => None,
-    };
 
     let cast_from_c: Option<fn(&str) -> String> = match point.type_ {
         PointType::String => Some(cast_string_from_c),
         PointType::Eui48 => Some(cast_eui48_from_c),
         PointType::Ipv6addr => Some(cast_ipv6_from_c),
+        _ => None,
+    };
+
+    let enum_repr: Option<String> = match point.type_ {
+        _ if is_enum => Some(base_type),
         _ => None,
     };
 
@@ -170,8 +175,9 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         size: point.size as u16,
         array_length,
         writer_function_name,
+        reader_function_name,
         writer_allow_offset,
-        writer_value_cast,
+        enum_repr,
         cast_from_c,
     }
 }
@@ -363,6 +369,9 @@ pub fn resolve_group(
 
     let name = group.label.as_ref().unwrap_or(&group.name);
 
+    let writable = repeating_child.iter().any(|(_, g)| g.writable)
+        || points.iter().any(|p| p.access == PointAccess::Rw);
+
     ResolvedGroup {
         name_pascal_case: name.to_pascal_case(),
         name_snake_case: name.to_snake_case(),
@@ -371,6 +380,7 @@ pub fn resolve_group(
         points,
         enums,
         repeating_child,
+        writable,
     }
 }
 

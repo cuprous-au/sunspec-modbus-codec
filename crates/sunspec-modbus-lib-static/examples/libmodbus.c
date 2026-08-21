@@ -20,13 +20,22 @@ const char *model_callback()
 const char *serial_number_callback()
 {
     static char static_content2[32] = "ABC-123";
-    printf("Getting serial number\n");
     return static_content2;
+};
+
+uint16_t read_u16(const void *ctx)
+{
+    return *(uint16_t*)ctx;
+};
+
+void update_u16(uint16_t value, void *ctx)
+{
+    printf("Updating value - %u\n", value);
+    *(uint16_t*)ctx = value;
 };
 
 uint16_t zero_callback_u16()
 {
-    printf("zero callback - u16");
     return 0;
 };
 
@@ -43,7 +52,8 @@ int16_t zero_callback_i16()
 void noop_callback() {
 };
 
-void handle_panic(const char* message) {
+void handle_panic(const char *message)
+{
     fprintf(stderr, "Panic from rust lib: %s", message);
     exit(1);
 };
@@ -97,17 +107,21 @@ int main(void)
     if (!ctx)
         return 1;
 
-    // 0 coils, 0 discrete inputs, 100 holding regs, 0 input regs
-    modbus_mapping_t *map = modbus_mapping_new(0, 0, 100, 0);
+    // 0 coils, 0 discrete inputs, 0 holding regs, 0 input regs
+    modbus_mapping_t *map = modbus_mapping_new(0, 0, 0, 0);
     if (!map)
     {
         modbus_free(ctx);
         return 1;
     }
+    uint16_t device_address = 0;
     struct Model1CallbackAdapter sunspec_common_adapter = {
+        .context = &device_address,
         .manufacturer_callback = manufacturer_callback,
         .model_callback = model_callback,
         .serial_number_callback = serial_number_callback,
+        .device_address_callback = read_u16,
+        .set_device_address_callback = update_u16,
     };
 
     struct BatteryState battery_state = {
@@ -137,14 +151,14 @@ int main(void)
             .external_battery_voltage_callback = zero_callback_u16,
             .total_dc_current_callback = zero_callback_i16,
             .total_power_callback = zero_callback_i16,
-            .ah_rtg_sf_callback = zero_callback_u16,
-            .wh_rtg_sf_callback = zero_callback_u16,
-            .w_cha_dis_cha_max_sf_callback = zero_callback_u16,
-            .so_c_sf_callback = zero_callback_u16,
-            .v_sf_callback = zero_callback_u16,
-            .cell_v_sf_callback = zero_callback_u16,
-            .a_sf_callback = zero_callback_u16,
-            .a_max_sf_callback = zero_callback_u16,
+            .ah_rtg_sf_callback = zero_callback_i16,
+            .wh_rtg_sf_callback = zero_callback_i16,
+            .w_cha_dis_cha_max_sf_callback = zero_callback_i16,
+            .so_c_sf_callback = zero_callback_i16,
+            .v_sf_callback = zero_callback_i16,
+            .cell_v_sf_callback = zero_callback_i16,
+            .a_sf_callback = zero_callback_i16,
+            .a_max_sf_callback = zero_callback_i16,
             .inverter_state_callback = inverter_state_callback,
             .operation_callback = operation_callback,
             .set_alarm_reset_callback = set_alarm_reset_callback,
@@ -201,10 +215,8 @@ int main(void)
                 uint16_t length = req[10] << 8 | req[11];
 
                 printf("Function %d, addr %d, len %d\n", function_code, address, length);
-                if (function_code == 3)
+                if (function_code == MODBUS_FC_READ_HOLDING_REGISTERS)
                 {
-                    // Only holding register reads are supported at this point;
-
                     // Reuse request buffer, copying values from initial request
                     int bytes = (length) * 2;
 
@@ -215,16 +227,16 @@ int main(void)
                     res[1] = function_code;
                     res[2] = bytes;
 
-                    sunspec_service_handle_request(&adapters, address, length, &res[3]);
-
+                    sunspec_service_read_registers(&adapters, address, length, &res[3]);
                     printf("Responding with %d bytes\n", bytes + 3);
-                    for (int i = 0; i < bytes + 3; i++)
-                    {
-                        printf("%02x ", res[i]);
-                    }
-                    printf("\n");
 
                     modbus_send_raw_request_tid(ctx, res, bytes + 3, tid);
+                    modbus_flush(ctx);
+                }
+                else if (function_code == MODBUS_FC_WRITE_MULTIPLE_REGISTERS) {
+                    sunspec_service_write_registers(&adapters, address, length, &req[13]);
+
+                    modbus_send_raw_request_tid(ctx, &req[6], 6, tid);
                     modbus_flush(ctx);
                 }
                 else

@@ -6,7 +6,7 @@ use core::slice;
 use core::{ffi::c_char, panic::PanicInfo};
 
 use sunspec_modbus_lib_rs::{
-    ModbusRequest, handle_request, sunspec::adapters::SunspecExternalAdapters,
+    read_registers, sunspec::adapters::SunspecExternalAdapters, write_multiple_registers,
 };
 
 #[cfg(not(feature = "std"))]
@@ -46,7 +46,7 @@ fn panic(panic_info: &PanicInfo) -> ! {
 /// - `response_buffer` must be a valid, non-null, writable buffer of at least
 ///   `length * 2` bytes.
 /// - Both pointers must remain valid for the duration of this call.
-pub unsafe extern "C" fn sunspec_service_handle_request(
+pub unsafe extern "C" fn sunspec_service_read_registers(
     adapters: *const SunspecExternalAdapters,
     address: u16,
     length: u16,
@@ -61,11 +61,35 @@ pub unsafe extern "C" fn sunspec_service_handle_request(
     let adapter_ref = unsafe { &*adapters };
     let buf = unsafe { slice::from_raw_parts_mut(response_buffer, (length as usize) * 2) };
 
-    match handle_request(
-        adapter_ref,
-        ModbusRequest::ReadRegister(address, length),
-        buf,
-    ) {
+    match read_registers(adapter_ref, address, buf) {
+        Ok(()) => 0,
+        Err(_) => -2,
+    }
+}
+
+#[unsafe(no_mangle)]
+/// Handles a SunSpec Modbus register write request and invokes the relevant updates in the Sunspec model.
+///
+/// # Safety
+/// - `adapters` must be a valid, non-null pointer to a live `SunspecExternalAdapters`.
+/// - `request_buffer` must be a valid, non-null, buffer of at least `length * 2` bytes.
+/// - Both pointers must remain valid for the duration of this call.
+pub unsafe extern "C" fn sunspec_service_write_registers(
+    adapters: *mut SunspecExternalAdapters,
+    address: u16,
+    length: u16,
+    request_buffer: *const u8,
+) -> i32 {
+    if adapters.is_null() {
+        return -1;
+    }
+    if request_buffer.is_null() {
+        return -1;
+    }
+    let adapter_ref = unsafe { &mut *adapters };
+    let buf = unsafe { slice::from_raw_parts(request_buffer, (length as usize) * 2) };
+
+    match write_multiple_registers(adapter_ref, address, buf) {
         Ok(()) => 0,
         Err(_) => -2,
     }
