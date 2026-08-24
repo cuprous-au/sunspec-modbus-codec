@@ -18,7 +18,9 @@ fn generate_enum(resolved_enum: &ResolvedEnum, scope: &mut Scope) {
         .vis("pub")
         .repr(&resolved_enum.discriminant_type)
         .derive("Clone")
-        .derive("Copy");
+        .derive("Copy")
+        .derive("Debug")
+        .derive("PartialEq");
 
     for value in &resolved_enum.values {
         enum_def
