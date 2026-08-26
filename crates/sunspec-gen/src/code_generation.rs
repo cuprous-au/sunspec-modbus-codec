@@ -364,7 +364,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
     suns_prefix_skip_block.line("Ok(())").after(");");
     write_fn.push_block(suns_prefix_skip_block);
 
-    for model in models.iter().filter(|m| m.group.writable) {
+    for model in models.iter() {
         let name = &model.name_snake_case;
 
         write_fn.line("cursor.visit_optional_source_block(");
