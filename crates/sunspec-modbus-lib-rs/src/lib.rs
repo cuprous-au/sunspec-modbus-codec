@@ -226,9 +226,7 @@ mod tests {
         write_multiple_registers(
             &mut adapters,
             40247,
-            hex::decode("0001")
-                .unwrap()
-                .as_slice(),
+            hex::decode("0001").unwrap().as_slice(),
         )?;
 
         assert!(der_ac_controls.active_power_enable);
