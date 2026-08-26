@@ -10,6 +10,7 @@ crate-type = ["lib"]
 bytemuck = { workspace = true }
 
 [dev-dependencies]
+hex.workspace = true
 tokio = { workspace = true, features = ["time"] }
 tokio-modbus = { workspace = true, default-features = false, features = ["tcp-server"] }
 rand = { workspace = true }

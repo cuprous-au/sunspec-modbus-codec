@@ -96,7 +96,10 @@ pub fn write_single_register<'a>(
 mod tests {
     use core::ffi::CStr;
 
-    use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulAdapter};
+    use crate::sunspec::{
+        adapters::SunspecAdapters,
+        models::{model_1::Model1StatefulAdapter, model_701, model_704},
+    };
 
     use super::*;
 
@@ -175,6 +178,61 @@ mod tests {
             ),
             1234
         );
+        Ok(())
+    }
+
+    #[test]
+    fn write_model_704_sets_active_power_enable() -> Result<(), ModbusException> {
+        let mut common_model = Model1StatefulAdapter {
+            manufacturer: c_char_array!("Cuprous"),
+            model: c_char_array!("Inverter 1"),
+            options: c_char_array!("opt_a_b_c"),
+            version: c_char_array!("v0.1"),
+            serial_number: c_char_array!("I-1"),
+            device_address: 0,
+        };
+
+        struct DerAcMeasurementModel;
+
+        impl model_701::ModelAdapter for DerAcMeasurementModel {
+            fn ac_wiring_type(&self) -> model_701::AcType {
+                model_701::AcType::ThreePhase
+            }
+        }
+
+        let mut der_ac_measurement = DerAcMeasurementModel;
+
+        struct DerAcControlsModel {
+            active_power_enable: bool,
+        }
+
+        impl model_704::ModelAdapter for DerAcControlsModel {
+            fn set_active_power_enable(&mut self, value: model_704::WSetEna) {
+                self.active_power_enable = value == model_704::WSetEna::Enabled;
+            }
+        }
+
+        let mut der_ac_controls = DerAcControlsModel {
+            active_power_enable: false,
+        };
+
+        let mut adapters = SunspecAdapters {
+            model_1_adapter: Some(&mut common_model),
+            model_701_adapter: Some(&mut der_ac_measurement),
+            model_704_adapter: Some(&mut der_ac_controls),
+            ..Default::default()
+        };
+
+        write_multiple_registers(
+            &mut adapters,
+            40247,
+            hex::decode("00070000000901109d370001020001")
+                .unwrap()
+                .as_slice(),
+        )?;
+
+        assert!(der_ac_controls.active_power_enable);
+
         Ok(())
     }
 }
