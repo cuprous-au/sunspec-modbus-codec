@@ -226,7 +226,7 @@ mod tests {
         write_multiple_registers(
             &mut adapters,
             40247,
-            hex::decode("00070000000901109d370001020001")
+            hex::decode("0001")
                 .unwrap()
                 .as_slice(),
         )?;
