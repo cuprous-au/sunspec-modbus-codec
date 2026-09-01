@@ -5,12 +5,8 @@ use std::{
     sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    c_char_array, read_registers,
-    sunspec::{
-        adapters::SunspecAdapters,
-        models::{model_1::Model1StatefulAdapter, model_103},
-    },
-    write_multiple_registers, write_single_register,
+    Sunspec, c_char_array,
+    sunspec::models::{model_1, model_1::Model1StatefulAdapter, model_103},
 };
 use tokio::net::TcpListener;
 
@@ -23,7 +19,7 @@ struct InverterModel {
     pub amp_value: u16,
     pub voltages: [u16; 3],
 }
-impl model_103::ModelAdapter for InverterModel {
+impl model_103::ReadAdapter for InverterModel {
     fn amps(&self) -> u16 {
         self.amp_value
     }
@@ -105,6 +101,11 @@ impl model_103::ModelAdapter for InverterModel {
     }
 }
 
+/// The device's register map: the common model followed by an inverter model. The same
+/// list backs both reads and writes.
+const SUNSPEC: Sunspec<(model_1::Model1, model_103::Model103)> =
+    Sunspec::new((model_1::Model1, model_103::Model103));
+
 struct ExampleService {
     common_model: Arc<Mutex<Model1StatefulAdapter>>,
     inverter: Arc<Mutex<InverterModel>>,
@@ -131,18 +132,17 @@ impl tokio_modbus::server::Service for ExampleService {
             rand::random_range(2300..2500),
             rand::random_range(2300..2500),
         ];
-        let mut adapters = SunspecAdapters {
-            model_1_adapter: Some(&mut *common_model),
-            model_103_adapter: Some(&mut *inverter_model),
-            ..Default::default()
-        };
         println!("Handling {req:?}");
         let res = match req {
             Request::ReadHoldingRegisters(addr, cnt) => {
                 println!("{} -> {} ({} words)", addr, addr + cnt, cnt);
 
                 let mut response_buffer = vec![0_u16; cnt as usize].into_boxed_slice();
-                match read_registers(&adapters, addr, &mut response_buffer as &mut [u16]) {
+                match SUNSPEC.read_registers(
+                    addr,
+                    &mut response_buffer as &mut [u16],
+                    (&*common_model, &*inverter_model),
+                ) {
                     Ok(_) => {
                         for word in &response_buffer {
                             print!("{:x} ", word);
@@ -156,13 +156,17 @@ impl tokio_modbus::server::Service for ExampleService {
             }
             Request::WriteMultipleRegisters(addr, buffer) => {
                 let len = buffer.len() as u16;
-                match write_multiple_registers(&mut adapters, addr, buffer.as_ref()) {
+                match SUNSPEC.write_multiple_registers(
+                    addr,
+                    buffer.as_ref(),
+                    (Some(&mut *common_model), None),
+                ) {
                     Ok(_) => Ok(Response::WriteMultipleRegisters(addr, len)),
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }
             }
             Request::WriteSingleRegister(addr, value) => {
-                match write_single_register(&mut adapters, addr, value) {
+                match SUNSPEC.write_single_register(addr, value, (Some(&mut *common_model), None)) {
                     Ok(_) => Ok(Response::WriteSingleRegister(addr, value)),
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }

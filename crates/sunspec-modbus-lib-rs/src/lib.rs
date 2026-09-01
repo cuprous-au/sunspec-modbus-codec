@@ -3,12 +3,11 @@ pub mod buffer;
 pub mod cursor;
 #[macro_use]
 pub mod macros;
-pub mod sunspec;
 pub mod model;
+pub mod sunspec;
 
-use crate::{
-    buffer::{ReadableRegisterBuffer, WritableRegisterBuffer},
-    sunspec::adapters::{SunspecAdapterProvider, traverse_adapters_read, traverse_adapters_write},
+pub use crate::model::{
+    ModelList, ModelSpec, STARTING_REGISTER_OFFSET, Sunspec, visit_model_read, visit_model_write,
 };
 
 #[derive(Debug, Copy, Clone)]
@@ -24,80 +23,11 @@ pub enum ModbusException {
     GatewayTargetDevice = 0x0B,
 }
 
-const STARTING_REGISTER_OFFSET: u16 = 40000;
-
-pub fn read_registers<'a, 'b, B: Into<WritableRegisterBuffer<'b>>>(
-    adapter_provider: &dyn SunspecAdapterProvider<'a>,
-    address: u16,
-    response_buffer: B,
-) -> Result<(), ModbusException> {
-    let mut buffer = response_buffer.into();
-    let count = buffer.len();
-
-    if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
-        if let Some(remainder_offset) = traverse_adapters_read(
-            adapter_provider,
-            &mut buffer.slice(0, count),
-            address - STARTING_REGISTER_OFFSET,
-            count,
-        ) {
-            buffer
-                .slice(remainder_offset, count - remainder_offset)
-                .fill(&[0xff, 0xff]);
-        }
-        Ok(())
-    } else {
-        Err(ModbusException::IllegalDataAddress)
-    }
-}
-
-pub fn write_multiple_registers<'a, 'b, B: Into<ReadableRegisterBuffer<'b>>>(
-    adapter_provider: &mut dyn SunspecAdapterProvider<'a>,
-    address: u16,
-    request_buffer: B,
-) -> Result<(), ModbusException> {
-    let buffer = request_buffer.into();
-    let count = buffer.len();
-
-    if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
-        traverse_adapters_write(
-            adapter_provider,
-            &buffer,
-            address - STARTING_REGISTER_OFFSET,
-            count,
-        )?;
-        Ok(())
-    } else {
-        Err(ModbusException::IllegalDataAddress)
-    }
-}
-
-pub fn write_single_register<'a>(
-    adapter_provider: &mut dyn SunspecAdapterProvider<'a>,
-    address: u16,
-    value: u16,
-) -> Result<(), ModbusException> {
-    let words: [u16; 1] = [value];
-    let buffer = ReadableRegisterBuffer::from(&words[..]);
-
-    if address >= STARTING_REGISTER_OFFSET {
-        traverse_adapters_write(
-            adapter_provider,
-            &buffer,
-            address - STARTING_REGISTER_OFFSET,
-            1,
-        )?;
-        Ok(())
-    } else {
-        Err(ModbusException::IllegalDataAddress)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use core::ffi::CStr;
 
-    use crate::sunspec::{adapters::SunspecAdapters, models::model_1::Model1StatefulAdapter};
+    use crate::sunspec::models::model_1::{self, Model1StatefulAdapter, ReadAdapter};
 
     use super::*;
 
@@ -112,17 +42,17 @@ mod tests {
             device_address: 0,
         };
 
-        let mut adapters = SunspecAdapters {
-            model_1_read_adapter: Some(&adapter),
-            model_1_write_adapter: Some(&mut adapter),
-            ..SunspecAdapters::default()
-        };
+        let sunspec = Sunspec::new((model_1::Model1,));
 
         const WORDS_TO_READ: u16 = 72;
 
         let mut init_buf = [0_u8; WORDS_TO_READ as usize * 2];
 
-        read_registers(&adapters, STARTING_REGISTER_OFFSET, init_buf.as_mut_slice())?;
+        sunspec.read_registers(
+            STARTING_REGISTER_OFFSET,
+            init_buf.as_mut_slice(),
+            (&adapter,),
+        )?;
 
         assert_eq!(&init_buf[..4], b"SunS");
         assert_eq!(
@@ -153,19 +83,20 @@ mod tests {
             0
         );
 
-        write_single_register(&mut adapters, STARTING_REGISTER_OFFSET + 68, 1234)?;
+        sunspec.write_single_register(
+            STARTING_REGISTER_OFFSET + 68,
+            1234,
+            (Some(&mut adapter),),
+        )?;
 
-        assert_eq!(
-            adapters.model_1_read_adapter.as_ref().unwrap().device_address(),
-            Some(1234)
-        );
+        assert_eq!(ReadAdapter::device_address(&adapter), Some(1234));
 
         let mut after_buf = [0_u8; 40];
 
-        read_registers(
-            &adapters,
+        sunspec.read_registers(
             STARTING_REGISTER_OFFSET + 52,
             after_buf.as_mut_slice(),
+            (&adapter,),
         )?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));

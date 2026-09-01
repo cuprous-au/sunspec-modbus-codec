@@ -5,9 +5,7 @@ use core::slice;
 #[cfg(not(feature = "std"))]
 use core::{ffi::c_char, panic::PanicInfo};
 
-use sunspec_modbus_lib_rs::{
-    read_registers, sunspec::adapters::SunspecExternalAdapters, write_multiple_registers,
-};
+use sunspec_modbus_lib_rs::sunspec::adapters::SunspecExternalAdapters;
 
 #[cfg(not(feature = "std"))]
 unsafe extern "C" {
@@ -61,10 +59,11 @@ pub unsafe extern "C" fn sunspec_service_read_registers(
     let adapter_ref = unsafe { &*adapters };
     let buf = unsafe { slice::from_raw_parts_mut(response_buffer, (length as usize) * 2) };
 
-    match read_registers(adapter_ref, address, buf) {
-        Ok(()) => 0,
-        Err(_) => -2,
-    }
+    // TODO: rebuild on `Sunspec<L>` once a catalogue `ModelList` can report the length of
+    // repeating-group models without an owning tuple. `SunspecExternalAdapters` still exposes
+    // per-model `*_read_adapter()` / `*_write_adapter()` accessors for that work.
+    let _ = (adapter_ref, address, buf);
+    -3
 }
 
 #[unsafe(no_mangle)]
@@ -89,8 +88,9 @@ pub unsafe extern "C" fn sunspec_service_write_registers(
     let adapter_ref = unsafe { &mut *adapters };
     let buf = unsafe { slice::from_raw_parts(request_buffer, (length as usize) * 2) };
 
-    match write_multiple_registers(adapter_ref, address, buf) {
-        Ok(()) => 0,
-        Err(_) => -2,
-    }
+    // TODO: rebuild on `Sunspec<L>` once a catalogue `ModelList` can report the length of
+    // repeating-group models without an owning tuple. `SunspecExternalAdapters` still exposes
+    // per-model `*_read_adapter()` / `*_write_adapter()` accessors for that work.
+    let _ = (adapter_ref, address, buf);
+    -3
 }

@@ -149,97 +149,9 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         scope.import("crate::sunspec::models", &model.name_snake_case);
     }
 
-    scope.import("crate::buffer", "WritableRegisterBuffer");
-    scope.import("crate::buffer", "ReadableRegisterBuffer");
-    scope.import("crate::cursor", "Cursor");
-    scope.import("crate::cursor", "CursorResult");
-    scope.import("crate", "ModbusException");
-    scope.import("core::convert", "Infallible");
-
-    let adapter_trait = scope
-        .new_trait("SunspecAdapterProvider")
-        .vis("pub")
-        .generic("'a");
-    for model in models {
-        adapter_trait
-            .new_fn(format!("{}_read_adapter", model.name_snake_case))
-            .arg_ref_self()
-            .ret(format!(
-                "Option<&(dyn {}::ReadAdapter + 'a)>",
-                model.name_snake_case
-            ));
-
-        if model.group.writable {
-            adapter_trait
-                .new_fn(format!("{}_write_adapter", model.name_snake_case))
-                .arg_mut_self()
-                .ret(format!(
-                    "Option<&mut (dyn {}::WriteAdapter + 'a)>",
-                    model.name_snake_case
-                ));
-        }
-    }
-
-    let trait_struct = scope
-        .new_struct("SunspecAdapters")
-        .vis("pub")
-        .generic("'a")
-        .derive("Default");
-
-    for model in models {
-        trait_struct
-            .field(
-                format!("pub {}_read_adapter", model.name_snake_case),
-                format!("Option<&'a dyn {}::ReadAdapter>", model.name_snake_case),
-            )
-            .vis("pub");
-
-        if model.group.writable {
-            trait_struct
-                .field(
-                    format!("pub {}_write_adapter", model.name_snake_case),
-                    format!(
-                        "Option<&'a mut dyn {}::WriteAdapter>",
-                        model.name_snake_case
-                    ),
-                )
-                .vis("pub");
-        }
-    }
-
-    let trait_struct_impl = scope
-        .new_impl("SunspecAdapters<'a>")
-        .impl_trait("SunspecAdapterProvider<'a>")
-        .generic("'a");
-
-    for model in models {
-        trait_struct_impl
-            .new_fn(format!("{}_read_adapter", model.name_snake_case))
-            .arg_ref_self()
-            .ret(format!(
-                "Option<&(dyn {}::ReadAdapter + 'a)>",
-                model.name_snake_case
-            ))
-            .line(format!(
-                "self.{}_read_adapter.as_deref()",
-                model.name_snake_case
-            ));
-
-        if model.group.writable {
-            trait_struct_impl
-                .new_fn(format!("{}_write_adapter", model.name_snake_case))
-                .arg_mut_self()
-                .ret(format!(
-                    "Option<&mut (dyn {}::WriteAdapter + 'a)>",
-                    model.name_snake_case
-                ))
-                .line(format!(
-                    "self.{}_write_adapter.as_deref_mut()",
-                    model.name_snake_case
-                ));
-        }
-    }
-
+    // A C-FFI facing bag of optional adapters, one slot per model. The `sunspec-modbus-lib-static`
+    // wrapper is expected to turn this into a `ModelList` once repeating-group models can report
+    // their length without an owning tuple; until then the accessors below are its only surface.
     let c_struct = scope
         .new_struct("SunspecExternalAdapters")
         .vis("pub")
@@ -271,14 +183,12 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         }
     }
 
-    let c_struct_impl = scope
-        .new_impl("SunspecExternalAdapters<'a>")
-        .impl_trait("SunspecAdapterProvider<'a>")
-        .generic("'a");
+    let c_struct_impl = scope.new_impl("SunspecExternalAdapters<'a>").generic("'a");
 
     for model in models {
         let ref_impl_fn = c_struct_impl
             .new_fn(format!("{}_read_adapter", model.name_snake_case))
+            .vis("pub")
             .arg_ref_self()
             .ret(format!(
                 "Option<&(dyn {}::ReadAdapter + 'a)>",
@@ -303,6 +213,7 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
         if model.group.writable {
             let impl_fn = c_struct_impl
                 .new_fn(format!("{}_write_adapter", model.name_snake_case))
+                .vis("pub")
                 .arg_mut_self()
                 .ret(format!(
                     "Option<&mut (dyn {}::WriteAdapter + 'a)>",
@@ -325,79 +236,6 @@ pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
             }
         }
     }
-
-    let read_fn = scope
-        .new_fn("traverse_adapters_read")
-        .vis("pub")
-        .generic("'a")
-        .generic("'b")
-        .arg("adapters", "&dyn SunspecAdapterProvider<'a>")
-        .arg("buffer", "&'b mut WritableRegisterBuffer<'b>")
-        .arg("offset", "u16")
-        .arg("limit", "u16")
-        .ret("Option<u16>");
-
-    read_fn.line("let mut cursor: Cursor<Infallible> = Cursor::new(offset, limit);");
-    read_fn.line("");
-
-    let mut suns_prefix_block = Block::new("cursor.visit_source_block(2, |offset, from, len|");
-    suns_prefix_block
-        .line("buffer.slice(from, len).write_string(c\"SunS\", offset);")
-        .line("Ok(())")
-        .after(")?;");
-    read_fn.push_block(suns_prefix_block);
-
-    for model in models {
-        let name = &model.name_snake_case;
-
-        read_fn.line("cursor.visit_optional_source_block_ref(");
-        read_fn.line(format!("adapters.{name}_read_adapter(),"));
-        read_fn.line(format!("{name}::model_length,"));
-        read_fn.line(format!(
-            "|adapter, offset, from, len| {{ {name}::traverse_points_read(adapter, &mut buffer.slice(from, len), offset); Ok(()) }},"
-        ));
-        read_fn.line(")?;");
-    }
-    read_fn.line("");
-
-    read_fn.line("cursor.target_offset");
-
-    let write_fn = scope
-        .new_fn("traverse_adapters_write")
-        .vis("pub")
-        .generic("'a")
-        .generic("'b")
-        .arg("adapters", "&mut dyn SunspecAdapterProvider<'a>")
-        .arg("buffer", "&'b ReadableRegisterBuffer<'b>")
-        .arg("offset", "u16")
-        .arg("limit", "u16")
-        .ret("Result<Option<u16>, ModbusException>");
-
-    write_fn.line("let mut cursor = Cursor::new(offset, limit);");
-    write_fn.line("");
-
-    let mut suns_prefix_skip_block = Block::new("cursor.visit_source_block(2, |_, _, _|");
-    suns_prefix_skip_block.line("Ok(())").after(");");
-    write_fn.push_block(suns_prefix_skip_block);
-
-    for model in models.iter().filter(|m| m.group.writable) {
-        let name = &model.name_snake_case;
-
-        write_fn.line("cursor.visit_optional_source_block(");
-        write_fn.line(format!("adapters.{name}_write_adapter(),"));
-        write_fn.line(format!("{name}::model_length,"));
-        write_fn.line(format!(
-            "|adapter, offset, from, len| {name}::traverse_points_write(adapter, &buffer.slice(from, len), offset),"
-        ));
-        write_fn.line(");");
-    }
-    write_fn.line("");
-
-    let mut result_match = Block::new("match cursor.result()");
-    result_match.line("CursorResult::Complete => Ok(None),");
-    result_match.line("CursorResult::Incomplete(offset) => Ok(Some(offset)),");
-    result_match.line("CursorResult::Error(e) => Err(e),");
-    write_fn.push_block(result_match);
 
     scope
 }
@@ -1037,7 +875,7 @@ fn generate_traverse_points_fn(
         TraverseDirection::Read => {
             fn_def
                 .arg_ref_self()
-                .arg("adapter", "&dyn ReadAdapter")
+                .arg("adapter", "&Self::ReadAdapter")
                 .arg("buffer", "&mut WritableRegisterBuffer<'a>")
                 .arg("offset", "u16")
                 .ret("Result<(), ModbusException>");
@@ -1045,7 +883,7 @@ fn generate_traverse_points_fn(
         TraverseDirection::Write => {
             fn_def
                 .arg_ref_self()
-                .arg("adapter", "&mut (dyn WriteAdapter + 'w)")
+                .arg("adapter", "&mut Self::WriteAdapter")
                 .arg("buffer", "&ReadableRegisterBuffer<'a>")
                 .arg("offset", "u16")
                 .ret("Result<(), ModbusException>");
@@ -1066,7 +904,10 @@ fn generate_traverse_points_fn(
     let mut child_group: Option<&ResolvedGroup> = None;
     for (count_point, inner_group) in group_stack.iter().rev() {
         let prefix = &inner_group.name_short;
-        fn_def.line(format!("let {prefix}_count = self.{};", count_point.name_snake_case));
+        fn_def.line(format!(
+            "let {prefix}_count = self.{};",
+            count_point.name_snake_case
+        ));
         if let Some(child) = child_group {
             fn_def.line(format!(
                 "let {prefix}_size = {static_size} + {child_prefix}_count * {child_prefix}_size;",
@@ -1151,7 +992,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope.import("core::ffi", "c_void");
     scope.import("crate::buffer", "WritableRegisterBuffer");
     scope.import("crate::buffer", "ReadableRegisterBuffer");
-    scope.import("crate::model", "Model");
+    scope.import("crate::model", "ModelSpec");
     scope.import("crate", "ModbusException");
     scope.import("core::cmp", "min");
 
@@ -1178,19 +1019,30 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .field("start_address", "u16")
         .field("size", "u16");
 
-    let model_struct = scope.new_struct(&model.name_pascal_case);
+    let model_struct = scope.new_struct(&model.name_pascal_case).vis("pub");
+
+    model_struct.doc(format!(
+        "Marker for SunSpec model {}. Add it to a [`Sunspec`](crate::Sunspec) model list.",
+        model.model_number
+    ));
 
     for count_point in &model.count_points {
-        model_struct.field(
-            &count_point.point.name_snake_case,
-            &count_point.point.point_type.rust_type,
-        );
+        model_struct
+            .new_field(
+                &count_point.point.name_snake_case,
+                &count_point.point.point_type.rust_type,
+            )
+            .vis("pub")
+            .doc("Number of repeating blocks in this model instance.");
     }
 
     let model_impl = scope
         .new_impl(&model.name_pascal_case)
-        .generic("'w")
-        .impl_trait("Model<dyn ReadAdapter, dyn WriteAdapter + 'w>");
+        .impl_trait("ModelSpec");
+
+    model_impl.associate_const("MODEL_ID", "u16", model.model_number.to_string(), "");
+    model_impl.associate_type("ReadAdapter", "dyn ReadAdapter");
+    model_impl.associate_type("WriteAdapter", "dyn WriteAdapter");
 
     model_impl
         .new_fn("model_length")
