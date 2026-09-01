@@ -67,12 +67,18 @@ pub struct EnumValue {
     pub doc: DocLines,
 }
 
+pub struct CountPoint {
+    pub point: ResolvedPoint,
+    pub index_name: String,
+}
+
 pub struct ResolvedModel {
     pub name_pascal_case: String,
     pub name_snake_case: String,
     pub features: HashSet<CodegenFeature>,
     pub model_number: u16,
     pub group: ResolvedGroup,
+    pub count_points: Vec<CountPoint>,
 }
 
 pub struct ResolvedGroup {
@@ -390,6 +396,18 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
     );
     let mut features: HashSet<CodegenFeature> = HashSet::new();
     let group = resolve_group(&model.group, None, &mut features, vec![], None);
+    let mut count_points = vec![];
+
+    let mut current_group = &group;
+
+    while let Some((count_point, inner_group)) = &current_group.repeating_child {
+        count_points.push(CountPoint {
+            point: count_point.clone(),
+            index_name: format!("{}_index", inner_group.name_snake_case),
+        });
+
+        current_group = inner_group
+    }
 
     ResolvedModel {
         model_number,
@@ -397,5 +415,6 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
         name_pascal_case: file_name.to_pascal_case(),
         group,
         features,
+        count_points,
     }
 }

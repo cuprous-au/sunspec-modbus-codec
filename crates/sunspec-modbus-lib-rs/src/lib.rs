@@ -4,6 +4,7 @@ pub mod cursor;
 #[macro_use]
 pub mod macros;
 pub mod sunspec;
+pub mod model;
 
 use crate::{
     buffer::{ReadableRegisterBuffer, WritableRegisterBuffer},
@@ -112,7 +113,8 @@ mod tests {
         };
 
         let mut adapters = SunspecAdapters {
-            model_1_adapter: Some(&mut adapter),
+            model_1_read_adapter: Some(&adapter),
+            model_1_write_adapter: Some(&mut adapter),
             ..SunspecAdapters::default()
         };
 
@@ -154,7 +156,7 @@ mod tests {
         write_single_register(&mut adapters, STARTING_REGISTER_OFFSET + 68, 1234)?;
 
         assert_eq!(
-            adapters.model_1_adapter.as_ref().unwrap().device_address(),
+            adapters.model_1_read_adapter.as_ref().unwrap().device_address(),
             Some(1234)
         );
 
