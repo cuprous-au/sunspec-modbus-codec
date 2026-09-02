@@ -5,8 +5,15 @@ use std::{
     sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    Sunspec, c_char_array,
-    sunspec::models::{model_1, model_1::Model1StatefulAdapter, model_103},
+    ModbusException, ModelList, ModelSpec, Sunspec,
+    buffer::{ReadableRegisterBuffer, WritableRegisterBuffer},
+    c_char_array, cursor,
+    model::reject_model_write,
+    sunspec::models::{
+        model_1::{self, Model1StatefulAdapter},
+        model_103,
+    },
+    visit_model_read, visit_model_write,
 };
 use tokio::net::TcpListener;
 
@@ -101,10 +108,56 @@ impl model_103::ReadAdapter for InverterModel {
     }
 }
 
+struct SunspecModel {
+    model_1: model_1::Model1,
+    model_103: model_103::Model103,
+}
+
+struct SunspecReadAdapters<'a> {
+    model_1: &'a dyn model_1::ReadAdapter,
+    model_103: &'a dyn model_103::ReadAdapter,
+}
+
+struct SunspecWriteAdapters<'a> {
+    model_1: &'a mut dyn model_1::WriteAdapter,
+}
+
+impl ModelList for SunspecModel {
+    type ReadAdapters<'a> = SunspecReadAdapters<'a>;
+
+    type WriteAdapters<'a> = SunspecWriteAdapters<'a>;
+
+    fn map_length(&self) -> u16 {
+        self.model_1.model_length() + self.model_103.model_length()
+    }
+
+    fn traverse_read<'a>(
+        &self,
+        adapters: Self::ReadAdapters<'a>,
+        cursor: &mut cursor::Cursor<ModbusException>,
+        buffer: &mut WritableRegisterBuffer<'a>,
+    ) {
+        visit_model_read(cursor, buffer, &self.model_1, adapters.model_1);
+        visit_model_read(cursor, buffer, &self.model_103, adapters.model_103);
+    }
+
+    fn traverse_write<'a, 'buf>(
+        &self,
+        adapters: Self::WriteAdapters<'a>,
+        cursor: &mut cursor::Cursor<ModbusException>,
+        buffer: &ReadableRegisterBuffer<'buf>,
+    ) {
+        visit_model_write(cursor, buffer, &self.model_1, adapters.model_1);
+        reject_model_write(cursor, &self.model_103);
+    }
+}
+
 /// The device's register map: the common model followed by an inverter model. The same
 /// list backs both reads and writes.
-const SUNSPEC: Sunspec<(model_1::Model1, model_103::Model103)> =
-    Sunspec::new((model_1::Model1, model_103::Model103));
+const SUNSPEC: Sunspec<SunspecModel> = Sunspec::new(SunspecModel {
+    model_1: model_1::Model1,
+    model_103: model_103::Model103,
+});
 
 struct ExampleService {
     common_model: Arc<Mutex<Model1StatefulAdapter>>,
@@ -141,7 +194,10 @@ impl tokio_modbus::server::Service for ExampleService {
                 match SUNSPEC.read_registers(
                     addr,
                     &mut response_buffer as &mut [u16],
-                    (&*common_model, &*inverter_model),
+                    SunspecReadAdapters {
+                        model_1: &*common_model,
+                        model_103: &*inverter_model,
+                    },
                 ) {
                     Ok(_) => {
                         for word in &response_buffer {
@@ -159,14 +215,22 @@ impl tokio_modbus::server::Service for ExampleService {
                 match SUNSPEC.write_multiple_registers(
                     addr,
                     buffer.as_ref(),
-                    (Some(&mut *common_model), None),
+                    SunspecWriteAdapters {
+                        model_1: &mut *common_model,
+                    },
                 ) {
                     Ok(_) => Ok(Response::WriteMultipleRegisters(addr, len)),
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }
             }
             Request::WriteSingleRegister(addr, value) => {
-                match SUNSPEC.write_single_register(addr, value, (Some(&mut *common_model), None)) {
+                match SUNSPEC.write_single_register(
+                    addr,
+                    value,
+                    SunspecWriteAdapters {
+                        model_1: &mut *common_model,
+                    },
+                ) {
                     Ok(_) => Ok(Response::WriteSingleRegister(addr, value)),
                     Err(code) => Err(ExceptionCode::new(code as u8)),
                 }

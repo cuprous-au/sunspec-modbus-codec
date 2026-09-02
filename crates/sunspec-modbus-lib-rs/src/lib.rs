@@ -7,7 +7,8 @@ pub mod model;
 pub mod sunspec;
 
 pub use crate::model::{
-    ModelList, ModelSpec, STARTING_REGISTER_OFFSET, Sunspec, visit_model_read, visit_model_write,
+    CModel, ModelList, ModelSpec, STARTING_REGISTER_OFFSET, Sunspec, reject_model_write,
+    visit_absent_read, visit_model_read, visit_model_write,
 };
 
 #[derive(Debug, Copy, Clone)]
@@ -42,7 +43,35 @@ mod tests {
             device_address: 0,
         };
 
-        let sunspec = Sunspec::new((model_1::Model1,));
+        impl ModelList for model_1::Model1 {
+            type ReadAdapters<'a> = &'a Model1StatefulAdapter;
+        
+            type WriteAdapters<'a> = &'a mut Model1StatefulAdapter;
+        
+            fn map_length(&self) -> u16 {
+                self.model_length()
+            }
+        
+            fn traverse_read(
+                &self,
+                adapter: Self::ReadAdapters<'_>,
+                cursor: &mut cursor::Cursor<ModbusException>,
+                buffer: &mut buffer::WritableRegisterBuffer<'_>,
+            ) {
+                visit_model_read(cursor, buffer, self, adapter);
+            }
+        
+            fn traverse_write(
+                &self,
+                adapter: Self::WriteAdapters<'_>,
+                cursor: &mut cursor::Cursor<ModbusException>,
+                buffer: &buffer::ReadableRegisterBuffer<'_>,
+            ) {
+                visit_model_write(cursor, buffer, self, adapter);
+            }
+        }
+
+        let sunspec = Sunspec::new(model_1::Model1);
 
         const WORDS_TO_READ: u16 = 72;
 
@@ -51,7 +80,7 @@ mod tests {
         sunspec.read_registers(
             STARTING_REGISTER_OFFSET,
             init_buf.as_mut_slice(),
-            (&adapter,),
+            &adapter,
         )?;
 
         assert_eq!(&init_buf[..4], b"SunS");
@@ -83,10 +112,10 @@ mod tests {
             0
         );
 
-        sunspec.write_single_register(
+        sunspec.write_multiple_registers(
             STARTING_REGISTER_OFFSET + 68,
-            1234,
-            (Some(&mut adapter),),
+            [1234u16].as_slice(),
+            &mut adapter,
         )?;
 
         assert_eq!(ReadAdapter::device_address(&adapter), Some(1234));
@@ -96,7 +125,7 @@ mod tests {
         sunspec.read_registers(
             STARTING_REGISTER_OFFSET + 52,
             after_buf.as_mut_slice(),
-            (&adapter,),
+            &adapter,
         )?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));

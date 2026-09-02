@@ -1,3 +1,5 @@
+use core::ffi::c_void;
+
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
 use crate::cursor::{Cursor, CursorResult};
@@ -14,17 +16,17 @@ const SUNS_HEADER_WORDS: u16 = 2;
 /// Generated once per model by `sunspec-gen`. `ReadAdapter` / `WriteAdapter` are that
 /// model's own adapter traits; a model with no writable points still has an (empty)
 /// `WriteAdapter` and a `traverse_points_write` that rejects every address.
-pub trait ModelSpec {
+pub trait ModelSpec<'a> {
     /// The SunSpec model id (e.g. `1` for the common model).
     const MODEL_ID: u16;
 
-    /// This model's read adapter trait. `'static` because it is named as a `dyn` type in
-    /// the per-request adapter tuples; adapters may still borrow `'static` data.
-    type ReadAdapter: ?Sized + 'static;
+    /// This model's read adapter trait. Bounded by `'a` so a request can pass an adapter
+    /// that borrows non-`'static` data; the generated impls set it to `dyn ReadAdapter + 'a`.
+    type ReadAdapter: ?Sized + 'a;
 
-    /// This model's write adapter trait. `'static` for the same reason as
+    /// This model's write adapter trait. Bounded by `'a` for the same reason as
     /// [`ReadAdapter`](ModelSpec::ReadAdapter).
-    type WriteAdapter: ?Sized + 'static;
+    type WriteAdapter: ?Sized + 'a;
 
     /// Length of this model's register block, in words, excluding the `SunS` header but
     /// including the model id / length header words. For models with a repeating group
@@ -57,29 +59,28 @@ pub trait ModelSpec {
 /// - [`WriteAdapters`](ModelList::WriteAdapters) — one `Option<&mut WriteAdapter>` per model;
 ///   a `None` (or a model with no writable points) rejects writes to that block.
 pub trait ModelList {
-    /// Tuple of `&ReadAdapter` references, one per model, in list order.
     type ReadAdapters<'a>;
-
-    /// Tuple of `Option<&mut WriteAdapter>` references, one per model, in list order.
     type WriteAdapters<'a>;
 
-    /// Total words spanned by every model in the list, excluding the `SunS` header.
     fn map_length(&self) -> u16;
 
     /// Walk the models in order, encoding each into `buffer` via the cursor.
-    fn traverse_read(
+    fn traverse_read<'a>(
         &self,
-        adapters: Self::ReadAdapters<'_>,
+        adapters: Self::ReadAdapters<'a>,
         cursor: &mut Cursor<ModbusException>,
-        buffer: &mut WritableRegisterBuffer<'_>,
+        buffer: &mut WritableRegisterBuffer<'a>,
     );
 
     /// Walk the models in order, decoding `buffer` into each via the cursor.
-    fn traverse_write(
+    ///
+    /// The request buffer's lifetime `'buf` is independent of the adapter lifetime `'a`:
+    /// the buffer only needs to outlive the call, not the adapters.
+    fn traverse_write<'a, 'buf>(
         &self,
-        adapters: Self::WriteAdapters<'_>,
+        adapters: Self::WriteAdapters<'a>,
         cursor: &mut Cursor<ModbusException>,
-        buffer: &ReadableRegisterBuffer<'_>,
+        buffer: &ReadableRegisterBuffer<'buf>,
     );
 }
 
@@ -87,14 +88,13 @@ pub trait ModelList {
 ///
 /// The block is always consumed (`model_length` words) whether or not it produces data,
 /// so the read and write maps stay positionally identical.
-#[doc(hidden)]
-pub fn visit_model_read<M: ModelSpec>(
+pub fn visit_model_read<'a, M: ModelSpec<'a>>(
     cursor: &mut Cursor<ModbusException>,
     buffer: &mut WritableRegisterBuffer<'_>,
     model: &M,
     adapter: &M::ReadAdapter,
 ) {
-    let _ = cursor.visit_source_block(model.model_length(), |offset, from, len| {
+    cursor.visit_source_block(model.model_length(), |offset, from, len| {
         model.traverse_points_read(adapter, &mut buffer.slice(from, len), offset)
     });
 }
@@ -102,66 +102,91 @@ pub fn visit_model_read<M: ModelSpec>(
 /// Advance `cursor` across one model's block, decoding it into `adapter`.
 ///
 /// A write that lands in a block with no adapter is [`ModbusException::IllegalDataAddress`].
-#[doc(hidden)]
-pub fn visit_model_write<M: ModelSpec>(
+pub fn visit_model_write<'a, M: ModelSpec<'a>>(
     cursor: &mut Cursor<ModbusException>,
     buffer: &ReadableRegisterBuffer<'_>,
     model: &M,
-    adapter: Option<&mut M::WriteAdapter>,
+    adapter: &mut M::WriteAdapter,
 ) {
-    let _ = cursor.visit_source_block(model.model_length(), |offset, from, len| match adapter {
-        Some(adapter) => model.traverse_points_write(adapter, &buffer.slice(from, len), offset),
-        None => Err(ModbusException::IllegalDataAddress),
+    cursor.visit_source_block(model.model_length(), |offset, from, len| {
+        model.traverse_points_write(adapter, &buffer.slice(from, len), offset)
     });
 }
 
-macro_rules! impl_model_list {
-    ($($model:ident $index:tt),+) => {
-        impl<$($model: ModelSpec),+> ModelList for ($($model,)+) {
-            type ReadAdapters<'a> = ($(&'a <$model as ModelSpec>::ReadAdapter,)+);
-            type WriteAdapters<'a> = ($(Option<&'a mut <$model as ModelSpec>::WriteAdapter>,)+);
-
-            fn map_length(&self) -> u16 {
-                0 $(+ self.$index.model_length())+
-            }
-
-            fn traverse_read(
-                &self,
-                adapters: Self::ReadAdapters<'_>,
-                cursor: &mut Cursor<ModbusException>,
-                buffer: &mut WritableRegisterBuffer<'_>,
-            ) {
-                $( visit_model_read(cursor, buffer, &self.$index, adapters.$index); )+
-            }
-
-            fn traverse_write(
-                &self,
-                adapters: Self::WriteAdapters<'_>,
-                cursor: &mut Cursor<ModbusException>,
-                buffer: &ReadableRegisterBuffer<'_>,
-            ) {
-                $( visit_model_write(cursor, buffer, &self.$index, adapters.$index); )+
-            }
-        }
-    };
+/// Advance `cursor` across one model's block when no read adapter was supplied for it.
+///
+/// The block is still consumed so the read and write maps stay positionally identical, and
+/// the skipped words are filled with `0xffff` (the SunSpec "not implemented" value).
+pub fn visit_absent_read<'a, M: ModelSpec<'a>>(
+    cursor: &mut Cursor<ModbusException>,
+    buffer: &mut WritableRegisterBuffer<'_>,
+    model: &M,
+) {
+    cursor.visit_source_block(model.model_length(), |_, from, len| {
+        buffer.slice(from, len).fill(&[0xff, 0xff]);
+        Ok(())
+    });
 }
 
-impl_model_list!(M0 0);
-impl_model_list!(M0 0, M1 1);
-impl_model_list!(M0 0, M1 1, M2 2);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9, M10 10);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9, M10 10, M11 11);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9, M10 10, M11 11, M12 12);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9, M10 10, M11 11, M12 12, M13 13);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9, M10 10, M11 11, M12 12, M13 13, M14 14);
-impl_model_list!(M0 0, M1 1, M2 2, M3 3, M4 4, M5 5, M6 6, M7 7, M8 8, M9 9, M10 10, M11 11, M12 12, M13 13, M14 14, M15 15);
+/// Advance `cursor` across one model's block, rejecting any write that lands in it with
+/// [`ModbusException::IllegalDataAddress`].
+///
+/// Used for models with no writable points, or when no write adapter was supplied.
+pub fn reject_model_write<'a, M: ModelSpec<'a>>(cursor: &mut Cursor<ModbusException>, model: &M) {
+    cursor.visit_source_block(model.model_length(), |_, _, _| {
+        Err(ModbusException::IllegalDataAddress)
+    });
+}
+
+/// C-FFI dispatch descriptor for one SunSpec model.
+///
+/// One `#[unsafe(no_mangle)] pub static SUNSPEC_MODEL_<id>: CModel` is generated per model
+/// into that model's module. A C `SunspecModelBinding` holds a `*const CModel` pointing at
+/// that static, so the `sunspec-modbus-lib-static` service functions dispatch straight
+/// through these function pointers with no model-id lookup.
+///
+/// The `dyn` adapters never cross the C boundary; the concrete `Model<id>{Stateful,Callback}Adapter`
+/// pointer is cast back to a reference inside `visit_read` / `visit_write`.
+pub struct CModel {
+    /// The SunSpec model id this descriptor dispatches, for diagnostics and wire cross-checks.
+    pub id: u16,
+
+    /// Register block length in words for the given repeat counts (model header included,
+    /// `SunS` excluded). Repeat counts are ignored by non-repeating models.
+    pub length: fn(repeat_count_0: u16, repeat_count_1: u16) -> u16,
+
+    /// Decode one model block on a read. `kind`: `1` = stateful adapter pointer, `2` =
+    /// callback adapter pointer, anything else = no adapter (the block reads as `0xffff`).
+    /// Repeating-group models accept only `kind` `2`.
+    ///
+    /// # Safety
+    /// For `kind` `1` or `2`, `adapter` must point to a live `Model<id>{Stateful,Callback}Adapter`
+    /// for this model, valid for the duration of the call.
+    pub visit_read: unsafe fn(
+        kind: u8,
+        adapter: *const c_void,
+        repeat_count_0: u16,
+        repeat_count_1: u16,
+        cursor: &mut Cursor<ModbusException>,
+        buffer: &mut WritableRegisterBuffer<'_>,
+    ),
+
+    /// Encode one model block on a write. `kind` is as for [`visit_read`](CModel::visit_read).
+    /// A non-writable model, or a `kind` with no adapter, rejects the write with
+    /// [`ModbusException::IllegalDataAddress`].
+    ///
+    /// # Safety
+    /// As for [`visit_read`](CModel::visit_read), and `adapter` must be uniquely borrowable
+    /// for the duration of the call.
+    pub visit_write: unsafe fn(
+        kind: u8,
+        adapter: *mut c_void,
+        repeat_count_0: u16,
+        repeat_count_1: u16,
+        cursor: &mut Cursor<ModbusException>,
+        buffer: &ReadableRegisterBuffer<'_>,
+    ),
+}
 
 /// A SunSpec register-map codec bound to a fixed [`ModelList`].
 ///
@@ -194,11 +219,11 @@ impl<L: ModelList> Sunspec<L> {
     /// Encode a holding-register read of `response_buffer.len()` words starting at
     /// `address` into `response_buffer`. Registers past the end of the model map are
     /// filled with `0xffff`.
-    pub fn read_registers<'b, B: Into<WritableRegisterBuffer<'b>>>(
+    pub fn read_registers<'a, B: Into<WritableRegisterBuffer<'a>>>(
         &self,
         address: u16,
         response_buffer: B,
-        adapters: L::ReadAdapters<'_>,
+        adapters: L::ReadAdapters<'a>,
     ) -> Result<(), ModbusException> {
         let mut buffer = response_buffer.into();
         let count = buffer.len();
@@ -233,11 +258,11 @@ impl<L: ModelList> Sunspec<L> {
     /// Decode a write of `request_buffer.len()` words starting at `address` into the
     /// relevant models. A write that touches a block whose `Option` adapter is `None`,
     /// or a model with no writable points, is rejected.
-    pub fn write_multiple_registers<'b, B: Into<ReadableRegisterBuffer<'b>>>(
+    pub fn write_multiple_registers<'a, 'buf, B: Into<ReadableRegisterBuffer<'buf>>>(
         &self,
         address: u16,
         request_buffer: B,
-        adapters: L::WriteAdapters<'_>,
+        adapters: L::WriteAdapters<'a>,
     ) -> Result<(), ModbusException> {
         let buffer = request_buffer.into();
         let count = buffer.len();
@@ -263,13 +288,12 @@ impl<L: ModelList> Sunspec<L> {
     /// one-word buffer.
     ///
     /// [`write_multiple_registers`]: Sunspec::write_multiple_registers
-    pub fn write_single_register(
+    pub fn write_single_register<'a>(
         &self,
         address: u16,
         value: u16,
-        adapters: L::WriteAdapters<'_>,
+        adapters: L::WriteAdapters<'a>,
     ) -> Result<(), ModbusException> {
-        let words = [value];
-        self.write_multiple_registers(address, &words[..], adapters)
+        self.write_multiple_registers(address, [value].as_slice(), adapters)
     }
 }

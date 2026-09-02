@@ -39,6 +39,13 @@ impl<E: Clone> Cursor<E> {
         self.target_offset.is_none()
     }
 
+    /// Abort the traversal with `error`. Any remaining source blocks become no-ops and
+    /// [`result`](Self::result) reports [`CursorResult::Error`].
+    pub fn fail(&mut self, error: E) {
+        self.error = Some(error);
+        self.target_offset = None;
+    }
+
     pub fn result(&self) -> CursorResult<E> {
         if let Some(e) = &self.error {
             CursorResult::Error(e.clone())
@@ -76,6 +83,27 @@ impl<E: Clone> Cursor<E> {
                     };
                     self.source_offset = 0;
                 }
+            } else {
+                self.source_offset -= size;
+            }
+        }
+
+        self.target_offset
+    }
+
+    pub fn skip_source_block<F>(&mut self, size: u16) -> Option<u16>
+    {
+        if let Some(target_offset) = self.target_offset {
+            if self.source_offset < size {
+                let limit = min(self.limit - target_offset, size - self.source_offset);
+
+                let new_offset = target_offset + limit;
+                self.target_offset = if new_offset < self.limit {
+                    Some(new_offset)
+                } else {
+                    None
+                };
+                self.source_offset = 0;
             } else {
                 self.source_offset -= size;
             }

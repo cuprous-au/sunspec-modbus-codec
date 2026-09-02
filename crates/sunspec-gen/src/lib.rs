@@ -3,7 +3,10 @@ use glob::glob;
 use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
-use crate::code_generation::{generate_adapter_structs, generate_model, generate_models_mod};
+use crate::code_generation::{
+    generate_adapter_structs, generate_model, generate_models_mod, model_c_expressible,
+    model_is_repeating,
+};
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::sunspec_schema::SunspecModel;
 
@@ -84,13 +87,13 @@ pub fn generate() {
     let src_path = format!("{project_root}/../sunspec-modbus-lib-rs/src/sunspec");
     let generated_src_dir = Path::new(&src_path);
 
-    if let Err(error) = fs::remove_dir_all(generated_src_dir)
-        && error.kind() != std::io::ErrorKind::NotFound
-    {
-        panic!("Failed to remove generated source directory: {error}");
-    }
-    fs::create_dir_all(generated_src_dir.join("models"))
-        .expect("Failed to create generated source directories");
+    // if let Err(error) = fs::remove_dir_all(generated_src_dir)
+    //     && error.kind() != std::io::ErrorKind::NotFound
+    // {
+    //     panic!("Failed to remove generated source directory: {error}");
+    // }
+    // fs::create_dir_all(generated_src_dir.join("models"))
+    //     .expect("Failed to create generated source directories");
 
     let models = collect_models(&model_glob);
 
@@ -111,4 +114,94 @@ pub fn generate() {
         &generated_src_dir.join("models.rs"),
         &generate_models_mod(&models),
     );
+}
+
+/// C declarations for the per-model `SUNSPEC_MODEL_<id>` dispatch descriptors, to splice into
+/// the cbindgen header (which cannot export `static`s from a dependency crate).
+///
+/// A C caller sets each `SunspecModelBinding.model` to the address of the matching entry.
+pub fn c_model_externs() -> String {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_glob = format!("{project_root}/models/json/model_*.json");
+    let models = collect_models(&model_glob);
+
+    let mut out = String::new();
+    out.push_str("#ifdef __cplusplus\nextern \"C\" {\n#endif // __cplusplus\n\n");
+    out.push_str(
+        "/*\n\
+         \x20* Per-model dispatch descriptors, one per SunSpec model the codec supports. Point\n\
+         \x20* each `SunspecModelBinding.model` at the address of the entry for that model,\n\
+         \x20* e.g. `.model = &SUNSPEC_MODEL_103`.\n\
+         \x20*/\n",
+    );
+    out.push_str("struct CModel;\n");
+    for model in models.iter().filter(|model| model_c_expressible(model)) {
+        out.push_str(&format!(
+            "extern const struct CModel SUNSPEC_MODEL_{};\n",
+            model.model_number
+        ));
+    }
+    out.push_str("\n#ifdef __cplusplus\n} // extern \"C\"\n#endif // __cplusplus\n");
+    out
+}
+
+/// Typed `static inline` constructors for [`SunspecAdapter`], one set per model, to splice
+/// into the cbindgen header **after** the struct definitions (via `config.trailer`).
+///
+/// `sunspec_model_<id>_callback(Model<id>CallbackAdapter *)` /
+/// `sunspec_model_<id>_stateful(Model<id>StatefulAdapter *)` /
+/// `sunspec_model_<id>_none(void)` build a `SunspecAdapter` with the matching `model`, `kind`
+/// and adapter pointer, so a C caller cannot pair the wrong adapter type with a model (the C
+/// compiler rejects a mismatched pointer) or leave the `model`/`kind`/`adapter` triple
+/// inconsistent. `_stateful` is emitted only for non-repeating models, matching the dispatch
+/// code (repeating models have no C-usable stateful adapter).
+pub fn c_model_adapter_constructors() -> String {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_glob = format!("{project_root}/models/json/model_*.json");
+    let models = collect_models(&model_glob);
+
+    let mut out = String::new();
+    out.push_str(
+        "#ifndef SUNSPEC_MODBUS_CODEC_ADAPTER_CTORS\n\
+         #define SUNSPEC_MODBUS_CODEC_ADAPTER_CTORS\n\n\
+         /*\n\
+         \x20* Typed builders for `SunspecAdapter`. Prefer these over a raw struct literal: the C\n\
+         \x20* compiler then checks that the adapter pointer matches the model, and `model` / `kind`\n\
+         \x20* are always filled consistently. Example:\n\
+         \x20*\n\
+         \x20*     SunspecAdapter read_adapters[] = {\n\
+         \x20*         sunspec_model_1_callback(&common),\n\
+         \x20*         sunspec_model_103_stateful(&inverter),\n\
+         \x20*     };\n\
+         \x20*/\n",
+    );
+
+    for model in models.iter().filter(|model| model_c_expressible(model)) {
+        let n = model.model_number;
+        let pc = &model.name_pascal_case;
+
+        out.push_str(&format!(
+            "static inline SunspecAdapter sunspec_model_{n}_callback({pc}CallbackAdapter *adapter) {{\n\
+             \x20   SunspecAdapter s = {{ &SUNSPEC_MODEL_{n}, SUNSPEC_ADAPTER_CALLBACK, adapter }};\n\
+             \x20   return s;\n\
+             }}\n"
+        ));
+        if !model_is_repeating(model) {
+            out.push_str(&format!(
+                "static inline SunspecAdapter sunspec_model_{n}_stateful({pc}StatefulAdapter *adapter) {{\n\
+                 \x20   SunspecAdapter s = {{ &SUNSPEC_MODEL_{n}, SUNSPEC_ADAPTER_STATEFUL, adapter }};\n\
+                 \x20   return s;\n\
+                 }}\n"
+            ));
+        }
+        out.push_str(&format!(
+            "static inline SunspecAdapter sunspec_model_{n}_none(void) {{\n\
+             \x20   SunspecAdapter s = {{ &SUNSPEC_MODEL_{n}, SUNSPEC_ADAPTER_NONE, NULL }};\n\
+             \x20   return s;\n\
+             }}\n"
+        ));
+    }
+
+    out.push_str("\n#endif /* SUNSPEC_MODBUS_CODEC_ADAPTER_CTORS */\n");
+    out
 }

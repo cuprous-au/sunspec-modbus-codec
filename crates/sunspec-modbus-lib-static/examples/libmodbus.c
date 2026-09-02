@@ -181,12 +181,29 @@ int main(void)
             .phase_voltage_cn = 0,
         };
 
-    struct SunspecExternalAdapters adapters =
-        {
-            .model_1_callback_adapter = &sunspec_common_adapter,
-            .model_802_callback_adapter = &sunspec_battery_adapter,
-            .model_103_stateful_adapter = &inverter_adapter,
-        };
+    // The register map, in block order: pure layout, so it can be `const`. Each entry names a
+    // model by its dispatch descriptor.
+    static const SunspecModelBinding bindings[] = {
+        {.model = &SUNSPEC_MODEL_1},
+        {.model = &SUNSPEC_MODEL_103},
+        {.model = &SUNSPEC_MODEL_802},
+    };
+    size_t binding_count = sizeof(bindings) / sizeof(bindings[0]);
+
+    // Adapters for this request, index-aligned with `bindings`. The `sunspec_model_<id>_*`
+    // builders fill `.model` / `.kind` and let the compiler check the adapter type; the
+    // runtime still verifies each slot lines up with `bindings` before touching registers.
+    SunspecAdapter read_adapters[] = {
+        sunspec_model_1_callback(&sunspec_common_adapter),
+        sunspec_model_103_stateful(&inverter_adapter),
+        sunspec_model_802_callback(&sunspec_battery_adapter),
+    };
+    SunspecAdapter write_adapters[] = {
+        sunspec_model_1_callback(&sunspec_common_adapter),
+        sunspec_model_103_none(),
+        sunspec_model_802_callback(&sunspec_battery_adapter),
+    };
+    size_t adapter_count = sizeof(read_adapters) / sizeof(read_adapters[0]);
 
     int server_socket = modbus_tcp_listen(ctx, 1);
     if (server_socket == -1)
@@ -227,14 +244,14 @@ int main(void)
                     res[1] = function_code;
                     res[2] = bytes;
 
-                    sunspec_service_read_registers(&adapters, address, length, &res[3]);
+                    sunspec_service_read_registers(bindings, binding_count, read_adapters, adapter_count, address, length, &res[3]);
                     printf("Responding with %d bytes\n", bytes + 3);
 
                     modbus_send_raw_request_tid(ctx, res, bytes + 3, tid);
                     modbus_flush(ctx);
                 }
                 else if (function_code == MODBUS_FC_WRITE_MULTIPLE_REGISTERS) {
-                    sunspec_service_write_registers(&adapters, address, length, &req[13]);
+                    sunspec_service_write_registers(bindings, binding_count, write_adapters, adapter_count, address, length, &req[13]);
 
                     modbus_send_raw_request_tid(ctx, &req[6], 6, tid);
                     modbus_flush(ctx);
