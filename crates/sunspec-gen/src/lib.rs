@@ -4,8 +4,7 @@ use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
-    generate_adapter_structs, generate_model, generate_models_mod, model_c_expressible,
-    model_is_repeating,
+    generate_model, generate_models_mod, model_c_expressible, model_is_repeating,
 };
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::sunspec_schema::SunspecModel;
@@ -107,10 +106,6 @@ pub fn generate() {
     }
 
     format_and_write(
-        &generated_src_dir.join("adapters.rs"),
-        &generate_adapter_structs(&models),
-    );
-    format_and_write(
         &generated_src_dir.join("models.rs"),
         &generate_models_mod(&models),
     );
@@ -204,4 +199,27 @@ pub fn c_model_adapter_constructors() -> String {
 
     out.push_str("\n#endif /* SUNSPEC_MODBUS_CODEC_ADAPTER_CTORS */\n");
     out
+}
+
+/// Names of the per-model adapter structs a C caller must be able to allocate:
+/// `Model<id>CallbackAdapter` for every C-expressible model, plus `Model<id>StatefulAdapter`
+/// for the non-repeating ones (repeating models have no C-usable stateful adapter).
+///
+/// Nothing in `sunspec-modbus-lib-static`'s signatures names these types (the adapter is
+/// carried as `void*`), so they must be force-listed in cbindgen's `export.include` for the
+/// header to carry their field layout.
+pub fn c_adapter_struct_names() -> Vec<String> {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_glob = format!("{project_root}/models/json/model_*.json");
+    let models = collect_models(&model_glob);
+
+    let mut names = Vec::new();
+    for model in models.iter().filter(|model| model_c_expressible(model)) {
+        let pc = &model.name_pascal_case;
+        names.push(format!("{pc}CallbackAdapter"));
+        if !model_is_repeating(model) {
+            names.push(format!("{pc}StatefulAdapter"));
+        }
+    }
+    names
 }

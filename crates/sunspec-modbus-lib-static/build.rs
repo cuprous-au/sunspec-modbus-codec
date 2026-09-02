@@ -30,6 +30,14 @@ fn main() {
         None => externs,
     });
 
+    // The per-model `Model<id>{Callback,Stateful}Adapter` structs are only ever named through a
+    // `void*` in this crate's signatures, so cbindgen would prune them. Force-list every one:
+    // the header then carries the field layout a C caller needs to build an adapter.
+    config
+        .export
+        .include
+        .extend(sunspec_gen::c_adapter_struct_names());
+
     // Typed `SunspecAdapter` constructors go after the struct definitions.
     let ctors = sunspec_gen::c_model_adapter_constructors();
     config.trailer = Some(match config.trailer.take() {

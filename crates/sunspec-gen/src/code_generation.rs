@@ -142,105 +142,6 @@ fn generate_point_arrays(group: &ResolvedGroup, scope: &mut Scope, args: Vec<Str
     }
 }
 
-pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
-    let mut scope: Scope = Scope::new();
-
-    for model in models {
-        scope.import("crate::sunspec::models", &model.name_snake_case);
-    }
-
-    // A C-FFI facing bag of optional adapters, one slot per model. Superseded for wiring by the
-    // flat `SunspecModelBinding` descriptor in `sunspec-modbus-lib-static`, but still generated:
-    // it names every per-model `Model<id>{Stateful,Callback}Adapter`, and the static crate force-
-    // includes it so cbindgen keeps those struct definitions in the C header.
-    let c_struct = scope
-        .new_struct("SunspecExternalAdapters")
-        .vis("pub")
-        .repr("C")
-        .generic("'a");
-
-    for model in models {
-        c_struct
-            .field(
-                format!("pub {}_callback_adapter", model.name_snake_case),
-                format!(
-                    "Option<&'a mut {}::{}CallbackAdapter>",
-                    model.name_snake_case, model.name_pascal_case
-                ),
-            )
-            .vis("pub");
-
-        if model.group.repeating_child.is_none() {
-            // The C ffi can't handle the required generics to support arbitrary length arrays, so we can't include stateful adapters for repeating groups
-            c_struct
-                .field(
-                    format!("pub {}_stateful_adapter", model.name_snake_case),
-                    format!(
-                        "Option<&'a mut {}::{}StatefulAdapter>",
-                        model.name_snake_case, model.name_pascal_case
-                    ),
-                )
-                .vis("pub");
-        }
-    }
-
-    let c_struct_impl = scope.new_impl("SunspecExternalAdapters<'a>").generic("'a");
-
-    for model in models {
-        let ref_impl_fn = c_struct_impl
-            .new_fn(format!("{}_read_adapter", model.name_snake_case))
-            .vis("pub")
-            .arg_ref_self()
-            .ret(format!(
-                "Option<&(dyn {}::ReadAdapter + 'a)>",
-                model.name_snake_case
-            ))
-            .line(format!(
-                "self.{}_callback_adapter.as_deref()",
-                model.name_snake_case
-            ))
-            .line(format!(
-                ".map(|a| a as &(dyn {}::ReadAdapter + 'a))",
-                model.name_snake_case
-            ));
-
-        if model.group.repeating_child.is_none() {
-            ref_impl_fn.line(format!(
-                ".or_else(|| self.{}_stateful_adapter.as_deref().map(|a| a as &(dyn {}::ReadAdapter + 'a)))",
-                model.name_snake_case, model.name_snake_case,
-            ));
-        }
-
-        if model.group.writable {
-            let impl_fn = c_struct_impl
-                .new_fn(format!("{}_write_adapter", model.name_snake_case))
-                .vis("pub")
-                .arg_mut_self()
-                .ret(format!(
-                    "Option<&mut (dyn {}::WriteAdapter + 'a)>",
-                    model.name_snake_case
-                ))
-                .line(format!(
-                    "self.{}_callback_adapter.as_deref_mut()",
-                    model.name_snake_case
-                ))
-                .line(format!(
-                    ".map(|a| a as &mut (dyn {}::WriteAdapter + 'a))",
-                    model.name_snake_case
-                ));
-
-            if model.group.repeating_child.is_none() {
-                impl_fn.line(format!(
-                ".or_else(|| self.{}_stateful_adapter.as_deref_mut().map(|a| a as &mut (dyn {}::WriteAdapter + 'a)))",
-                model.name_snake_case, model.name_snake_case,
-            ));
-            }
-        }
-    }
-
-    scope
-}
-
 pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     let mut scope = Scope::new();
     scope.raw("#![allow(unused_variables)]");
@@ -1161,15 +1062,6 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         }
     }
 
-    let size: u16 = model
-        .group
-        .points
-        .iter()
-        .map(|point| point.point_type.size)
-        .sum();
-
-    scope.raw(format!("pub const SIZE: u16 = {};", size));
-
     generate_point_arrays(&model.group, &mut scope, vec![]);
 
     let point_enum = scope.new_enum("Point").vis("pub").derive("Debug");
@@ -1179,7 +1071,6 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope
         .new_struct("PointDetails")
         .generic("GroupIndexArgs")
-        .derive("Debug")
         .field("point", "fn(GroupIndexArgs) -> Point")
         .field("start_address", "u16")
         .field("size", "u16");
@@ -1225,7 +1116,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope
         .new_fn("write_point_to_buffer")
         .generic("'a")
-        .vis("pub")
+        .vis("pub(crate)")
         .arg("model", format!("&{}", model.name_pascal_case))
         .arg("adapter", "&dyn ReadAdapter")
         .arg("point", "&Point")
@@ -1236,7 +1127,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     let reader_fn = scope
         .new_fn("read_point_from_buffer")
         .generic("'a")
-        .vis("pub")
+        .vis("pub(crate)")
         .arg("model", format!("&{}", model.name_pascal_case))
         .arg("adapter", "&mut dyn WriteAdapter")
         .arg("point", "&Point")

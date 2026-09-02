@@ -17,15 +17,7 @@ include = ["sunspec-modbus-lib-rs"]
 
 [export]
 item_types = ["constants", "functions", "typedefs", "structs", "enums"]
-# `SunspecModelBinding` points at per-model `Model<id>{Stateful,Callback}Adapter` structs as
-# `void*`, so nothing in this crate's signatures references them. Force the codec crate's
-# adapter bag in: it names every one of those structs, and cbindgen follows the transitive
-# types, so the header keeps the definitions C callers build.
-#
-# `CModel` is the per-model dispatch descriptor. C only ever holds `const CModel *` (taken
-# from the `SUNSPEC_MODEL_<id>` externs that `build.rs` splices in), never its fields, so it
-# stays an opaque incomplete type here.
-include = ["SunspecExternalAdapters"]
+include = []
 
 [enum]
 prefix_with_name = true
