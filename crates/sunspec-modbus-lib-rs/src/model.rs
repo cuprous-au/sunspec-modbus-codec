@@ -155,6 +155,11 @@ pub struct CModel {
     /// `SunS` excluded). Repeat counts are ignored by non-repeating models.
     pub length: fn(repeat_count_0: u16, repeat_count_1: u16) -> u16,
 
+    /// Whether this model has any writable points. A non-writable model rejects every write
+    /// regardless of adapter; `sunspec-modbus-lib-static` uses this to let a C caller pass a
+    /// `write_adapters` array covering only the writable models.
+    pub writable: bool,
+
     /// Decode one model block on a read. `kind`: `1` = stateful adapter pointer, `2` =
     /// callback adapter pointer, anything else = no adapter (the block reads as `0xffff`).
     /// Repeating-group models accept only `kind` `2`.

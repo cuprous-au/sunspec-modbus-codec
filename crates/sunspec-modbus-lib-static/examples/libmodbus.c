@@ -198,12 +198,15 @@ int main(void)
         sunspec_model_103_stateful(&inverter_adapter),
         sunspec_model_802_callback(&sunspec_battery_adapter),
     };
+    size_t adapter_count = sizeof(read_adapters) / sizeof(read_adapters[0]);
+
+    // Write adapters cover only the writable models, in map order. Model 103 has no writable
+    // points, so it takes no entry here (its block still rejects writes).
     SunspecAdapter write_adapters[] = {
         sunspec_model_1_callback(&sunspec_common_adapter),
-        sunspec_model_103_none(),
         sunspec_model_802_callback(&sunspec_battery_adapter),
     };
-    size_t adapter_count = sizeof(read_adapters) / sizeof(read_adapters[0]);
+    size_t write_adapter_count = sizeof(write_adapters) / sizeof(write_adapters[0]);
 
     int server_socket = modbus_tcp_listen(ctx, 1);
     if (server_socket == -1)
@@ -251,7 +254,7 @@ int main(void)
                     modbus_flush(ctx);
                 }
                 else if (function_code == MODBUS_FC_WRITE_MULTIPLE_REGISTERS) {
-                    sunspec_service_write_registers(bindings, binding_count, write_adapters, adapter_count, address, length, &req[13]);
+                    sunspec_service_write_registers(bindings, binding_count, write_adapters, write_adapter_count, address, length, &req[13]);
 
                     modbus_send_raw_request_tid(ctx, &req[6], 6, tid);
                     modbus_flush(ctx);

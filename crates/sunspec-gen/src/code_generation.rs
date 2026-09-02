@@ -199,6 +199,7 @@ fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
     let pc = &model.name_pascal_case;
     let ctor = model_marker_ctor(model);
     let repeating = model_is_repeating(model);
+    let writable = model.group.writable;
     // Non-repeating models ignore the repeat counts; repeating models consume them in `ctor`.
     let discard_counts = if repeating {
         ""
@@ -215,6 +216,7 @@ fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
          pub static SUNSPEC_MODEL_{n}: CModel = CModel {{\n\
          \x20   id: {n},\n\
          \x20   length: {sc}_c_length,\n\
+         \x20   writable: {writable},\n\
          \x20   visit_read: {sc}_c_visit_read,\n\
          \x20   visit_write: {sc}_c_visit_write,\n\
          }};\n\n"
