@@ -18,7 +18,9 @@ fn generate_enum(resolved_enum: &ResolvedEnum, scope: &mut Scope) {
         .vis("pub")
         .repr(&resolved_enum.discriminant_type)
         .derive("Clone")
-        .derive("Copy");
+        .derive("Copy")
+        .derive("Debug")
+        .derive("PartialEq");
 
     for value in &resolved_enum.values {
         enum_def
@@ -322,25 +324,29 @@ fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Stru
         let group_index_args = ", u16".repeat(point.block_indices.len());
 
         let fn_ptr = format!("extern \"C\" fn(*const c_void{group_index_args}) -> {c_type}");
-        callback_struct.field(
-            format!("{}_callback", point.name_snake_case),
-            if point.mandatory == PointMandatory::M {
-                fn_ptr
-            } else {
-                format!("Option<{fn_ptr}>")
-            },
-        );
+        callback_struct
+            .new_field(
+                format!("{}_callback", point.name_snake_case),
+                if point.mandatory == PointMandatory::M {
+                    fn_ptr
+                } else {
+                    format!("Option<{fn_ptr}>")
+                },
+            )
+            .doc(doc_text(&point.doc));
 
         if point.access == PointAccess::Rw {
             let set_fn_ptr = format!("extern \"C\" fn({c_type}, *mut c_void{group_index_args})");
-            callback_struct.field(
-                format!("set_{}_callback", point.name_snake_case),
-                if point.mandatory == PointMandatory::M {
-                    set_fn_ptr
-                } else {
-                    format!("Option<{set_fn_ptr}>")
-                },
-            );
+            callback_struct
+                .new_field(
+                    format!("set_{}_callback", point.name_snake_case),
+                    if point.mandatory == PointMandatory::M {
+                        set_fn_ptr
+                    } else {
+                        format!("Option<{set_fn_ptr}>")
+                    },
+                )
+                .doc(doc_text(&point.doc));
         };
     }
 
@@ -368,6 +374,7 @@ fn generate_callback_read_handlers(group: &ResolvedGroup, callback_impl: &mut Im
         }
 
         getter.body = None;
+        getter.doc("");
 
         let callback_ref = if point.mandatory == PointMandatory::M {
             format!("self.{}_callback", point.name_snake_case)
@@ -504,7 +511,9 @@ pub fn populate_stateful_struct(
         } else {
             point.point_type.c_type.clone()
         };
-        stateful_struct.field(format!("pub {}", point.name_snake_case), c_type);
+        stateful_struct
+            .new_field(format!("pub {}", point.name_snake_case), c_type)
+            .doc(doc_text(&point.doc));
     }
 
     if let Some((_, inner_group)) = &group.repeating_child {
@@ -560,6 +569,7 @@ fn generate_stateful_read_handlers(group: &ResolvedGroup, stateful_impl: &mut Im
         }
 
         getter.body = None;
+        getter.doc("");
 
         let field = if point.point_type.array_length.is_some() {
             format!(

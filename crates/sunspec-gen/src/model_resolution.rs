@@ -213,14 +213,16 @@ pub fn resolve_point(
         main_name
     );
 
-    let doc = [
-        point.label.as_ref(),
-        point.desc.as_ref(),
-        point.detail.as_ref(),
-    ]
-    .iter()
-    .flat_map(|r| r.cloned())
-    .collect();
+    let label = if let Some(label) = &point.label {
+        format!("{} ({})", label, point.name)
+    } else {
+        point.name.clone()
+    };
+
+    let doc = [Some(label), point.desc.clone(), point.detail.clone()]
+        .into_iter()
+        .flatten()
+        .collect();
 
     let value_type = if point.type_ == PointType::Pad {
         PointValueType::StaticValue("0".to_string())

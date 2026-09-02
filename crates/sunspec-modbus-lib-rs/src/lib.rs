@@ -28,12 +28,15 @@ pub enum ModbusException {
 mod tests {
     use core::ffi::CStr;
 
-    use crate::sunspec::models::model_1::{self, Model1StatefulAdapter, ReadAdapter};
+    use crate::{buffer::{ReadableRegisterBuffer, WritableRegisterBuffer}, sunspec::models::{model_1::{self, Model1StatefulAdapter, ReadAdapter}, model_701, model_704}};
 
     use super::*;
 
     #[test]
     fn simple_common_adapter() -> Result<(), ModbusException> {
+        struct SunspecModel {
+            model: model_1::Model1,
+        }
         let mut adapter = Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
@@ -43,13 +46,13 @@ mod tests {
             device_address: 0,
         };
 
-        impl ModelList for model_1::Model1 {
+        impl ModelList for SunspecModel {
             type ReadAdapters<'a> = &'a Model1StatefulAdapter;
         
             type WriteAdapters<'a> = &'a mut Model1StatefulAdapter;
         
             fn map_length(&self) -> u16 {
-                self.model_length()
+                self.model.model_length()
             }
         
             fn traverse_read(
@@ -58,7 +61,7 @@ mod tests {
                 cursor: &mut cursor::Cursor<ModbusException>,
                 buffer: &mut buffer::WritableRegisterBuffer<'_>,
             ) {
-                visit_model_read(cursor, buffer, self, adapter);
+                visit_model_read(cursor, buffer, &self.model, adapter);
             }
         
             fn traverse_write(
@@ -67,11 +70,11 @@ mod tests {
                 cursor: &mut cursor::Cursor<ModbusException>,
                 buffer: &buffer::ReadableRegisterBuffer<'_>,
             ) {
-                visit_model_write(cursor, buffer, self, adapter);
+                visit_model_write(cursor, buffer, &self.model, adapter);
             }
         }
 
-        let sunspec = Sunspec::new(model_1::Model1);
+        let sunspec = Sunspec::new(SunspecModel { model: model_1::Model1 });
 
         const WORDS_TO_READ: u16 = 72;
 
@@ -137,6 +140,104 @@ mod tests {
             ),
             1234
         );
+        Ok(())
+    }
+
+    #[test]
+    fn write_model_704_sets_active_power_enable() -> Result<(), ModbusException> {
+        struct SunspecModel {
+            model_1: model_1::Model1,
+            model_701: model_701::Model701,
+            model_704: model_704::Model704,
+        }
+
+        struct SunspecReadAdapters<'a> {
+            model_1: &'a dyn model_1::ReadAdapter,
+            model_701: &'a dyn model_701::ReadAdapter,
+            model_704: &'a dyn model_704::ReadAdapter,
+        }
+
+        struct SunspecWriteAdapters<'a> {
+            model_1: &'a mut dyn model_1::WriteAdapter,
+            model_704: &'a mut dyn model_704::WriteAdapter,
+        }
+
+        impl ModelList for SunspecModel {
+            type ReadAdapters<'a> = SunspecReadAdapters<'a>;
+
+            type WriteAdapters<'a> = SunspecWriteAdapters<'a>;
+
+            fn map_length(&self) -> u16 {
+                self.model_1.model_length() + self.model_701.model_length() + self.model_704.model_length()
+            }
+
+            fn traverse_read<'a>(
+                &self,
+                adapters: Self::ReadAdapters<'a>,
+                cursor: &mut cursor::Cursor<ModbusException>,
+                buffer: &mut WritableRegisterBuffer<'a>,
+            ) {
+                visit_model_read(cursor, buffer, &self.model_1, adapters.model_1);
+                visit_model_read(cursor, buffer, &self.model_701, adapters.model_701);
+                visit_model_read(cursor, buffer, &self.model_704, adapters.model_704);
+            }
+
+            fn traverse_write<'a, 'buf>(
+                &self,
+                adapters: Self::WriteAdapters<'a>,
+                cursor: &mut cursor::Cursor<ModbusException>,
+                buffer: &ReadableRegisterBuffer<'buf>,
+            ) {
+                visit_model_write(cursor, buffer, &self.model_1, adapters.model_1);
+                reject_model_write(cursor, &self.model_701);
+                visit_model_write(cursor, buffer, &self.model_704, adapters.model_704);
+
+            }
+        }
+
+
+        let mut common_model = Model1StatefulAdapter {
+            manufacturer: c_char_array!("Cuprous"),
+            model: c_char_array!("Inverter 1"),
+            options: c_char_array!("opt_a_b_c"),
+            version: c_char_array!("v0.1"),
+            serial_number: c_char_array!("I-1"),
+            device_address: 0,
+        };
+
+        struct DerAcControlsModel {
+            active_power_enable: bool,
+        }
+
+        impl model_704::WriteAdapter for DerAcControlsModel {
+            fn set_active_power_enable(&mut self, value: model_704::WSetEna) {
+                self.active_power_enable = value == model_704::WSetEna::Enabled;
+            }
+        }
+
+        let sunspec = Sunspec::new(SunspecModel {
+            model_1: model_1::Model1,
+            model_701: model_701::Model701,
+            model_704: model_704::Model704,
+        });
+
+        let mut der_ac_controls = DerAcControlsModel {
+            active_power_enable: false,
+        };
+
+        let adapters = SunspecWriteAdapters {
+            model_1: &mut common_model,
+            model_704: &mut der_ac_controls
+        };
+
+        sunspec.write_multiple_registers(
+            40247,
+            hex::decode("0001").unwrap().as_slice(),
+            adapters,
+        )?;
+
+        assert!(der_ac_controls.active_power_enable);
+
         Ok(())
     }
 }

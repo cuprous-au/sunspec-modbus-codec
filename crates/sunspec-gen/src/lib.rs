@@ -86,13 +86,13 @@ pub fn generate() {
     let src_path = format!("{project_root}/../sunspec-modbus-lib-rs/src/sunspec");
     let generated_src_dir = Path::new(&src_path);
 
-    // if let Err(error) = fs::remove_dir_all(generated_src_dir)
-    //     && error.kind() != std::io::ErrorKind::NotFound
-    // {
-    //     panic!("Failed to remove generated source directory: {error}");
-    // }
-    // fs::create_dir_all(generated_src_dir.join("models"))
-    //     .expect("Failed to create generated source directories");
+    if let Err(error) = fs::remove_dir_all(generated_src_dir)
+        && error.kind() != std::io::ErrorKind::NotFound
+    {
+        panic!("Failed to remove generated source directory: {error}");
+    }
+    fs::create_dir_all(generated_src_dir.join("models"))
+        .expect("Failed to create generated source directories");
 
     let models = collect_models(&model_glob);
 
