@@ -191,9 +191,9 @@ pub(crate) fn model_is_repeating(model: &ResolvedModel) -> bool {
 /// `sunspec-modbus-lib-static` dispatches straight through the function pointers with no
 /// model-id lookup. `None` for models that can't be expressed through the two-repeat-count
 /// C descriptor.
-fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
+fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
     if !model_c_expressible(model) {
-        return None;
+        return;
     }
 
     let n = model.model_number;
@@ -203,15 +203,25 @@ fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
     let repeating = model_is_repeating(model);
     let writable = model.group.writable;
     // Non-repeating models ignore the repeat counts; repeating models consume them in `ctor`.
-    let discard_counts = if repeating {
-        ""
-    } else {
-        "    let _ = (repeat_count_0, repeat_count_1);\n"
-    };
 
-    let mut out = String::new();
+    let count_arg_0 = format!(
+        "{}repeat_count_0",
+        if !model.count_points.is_empty() {
+            ""
+        } else {
+            "_"
+        }
+    );
+    let count_arg_1 = format!(
+        "{}repeat_count_1",
+        if model.count_points.len() > 1 {
+            ""
+        } else {
+            "_"
+        }
+    );
 
-    out.push_str(&format!(
+    scope.raw(format!(
         "/// C-FFI dispatch descriptor for SunSpec model {n}. A C `SunspecModelBinding` points\n\
          /// at this static, so the service functions dispatch with no model-id lookup.\n\
          #[unsafe(no_mangle)]\n\
@@ -224,38 +234,37 @@ fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
          }};\n\n"
     ));
 
-    out.push_str(&format!(
-        "fn {sc}_c_length(repeat_count_0: u16, repeat_count_1: u16) -> u16 {{\n\
-         {discard_counts}\
-         \x20   ({ctor}).model_length()\n\
-         }}\n\n"
-    ));
+    scope
+        .new_fn(format!("{sc}_c_length"))
+        .arg(&count_arg_0, "u16")
+        .arg(&count_arg_1, "u16")
+        .ret("u16")
+        .line(format!("({ctor}).model_length()"));
 
-    out.push_str(&format!(
+    scope.raw(format!(
         "/// # Safety\n\
          /// For `kind` 1 or 2, `adapter` must point to a live `Model{n}{{Stateful,Callback}}Adapter`,\n\
          /// valid for the duration of the call.\n\
          unsafe fn {sc}_c_visit_read(\n\
          \x20   kind: u8,\n\
          \x20   adapter: *const c_void,\n\
-         \x20   repeat_count_0: u16,\n\
-         \x20   repeat_count_1: u16,\n\
+         \x20   {count_arg_0}: u16,\n\
+         \x20   {count_arg_1}: u16,\n\
          \x20   cursor: &mut Cursor<ModbusException>,\n\
          \x20   buffer: &mut WritableRegisterBuffer<'_>,\n\
          ) {{\n\
-         {discard_counts}\
          \x20   let model = {ctor};\n\
          \x20   match kind {{\n"
     ));
     if !repeating {
-        out.push_str(&format!(
+        scope.raw(format!(
             "        1 => {{\n\
              \x20           let adapter = unsafe {{ &*(adapter as *const {pc}StatefulAdapter) }};\n\
              \x20           visit_model_read(cursor, buffer, &model, adapter as &dyn ReadAdapter);\n\
              \x20       }}\n"
         ));
     }
-    out.push_str(&format!(
+    scope.raw(format!(
         "        2 => {{\n\
          \x20           let adapter = unsafe {{ &*(adapter as *const {pc}CallbackAdapter) }};\n\
          \x20           visit_model_read(cursor, buffer, &model, adapter as &dyn ReadAdapter);\n\
@@ -265,31 +274,30 @@ fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
          }}\n\n"
     ));
 
-    out.push_str(&format!(
+    scope.raw(format!(
         "/// # Safety\n\
          /// As for [`{sc}_c_visit_read`], and `adapter` must be uniquely borrowable for the call.\n\
          unsafe fn {sc}_c_visit_write(\n\
          \x20   kind: u8,\n\
          \x20   adapter: *mut c_void,\n\
-         \x20   repeat_count_0: u16,\n\
-         \x20   repeat_count_1: u16,\n\
+         \x20   {count_arg_0}: u16,\n\
+         \x20   {count_arg_1}: u16,\n\
          \x20   cursor: &mut Cursor<ModbusException>,\n\
          \x20   buffer: &ReadableRegisterBuffer<'_>,\n\
          ) {{\n\
-         {discard_counts}\
          \x20   let model = {ctor};\n"
     ));
     if model.group.writable {
-        out.push_str("    match kind {\n");
+        scope.raw("    match kind {\n");
         if !repeating {
-            out.push_str(&format!(
+            scope.raw(format!(
                 "        1 => {{\n\
                  \x20           let adapter = unsafe {{ &mut *(adapter as *mut {pc}StatefulAdapter) }};\n\
                  \x20           visit_model_write(cursor, buffer, &model, adapter as &mut dyn WriteAdapter);\n\
                  \x20       }}\n"
             ));
         }
-        out.push_str(&format!(
+        scope.raw(format!(
             "        2 => {{\n\
              \x20           let adapter = unsafe {{ &mut *(adapter as *mut {pc}CallbackAdapter) }};\n\
              \x20           visit_model_write(cursor, buffer, &model, adapter as &mut dyn WriteAdapter);\n\
@@ -299,14 +307,12 @@ fn generate_c_model_dispatch(model: &ResolvedModel) -> Option<String> {
              }}\n\n"
         ));
     } else {
-        out.push_str(
+        scope.raw(
             "    let _ = (kind, adapter, buffer);\n\
              \x20   reject_model_write(cursor, &model);\n\
              }\n\n",
         );
     }
-
-    Some(out)
 }
 
 fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Struct) {
@@ -1062,16 +1068,13 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope.import("crate", "ModbusException");
     scope.import("core::cmp", "min");
 
-    let c_model_dispatch = generate_c_model_dispatch(model);
-    if c_model_dispatch.is_some() {
-        scope.import("crate::cursor", "Cursor");
-        scope.import("crate::model", "CModel");
-        scope.import("crate::model", "reject_model_write");
-        scope.import("crate::model", "visit_absent_read");
-        scope.import("crate::model", "visit_model_read");
-        if model.group.writable {
-            scope.import("crate::model", "visit_model_write");
-        }
+    scope.import("crate::cursor", "Cursor");
+    scope.import("crate::model", "CModel");
+    scope.import("crate::model", "reject_model_write");
+    scope.import("crate::model", "visit_absent_read");
+    scope.import("crate::model", "visit_model_read");
+    if model.group.writable {
+        scope.import("crate::model", "visit_model_write");
     }
 
     generate_point_arrays(&model.group, &mut scope, vec![]);
@@ -1174,9 +1177,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     generate_callback_struct(model, &mut scope);
     generate_stateful_struct(model, &mut scope);
 
-    if let Some(dispatch) = c_model_dispatch {
-        scope.raw(dispatch);
-    }
+    generate_c_model_dispatch(model, &mut scope);
 
     scope
 }
