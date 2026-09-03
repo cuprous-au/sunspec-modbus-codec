@@ -91,8 +91,7 @@ impl<E: Clone> Cursor<E> {
         self.target_offset
     }
 
-    pub fn skip_source_block<F>(&mut self, size: u16) -> Option<u16>
-    {
+    pub fn skip_source_block<F>(&mut self, size: u16) -> Option<u16> {
         if let Some(target_offset) = self.target_offset {
             if self.source_offset < size {
                 let limit = min(self.limit - target_offset, size - self.source_offset);

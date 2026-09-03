@@ -28,7 +28,13 @@ pub enum ModbusException {
 mod tests {
     use core::ffi::CStr;
 
-    use crate::{buffer::{ReadableRegisterBuffer, WritableRegisterBuffer}, sunspec::models::{model_1::{self, Model1StatefulAdapter, ReadAdapter}, model_701, model_704}};
+    use crate::{
+        buffer::{ReadableRegisterBuffer, WritableRegisterBuffer},
+        sunspec::models::{
+            model_1::{self, Model1StatefulAdapter, ReadAdapter},
+            model_701, model_704,
+        },
+    };
 
     use super::*;
 
@@ -48,13 +54,13 @@ mod tests {
 
         impl ModelList for SunspecModel {
             type ReadAdapters<'a> = &'a Model1StatefulAdapter;
-        
+
             type WriteAdapters<'a> = &'a mut Model1StatefulAdapter;
-        
+
             fn map_length(&self) -> u16 {
                 self.model.model_length()
             }
-        
+
             fn traverse_read(
                 &self,
                 adapter: Self::ReadAdapters<'_>,
@@ -63,7 +69,7 @@ mod tests {
             ) {
                 visit_model_read(cursor, buffer, &self.model, adapter);
             }
-        
+
             fn traverse_write(
                 &self,
                 adapter: Self::WriteAdapters<'_>,
@@ -74,17 +80,15 @@ mod tests {
             }
         }
 
-        let sunspec = Sunspec::new(SunspecModel { model: model_1::Model1 });
+        let sunspec = Sunspec::new(SunspecModel {
+            model: model_1::Model1,
+        });
 
         const WORDS_TO_READ: u16 = 72;
 
         let mut init_buf = [0_u8; WORDS_TO_READ as usize * 2];
 
-        sunspec.read_registers(
-            STARTING_REGISTER_OFFSET,
-            init_buf.as_mut_slice(),
-            &adapter,
-        )?;
+        sunspec.read_registers(STARTING_REGISTER_OFFSET, init_buf.as_mut_slice(), &adapter)?;
 
         assert_eq!(&init_buf[..4], b"SunS");
         assert_eq!(
@@ -168,7 +172,9 @@ mod tests {
             type WriteAdapters<'a> = SunspecWriteAdapters<'a>;
 
             fn map_length(&self) -> u16 {
-                self.model_1.model_length() + self.model_701.model_length() + self.model_704.model_length()
+                self.model_1.model_length()
+                    + self.model_701.model_length()
+                    + self.model_704.model_length()
             }
 
             fn traverse_read<'a>(
@@ -191,10 +197,8 @@ mod tests {
                 visit_model_write(cursor, buffer, &self.model_1, adapters.model_1);
                 reject_model_write(cursor, &self.model_701);
                 visit_model_write(cursor, buffer, &self.model_704, adapters.model_704);
-
             }
         }
-
 
         let mut common_model = Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
@@ -227,7 +231,7 @@ mod tests {
 
         let adapters = SunspecWriteAdapters {
             model_1: &mut common_model,
-            model_704: &mut der_ac_controls
+            model_704: &mut der_ac_controls,
         };
 
         sunspec.write_multiple_registers(

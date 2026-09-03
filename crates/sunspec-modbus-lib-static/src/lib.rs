@@ -171,8 +171,10 @@ impl ModelList for CModelList<'_> {
         let mut total: u16 = 0;
         for binding in self.bindings {
             let model = unsafe { Self::descriptor(binding) };
-            total = total
-                .wrapping_add((model.length)(binding.repeat_count_0, binding.repeat_count_1));
+            total = total.wrapping_add((model.length)(
+                binding.repeat_count_0,
+                binding.repeat_count_1,
+            ));
         }
         total
     }
