@@ -91,26 +91,6 @@ impl<E: Clone> Cursor<E> {
         self.target_offset
     }
 
-    pub fn skip_source_block<F>(&mut self, size: u16) -> Option<u16> {
-        if let Some(target_offset) = self.target_offset {
-            if self.source_offset < size {
-                let limit = min(self.limit - target_offset, size - self.source_offset);
-
-                let new_offset = target_offset + limit;
-                self.target_offset = if new_offset < self.limit {
-                    Some(new_offset)
-                } else {
-                    None
-                };
-                self.source_offset = 0;
-            } else {
-                self.source_offset -= size;
-            }
-        }
-
-        self.target_offset
-    }
-
     /// Invokes [Self::visit_source_block] if the provided context is non-empty.
     ///
     /// If the context is None, this method has no impact, and doesn't impact the source or target offsets in any way.
@@ -122,29 +102,6 @@ impl<E: Clone> Cursor<E> {
     ) -> Option<u16>
     where
         F: FnOnce(&mut A, u16, u16, u16) -> Result<(), E>,
-    {
-        if self.target_offset.is_some()
-            && let Some(ctx) = ctx_opt
-        {
-            let size = get_size(ctx);
-            self.visit_source_block(size, |offset, buffer_offset, limit| {
-                handler(ctx, offset, buffer_offset, limit)
-            })
-        } else {
-            self.target_offset
-        }
-    }
-
-    /// Shared-reference counterpart to [Self::visit_optional_source_block], for traversals that
-    /// only need read access to the context.
-    pub fn visit_optional_source_block_ref<A: ?Sized, F>(
-        &mut self,
-        ctx_opt: Option<&A>,
-        get_size: fn(&A) -> u16,
-        handler: F,
-    ) -> Option<u16>
-    where
-        F: FnOnce(&A, u16, u16, u16) -> Result<(), E>,
     {
         if self.target_offset.is_some()
             && let Some(ctx) = ctx_opt

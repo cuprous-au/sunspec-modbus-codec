@@ -429,6 +429,16 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
         .ret("u16")
         .line(format!("({ctor}).model_length()"));
 
+    // `kind` selects the adapter (1 = stateful, 2 = callback, anything else = none), then a
+    // single `visit_source_block` consumes the model's words: a present adapter encodes the
+    // block, an absent one fills it with the SunSpec "not implemented" value.
+    let read_stateful_arm = if repeating {
+        String::new()
+    } else {
+        format!(
+            "        1 => Some(unsafe {{ &*(adapter as *const {pc}StatefulAdapter) }} as &dyn ReadAdapter),\n"
+        )
+    };
     scope.raw(format!(
         "/// # Safety\n\
          /// For `kind` 1 or 2, `adapter` must point to a live `Model{n}{{Stateful,Callback}}Adapter`,\n\
@@ -442,26 +452,54 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
          \x20   buffer: &mut WritableRegisterBuffer<'_>,\n\
          ) {{\n\
          \x20   let model = {ctor};\n\
-         \x20   match kind {{\n"
-    ));
-    if !repeating {
-        scope.raw(format!(
-            "        1 => {{\n\
-             \x20           let adapter = unsafe {{ &*(adapter as *const {pc}StatefulAdapter) }};\n\
-             \x20           visit_model_read(cursor, buffer, &model, adapter as &dyn ReadAdapter);\n\
-             \x20       }}\n"
-        ));
-    }
-    scope.raw(format!(
-        "        2 => {{\n\
-         \x20           let adapter = unsafe {{ &*(adapter as *const {pc}CallbackAdapter) }};\n\
-         \x20           visit_model_read(cursor, buffer, &model, adapter as &dyn ReadAdapter);\n\
+         \x20   let adapter: Option<&dyn ReadAdapter> = match kind {{\n\
+         {read_stateful_arm}\
+         \x20       2 => Some(unsafe {{ &*(adapter as *const {pc}CallbackAdapter) }} as &dyn ReadAdapter),\n\
+         \x20       _ => None,\n\
+         \x20   }};\n\
+         \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| {{\n\
+         \x20       let mut block = buffer.slice(from, len);\n\
+         \x20       match adapter {{\n\
+         \x20           Some(adapter) => model.traverse_points_read(adapter, &mut block, offset),\n\
+         \x20           None => {{\n\
+         \x20               block.fill(&[0xff, 0xff]);\n\
+         \x20               Ok(())\n\
+         \x20           }}\n\
          \x20       }}\n\
-         \x20       _ => visit_absent_read(cursor, buffer, &model),\n\
-         \x20   }}\n\
+         \x20   }});\n\
          }}\n\n"
     ));
 
+    let write_body = if model.group.writable {
+        let write_stateful_arm = if repeating {
+            String::new()
+        } else {
+            format!(
+                "        1 => Some(unsafe {{ &mut *(adapter as *mut {pc}StatefulAdapter) }} as &mut dyn WriteAdapter),\n"
+            )
+        };
+        format!(
+            "    let model = {ctor};\n\
+             \x20   let adapter: Option<&mut dyn WriteAdapter> = match kind {{\n\
+             {write_stateful_arm}\
+             \x20       2 => Some(unsafe {{ &mut *(adapter as *mut {pc}CallbackAdapter) }} as &mut dyn WriteAdapter),\n\
+             \x20       _ => None,\n\
+             \x20   }};\n\
+             \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| match adapter {{\n\
+             \x20       Some(adapter) => model.traverse_points_write(adapter, &buffer.slice(from, len), offset),\n\
+             \x20       None => Err(ModbusException::IllegalDataAddress),\n\
+             \x20   }});\n"
+        )
+    } else {
+        // No writable points: consume the block and reject every write that lands in it.
+        format!(
+            "    let _ = (kind, adapter, buffer);\n\
+             \x20   let model = {ctor};\n\
+             \x20   cursor.visit_source_block(model.model_length(), |_, _, _| {{\n\
+             \x20       Err(ModbusException::IllegalDataAddress)\n\
+             \x20   }});\n"
+        )
+    };
     scope.raw(format!(
         "/// # Safety\n\
          /// As for [`{sc}_c_visit_read`], and `adapter` must be uniquely borrowable for the call.\n\
@@ -473,34 +511,9 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
          \x20   cursor: &mut Cursor<ModbusException>,\n\
          \x20   buffer: &ReadableRegisterBuffer<'_>,\n\
          ) {{\n\
-         \x20   let model = {ctor};\n"
+         {write_body}\
+         }}\n\n"
     ));
-    if model.group.writable {
-        scope.raw("    match kind {\n");
-        if !repeating {
-            scope.raw(format!(
-                "        1 => {{\n\
-                 \x20           let adapter = unsafe {{ &mut *(adapter as *mut {pc}StatefulAdapter) }};\n\
-                 \x20           visit_model_write(cursor, buffer, &model, adapter as &mut dyn WriteAdapter);\n\
-                 \x20       }}\n"
-            ));
-        }
-        scope.raw(format!(
-            "        2 => {{\n\
-             \x20           let adapter = unsafe {{ &mut *(adapter as *mut {pc}CallbackAdapter) }};\n\
-             \x20           visit_model_write(cursor, buffer, &model, adapter as &mut dyn WriteAdapter);\n\
-             \x20       }}\n\
-             \x20       _ => reject_model_write(cursor, &model),\n\
-             \x20   }}\n\
-             }}\n\n"
-        ));
-    } else {
-        scope.raw(
-            "    let _ = (kind, adapter, buffer);\n\
-             \x20   reject_model_write(cursor, &model);\n\
-             }\n\n",
-        );
-    }
 }
 
 fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Struct) {
@@ -1258,12 +1271,6 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
 
     scope.import("crate::cursor", "Cursor");
     scope.import("crate::model", "CModel");
-    scope.import("crate::model", "reject_model_write");
-    scope.import("crate::model", "visit_absent_read");
-    scope.import("crate::model", "visit_model_read");
-    if model.group.writable {
-        scope.import("crate::model", "visit_model_write");
-    }
 
     generate_point_arrays(&model.group, &mut scope, vec![]);
 

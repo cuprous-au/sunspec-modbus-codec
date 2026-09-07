@@ -6,10 +6,7 @@ pub mod macros;
 pub mod model;
 pub mod sunspec;
 
-pub use crate::model::{
-    CModel, ModelList, ModelSpec, STARTING_REGISTER_OFFSET, Sunspec, reject_model_write,
-    visit_absent_read, visit_model_read, visit_model_write,
-};
+pub use crate::model::{CModel, ModelList, ModelSpec, STARTING_REGISTER_OFFSET, Sunspec};
 
 #[derive(Debug, Copy, Clone)]
 pub enum ModbusException {
@@ -56,10 +53,6 @@ mod tests {
             type ReadAdapters<'a> = &'a Model1StatefulAdapter;
 
             type WriteAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
-
-            fn map_length(&self) -> u16 {
-                self.model.model_length()
-            }
 
             fn read_iter<'a>(
                 &'a self,
@@ -228,12 +221,6 @@ mod tests {
             type ReadAdapters<'a> = &'a SunspecReadAdapters<'a>;
 
             type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
-
-            fn map_length(&self) -> u16 {
-                self.model_1.model_length()
-                    + self.model_701.model_length()
-                    + self.model_704.model_length()
-            }
 
             fn read_iter<'a>(
                 &'a self,

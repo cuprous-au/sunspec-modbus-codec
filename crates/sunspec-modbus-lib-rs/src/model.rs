@@ -67,8 +67,6 @@ pub trait ModelList {
     where
         Self: 'a;
 
-    fn map_length(&self) -> u16;
-
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
@@ -78,60 +76,6 @@ pub trait ModelList {
         &'a self,
         adapters: Self::WriteAdapters<'a>,
     ) -> impl Iterator<Item = WriteAdapter<'a>>;
-}
-
-/// Advance `cursor` across one model's block, encoding it from `adapter`.
-///
-/// The block is always consumed (`model_length` words) whether or not it produces data,
-/// so the read and write maps stay positionally identical.
-pub fn visit_model_read<'a, M: ModelSpec<'a>>(
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &mut WritableRegisterBuffer<'_>,
-    model: &M,
-    adapter: &M::ReadAdapter,
-) {
-    cursor.visit_source_block(model.model_length(), |offset, from, len| {
-        model.traverse_points_read(adapter, &mut buffer.slice(from, len), offset)
-    });
-}
-
-/// Advance `cursor` across one model's block, decoding it into `adapter`.
-///
-/// A write that lands in a block with no adapter is [`ModbusException::IllegalDataAddress`].
-pub fn visit_model_write<'a, M: ModelSpec<'a>>(
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &ReadableRegisterBuffer<'_>,
-    model: &M,
-    adapter: &mut M::WriteAdapter,
-) {
-    cursor.visit_source_block(model.model_length(), |offset, from, len| {
-        model.traverse_points_write(adapter, &buffer.slice(from, len), offset)
-    });
-}
-
-/// Advance `cursor` across one model's block when no read adapter was supplied for it.
-///
-/// The block is still consumed so the read and write maps stay positionally identical, and
-/// the skipped words are filled with `0xffff` (the SunSpec "not implemented" value).
-pub fn visit_absent_read<'a, M: ModelSpec<'a>>(
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &mut WritableRegisterBuffer<'_>,
-    model: &M,
-) {
-    cursor.visit_source_block(model.model_length(), |_, from, len| {
-        buffer.slice(from, len).fill(&[0xff, 0xff]);
-        Ok(())
-    });
-}
-
-/// Advance `cursor` across one model's block, rejecting any write that lands in it with
-/// [`ModbusException::IllegalDataAddress`].
-///
-/// Used for models with no writable points, or when no write adapter was supplied.
-pub fn reject_model_write<'a, M: ModelSpec<'a>>(cursor: &mut Cursor<ModbusException>, model: &M) {
-    cursor.visit_source_block(model.model_length(), |_, _, _| {
-        Err(ModbusException::IllegalDataAddress)
-    });
 }
 
 /// C-FFI dispatch descriptor for one SunSpec model.
@@ -210,11 +154,6 @@ impl<L: ModelList> Sunspec<L> {
     /// used identically for reads and writes.
     pub const fn new(models: L) -> Self {
         Self { models }
-    }
-
-    /// The models this codec serves.
-    pub fn models(&self) -> &L {
-        &self.models
     }
 
     /// Encode a holding-register read of `response_buffer.len()` words starting at

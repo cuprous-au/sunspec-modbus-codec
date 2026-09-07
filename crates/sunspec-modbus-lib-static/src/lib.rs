@@ -172,18 +172,6 @@ impl ModelList for CModelList<'_> {
     where
         Self: 'a;
 
-    fn map_length(&self) -> u16 {
-        let mut total: u16 = 0;
-        for binding in self.bindings {
-            let model = unsafe { Self::descriptor(binding) };
-            total = total.wrapping_add((model.length)(
-                binding.repeat_count_0,
-                binding.repeat_count_1,
-            ));
-        }
-        total
-    }
-
     /// One [`ReadAdapter::Extern`] per binding, in map order — the codec drives each through
     /// its `CModel` vtable. `adapters` is index-aligned with the bindings (checked by
     /// [`check_read_alignment`]), so each `kind` / pointer passes straight through.

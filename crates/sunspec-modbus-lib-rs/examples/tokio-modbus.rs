@@ -6,7 +6,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 use sunspec_modbus_lib_rs::{
-    ModelList, ModelSpec, Sunspec, c_char_array,
+    ModelList, Sunspec, c_char_array,
     sunspec::{
         adapters::{ReadAdapter, WriteAdapter},
         models::{
@@ -176,10 +176,6 @@ impl ModelList for SunspecModel {
 
     type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
 
-    fn map_length(&self) -> u16 {
-        self.model_1.model_length() + self.model_103.model_length()
-    }
-
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
@@ -222,11 +218,11 @@ impl tokio_modbus::server::Service for ExampleService {
     type Future = future::Ready<Result<Self::Response, Self::Exception>>;
 
     fn call(&self, req: Self::Request) -> Self::Future {
-        let mut common_model = self
+        let common_model = self
             .common_model
             .lock()
             .expect("Failed to get mutable reference to common model");
-        let mut inverter_model = self
+        let inverter_model = self
             .inverter
             .lock()
             .expect("Failed to get mutable reference to inverter model");
