@@ -4,7 +4,8 @@ use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
-    generate_model, generate_models_mod, model_c_expressible, model_is_repeating,
+    generate_adapters_mod, generate_model, generate_models_mod, model_c_expressible,
+    model_is_repeating,
 };
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::sunspec_schema::SunspecModel;
@@ -86,11 +87,6 @@ pub fn generate() {
     let src_path = format!("{project_root}/../sunspec-modbus-lib-rs/src/sunspec");
     let generated_src_dir = Path::new(&src_path);
 
-    if let Err(error) = fs::remove_dir_all(generated_src_dir)
-        && error.kind() != std::io::ErrorKind::NotFound
-    {
-        panic!("Failed to remove generated source directory: {error}");
-    }
     fs::create_dir_all(generated_src_dir.join("models"))
         .expect("Failed to create generated source directories");
 
@@ -108,6 +104,11 @@ pub fn generate() {
     format_and_write(
         &generated_src_dir.join("models.rs"),
         &generate_models_mod(&models),
+    );
+
+    format_and_write(
+        &generated_src_dir.join("adapters.rs"),
+        &generate_adapters_mod(&models),
     );
 }
 

@@ -3,6 +3,7 @@ use core::ffi::c_void;
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
 use crate::cursor::{Cursor, CursorResult};
+use crate::sunspec::adapters::{ReadAdapter, WriteAdapter, read_model, write_model};
 
 /// SunSpec register maps begin at this Modbus holding-register address.
 pub const STARTING_REGISTER_OFFSET: u16 = 40000;
@@ -59,29 +60,24 @@ pub trait ModelSpec<'a> {
 /// - [`WriteAdapters`](ModelList::WriteAdapters) — one `Option<&mut WriteAdapter>` per model;
 ///   a `None` (or a model with no writable points) rejects writes to that block.
 pub trait ModelList {
-    type ReadAdapters<'a>;
-    type WriteAdapters<'a>;
+    type ReadAdapters<'a>
+    where
+        Self: 'a;
+    type WriteAdapters<'a>
+    where
+        Self: 'a;
 
     fn map_length(&self) -> u16;
 
-    /// Walk the models in order, encoding each into `buffer` via the cursor.
-    fn traverse_read<'a>(
-        &self,
+    fn read_iter<'a>(
+        &'a self,
         adapters: Self::ReadAdapters<'a>,
-        cursor: &mut Cursor<ModbusException>,
-        buffer: &mut WritableRegisterBuffer<'a>,
-    );
+    ) -> impl Iterator<Item = ReadAdapter<'a>>;
 
-    /// Walk the models in order, decoding `buffer` into each via the cursor.
-    ///
-    /// The request buffer's lifetime `'buf` is independent of the adapter lifetime `'a`:
-    /// the buffer only needs to outlive the call, not the adapters.
-    fn traverse_write<'a, 'buf>(
-        &self,
+    fn write_iter<'a>(
+        &'a self,
         adapters: Self::WriteAdapters<'a>,
-        cursor: &mut Cursor<ModbusException>,
-        buffer: &ReadableRegisterBuffer<'buf>,
-    );
+    ) -> impl Iterator<Item = WriteAdapter<'a>>;
 }
 
 /// Advance `cursor` across one model's block, encoding it from `adapter`.
@@ -225,7 +221,7 @@ impl<L: ModelList> Sunspec<L> {
     /// `address` into `response_buffer`. Registers past the end of the model map are
     /// filled with `0xffff`.
     pub fn read_registers<'a, B: Into<WritableRegisterBuffer<'a>>>(
-        &self,
+        &'a self,
         address: u16,
         response_buffer: B,
         adapters: L::ReadAdapters<'a>,
@@ -245,8 +241,9 @@ impl<L: ModelList> Sunspec<L> {
             Ok(())
         });
 
-        self.models
-            .traverse_read(adapters, &mut cursor, &mut buffer);
+        for model in self.models.read_iter(adapters) {
+            read_model(model, &mut cursor, &mut buffer);
+        }
 
         match cursor.result() {
             CursorResult::Error(exception) => Err(exception),
@@ -264,7 +261,7 @@ impl<L: ModelList> Sunspec<L> {
     /// relevant models. A write that touches a block whose `Option` adapter is `None`,
     /// or a model with no writable points, is rejected.
     pub fn write_multiple_registers<'a, 'buf, B: Into<ReadableRegisterBuffer<'buf>>>(
-        &self,
+        &'a self,
         address: u16,
         request_buffer: B,
         adapters: L::WriteAdapters<'a>,
@@ -281,7 +278,9 @@ impl<L: ModelList> Sunspec<L> {
 
         let _ = cursor.visit_source_block(SUNS_HEADER_WORDS, |_, _, _| Ok(()));
 
-        self.models.traverse_write(adapters, &mut cursor, &buffer);
+        for model in self.models.write_iter(adapters) {
+            write_model(model, &mut cursor, &buffer);
+        }
 
         match cursor.result() {
             CursorResult::Error(exception) => Err(exception),
@@ -294,7 +293,7 @@ impl<L: ModelList> Sunspec<L> {
     ///
     /// [`write_multiple_registers`]: Sunspec::write_multiple_registers
     pub fn write_single_register<'a>(
-        &self,
+        &'a self,
         address: u16,
         value: u16,
         adapters: L::WriteAdapters<'a>,

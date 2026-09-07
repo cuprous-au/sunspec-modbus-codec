@@ -26,12 +26,12 @@ pub enum ModbusException {
 
 #[cfg(test)]
 mod tests {
-    use core::ffi::CStr;
+    use core::{cell::RefCell, ffi::CStr};
 
-    use crate::{
-        buffer::{ReadableRegisterBuffer, WritableRegisterBuffer},
-        sunspec::models::{
-            model_1::{self, Model1StatefulAdapter, ReadAdapter},
+    use crate::sunspec::{
+        adapters::{ReadAdapter, WriteAdapter},
+        models::{
+            model_1::{self, Model1StatefulAdapter},
             model_701, model_704,
         },
     };
@@ -43,40 +43,36 @@ mod tests {
         struct SunspecModel {
             model: model_1::Model1,
         }
-        let mut adapter = Model1StatefulAdapter {
+        let adapter = RefCell::new(Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
             options: c_char_array!("opt_a_b_c"),
             version: c_char_array!("v0.1"),
             serial_number: c_char_array!("I-1"),
             device_address: 0,
-        };
+        });
 
         impl ModelList for SunspecModel {
             type ReadAdapters<'a> = &'a Model1StatefulAdapter;
 
-            type WriteAdapters<'a> = &'a mut Model1StatefulAdapter;
+            type WriteAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
 
             fn map_length(&self) -> u16 {
                 self.model.model_length()
             }
 
-            fn traverse_read(
-                &self,
-                adapter: Self::ReadAdapters<'_>,
-                cursor: &mut cursor::Cursor<ModbusException>,
-                buffer: &mut buffer::WritableRegisterBuffer<'_>,
-            ) {
-                visit_model_read(cursor, buffer, &self.model, adapter);
+            fn read_iter<'a>(
+                &'a self,
+                adapters: Self::ReadAdapters<'a>,
+            ) -> impl Iterator<Item = ReadAdapter<'a>> {
+                Some(ReadAdapter::Model1(&self.model, adapters)).into_iter()
             }
 
-            fn traverse_write(
-                &self,
-                adapter: Self::WriteAdapters<'_>,
-                cursor: &mut cursor::Cursor<ModbusException>,
-                buffer: &buffer::ReadableRegisterBuffer<'_>,
-            ) {
-                visit_model_write(cursor, buffer, &self.model, adapter);
+            fn write_iter<'a>(
+                &'a self,
+                adapter: Self::WriteAdapters<'a>,
+            ) -> impl Iterator<Item = WriteAdapter<'a>> {
+                Some(WriteAdapter::Model1(&self.model, adapter.borrow_mut())).into_iter()
             }
         }
 
@@ -88,7 +84,11 @@ mod tests {
 
         let mut init_buf = [0_u8; WORDS_TO_READ as usize * 2];
 
-        sunspec.read_registers(STARTING_REGISTER_OFFSET, init_buf.as_mut_slice(), &adapter)?;
+        sunspec.read_registers(
+            STARTING_REGISTER_OFFSET,
+            init_buf.as_mut_slice(),
+            &adapter.borrow(),
+        )?;
 
         assert_eq!(&init_buf[..4], b"SunS");
         assert_eq!(
@@ -122,17 +122,20 @@ mod tests {
         sunspec.write_multiple_registers(
             STARTING_REGISTER_OFFSET + 68,
             [1234u16].as_slice(),
-            &mut adapter,
+            &adapter,
         )?;
 
-        assert_eq!(ReadAdapter::device_address(&adapter), Some(1234));
+        assert_eq!(
+            model_1::ReadAdapter::device_address(&adapter.borrow() as &Model1StatefulAdapter),
+            Some(1234)
+        );
 
         let mut after_buf = [0_u8; 40];
 
         sunspec.read_registers(
             STARTING_REGISTER_OFFSET + 52,
             after_buf.as_mut_slice(),
-            &adapter,
+            &adapter.borrow(),
         )?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));
@@ -161,15 +164,70 @@ mod tests {
             model_704: &'a dyn model_704::ReadAdapter,
         }
 
+        struct ReadAdapterIter<'a> {
+            model: &'a SunspecModel,
+            adapters: &'a SunspecReadAdapters<'a>,
+            state: usize,
+        }
+
+        impl<'a> Iterator for ReadAdapterIter<'a> {
+            type Item = ReadAdapter<'a>;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                let result = match self.state {
+                    0 => Some(ReadAdapter::Model1(
+                        &self.model.model_1,
+                        self.adapters.model_1,
+                    )),
+                    1 => Some(ReadAdapter::Model701(
+                        &self.model.model_701,
+                        self.adapters.model_701,
+                    )),
+                    2 => Some(ReadAdapter::Model704(
+                        &self.model.model_704,
+                        self.adapters.model_704,
+                    )),
+                    _ => None,
+                };
+                self.state += 1;
+                result
+            }
+        }
+
         struct SunspecWriteAdapters<'a> {
-            model_1: &'a mut dyn model_1::WriteAdapter,
-            model_704: &'a mut dyn model_704::WriteAdapter,
+            model_1: &'a RefCell<dyn model_1::WriteAdapter>,
+            model_704: &'a RefCell<dyn model_704::WriteAdapter>,
+        }
+        struct WriteAdapterIter<'a> {
+            model: &'a SunspecModel,
+            adapters: &'a SunspecWriteAdapters<'a>,
+            state: usize,
+        }
+        impl<'a> Iterator for WriteAdapterIter<'a> {
+            type Item = WriteAdapter<'a>;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                let result: Option<WriteAdapter<'a>> = match self.state {
+                    0 => Some(WriteAdapter::Model1(
+                        &self.model.model_1,
+                        self.adapters.model_1.borrow_mut(),
+                    )),
+                    1 => Some(WriteAdapter::Model701(&self.model.model_701)),
+                    2 => Some(WriteAdapter::Model704(
+                        &self.model.model_704,
+                        self.adapters.model_704.borrow_mut(),
+                    )),
+                    _ => None,
+                };
+                self.state += 1;
+                result
+            }
         }
 
         impl ModelList for SunspecModel {
-            type ReadAdapters<'a> = SunspecReadAdapters<'a>;
+            type ReadAdapters<'a> = &'a SunspecReadAdapters<'a>;
 
-            type WriteAdapters<'a> = SunspecWriteAdapters<'a>;
+            type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
 
             fn map_length(&self) -> u16 {
                 self.model_1.model_length()
@@ -177,30 +235,30 @@ mod tests {
                     + self.model_704.model_length()
             }
 
-            fn traverse_read<'a>(
-                &self,
+            fn read_iter<'a>(
+                &'a self,
                 adapters: Self::ReadAdapters<'a>,
-                cursor: &mut cursor::Cursor<ModbusException>,
-                buffer: &mut WritableRegisterBuffer<'a>,
-            ) {
-                visit_model_read(cursor, buffer, &self.model_1, adapters.model_1);
-                visit_model_read(cursor, buffer, &self.model_701, adapters.model_701);
-                visit_model_read(cursor, buffer, &self.model_704, adapters.model_704);
+            ) -> impl Iterator<Item = ReadAdapter<'a>> {
+                ReadAdapterIter {
+                    model: self,
+                    adapters,
+                    state: 0,
+                }
             }
 
-            fn traverse_write<'a, 'buf>(
-                &self,
+            fn write_iter<'a>(
+                &'a self,
                 adapters: Self::WriteAdapters<'a>,
-                cursor: &mut cursor::Cursor<ModbusException>,
-                buffer: &ReadableRegisterBuffer<'buf>,
-            ) {
-                visit_model_write(cursor, buffer, &self.model_1, adapters.model_1);
-                reject_model_write(cursor, &self.model_701);
-                visit_model_write(cursor, buffer, &self.model_704, adapters.model_704);
+            ) -> impl Iterator<Item = WriteAdapter<'a>> {
+                WriteAdapterIter {
+                    model: self,
+                    adapters,
+                    state: 0,
+                }
             }
         }
 
-        let mut common_model = Model1StatefulAdapter {
+        let common_model = Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
             options: c_char_array!("opt_a_b_c"),
@@ -225,22 +283,22 @@ mod tests {
             model_704: model_704::Model704,
         });
 
-        let mut der_ac_controls = DerAcControlsModel {
+        let der_ac_controls = RefCell::new(DerAcControlsModel {
             active_power_enable: false,
-        };
+        });
 
-        let adapters = SunspecWriteAdapters {
-            model_1: &mut common_model,
-            model_704: &mut der_ac_controls,
+        let mut adapters = SunspecWriteAdapters {
+            model_1: &RefCell::new(common_model),
+            model_704: &der_ac_controls,
         };
 
         sunspec.write_multiple_registers(
             40247,
             hex::decode("0001").unwrap().as_slice(),
-            adapters,
+            &mut adapters,
         )?;
 
-        assert!(der_ac_controls.active_power_enable);
+        assert!(der_ac_controls.borrow().active_power_enable);
 
         Ok(())
     }

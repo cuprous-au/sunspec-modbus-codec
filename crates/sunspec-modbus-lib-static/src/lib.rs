@@ -6,10 +6,9 @@ use core::slice;
 #[cfg(not(feature = "std"))]
 use core::{ffi::c_char, panic::PanicInfo};
 
-use sunspec_modbus_lib_rs::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
-use sunspec_modbus_lib_rs::cursor::Cursor;
+use sunspec_modbus_lib_rs::Sunspec;
 use sunspec_modbus_lib_rs::model::{CModel, ModelList};
-use sunspec_modbus_lib_rs::{ModbusException, Sunspec};
+use sunspec_modbus_lib_rs::sunspec::adapters::{ReadAdapter, WriteAdapter};
 
 #[cfg(not(feature = "std"))]
 unsafe extern "C" {
@@ -164,8 +163,14 @@ impl CModelList<'_> {
 }
 
 impl ModelList for CModelList<'_> {
-    type ReadAdapters<'a> = &'a [SunspecAdapter];
-    type WriteAdapters<'a> = &'a [SunspecAdapter];
+    type ReadAdapters<'a>
+        = &'a [SunspecAdapter]
+    where
+        Self: 'a;
+    type WriteAdapters<'a>
+        = &'a [SunspecAdapter]
+    where
+        Self: 'a;
 
     fn map_length(&self) -> u16 {
         let mut total: u16 = 0;
@@ -179,59 +184,56 @@ impl ModelList for CModelList<'_> {
         total
     }
 
-    fn traverse_read<'a>(
-        &self,
-        adapters: &'a [SunspecAdapter],
-        cursor: &mut Cursor<ModbusException>,
-        buffer: &mut WritableRegisterBuffer<'a>,
-    ) {
-        for (binding, adapter) in self.bindings.iter().zip(adapters) {
-            let model = unsafe { Self::descriptor(binding) };
-            unsafe {
-                (model.visit_read)(
-                    adapter.kind,
-                    adapter.adapter,
-                    binding.repeat_count_0,
-                    binding.repeat_count_1,
-                    cursor,
-                    buffer,
-                );
-            }
-        }
+    /// One [`ReadAdapter::Extern`] per binding, in map order — the codec drives each through
+    /// its `CModel` vtable. `adapters` is index-aligned with the bindings (checked by
+    /// [`check_read_alignment`]), so each `kind` / pointer passes straight through.
+    fn read_iter<'a>(
+        &'a self,
+        adapters: Self::ReadAdapters<'a>,
+    ) -> impl Iterator<Item = ReadAdapter<'a>> {
+        self.bindings
+            .iter()
+            .zip(adapters)
+            .map(|(binding, adapter)| ReadAdapter::Extern {
+                // SAFETY: `check_read_alignment` rejected every null `model` before the
+                // service function built this `CModelList`.
+                descriptor: unsafe { Self::descriptor(binding) },
+                kind: adapter.kind,
+                adapter: adapter.adapter,
+                repeat_count_0: binding.repeat_count_0,
+                repeat_count_1: binding.repeat_count_1,
+            })
     }
 
-    fn traverse_write<'a, 'buf>(
-        &self,
-        adapters: &'a [SunspecAdapter],
-        cursor: &mut Cursor<ModbusException>,
-        buffer: &ReadableRegisterBuffer<'buf>,
-    ) {
-        // `adapters` carries an entry only for the writable models, in map order. Every
-        // model's block is still visited so the cursor consumes it; non-writable blocks
-        // (and any not covered by a short array) reject the write.
+    /// One [`WriteAdapter::Extern`] per binding, in map order. `adapters` carries an entry
+    /// only for the writable models (see [`check_write_alignment`]); it is consumed in order
+    /// for those, and every other block — plus any writable block past the end of a short
+    /// array — gets `SUNSPEC_ADAPTER_NONE` and rejects the write.
+    fn write_iter<'a>(
+        &'a self,
+        adapters: Self::WriteAdapters<'a>,
+    ) -> impl Iterator<Item = WriteAdapter<'a>> {
         let mut write_adapters = adapters.iter();
-        for binding in self.bindings {
-            let model = unsafe { Self::descriptor(binding) };
-            let adapter = if model.writable {
+        self.bindings.iter().map(move |binding| {
+            // SAFETY: as for `read_iter`.
+            let descriptor = unsafe { Self::descriptor(binding) };
+            let entry = if descriptor.writable {
                 write_adapters.next()
             } else {
                 None
             };
-            let (kind, ptr) = match adapter {
-                Some(adapter) => (adapter.kind, adapter.adapter),
+            let (kind, adapter) = match entry {
+                Some(entry) => (entry.kind, entry.adapter),
                 None => (SUNSPEC_ADAPTER_NONE, core::ptr::null_mut()),
             };
-            unsafe {
-                (model.visit_write)(
-                    kind,
-                    ptr,
-                    binding.repeat_count_0,
-                    binding.repeat_count_1,
-                    cursor,
-                    buffer,
-                );
+            WriteAdapter::Extern {
+                descriptor,
+                kind,
+                adapter,
+                repeat_count_0: binding.repeat_count_0,
+                repeat_count_1: binding.repeat_count_1,
             }
-        }
+        })
     }
 }
 
