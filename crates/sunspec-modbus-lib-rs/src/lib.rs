@@ -6,7 +6,7 @@ pub mod macros;
 pub mod model;
 pub mod sunspec;
 
-pub use crate::model::{CModel, ModelList, ModelSpec, STARTING_REGISTER_OFFSET, Sunspec};
+pub use crate::model::{ModelList, ModelSpec, STARTING_REGISTER_OFFSET, StaticModelSpec, Sunspec};
 
 #[derive(Debug, Copy, Clone)]
 pub enum ModbusException {
@@ -26,7 +26,7 @@ mod tests {
     use core::{cell::RefCell, ffi::CStr};
 
     use crate::sunspec::{
-        adapters::{ReadAdapter, WriteAdapter},
+        adapters::{ReadBinding, WriteBinding},
         models::{
             model_1::{self, Model1StatefulAdapter},
             model_701, model_704,
@@ -57,15 +57,15 @@ mod tests {
             fn read_iter<'a>(
                 &'a self,
                 adapters: Self::ReadAdapters<'a>,
-            ) -> impl Iterator<Item = ReadAdapter<'a>> {
-                Some(ReadAdapter::Model1(&self.model, adapters)).into_iter()
+            ) -> impl Iterator<Item = ReadBinding<'a>> {
+                Some(ReadBinding::Model1(&self.model, adapters)).into_iter()
             }
 
             fn write_iter<'a>(
                 &'a self,
                 adapter: Self::WriteAdapters<'a>,
-            ) -> impl Iterator<Item = WriteAdapter<'a>> {
-                Some(WriteAdapter::Model1(&self.model, adapter.borrow_mut())).into_iter()
+            ) -> impl Iterator<Item = WriteBinding<'a>> {
+                Some(WriteBinding::Model1(&self.model, adapter.borrow_mut())).into_iter()
             }
         }
 
@@ -164,19 +164,19 @@ mod tests {
         }
 
         impl<'a> Iterator for ReadAdapterIter<'a> {
-            type Item = ReadAdapter<'a>;
+            type Item = ReadBinding<'a>;
 
             fn next(&mut self) -> Option<Self::Item> {
                 let result = match self.state {
-                    0 => Some(ReadAdapter::Model1(
+                    0 => Some(ReadBinding::Model1(
                         &self.model.model_1,
                         self.adapters.model_1,
                     )),
-                    1 => Some(ReadAdapter::Model701(
+                    1 => Some(ReadBinding::Model701(
                         &self.model.model_701,
                         self.adapters.model_701,
                     )),
-                    2 => Some(ReadAdapter::Model704(
+                    2 => Some(ReadBinding::Model704(
                         &self.model.model_704,
                         self.adapters.model_704,
                     )),
@@ -197,16 +197,16 @@ mod tests {
             state: usize,
         }
         impl<'a> Iterator for WriteAdapterIter<'a> {
-            type Item = WriteAdapter<'a>;
+            type Item = WriteBinding<'a>;
 
             fn next(&mut self) -> Option<Self::Item> {
-                let result: Option<WriteAdapter<'a>> = match self.state {
-                    0 => Some(WriteAdapter::Model1(
+                let result: Option<WriteBinding<'a>> = match self.state {
+                    0 => Some(WriteBinding::Model1(
                         &self.model.model_1,
                         self.adapters.model_1.borrow_mut(),
                     )),
-                    1 => Some(WriteAdapter::Model701(&self.model.model_701)),
-                    2 => Some(WriteAdapter::Model704(
+                    1 => Some(WriteBinding::Model701(&self.model.model_701)),
+                    2 => Some(WriteBinding::Model704(
                         &self.model.model_704,
                         self.adapters.model_704.borrow_mut(),
                     )),
@@ -225,7 +225,7 @@ mod tests {
             fn read_iter<'a>(
                 &'a self,
                 adapters: Self::ReadAdapters<'a>,
-            ) -> impl Iterator<Item = ReadAdapter<'a>> {
+            ) -> impl Iterator<Item = ReadBinding<'a>> {
                 ReadAdapterIter {
                     model: self,
                     adapters,
@@ -236,7 +236,7 @@ mod tests {
             fn write_iter<'a>(
                 &'a self,
                 adapters: Self::WriteAdapters<'a>,
-            ) -> impl Iterator<Item = WriteAdapter<'a>> {
+            ) -> impl Iterator<Item = WriteBinding<'a>> {
                 WriteAdapterIter {
                     model: self,
                     adapters,

@@ -8,7 +8,7 @@ use std::{
 use sunspec_modbus_lib_rs::{
     ModelList, Sunspec, c_char_array,
     sunspec::{
-        adapters::{ReadAdapter, WriteAdapter},
+        adapters::{ReadBinding, WriteBinding},
         models::{
             model_1::{self, Model1StatefulAdapter},
             model_103,
@@ -125,15 +125,15 @@ struct ReadAdapterIter<'a> {
 }
 
 impl<'a> Iterator for ReadAdapterIter<'a> {
-    type Item = ReadAdapter<'a>;
+    type Item = ReadBinding<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let result = match self.state {
-            0 => Some(ReadAdapter::Model1(
+            0 => Some(ReadBinding::Model1(
                 &self.models.model_1,
                 self.adapters.model_1,
             )),
-            1 => Some(ReadAdapter::Model103(
+            1 => Some(ReadBinding::Model103(
                 &self.models.model_103,
                 self.adapters.model_103,
             )),
@@ -155,15 +155,15 @@ struct WriteAdapterIter<'a> {
 }
 
 impl<'a> Iterator for WriteAdapterIter<'a> {
-    type Item = WriteAdapter<'a>;
+    type Item = WriteBinding<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let result = match self.state {
-            0 => Some(WriteAdapter::Model1(
+            0 => Some(WriteBinding::Model1(
                 &self.models.model_1,
                 self.adapters.model_1.borrow_mut(),
             )),
-            1 => Some(WriteAdapter::Model103(&self.models.model_103)),
+            1 => Some(WriteBinding::Model103(&self.models.model_103)),
             _ => None,
         };
         self.state += 1;
@@ -179,7 +179,7 @@ impl ModelList for SunspecModel {
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
-    ) -> impl Iterator<Item = ReadAdapter<'a>> {
+    ) -> impl Iterator<Item = ReadBinding<'a>> {
         ReadAdapterIter {
             models: self,
             adapters,
@@ -190,7 +190,7 @@ impl ModelList for SunspecModel {
     fn write_iter<'a>(
         &'a self,
         adapters: Self::WriteAdapters<'a>,
-    ) -> impl Iterator<Item = WriteAdapter<'a>> {
+    ) -> impl Iterator<Item = WriteBinding<'a>> {
         WriteAdapterIter {
             models: self,
             adapters,
@@ -322,7 +322,7 @@ async fn server_context(socket_addr: SocketAddr) -> io::Result<()> {
         voltages: [0, 0, 0],
     })));
 
-    let new_service = |_socket_addr| {
+    let new_service = |_socket_addr|{
         Ok(Some(ExampleService {
             common_model: common_model.clone(),
             inverter: inverter.clone(),

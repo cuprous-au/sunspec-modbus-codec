@@ -7,8 +7,8 @@ use core::slice;
 use core::{ffi::c_char, panic::PanicInfo};
 
 use sunspec_modbus_lib_rs::Sunspec;
-use sunspec_modbus_lib_rs::model::{CModel, ModelList};
-use sunspec_modbus_lib_rs::sunspec::adapters::{ReadAdapter, WriteAdapter};
+use sunspec_modbus_lib_rs::model::{ModelList, StaticModelSpec};
+use sunspec_modbus_lib_rs::sunspec::adapters::{ReadBinding, WriteBinding};
 
 #[cfg(not(feature = "std"))]
 unsafe extern "C" {
@@ -67,7 +67,7 @@ pub const SUNSPEC_RC_ADAPTER_MODEL_MISMATCH: i32 = -3;
 pub struct SunspecModelBinding {
     /// The model's dispatch descriptor: the codec's `SUNSPEC_MODEL_<id>` static, e.g.
     /// `&SUNSPEC_MODEL_103`.
-    pub model: *const CModel,
+    pub model: *const StaticModelSpec,
     /// First repeat count for repeating-group models; `0` for non-repeating models.
     pub repeat_count_0: u16,
     /// Second repeat count for models with two nested repeating groups; `0` otherwise.
@@ -82,7 +82,7 @@ pub struct SunspecAdapter {
     /// Must equal the `model` of the binding this entry lines up with. This is the alignment
     /// guard: a mismatch (misordered or short adapter array) fails the request with
     /// [`SUNSPEC_RC_ADAPTER_MODEL_MISMATCH`] before any registers are touched.
-    pub model: *const CModel,
+    pub model: *const StaticModelSpec,
     /// `SUNSPEC_ADAPTER_NONE` / `_STATEFUL` / `_CALLBACK`. Repeating-group models support only
     /// `_CALLBACK`.
     pub kind: u8,
@@ -157,7 +157,7 @@ impl CModelList<'_> {
     /// Every `binding.model` must be non-null — guaranteed by [`check_read_alignment`] /
     /// [`check_write_alignment`], which the service functions run before constructing a
     /// `CModelList`.
-    unsafe fn descriptor(binding: &SunspecModelBinding) -> &CModel {
+    unsafe fn descriptor(binding: &SunspecModelBinding) -> &StaticModelSpec {
         unsafe { &*binding.model }
     }
 }
@@ -172,17 +172,17 @@ impl ModelList for CModelList<'_> {
     where
         Self: 'a;
 
-    /// One [`ReadAdapter::Extern`] per binding, in map order — the codec drives each through
-    /// its `CModel` vtable. `adapters` is index-aligned with the bindings (checked by
+    /// One [`ReadBinding::Extern`] per binding, in map order — the codec drives each through
+    /// its `StaticModelSpec` vtable. `adapters` is index-aligned with the bindings (checked by
     /// [`check_read_alignment`]), so each `kind` / pointer passes straight through.
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
-    ) -> impl Iterator<Item = ReadAdapter<'a>> {
+    ) -> impl Iterator<Item = ReadBinding<'a>> {
         self.bindings
             .iter()
             .zip(adapters)
-            .map(|(binding, adapter)| ReadAdapter::Extern {
+            .map(|(binding, adapter)| ReadBinding::Extern {
                 // SAFETY: `check_read_alignment` rejected every null `model` before the
                 // service function built this `CModelList`.
                 descriptor: unsafe { Self::descriptor(binding) },
@@ -193,14 +193,14 @@ impl ModelList for CModelList<'_> {
             })
     }
 
-    /// One [`WriteAdapter::Extern`] per binding, in map order. `adapters` carries an entry
+    /// One [`WriteBinding::Extern`] per binding, in map order. `adapters` carries an entry
     /// only for the writable models (see [`check_write_alignment`]); it is consumed in order
     /// for those, and every other block — plus any writable block past the end of a short
     /// array — gets `SUNSPEC_ADAPTER_NONE` and rejects the write.
     fn write_iter<'a>(
         &'a self,
         adapters: Self::WriteAdapters<'a>,
-    ) -> impl Iterator<Item = WriteAdapter<'a>> {
+    ) -> impl Iterator<Item = WriteBinding<'a>> {
         let mut write_adapters = adapters.iter();
         self.bindings.iter().map(move |binding| {
             // SAFETY: as for `read_iter`.
@@ -214,7 +214,7 @@ impl ModelList for CModelList<'_> {
                 Some(entry) => (entry.kind, entry.adapter),
                 None => (SUNSPEC_ADAPTER_NONE, core::ptr::null_mut()),
             };
-            WriteAdapter::Extern {
+            WriteBinding::Extern {
                 descriptor,
                 kind,
                 adapter,
@@ -277,7 +277,7 @@ pub unsafe extern "C" fn sunspec_service_read_registers(
 /// - `bindings` must point to `binding_count` valid, live [`SunspecModelBinding`]s, each
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `write_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, one per
-///   **writable** model (a model whose `CModel::writable` is set), index-aligned with the
+///   **writable** model (a model whose `StaticModelSpec::writable` is set), index-aligned with the
 ///   writable subsequence of `bindings` and in the same order; each `adapter` pointer must
 ///   match its `kind`. Non-writable models take no entry.
 /// - `request_buffer` must be a valid buffer of at least `length * 2` bytes.

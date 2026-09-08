@@ -155,15 +155,15 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     scope
 }
 
-/// The `ReadAdapter` / `WriteAdapter` enums and their `read_model` / `write_model` drivers.
+/// The `ReadBinding` / `WriteBinding` enums and their `read_model` / `write_model` drivers.
 ///
 /// Each enum has one variant per model, pairing the model marker (e.g. `model_1::Model1`)
 /// with a reference to that model's per-model adapter trait — shared for reads, uniquely
-/// borrowed (`RefMut`) for writes. `WriteAdapter`'s model variants carry an adapter only for
+/// borrowed (`RefMut`) for writes. `WriteBinding`'s model variants carry an adapter only for
 /// models with writable points.
 ///
-/// Both enums also have a non-model `Extern` variant carrying a C [`CModel`] vtable and an
-/// untyped adapter pointer, for maps whose models aren't known statically (the FFI
+/// Both enums also have a non-model `Extern` variant carrying a C [`StaticModelSpec`] vtable
+/// and an untyped adapter pointer, for maps whose models aren't known statically (the FFI
 /// `ModelList` in `sunspec-modbus-lib-static`). `read_model` / `write_model` traverse a model
 /// variant against the cursor directly, and forward an `Extern` variant through the vtable.
 pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
@@ -176,17 +176,17 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     scope.import("crate::buffer", "ReadableRegisterBuffer");
     scope.import("crate::buffer", "WritableRegisterBuffer");
     scope.import("crate::cursor", "Cursor");
-    scope.import("crate::model", "CModel");
+    scope.import("crate::model", "StaticModelSpec");
 
     let read_enum = scope
-        .new_enum("ReadAdapter")
+        .new_enum("ReadBinding")
         .vis("pub")
         .generic("'a")
         .r#macro("#[non_exhaustive]")
         .doc(
             "One model's read side: a statically known model paired with a shared reference to\n\
              its per-model [`ReadAdapter`](crate::sunspec::models) trait, or an\n\
-             [`Extern`](ReadAdapter::Extern) block dispatched through a C [`CModel`] vtable.",
+             [`Extern`](ReadBinding::Extern) block dispatched through a C [`StaticModelSpec`] vtable.",
         );
     for model in models {
         let sc = &model.name_snake_case;
@@ -199,31 +199,31 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     read_enum
         .new_variant("Extern")
         .doc(
-            "A model dispatched through a C [`CModel`] vtable rather than a statically known\n\
-             model type. Produced by the FFI `ModelList` in `sunspec-modbus-lib-static`.\n\
+            "A model dispatched through a C [`StaticModelSpec`] vtable rather than a statically\n\
+             known model type. Produced by the FFI `ModelList` in `sunspec-modbus-lib-static`.\n\
              \n\
              # Safety\n\
              Building this variant asserts `descriptor` and `adapter` uphold\n\
-             [`CModel::visit_read`]'s contract: for `kind` 1 or 2, `adapter` points to a live\n\
-             `Model<id>{Stateful,Callback}Adapter` valid for the traversal.",
+             [`StaticModelSpec::visit_read`]'s contract: for `kind` 1 or 2, `adapter` points to\n\
+             a live `Model<id>{Stateful,Callback}Adapter` valid for the traversal.",
         )
-        .named("descriptor", "&'a CModel")
+        .named("descriptor", "&'a StaticModelSpec")
         .named("kind", "u8")
         .named("adapter", "*const c_void")
         .named("repeat_count_0", "u16")
         .named("repeat_count_1", "u16");
 
     let write_enum = scope
-        .new_enum("WriteAdapter")
+        .new_enum("WriteBinding")
         .vis("pub")
         .generic("'a")
         .r#macro("#[non_exhaustive]")
         .doc(
             "One model's write side: a statically known model, carrying a uniquely borrowed\n\
              reference to its per-model [`WriteAdapter`](crate::sunspec::models) trait when the\n\
-             model has writable points, or an [`Extern`](WriteAdapter::Extern) block dispatched\n\
-             through a C [`CModel`] vtable. A variant with no adapter rejects every write in\n\
-             its block.",
+             model has writable points, or an [`Extern`](WriteBinding::Extern) block dispatched\n\
+             through a C [`StaticModelSpec`] vtable. A variant with no adapter rejects every\n\
+             write in its block.",
         );
     for model in models {
         let sc = &model.name_snake_case;
@@ -236,16 +236,16 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     write_enum
         .new_variant("Extern")
         .doc(
-            "A model dispatched through a C [`CModel`] vtable rather than a statically known\n\
-             model type. Produced by the FFI `ModelList` in `sunspec-modbus-lib-static`.\n\
+            "A model dispatched through a C [`StaticModelSpec`] vtable rather than a statically\n\
+             known model type. Produced by the FFI `ModelList` in `sunspec-modbus-lib-static`.\n\
              \n\
              # Safety\n\
              Building this variant asserts `descriptor` and `adapter` uphold\n\
-             [`CModel::visit_write`]'s contract: for `kind` 1 or 2, `adapter` is uniquely\n\
-             borrowable and points to a live `Model<id>{Stateful,Callback}Adapter` valid for\n\
-             the traversal.",
+             [`StaticModelSpec::visit_write`]'s contract: for `kind` 1 or 2, `adapter` is\n\
+             uniquely borrowable and points to a live `Model<id>{Stateful,Callback}Adapter`\n\
+             valid for the traversal.",
         )
-        .named("descriptor", "&'a CModel")
+        .named("descriptor", "&'a StaticModelSpec")
         .named("kind", "u8")
         .named("adapter", "*mut c_void")
         .named("repeat_count_0", "u16")
@@ -254,7 +254,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     let mut read_match = Block::new("match adapter");
     for model in models {
         let pc = &model.name_pascal_case;
-        let mut model_match = Block::new(format!("ReadAdapter::{pc}(model, adapter) => "));
+        let mut model_match = Block::new(format!("ReadBinding::{pc}(model, adapter) => "));
 
         model_match.line("cursor.visit_source_block(");
         model_match.line("model.model_length(),");
@@ -264,10 +264,10 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     }
     {
         let mut extern_match = Block::new(
-            "ReadAdapter::Extern { descriptor, kind, adapter, repeat_count_0, repeat_count_1 } =>",
+            "ReadBinding::Extern { descriptor, kind, adapter, repeat_count_0, repeat_count_1 } =>",
         );
         extern_match.line(
-            "// SAFETY: `ReadAdapter::Extern` upholds `CModel::visit_read`'s contract by construction.",
+            "// SAFETY: `ReadBinding::Extern` upholds `StaticModelSpec::visit_read`'s contract by construction.",
         );
         let mut call = Block::new("unsafe");
         call.line(
@@ -280,11 +280,11 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         .new_fn("read_model")
         .vis("pub")
         .generic("'a")
-        .arg("adapter", "ReadAdapter<'a>")
+        .arg("adapter", "ReadBinding<'a>")
         .arg("cursor", "&mut Cursor<ModbusException>")
         .arg("buffer", "&mut WritableRegisterBuffer<'_>")
         .doc(
-            "Encode one model's block into `buffer` from its matched [`ReadAdapter`] variant,\n\
+            "Encode one model's block into `buffer` from its matched [`ReadBinding`] variant,\n\
              advancing `cursor` across the block whether or not it produces data.",
         )
         .push_block(read_match);
@@ -294,9 +294,9 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         let pc = &model.name_pascal_case;
 
         let mut model_match = Block::new(if model.group.writable {
-            format!("WriteAdapter::{pc}(model, mut adapter) =>")
+            format!("WriteBinding::{pc}(model, mut adapter) =>")
         } else {
-            format!("WriteAdapter::{pc}(model) =>")
+            format!("WriteBinding::{pc}(model) =>")
         });
 
         model_match.line("cursor.visit_source_block(");
@@ -314,10 +314,10 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     }
     {
         let mut extern_match = Block::new(
-            "WriteAdapter::Extern { descriptor, kind, adapter, repeat_count_0, repeat_count_1 } =>",
+            "WriteBinding::Extern { descriptor, kind, adapter, repeat_count_0, repeat_count_1 } =>",
         );
         extern_match.line(
-            "// SAFETY: `WriteAdapter::Extern` upholds `CModel::visit_write`'s contract by construction.",
+            "// SAFETY: `WriteBinding::Extern` upholds `StaticModelSpec::visit_write`'s contract by construction.",
         );
         let mut call = Block::new("unsafe");
         call.line(
@@ -330,11 +330,11 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         .new_fn("write_model")
         .vis("pub")
         .generic("'a")
-        .arg("adapter", "WriteAdapter<'a>")
+        .arg("adapter", "WriteBinding<'a>")
         .arg("cursor", "&mut Cursor<ModbusException>")
         .arg("buffer", "&ReadableRegisterBuffer<'_>")
         .doc(
-            "Decode one model's block from `buffer` into its matched [`WriteAdapter`] variant,\n\
+            "Decode one model's block from `buffer` into its matched [`WriteBinding`] variant,\n\
              advancing `cursor` across the block. A non-writable variant rejects the write with\n\
              [`ModbusException::IllegalDataAddress`].",
         )
@@ -343,7 +343,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     scope
 }
 
-/// Marker-struct constructor expression for a model's `CModel` dispatch handlers.
+/// Marker-struct constructor expression for a model's `StaticModelSpec` dispatch handlers.
 ///
 /// Repeating-group models pull their repeat counts from the `repeat_count_0` /
 /// `repeat_count_1` handler parameters, in `count_points` order.
@@ -373,9 +373,9 @@ pub(crate) fn model_is_repeating(model: &ResolvedModel) -> bool {
 }
 
 /// The per-model C-FFI dispatch appended to a model's module: a `#[unsafe(no_mangle)] pub
-/// static SUNSPEC_MODEL_<id>: CModel` plus its three handler functions.
+/// static SUNSPEC_MODEL_<id>: StaticModelSpec` plus its three handler functions.
 ///
-/// A C `SunspecModelBinding` holds a `*const CModel` pointing at that static, so
+/// A C `SunspecModelBinding` holds a `*const StaticModelSpec` pointing at that static, so
 /// `sunspec-modbus-lib-static` dispatches straight through the function pointers with no
 /// model-id lookup. `None` for models that can't be expressed through the two-repeat-count
 /// C descriptor.
@@ -413,7 +413,7 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
         "/// C-FFI dispatch descriptor for SunSpec model {n}. A C `SunspecModelBinding` points\n\
          /// at this static, so the service functions dispatch with no model-id lookup.\n\
          #[unsafe(no_mangle)]\n\
-         pub static SUNSPEC_MODEL_{n}: CModel = CModel {{\n\
+         pub static SUNSPEC_MODEL_{n}: StaticModelSpec = StaticModelSpec {{\n\
          \x20   id: {n},\n\
          \x20   length: {sc}_c_length,\n\
          \x20   writable: {writable},\n\
@@ -1270,7 +1270,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope.import("core::cmp", "min");
 
     scope.import("crate::cursor", "Cursor");
-    scope.import("crate::model", "CModel");
+    scope.import("crate::model", "StaticModelSpec");
 
     generate_point_arrays(&model.group, &mut scope, vec![]);
 

@@ -130,10 +130,10 @@ pub fn c_model_externs() -> String {
          \x20* e.g. `.model = &SUNSPEC_MODEL_103`.\n\
          \x20*/\n",
     );
-    out.push_str("struct CModel;\n");
+    out.push_str("struct StaticModelSpec;\n");
     for model in models.iter().filter(|model| model_c_expressible(model)) {
         out.push_str(&format!(
-            "extern const struct CModel SUNSPEC_MODEL_{};\n",
+            "extern const struct StaticModelSpec SUNSPEC_MODEL_{};\n",
             model.model_number
         ));
     }

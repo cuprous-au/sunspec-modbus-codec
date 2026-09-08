@@ -3,7 +3,7 @@ use core::ffi::c_void;
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
 use crate::cursor::{Cursor, CursorResult};
-use crate::sunspec::adapters::{ReadAdapter, WriteAdapter, read_model, write_model};
+use crate::sunspec::adapters::{ReadBinding, WriteBinding, read_model, write_model};
 
 /// SunSpec register maps begin at this Modbus holding-register address.
 pub const STARTING_REGISTER_OFFSET: u16 = 40000;
@@ -70,24 +70,24 @@ pub trait ModelList {
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
-    ) -> impl Iterator<Item = ReadAdapter<'a>>;
+    ) -> impl Iterator<Item = ReadBinding<'a>>;
 
     fn write_iter<'a>(
         &'a self,
         adapters: Self::WriteAdapters<'a>,
-    ) -> impl Iterator<Item = WriteAdapter<'a>>;
+    ) -> impl Iterator<Item = WriteBinding<'a>>;
 }
 
 /// C-FFI dispatch descriptor for one SunSpec model.
 ///
-/// One `#[unsafe(no_mangle)] pub static SUNSPEC_MODEL_<id>: CModel` is generated per model
-/// into that model's module. A C `SunspecModelBinding` holds a `*const CModel` pointing at
-/// that static, so the `sunspec-modbus-lib-static` service functions dispatch straight
-/// through these function pointers with no model-id lookup.
+/// One `#[unsafe(no_mangle)] pub static SUNSPEC_MODEL_<id>: StaticModelSpec` is generated per
+/// model into that model's module. A C `SunspecModelBinding` holds a `*const StaticModelSpec`
+/// pointing at that static, so the `sunspec-modbus-lib-static` service functions dispatch
+/// straight through these function pointers with no model-id lookup.
 ///
 /// The `dyn` adapters never cross the C boundary; the concrete `Model<id>{Stateful,Callback}Adapter`
 /// pointer is cast back to a reference inside `visit_read` / `visit_write`.
-pub struct CModel {
+pub struct StaticModelSpec {
     /// The SunSpec model id this descriptor dispatches, for diagnostics and wire cross-checks.
     pub id: u16,
 
@@ -116,13 +116,13 @@ pub struct CModel {
         buffer: &mut WritableRegisterBuffer<'_>,
     ),
 
-    /// Encode one model block on a write. `kind` is as for [`visit_read`](CModel::visit_read).
+    /// Encode one model block on a write. `kind` is as for [`visit_read`](StaticModelSpec::visit_read).
     /// A non-writable model, or a `kind` with no adapter, rejects the write with
     /// [`ModbusException::IllegalDataAddress`].
     ///
     /// # Safety
-    /// As for [`visit_read`](CModel::visit_read), and `adapter` must be uniquely borrowable
-    /// for the duration of the call.
+    /// As for [`visit_read`](StaticModelSpec::visit_read), and `adapter` must be uniquely
+    /// borrowable for the duration of the call.
     pub visit_write: unsafe fn(
         kind: u8,
         adapter: *mut c_void,
