@@ -104,10 +104,7 @@ fn check_no_null_models(models: &[CModelSpec]) -> Result<(), i32> {
 
 /// Checks that `adapters` is index-aligned with `models` for a read: no null map entries,
 /// equal length, every `model` matching.
-fn check_read_alignment(
-    models: &[CModelSpec],
-    adapters: &[SunspecAdapter],
-) -> Result<(), i32> {
+fn check_read_alignment(models: &[CModelSpec], adapters: &[SunspecAdapter]) -> Result<(), i32> {
     check_no_null_models(models)?;
     if adapters.len() != models.len() {
         return Err(SUNSPEC_RC_ADAPTER_COUNT_MISMATCH);
@@ -123,10 +120,7 @@ fn check_read_alignment(
 /// As [`check_read_alignment`], but `adapters` covers only the writable models: a
 /// non-writable model takes no write adapter, so the array is index-aligned with the
 /// writable models, in map order.
-fn check_write_alignment(
-    models: &[CModelSpec],
-    adapters: &[SunspecAdapter],
-) -> Result<(), i32> {
+fn check_write_alignment(models: &[CModelSpec], adapters: &[SunspecAdapter]) -> Result<(), i32> {
     check_no_null_models(models)?;
     // SAFETY: `check_no_null_models` above rejected every null `model`.
     let writable = || {
