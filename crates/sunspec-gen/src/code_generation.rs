@@ -144,248 +144,6 @@ fn generate_point_arrays(group: &ResolvedGroup, scope: &mut Scope, args: Vec<Str
     }
 }
 
-pub fn generate_adapter_structs(models: &[ResolvedModel]) -> Scope {
-    let mut scope: Scope = Scope::new();
-
-    for model in models {
-        scope.import("crate::sunspec::models", &model.name_snake_case);
-    }
-
-    scope.import("crate::buffer", "WritableRegisterBuffer");
-    scope.import("crate::buffer", "ReadableRegisterBuffer");
-    scope.import("crate::cursor", "Cursor");
-    scope.import("crate::cursor", "CursorResult");
-    scope.import("crate", "ModbusException");
-    scope.import("core::convert", "Infallible");
-
-    let adapter_trait = scope
-        .new_trait("SunspecAdapterProvider")
-        .vis("pub")
-        .generic("'a");
-    for model in models {
-        adapter_trait
-            .new_fn(format!("{}_adapter", model.name_snake_case))
-            .arg_mut_self()
-            .ret(format!(
-                "Option<&mut (dyn {}::ModelAdapter + 'a)>",
-                model.name_snake_case
-            ));
-
-        adapter_trait
-            .new_fn(format!("{}_adapter_ref", model.name_snake_case))
-            .arg_ref_self()
-            .ret(format!(
-                "Option<&(dyn {}::ModelAdapter + 'a)>",
-                model.name_snake_case
-            ));
-    }
-
-    let trait_struct = scope
-        .new_struct("SunspecAdapters")
-        .vis("pub")
-        .generic("'a")
-        .derive("Default");
-
-    for model in models {
-        trait_struct
-            .field(
-                format!("pub {}_adapter", model.name_snake_case),
-                format!(
-                    "Option<&'a mut dyn {}::ModelAdapter>",
-                    model.name_snake_case
-                ),
-            )
-            .vis("pub");
-    }
-
-    let trait_struct_impl = scope
-        .new_impl("SunspecAdapters<'a>")
-        .impl_trait("SunspecAdapterProvider<'a>")
-        .generic("'a");
-
-    for model in models {
-        trait_struct_impl
-            .new_fn(format!("{}_adapter", model.name_snake_case))
-            .arg_mut_self()
-            .ret(format!(
-                "Option<&mut (dyn {}::ModelAdapter + 'a)>",
-                model.name_snake_case
-            ))
-            .line(format!(
-                "self.{}_adapter.as_deref_mut()",
-                model.name_snake_case
-            ));
-
-        trait_struct_impl
-            .new_fn(format!("{}_adapter_ref", model.name_snake_case))
-            .arg_ref_self()
-            .ret(format!(
-                "Option<&(dyn {}::ModelAdapter + 'a)>",
-                model.name_snake_case
-            ))
-            .line(format!("self.{}_adapter.as_deref()", model.name_snake_case));
-    }
-
-    let c_struct = scope
-        .new_struct("SunspecExternalAdapters")
-        .vis("pub")
-        .repr("C")
-        .generic("'a");
-
-    for model in models {
-        c_struct
-            .field(
-                format!("pub {}_callback_adapter", model.name_snake_case),
-                format!(
-                    "Option<&'a mut {}::{}CallbackAdapter>",
-                    model.name_snake_case, model.name_pascal_case
-                ),
-            )
-            .vis("pub");
-
-        if model.group.repeating_child.is_none() {
-            // The C ffi can't handle the required generics to support arbitrary length arrays, so we can't include stateful adapters for repeating groups
-            c_struct
-                .field(
-                    format!("pub {}_stateful_adapter", model.name_snake_case),
-                    format!(
-                        "Option<&'a mut {}::{}StatefulAdapter>",
-                        model.name_snake_case, model.name_pascal_case
-                    ),
-                )
-                .vis("pub");
-        }
-    }
-
-    let c_struct_impl = scope
-        .new_impl("SunspecExternalAdapters<'a>")
-        .impl_trait("SunspecAdapterProvider<'a>")
-        .generic("'a");
-
-    for model in models {
-        let impl_fn = c_struct_impl
-            .new_fn(format!("{}_adapter", model.name_snake_case))
-            .arg_mut_self()
-            .ret(format!(
-                "Option<&mut (dyn {}::ModelAdapter + 'a)>",
-                model.name_snake_case
-            ))
-            .line(format!(
-                "self.{}_callback_adapter.as_deref_mut()",
-                model.name_snake_case
-            ))
-            .line(format!(
-                ".map(|a| a as &mut (dyn {}::ModelAdapter + 'a))",
-                model.name_snake_case
-            ));
-
-        if model.group.repeating_child.is_none() {
-            impl_fn.line(format!(
-                ".or_else(|| self.{}_stateful_adapter.as_deref_mut().map(|a| a as &mut (dyn {}::ModelAdapter + 'a)))",
-                model.name_snake_case, model.name_snake_case,
-            ));
-        }
-
-        let ref_impl_fn = c_struct_impl
-            .new_fn(format!("{}_adapter_ref", model.name_snake_case))
-            .arg_ref_self()
-            .ret(format!(
-                "Option<&(dyn {}::ModelAdapter + 'a)>",
-                model.name_snake_case
-            ))
-            .line(format!(
-                "self.{}_callback_adapter.as_deref()",
-                model.name_snake_case
-            ))
-            .line(format!(
-                ".map(|a| a as &(dyn {}::ModelAdapter + 'a))",
-                model.name_snake_case
-            ));
-
-        if model.group.repeating_child.is_none() {
-            ref_impl_fn.line(format!(
-                ".or_else(|| self.{}_stateful_adapter.as_deref().map(|a| a as &(dyn {}::ModelAdapter + 'a)))",
-                model.name_snake_case, model.name_snake_case,
-            ));
-        }
-    }
-
-    let read_fn = scope
-        .new_fn("traverse_adapters_read")
-        .vis("pub")
-        .generic("'a")
-        .generic("'b")
-        .arg("adapters", "&dyn SunspecAdapterProvider<'a>")
-        .arg("buffer", "&'b mut WritableRegisterBuffer<'b>")
-        .arg("offset", "u16")
-        .arg("limit", "u16")
-        .ret("Option<u16>");
-
-    read_fn.line("let mut cursor: Cursor<Infallible> = Cursor::new(offset, limit);");
-    read_fn.line("");
-
-    let mut suns_prefix_block = Block::new("cursor.visit_source_block(2, |offset, from, len|");
-    suns_prefix_block
-        .line("buffer.slice(from, len).write_string(c\"SunS\", offset);")
-        .line("Ok(())")
-        .after(")?;");
-    read_fn.push_block(suns_prefix_block);
-
-    for model in models {
-        let name = &model.name_snake_case;
-
-        read_fn.line("cursor.visit_optional_source_block_ref(");
-        read_fn.line(format!("adapters.{name}_adapter_ref(),"));
-        read_fn.line(format!("{name}::model_length,"));
-        read_fn.line(format!(
-            "|adapter, offset, from, len| {{ {name}::traverse_points_read(adapter, &mut buffer.slice(from, len), offset); Ok(()) }},"
-        ));
-        read_fn.line(")?;");
-    }
-    read_fn.line("");
-
-    read_fn.line("cursor.target_offset");
-
-    let write_fn = scope
-        .new_fn("traverse_adapters_write")
-        .vis("pub")
-        .generic("'a")
-        .generic("'b")
-        .arg("adapters", "&mut dyn SunspecAdapterProvider<'a>")
-        .arg("buffer", "&'b ReadableRegisterBuffer<'b>")
-        .arg("offset", "u16")
-        .arg("limit", "u16")
-        .ret("Result<Option<u16>, ModbusException>");
-
-    write_fn.line("let mut cursor = Cursor::new(offset, limit);");
-    write_fn.line("");
-
-    let mut suns_prefix_skip_block = Block::new("cursor.visit_source_block(2, |_, _, _|");
-    suns_prefix_skip_block.line("Ok(())").after(");");
-    write_fn.push_block(suns_prefix_skip_block);
-
-    for model in models.iter() {
-        let name = &model.name_snake_case;
-
-        write_fn.line("cursor.visit_optional_source_block(");
-        write_fn.line(format!("adapters.{name}_adapter(),"));
-        write_fn.line(format!("{name}::model_length,"));
-        write_fn.line(format!(
-            "|adapter, offset, from, len| {name}::traverse_points_write(adapter, &buffer.slice(from, len), offset),"
-        ));
-        write_fn.line(");");
-    }
-    write_fn.line("");
-
-    let mut result_match = Block::new("match cursor.result()");
-    result_match.line("CursorResult::Complete => Ok(None),");
-    result_match.line("CursorResult::Incomplete(offset) => Ok(Some(offset)),");
-    result_match.line("CursorResult::Error(e) => Err(e),");
-    write_fn.push_block(result_match);
-
-    scope
-}
-
 pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     let mut scope = Scope::new();
     scope.raw("#![allow(unused_variables)]");
@@ -395,6 +153,368 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     });
 
     scope
+}
+
+/// The `ReadBinding` / `WriteBinding` enums and their `read_model` / `write_model` drivers.
+///
+/// Each enum has one variant per model, pairing the model marker (e.g. `model_1::Model1`)
+/// with a borrow of that model's per-model adapter trait out of a `RefCell` — shared (`Ref`)
+/// for reads, unique (`RefMut`) for writes. `WriteBinding`'s model variants carry an adapter
+/// only for models with writable points.
+///
+/// Both enums also have a non-model `Extern` variant carrying a C [`StaticModelSpec`] vtable
+/// and an untyped adapter pointer, for maps whose models aren't known statically (the FFI
+/// `ModelList` in `sunspec-modbus-lib-static`). `read_model` / `write_model` traverse a model
+/// variant against the cursor directly, and forward an `Extern` variant through the vtable.
+pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
+    let mut scope = Scope::new();
+    scope.import("crate::sunspec::models", "*");
+    scope.import("core::cell", "Ref");
+    scope.import("core::cell", "RefMut");
+    scope.import("core::ffi", "c_void");
+    scope.import("crate", "ModbusException");
+    scope.import("crate", "ModelSpec");
+    scope.import("crate::buffer", "ReadableRegisterBuffer");
+    scope.import("crate::buffer", "WritableRegisterBuffer");
+    scope.import("crate::cursor", "Cursor");
+    scope.import("crate::model", "StaticModelSpec");
+
+    let read_enum = scope
+        .new_enum("ReadBinding")
+        .vis("pub")
+        .generic("'a")
+        .r#macro("#[non_exhaustive]")
+        .doc(
+            "One model's read side: a statically known model paired with a shared borrow of\n\
+             its per-model [`ReadAdapter`](crate::sunspec::models) trait, or an\n\
+             [`Extern`](ReadBinding::Extern) block dispatched through a C [`StaticModelSpec`] vtable.",
+        );
+    for model in models {
+        let sc = &model.name_snake_case;
+        let pc = &model.name_pascal_case;
+        read_enum
+            .new_variant(pc)
+            .tuple(format!("&'a {sc}::{pc}"))
+            .tuple(format!("Ref<'a, dyn {sc}::ReadAdapter>"));
+    }
+    read_enum
+        .new_variant("Extern")
+        .doc(
+            "A model dispatched through a C [`StaticModelSpec`] vtable rather than a statically\n\
+             known model type. Produced by the FFI `ModelList` in `sunspec-modbus-lib-static`.\n\
+             \n\
+             # Safety\n\
+             Building this variant asserts `descriptor` and `adapter` uphold\n\
+             [`StaticModelSpec::visit_read`]'s contract: for `kind` 1 or 2, `adapter` points to\n\
+             a live `Model<id>{Stateful,Callback}Adapter` valid for the traversal.",
+        )
+        .named("descriptor", "&'a StaticModelSpec")
+        .named("kind", "u8")
+        .named("adapter", "*const c_void")
+        .named("repeat_count_0", "u16")
+        .named("repeat_count_1", "u16");
+
+    let write_enum = scope
+        .new_enum("WriteBinding")
+        .vis("pub")
+        .generic("'a")
+        .r#macro("#[non_exhaustive]")
+        .doc(
+            "One model's write side: a statically known model, carrying a uniquely borrowed\n\
+             reference to its per-model [`WriteAdapter`](crate::sunspec::models) trait when the\n\
+             model has writable points, or an [`Extern`](WriteBinding::Extern) block dispatched\n\
+             through a C [`StaticModelSpec`] vtable. A variant with no adapter rejects every\n\
+             write in its block.",
+        );
+    for model in models {
+        let sc = &model.name_snake_case;
+        let pc = &model.name_pascal_case;
+        let variant = write_enum.new_variant(pc).tuple(format!("&'a {sc}::{pc}"));
+        if model.group.writable {
+            variant.tuple(format!("RefMut<'a, dyn {sc}::WriteAdapter>"));
+        }
+    }
+    write_enum
+        .new_variant("Extern")
+        .doc(
+            "A model dispatched through a C [`StaticModelSpec`] vtable rather than a statically\n\
+             known model type. Produced by the FFI `ModelList` in `sunspec-modbus-lib-static`.\n\
+             \n\
+             # Safety\n\
+             Building this variant asserts `descriptor` and `adapter` uphold\n\
+             [`StaticModelSpec::visit_write`]'s contract: for `kind` 1 or 2, `adapter` is\n\
+             uniquely borrowable and points to a live `Model<id>{Stateful,Callback}Adapter`\n\
+             valid for the traversal.",
+        )
+        .named("descriptor", "&'a StaticModelSpec")
+        .named("kind", "u8")
+        .named("adapter", "*mut c_void")
+        .named("repeat_count_0", "u16")
+        .named("repeat_count_1", "u16");
+
+    let mut read_match = Block::new("match adapter");
+    for model in models {
+        let pc = &model.name_pascal_case;
+        let mut model_match = Block::new(format!("ReadBinding::{pc}(model, adapter) => "));
+
+        model_match.line("cursor.visit_source_block(");
+        model_match.line("model.model_length(),");
+        model_match.line("|offset, from, len| { model.traverse_points_read(&*adapter, &mut buffer.slice(from, len), offset) }");
+        model_match.line(");");
+        read_match.push_block(model_match);
+    }
+    {
+        let mut extern_match = Block::new(
+            "ReadBinding::Extern { descriptor, kind, adapter, repeat_count_0, repeat_count_1 } =>",
+        );
+        extern_match.line(
+            "// SAFETY: `ReadBinding::Extern` upholds `StaticModelSpec::visit_read`'s contract by construction.",
+        );
+        let mut call = Block::new("unsafe");
+        call.line(
+            "(descriptor.visit_read)(kind, adapter, repeat_count_0, repeat_count_1, cursor, buffer);",
+        );
+        extern_match.push_block(call);
+        read_match.push_block(extern_match);
+    }
+    scope
+        .new_fn("read_model")
+        .vis("pub")
+        .generic("'a")
+        .arg("adapter", "ReadBinding<'a>")
+        .arg("cursor", "&mut Cursor<ModbusException>")
+        .arg("buffer", "&mut WritableRegisterBuffer<'_>")
+        .doc(
+            "Encode one model's block into `buffer` from its matched [`ReadBinding`] variant,\n\
+             advancing `cursor` across the block whether or not it produces data.",
+        )
+        .push_block(read_match);
+
+    let mut write_match = Block::new("match adapter");
+    for model in models {
+        let pc = &model.name_pascal_case;
+
+        let mut model_match = Block::new(if model.group.writable {
+            format!("WriteBinding::{pc}(model, mut adapter) =>")
+        } else {
+            format!("WriteBinding::{pc}(model) =>")
+        });
+
+        model_match.line("cursor.visit_source_block(");
+        model_match.line("model.model_length(),");
+
+        if model.group.writable {
+            model_match.line(
+                "|offset, from, len| { model.traverse_points_write(&mut *adapter, &buffer.slice(from, len), offset) }"
+            );
+        } else {
+            model_match.line("|_, _, _| Err(ModbusException::IllegalDataAddress)");
+        }
+        model_match.line(");");
+        write_match.push_block(model_match);
+    }
+    {
+        let mut extern_match = Block::new(
+            "WriteBinding::Extern { descriptor, kind, adapter, repeat_count_0, repeat_count_1 } =>",
+        );
+        extern_match.line(
+            "// SAFETY: `WriteBinding::Extern` upholds `StaticModelSpec::visit_write`'s contract by construction.",
+        );
+        let mut call = Block::new("unsafe");
+        call.line(
+            "(descriptor.visit_write)(kind, adapter, repeat_count_0, repeat_count_1, cursor, buffer);",
+        );
+        extern_match.push_block(call);
+        write_match.push_block(extern_match);
+    }
+    scope
+        .new_fn("write_model")
+        .vis("pub")
+        .generic("'a")
+        .arg("adapter", "WriteBinding<'a>")
+        .arg("cursor", "&mut Cursor<ModbusException>")
+        .arg("buffer", "&ReadableRegisterBuffer<'_>")
+        .doc(
+            "Decode one model's block from `buffer` into its matched [`WriteBinding`] variant,\n\
+             advancing `cursor` across the block. A non-writable variant rejects the write with\n\
+             [`ModbusException::IllegalDataAddress`].",
+        )
+        .push_block(write_match);
+
+    scope
+}
+
+/// Marker-struct constructor expression for a model's `StaticModelSpec` dispatch handlers.
+///
+/// Repeating-group models pull their repeat counts from the `repeat_count_0` /
+/// `repeat_count_1` handler parameters, in `count_points` order.
+fn model_marker_ctor(model: &ResolvedModel) -> String {
+    let path = model.name_pascal_case.clone();
+    if model.count_points.is_empty() {
+        path
+    } else {
+        let fields: Vec<String> = model
+            .count_points
+            .iter()
+            .enumerate()
+            .map(|(index, count)| format!("{}: repeat_count_{index}", count.point.name_snake_case))
+            .collect();
+        format!("{path} {{ {} }}", fields.join(", "))
+    }
+}
+
+/// The C descriptor carries two repeat counts; a model needing more can't be built from C
+/// and so gets no `SUNSPEC_MODEL_<id>` static.
+pub(crate) fn model_c_expressible(model: &ResolvedModel) -> bool {
+    model.count_points.len() <= 2
+}
+
+pub(crate) fn model_is_repeating(model: &ResolvedModel) -> bool {
+    !model.count_points.is_empty()
+}
+
+/// The per-model C-FFI dispatch appended to a model's module: a `#[unsafe(no_mangle)] pub
+/// static SUNSPEC_MODEL_<id>: StaticModelSpec` plus its three handler functions.
+///
+/// A C `SunspecModelBinding` holds a `*const StaticModelSpec` pointing at that static, so
+/// `sunspec-modbus-lib-static` dispatches straight through the function pointers with no
+/// model-id lookup. `None` for models that can't be expressed through the two-repeat-count
+/// C descriptor.
+fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
+    if !model_c_expressible(model) {
+        return;
+    }
+
+    let n = model.model_number;
+    let sc = &model.name_snake_case;
+    let pc = &model.name_pascal_case;
+    let ctor = model_marker_ctor(model);
+    let repeating = model_is_repeating(model);
+    let writable = model.group.writable;
+    // Non-repeating models ignore the repeat counts; repeating models consume them in `ctor`.
+
+    let count_arg_0 = format!(
+        "{}repeat_count_0",
+        if !model.count_points.is_empty() {
+            ""
+        } else {
+            "_"
+        }
+    );
+    let count_arg_1 = format!(
+        "{}repeat_count_1",
+        if model.count_points.len() > 1 {
+            ""
+        } else {
+            "_"
+        }
+    );
+
+    scope.raw(format!(
+        "/// C-FFI dispatch descriptor for SunSpec model {n}. A C `SunspecModelBinding` points\n\
+         /// at this static, so the service functions dispatch with no model-id lookup.\n\
+         #[unsafe(no_mangle)]\n\
+         pub static SUNSPEC_MODEL_{n}: StaticModelSpec = StaticModelSpec {{\n\
+         \x20   id: {n},\n\
+         \x20   length: {sc}_c_length,\n\
+         \x20   writable: {writable},\n\
+         \x20   visit_read: {sc}_c_visit_read,\n\
+         \x20   visit_write: {sc}_c_visit_write,\n\
+         }};\n\n"
+    ));
+
+    scope
+        .new_fn(format!("{sc}_c_length"))
+        .arg(&count_arg_0, "u16")
+        .arg(&count_arg_1, "u16")
+        .ret("u16")
+        .line(format!("({ctor}).model_length()"));
+
+    // `kind` selects the adapter (1 = stateful, 2 = callback, anything else = none), then a
+    // single `visit_source_block` consumes the model's words: a present adapter encodes the
+    // block, an absent one fills it with the SunSpec "not implemented" value.
+    let read_stateful_arm = if repeating {
+        String::new()
+    } else {
+        format!(
+            "        1 => Some(unsafe {{ &*(adapter as *const {pc}StatefulAdapter) }} as &dyn ReadAdapter),\n"
+        )
+    };
+    scope.raw(format!(
+        "/// # Safety\n\
+         /// For `kind` 1 or 2, `adapter` must point to a live `Model{n}{{Stateful,Callback}}Adapter`,\n\
+         /// valid for the duration of the call.\n\
+         unsafe fn {sc}_c_visit_read(\n\
+         \x20   kind: u8,\n\
+         \x20   adapter: *const c_void,\n\
+         \x20   {count_arg_0}: u16,\n\
+         \x20   {count_arg_1}: u16,\n\
+         \x20   cursor: &mut Cursor<ModbusException>,\n\
+         \x20   buffer: &mut WritableRegisterBuffer<'_>,\n\
+         ) {{\n\
+         \x20   let model = {ctor};\n\
+         \x20   let adapter: Option<&dyn ReadAdapter> = match kind {{\n\
+         {read_stateful_arm}\
+         \x20       2 => Some(unsafe {{ &*(adapter as *const {pc}CallbackAdapter) }} as &dyn ReadAdapter),\n\
+         \x20       _ => None,\n\
+         \x20   }};\n\
+         \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| {{\n\
+         \x20       let mut block = buffer.slice(from, len);\n\
+         \x20       match adapter {{\n\
+         \x20           Some(adapter) => model.traverse_points_read(adapter, &mut block, offset),\n\
+         \x20           None => {{\n\
+         \x20               block.fill(&[0xff, 0xff]);\n\
+         \x20               Ok(())\n\
+         \x20           }}\n\
+         \x20       }}\n\
+         \x20   }});\n\
+         }}\n\n"
+    ));
+
+    let write_body = if model.group.writable {
+        let write_stateful_arm = if repeating {
+            String::new()
+        } else {
+            format!(
+                "        1 => Some(unsafe {{ &mut *(adapter as *mut {pc}StatefulAdapter) }} as &mut dyn WriteAdapter),\n"
+            )
+        };
+        format!(
+            "    let model = {ctor};\n\
+             \x20   let adapter: Option<&mut dyn WriteAdapter> = match kind {{\n\
+             {write_stateful_arm}\
+             \x20       2 => Some(unsafe {{ &mut *(adapter as *mut {pc}CallbackAdapter) }} as &mut dyn WriteAdapter),\n\
+             \x20       _ => None,\n\
+             \x20   }};\n\
+             \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| match adapter {{\n\
+             \x20       Some(adapter) => model.traverse_points_write(adapter, &buffer.slice(from, len), offset),\n\
+             \x20       None => Err(ModbusException::IllegalDataAddress),\n\
+             \x20   }});\n"
+        )
+    } else {
+        // No writable points: consume the block and reject every write that lands in it.
+        format!(
+            "    let _ = (kind, adapter, buffer);\n\
+             \x20   let model = {ctor};\n\
+             \x20   cursor.visit_source_block(model.model_length(), |_, _, _| {{\n\
+             \x20       Err(ModbusException::IllegalDataAddress)\n\
+             \x20   }});\n"
+        )
+    };
+    scope.raw(format!(
+        "/// # Safety\n\
+         /// As for [`{sc}_c_visit_read`], and `adapter` must be uniquely borrowable for the call.\n\
+         unsafe fn {sc}_c_visit_write(\n\
+         \x20   kind: u8,\n\
+         \x20   adapter: *mut c_void,\n\
+         \x20   {count_arg_0}: u16,\n\
+         \x20   {count_arg_1}: u16,\n\
+         \x20   cursor: &mut Cursor<ModbusException>,\n\
+         \x20   buffer: &ReadableRegisterBuffer<'_>,\n\
+         ) {{\n\
+         {write_body}\
+         }}\n\n"
+    ));
 }
 
 fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Struct) {
@@ -443,7 +563,7 @@ fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Stru
     }
 }
 
-fn generate_callback_handlers(group: &ResolvedGroup, callback_impl: &mut Impl) {
+fn generate_callback_read_handlers(group: &ResolvedGroup, callback_impl: &mut Impl) {
     for point in group
         .points
         .iter()
@@ -485,42 +605,55 @@ fn generate_callback_handlers(group: &ResolvedGroup, callback_impl: &mut Impl) {
             getter.line("})");
         }
         callback_impl.push_fn(getter);
-
-        if matches!(point.access, PointAccess::Rw) {
-            let mut setter = generate_setter(point);
-            setter.doc("");
-
-            for block_index in &point.block_indices {
-                setter.arg(&block_index.index_name, "u16");
-            }
-            let callback_ref = if point.mandatory == PointMandatory::O {
-                setter.line(format!(
-                    "if let Some(callback) = self.set_{}_callback {{",
-                    point.name_snake_case,
-                ));
-                "callback".to_string()
-            } else {
-                format!("self.set_{}_callback", point.name_snake_case)
-            };
-
-            setter.line(if point.point_type.cast_from_c.is_some() {
-                format!(
-                    "({})(value.as_ptr(), self.context{group_index_args});",
-                    callback_ref
-                )
-            } else {
-                format!("({})(value, self.context{group_index_args});", callback_ref)
-            });
-
-            if point.mandatory == PointMandatory::O {
-                setter.line("};");
-            }
-            callback_impl.push_fn(setter);
-        }
     }
 
     if let Some((_, inner_group)) = &group.repeating_child {
-        generate_callback_handlers(inner_group, callback_impl);
+        generate_callback_read_handlers(inner_group, callback_impl);
+    }
+}
+
+fn generate_callback_write_handlers(group: &ResolvedGroup, callback_impl: &mut Impl) {
+    for point in group.points.iter().filter(|point| {
+        point.value_type == PointValueType::Adapter && point.access == PointAccess::Rw
+    }) {
+        let group_index_args = point
+            .block_indices
+            .iter()
+            .map(|block_index| format!(", {}", block_index.index_name))
+            .collect::<Vec<_>>()
+            .join("");
+
+        let mut setter = generate_setter(point);
+        for block_index in &point.block_indices {
+            setter.arg(&block_index.index_name, "u16");
+        }
+        let callback_ref = if point.mandatory == PointMandatory::O {
+            setter.line(format!(
+                "if let Some(callback) = self.set_{}_callback {{",
+                point.name_snake_case,
+            ));
+            "callback".to_string()
+        } else {
+            format!("self.set_{}_callback", point.name_snake_case)
+        };
+
+        setter.line(if point.point_type.cast_from_c.is_some() {
+            format!(
+                "({})(value.as_ptr(), self.context{group_index_args});",
+                callback_ref
+            )
+        } else {
+            format!("({})(value, self.context{group_index_args});", callback_ref)
+        });
+
+        if point.mandatory == PointMandatory::O {
+            setter.line("};");
+        }
+        callback_impl.push_fn(setter);
+    }
+
+    if let Some((_, inner_group)) = &group.repeating_child {
+        generate_callback_write_handlers(inner_group, callback_impl);
     }
 }
 
@@ -534,24 +667,26 @@ pub fn generate_callback_struct(model: &ResolvedModel, scope: &mut Scope) {
 
     generate_callback_functions(&model.group, callback_struct);
 
-    let callback_impl = scope
+    let reader_impl = scope
         .new_impl(format!("{}CallbackAdapter", model.name_pascal_case))
-        .impl_trait("ModelAdapter");
+        .impl_trait("ReadAdapter");
+    generate_callback_read_handlers(&model.group, reader_impl);
 
-    generate_callback_handlers(&model.group, callback_impl);
+    if model.group.writable {
+        let writer_impl = scope
+            .new_impl(format!("{}CallbackAdapter", model.name_pascal_case))
+            .impl_trait("WriteAdapter");
+
+        generate_callback_write_handlers(&model.group, writer_impl);
+    }
 }
 
 fn generate_model_length_calculator(group: &ResolvedGroup) -> String {
     if let Some((repeat_count_pt, repeating_block)) = &group.repeating_child {
-        let repeat_count_ref = match repeat_count_pt.mandatory {
-            PointMandatory::M => format!("model.{}()", repeat_count_pt.name_snake_case),
-            PointMandatory::O => {
-                format!("model.{}().unwrap_or(0)", repeat_count_pt.name_snake_case)
-            }
-        };
         format!(
-            "{} + {repeat_count_ref} * ({})",
+            "{} + self.{} * ({})",
             group.static_size,
+            repeat_count_pt.name_snake_case,
             generate_model_length_calculator(repeating_block)
         )
     } else {
@@ -618,7 +753,7 @@ fn collect_struct_generics(group: &ResolvedGroup) -> Vec<String> {
     }
 }
 
-fn generate_stateful_handlers(group: &ResolvedGroup, stateful_impl: &mut Impl) {
+fn generate_stateful_read_handlers(group: &ResolvedGroup, stateful_impl: &mut Impl) {
     for point in group
         .points
         .iter()
@@ -666,35 +801,53 @@ fn generate_stateful_handlers(group: &ResolvedGroup, stateful_impl: &mut Impl) {
             getter.line(")");
         }
         stateful_impl.push_fn(getter);
-
-        if matches!(point.access, PointAccess::Rw) {
-            let mut setter = generate_setter(point);
-            setter.doc("");
-
-            for block_index in &point.block_indices {
-                setter.arg(&block_index.index_name, "u16");
-            }
-            if point.point_type.array_length.is_none() {
-                setter.line(format!(
-                    "self{group_index_access}.{} = value;",
-                    point.name_snake_case
-                ));
-            } else {
-                const ITER: &str = "value.to_bytes_with_nul().iter()";
-                let mut block = Block::new(format!(
-                    "for (dest, src) in self{group_index_access}.{}.iter_mut().zip({})",
-                    point.name_snake_case, ITER
-                ));
-                block.line("*dest = *src as c_char;");
-                setter.push_block(block);
-            }
-
-            stateful_impl.push_fn(setter);
-        }
     }
 
     if let Some((_, inner_group)) = &group.repeating_child {
-        generate_stateful_handlers(inner_group, stateful_impl);
+        generate_stateful_read_handlers(inner_group, stateful_impl);
+    }
+}
+
+fn generate_stateful_write_handlers(group: &ResolvedGroup, stateful_impl: &mut Impl) {
+    for point in group.points.iter().filter(|point| {
+        point.value_type == PointValueType::Adapter && point.access == PointAccess::Rw
+    }) {
+        let group_index_access = point
+            .block_indices
+            .iter()
+            .map(|block_index| {
+                format!(
+                    ".{}[{} as usize]",
+                    block_index.group_name, block_index.index_name
+                )
+            })
+            .collect::<Vec<_>>()
+            .join("");
+
+        let mut setter = generate_setter(point);
+        for block_index in &point.block_indices {
+            setter.arg(&block_index.index_name, "u16");
+        }
+        if point.point_type.array_length.is_none() {
+            setter.line(format!(
+                "self{group_index_access}.{} = value;",
+                point.name_snake_case
+            ));
+        } else {
+            const ITER: &str = "value.to_bytes_with_nul().iter()";
+            let mut block = Block::new(format!(
+                "for (dest, src) in self{group_index_access}.{}.iter_mut().zip({})",
+                point.name_snake_case, ITER
+            ));
+            block.line("*dest = *src as c_char;");
+            setter.push_block(block);
+        }
+
+        stateful_impl.push_fn(setter);
+    }
+
+    if let Some((_, inner_group)) = &group.repeating_child {
+        generate_stateful_write_handlers(inner_group, stateful_impl);
     }
 }
 
@@ -707,19 +860,36 @@ pub fn generate_stateful_struct(model: &ResolvedModel, scope: &mut Scope) {
         scope,
         &generics,
     );
+
     let stateful_impl = scope
         .new_impl(format!(
             "{}StatefulAdapter<{}>",
             model.name_pascal_case,
             generics.join(", ")
         ))
-        .impl_trait("ModelAdapter");
+        .impl_trait("ReadAdapter");
 
-    for generic in generics {
+    for generic in &generics {
         stateful_impl.generic(format!("const {generic}: usize"));
     }
 
-    generate_stateful_handlers(&model.group, stateful_impl);
+    generate_stateful_read_handlers(&model.group, stateful_impl);
+
+    if model.group.writable {
+        let write_impl = scope
+            .new_impl(format!(
+                "{}StatefulAdapter<{}>",
+                model.name_pascal_case,
+                generics.join(", ")
+            ))
+            .impl_trait("WriteAdapter");
+
+        for generic in &generics {
+            write_impl.generic(format!("const {generic}: usize"));
+        }
+
+        generate_stateful_write_handlers(&model.group, write_impl);
+    }
 }
 
 fn add_group_variants(group: &ResolvedGroup, target_enum: &mut Enum, counters: Vec<String>) {
@@ -736,29 +906,41 @@ fn add_group_variants(group: &ResolvedGroup, target_enum: &mut Enum, counters: V
     }
 }
 
-pub fn generate_funcs(group: &ResolvedGroup) -> Vec<Function> {
+pub fn generate_readers(group: &ResolvedGroup) -> Vec<Function> {
     group
         .points
         .iter()
         .filter(|point| point.value_type == PointValueType::Adapter)
-        .flat_map(|point| {
+        .map(|point| {
             let mut getter = generate_getter(point);
             point.block_indices.iter().for_each(|block_index| {
                 getter.arg(&block_index.index_name, "u16");
             });
-            match point.access {
-                PointAccess::R => vec![getter],
-                PointAccess::Rw => {
-                    let mut setter = generate_setter(point);
-                    point.block_indices.iter().for_each(|block_index| {
-                        setter.arg(&block_index.index_name, "u16");
-                    });
-                    vec![getter, setter]
-                }
-            }
+            getter
         })
         .chain(if let Some((_, inner_group)) = &group.repeating_child {
-            generate_funcs(inner_group)
+            generate_readers(inner_group)
+        } else {
+            vec![]
+        })
+        .collect()
+}
+
+pub fn generate_writers(group: &ResolvedGroup) -> Vec<Function> {
+    group
+        .points
+        .iter()
+        .filter(|point| point.value_type == PointValueType::Adapter)
+        .filter(|point| point.access == PointAccess::Rw)
+        .map(|point| {
+            let mut setter = generate_setter(point);
+            point.block_indices.iter().for_each(|block_index| {
+                setter.arg(&block_index.index_name, "u16");
+            });
+            setter
+        })
+        .chain(if let Some((_, inner_group)) = &group.repeating_child {
+            generate_writers(inner_group)
         } else {
             vec![]
         })
@@ -786,7 +968,7 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                 let dereferenced_args: Vec<String> =
                     index_args.iter().map(|arg| format!("*{arg}")).collect();
                 let value_reader = format!(
-                    "model.{}({})",
+                    "adapter.{}({})",
                     point.name_snake_case,
                     dereferenced_args.join(", ")
                 );
@@ -829,7 +1011,7 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
             PointValueType::ModelLength => {
                 let mut match_block = Block::new(match_arm);
 
-                match_block.line("buffer.write_u16(model_length(model) - 2);");
+                match_block.line("buffer.write_u16(model.model_length() - 2);");
                 writer_block.push_block(match_block);
             }
             PointValueType::StaticValue(s) => {
@@ -893,7 +1075,7 @@ fn populate_model_reader(group: &ResolvedGroup, reader_block: &mut Block) {
 
             match_block
                 .line(format!(
-                    "model.set_{}({parsed_value_name}{rest_args});",
+                    "adapter.set_{}({parsed_value_name}{rest_args});",
                     point.name_snake_case
                 ))
                 .line("Ok(())")
@@ -953,7 +1135,7 @@ enum TraverseDirection {
 
 fn generate_traverse_points_fn(
     model: &ResolvedModel,
-    scope: &mut Scope,
+    scope: &mut Impl,
     direction: TraverseDirection,
 ) {
     let fn_name = match direction {
@@ -961,18 +1143,21 @@ fn generate_traverse_points_fn(
         TraverseDirection::Write => "traverse_points_write",
     };
 
-    let fn_def = scope.new_fn(fn_name).vis("pub").generic("'a");
+    let fn_def = scope.new_fn(fn_name).generic("'a");
 
     match direction {
         TraverseDirection::Read => {
             fn_def
-                .arg("model", "&dyn ModelAdapter")
+                .arg_ref_self()
+                .arg("adapter", "&Self::ReadAdapter")
                 .arg("buffer", "&mut WritableRegisterBuffer<'a>")
-                .arg("offset", "u16");
+                .arg("offset", "u16")
+                .ret("Result<(), ModbusException>");
         }
         TraverseDirection::Write => {
             fn_def
-                .arg("model", "&mut dyn ModelAdapter")
+                .arg_ref_self()
+                .arg("adapter", "&mut Self::WriteAdapter")
                 .arg("buffer", "&ReadableRegisterBuffer<'a>")
                 .arg("offset", "u16")
                 .ret("Result<(), ModbusException>");
@@ -993,15 +1178,10 @@ fn generate_traverse_points_fn(
     let mut child_group: Option<&ResolvedGroup> = None;
     for (count_point, inner_group) in group_stack.iter().rev() {
         let prefix = &inner_group.name_short;
-        let count_accessor = if count_point.mandatory == PointMandatory::M {
-            format!("model.{}()", count_point.name_snake_case)
-        } else {
-            format!(
-                "model.{}().unwrap_or_default()",
-                count_point.name_snake_case
-            )
-        };
-        fn_def.line(format!("let {prefix}_count = {count_accessor};"));
+        fn_def.line(format!(
+            "let {prefix}_count = self.{};",
+            count_point.name_snake_case
+        ));
         if let Some(child) = child_group {
             fn_def.line(format!(
                 "let {prefix}_size = {static_size} + {child_prefix}_count * {child_prefix}_size;",
@@ -1041,7 +1221,8 @@ fn generate_traverse_points_fn(
         TraverseDirection::Read => {
             point_block
                 .line("write_point_to_buffer(")
-                .line("model,")
+                .line("self,")
+                .line("adapter,")
                 .line("&point,")
                 .line("&mut buffer.slice(cursor, word_count),")
                 .line("point_offset,")
@@ -1054,7 +1235,8 @@ fn generate_traverse_points_fn(
 
             point_block
                 .line("read_point_from_buffer(")
-                .line("model,")
+                .line("self,")
+                .line("adapter,")
                 .line("&point,")
                 .line("&buffer.slice(cursor, word_count),")
                 .line(")?;");
@@ -1064,16 +1246,12 @@ fn generate_traverse_points_fn(
     point_block.line("cursor += word_count;");
     fn_def.push_block(point_block);
 
-    if matches!(direction, TraverseDirection::Write) {
-        fn_def.line("");
-        fn_def.line("Ok(())");
-    }
+    fn_def.line("");
+    fn_def.line("Ok(())");
 }
 
 pub fn generate_model(model: &ResolvedModel) -> Scope {
     let mut scope = Scope::new();
-
-    let funcs: Vec<Function> = generate_funcs(&model.group);
 
     for feature in &model.features {
         match feature {
@@ -1088,17 +1266,12 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope.import("core::ffi", "c_void");
     scope.import("crate::buffer", "WritableRegisterBuffer");
     scope.import("crate::buffer", "ReadableRegisterBuffer");
+    scope.import("crate::model", "ModelSpec");
     scope.import("crate", "ModbusException");
     scope.import("core::cmp", "min");
 
-    let size: u16 = model
-        .group
-        .points
-        .iter()
-        .map(|point| point.point_type.size)
-        .sum();
-
-    scope.raw(format!("pub const SIZE: u16 = {};", size));
+    scope.import("crate::cursor", "Cursor");
+    scope.import("crate::model", "StaticModelSpec");
 
     generate_point_arrays(&model.group, &mut scope, vec![]);
 
@@ -1109,20 +1282,44 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope
         .new_struct("PointDetails")
         .generic("GroupIndexArgs")
-        .derive("Debug")
         .field("point", "fn(GroupIndexArgs) -> Point")
         .field("start_address", "u16")
         .field("size", "u16");
 
-    scope
+    let model_struct = scope.new_struct(&model.name_pascal_case).vis("pub");
+
+    model_struct.doc(format!(
+        "Marker for SunSpec model {}. Add it to a [`Sunspec`](crate::Sunspec) model list.",
+        model.model_number
+    ));
+
+    for count_point in &model.count_points {
+        model_struct
+            .new_field(
+                &count_point.point.name_snake_case,
+                &count_point.point.point_type.rust_type,
+            )
+            .vis("pub")
+            .doc("Number of repeating blocks in this model instance.");
+    }
+
+    let model_impl = scope
+        .new_impl(&model.name_pascal_case)
+        .generic("'ad")
+        .impl_trait("ModelSpec<'ad>");
+
+    model_impl.associate_const("MODEL_ID", "u16", model.model_number.to_string(), "");
+    model_impl.associate_type("ReadAdapter", "dyn ReadAdapter + 'ad");
+    model_impl.associate_type("WriteAdapter", "dyn WriteAdapter + 'ad");
+
+    model_impl
         .new_fn("model_length")
-        .vis("pub")
-        .arg("model", "&dyn ModelAdapter")
+        .arg_ref_self()
         .ret("u16")
         .line(generate_model_length_calculator(&model.group));
 
-    generate_traverse_points_fn(model, &mut scope, TraverseDirection::Read);
-    generate_traverse_points_fn(model, &mut scope, TraverseDirection::Write);
+    generate_traverse_points_fn(model, model_impl, TraverseDirection::Read);
+    generate_traverse_points_fn(model, model_impl, TraverseDirection::Write);
 
     let mut writer_block = Block::new("match point");
     populate_model_writer(&model.group, &mut writer_block);
@@ -1130,8 +1327,9 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     scope
         .new_fn("write_point_to_buffer")
         .generic("'a")
-        .vis("pub")
-        .arg("model", "&dyn ModelAdapter")
+        .vis("pub(crate)")
+        .arg("model", format!("&{}", model.name_pascal_case))
+        .arg("adapter", "&dyn ReadAdapter")
         .arg("point", "&Point")
         .arg("buffer", "&mut WritableRegisterBuffer<'a>")
         .arg("offset", "u16")
@@ -1140,8 +1338,9 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     let reader_fn = scope
         .new_fn("read_point_from_buffer")
         .generic("'a")
-        .vis("pub")
-        .arg("model", "&mut dyn ModelAdapter")
+        .vis("pub(crate)")
+        .arg("model", format!("&{}", model.name_pascal_case))
+        .arg("adapter", "&mut dyn WriteAdapter")
         .arg("point", "&Point")
         .arg("buffer", "&ReadableRegisterBuffer<'a>")
         .ret("Result<(), ModbusException>");
@@ -1155,10 +1354,16 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         reader_fn.line("Err(ModbusException::IllegalDataAddress)");
     }
 
-    let root_trait = scope.new_trait("ModelAdapter").vis("pub");
+    let read_trait = scope.new_trait("ReadAdapter").vis("pub");
 
-    for func in funcs {
-        root_trait.push_fn(func);
+    for func in generate_readers(&model.group) {
+        read_trait.push_fn(func);
+    }
+
+    let write_trait = scope.new_trait("WriteAdapter").vis("pub");
+
+    for func in generate_writers(&model.group) {
+        write_trait.push_fn(func);
     }
 
     for enum_type in &model.group.enums {
@@ -1167,6 +1372,8 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
 
     generate_callback_struct(model, &mut scope);
     generate_stateful_struct(model, &mut scope);
+
+    generate_c_model_dispatch(model, &mut scope);
 
     scope
 }

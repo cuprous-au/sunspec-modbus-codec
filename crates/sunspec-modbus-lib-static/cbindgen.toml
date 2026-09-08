@@ -16,7 +16,8 @@ clean = true
 include = ["sunspec-modbus-lib-rs"]
 
 [export]
-item_types = ["functions", "typedefs", "structs", "enums"]
+item_types = ["constants", "functions", "typedefs", "structs", "enums"]
+include = []
 
 [enum]
 prefix_with_name = true

@@ -1,31 +1,68 @@
 # sunspec-modbus-codec
 A Rust-first SunSpec Modbus codec with C bindings for fast, reliable serialisation and deserialisation of wire-compatible models.
 
-The objective is to provide a robust, open-source Sunspec MODBUS Server Library for resource-constrained microcontroller firmware,
+The objective is to provide a robust, open-source SunSpec MODBUS Server Library for resource-constrained microcontroller firmware,
 accelerating vendor compliance by standardising the physical device interface.
 
-The Sunspec MODBUS Server Library is known as a "bare-metal" Rust library with a C ABI for Sunspec MODBUS compliance in microcontrollers.
+The SunSpec MODBUS Server Library is known as a "bare-metal" Rust library with a C ABI for SunSpec MODBUS compliance in microcontrollers.
 Bare-metal approaches are those that do not have dependencies on their hosts insofar as shared libraries and operating
 systems. Device interactions are assumed to be direct with the hardware e.g. GPIO interactions, PWM control and so forth.
-When the Sunspec MODBUS Server Library is used, it will be used either directly,
+When the SunSpec MODBUS Server Library is used, it will be used either directly,
 called from Rust, or via a C ABI provided here. The end result is that any language that is able to call upon a C
 library is able to call on this codec library.
 
 Note that we make a distinction between a server and a client library. In MODBUS, a client is a single entity that communicates
 with many servers (devices, such as an inverter). Each server only responds when directly addressed by the client. This architecture evolved out of the
-necessity to support half-duplex serial communications such as that imposed by RS485. There are a number of Sunspec MODBUS clients
-available in a variety of languages, including reference implementations from Sunspec@python-sunspec. However, there are
-very few hardened libraries for Sunspec MODBUS servers targeting microcontrollers at a minimum, hence the need for this project to deliver one.
+necessity to support half-duplex serial communications such as that imposed by RS485. There are a number of SunSpec MODBUS clients
+available in a variety of languages, including reference implementations from SunSpec@python-sunspec. However, there are
+very few hardened libraries for SunSpec MODBUS servers targeting microcontrollers at a minimum, hence the need for this project to deliver one.
 
 As MODBUS itself is be delivered independently of its transport, this library retains this independence. For example,
 a developer can choose to use the C-based libmodbus, or Rust-based MODBUS library, for use with an operating system such as Linux or Windows.
 However, many devices have no operating system and quite often in support of serial comms over RS485 only.
 In this instance, the library could be used along with implementations of Rust's embedded-hal IO library.
 
+## Data model
+
+### Model specification
+A static description of a single specific SunSpec model, including the counts for any repeating groups. This must be static at runtime
+and is used identically for both reads and writes. Critically, this information is sufficient to fully calculate the register layout
+of the model and its points.
+
+In Rust-facing interfaces, this is represented by an implementation of the ModelSpec trait.
+
+### Model list
+A model list is an ordered collection of [Model specification](#model-specification) objects - representing the full set 
+of models exposed by a Modbus server.
+
+In Rust-facing interfaces, a ModelList implementation can be defined for any arbitrary data structure, and it must expose 
+an iterator over each of its included Models bound to an appropriate Adapter for each of the read and write cases.
+
+### Read/write adapter
+An implementation that can provide a value or handle an update for each point in a specific model respectively. To handle 
+an operation for a given Model list, one such adapter must be provided for each specification as defined above.
+
+These are provided as Traits, and a Rust consumer of the library can implement this in any way they choose. For convenience and compatibility
+with the interface for C or other programming languages, two standard implementations of the adapters are provided:
+ - The Stateful adapter holds a representation of each point in a struct, and directly gets and sets these values according
+   to requests
+ - The Callback adapter holds function pointers for each method which are directly invoked, allowing more complex custom
+   behaviour in non-Rust languages
+
+### Adapter binding
+An adapter binding represents the pair of a Model specification with an adapter implementation. This is represented by the
+ReadBinding and WriteBinding enumerations. These are explicitly paired to ensure that the register layout is static, and 
+consistent between read and write.
+
+For Rust-facing interfaces, a binding is expected to be represented by the variant specific to the model being represented.
+For other languages, there is a single Extern variant which allows the adapter to be referenced by void pointer. This variant
+includes the other parameters required to safely cast to the specific implementation and map through to the correct point
+traversal methods.
+
 ## Crates
 ### sunspec-gen
 This crate is responsible for generating the content of the `src/sunspec` directory of the `sunspec-modbus-lib-rs` crate
-described below. It sources the latest Sunspec MODBUS model definitions from https://github.com/sunspec/models, and generates
+described below. It sources the latest SunSpec MODBUS model definitions from https://github.com/sunspec/models, and generates
 adapter definitions for each model.
 
 > For development purposes of this crate, the codegen step can be triggered in isolation by running:
@@ -34,7 +71,7 @@ adapter definitions for each model.
 > ```
 
 ### sunspec-modbus-lib-rs
-This is the core rust crate that provides serialisation and deserialisation of Sunspec MODBUS models from a collection of
+This is the core rust crate that provides serialisation and deserialisation of SunSpec MODBUS models from a collection of
 adapters.
 
 ### sunspec-modbus-lib-static

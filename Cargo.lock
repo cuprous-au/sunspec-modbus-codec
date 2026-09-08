@@ -679,6 +679,7 @@ name = "sunspec-modbus-lib-static"
 version = "0.1.0"
 dependencies = [
  "cbindgen",
+ "sunspec-gen",
  "sunspec-modbus-lib-rs",
 ]
 

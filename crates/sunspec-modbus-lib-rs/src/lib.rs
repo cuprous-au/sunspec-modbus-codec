@@ -3,12 +3,10 @@ pub mod buffer;
 pub mod cursor;
 #[macro_use]
 pub mod macros;
+pub mod model;
 pub mod sunspec;
 
-use crate::{
-    buffer::{ReadableRegisterBuffer, WritableRegisterBuffer},
-    sunspec::adapters::{SunspecAdapterProvider, traverse_adapters_read, traverse_adapters_write},
-};
+pub use crate::model::{ModelList, ModelSpec, STARTING_REGISTER_OFFSET, StaticModelSpec, Sunspec};
 
 #[derive(Debug, Copy, Clone)]
 pub enum ModbusException {
@@ -23,107 +21,63 @@ pub enum ModbusException {
     GatewayTargetDevice = 0x0B,
 }
 
-const STARTING_REGISTER_OFFSET: u16 = 40000;
-
-pub fn read_registers<'a, 'b, B: Into<WritableRegisterBuffer<'b>>>(
-    adapter_provider: &dyn SunspecAdapterProvider<'a>,
-    address: u16,
-    response_buffer: B,
-) -> Result<(), ModbusException> {
-    let mut buffer = response_buffer.into();
-    let count = buffer.len();
-
-    if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
-        if let Some(remainder_offset) = traverse_adapters_read(
-            adapter_provider,
-            &mut buffer.slice(0, count),
-            address - STARTING_REGISTER_OFFSET,
-            count,
-        ) {
-            buffer
-                .slice(remainder_offset, count - remainder_offset)
-                .fill(&[0xff, 0xff]);
-        }
-        Ok(())
-    } else {
-        Err(ModbusException::IllegalDataAddress)
-    }
-}
-
-pub fn write_multiple_registers<'a, 'b, B: Into<ReadableRegisterBuffer<'b>>>(
-    adapter_provider: &mut dyn SunspecAdapterProvider<'a>,
-    address: u16,
-    request_buffer: B,
-) -> Result<(), ModbusException> {
-    let buffer = request_buffer.into();
-    let count = buffer.len();
-
-    if address >= STARTING_REGISTER_OFFSET && address <= u16::MAX - count {
-        traverse_adapters_write(
-            adapter_provider,
-            &buffer,
-            address - STARTING_REGISTER_OFFSET,
-            count,
-        )?;
-        Ok(())
-    } else {
-        Err(ModbusException::IllegalDataAddress)
-    }
-}
-
-pub fn write_single_register<'a>(
-    adapter_provider: &mut dyn SunspecAdapterProvider<'a>,
-    address: u16,
-    value: u16,
-) -> Result<(), ModbusException> {
-    let words: [u16; 1] = [value];
-    let buffer = ReadableRegisterBuffer::from(&words[..]);
-
-    if address >= STARTING_REGISTER_OFFSET {
-        traverse_adapters_write(
-            adapter_provider,
-            &buffer,
-            address - STARTING_REGISTER_OFFSET,
-            1,
-        )?;
-        Ok(())
-    } else {
-        Err(ModbusException::IllegalDataAddress)
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use core::ffi::CStr;
+    use core::{cell::RefCell, ffi::CStr};
 
     use crate::sunspec::{
-        adapters::SunspecAdapters,
-        models::{model_1::Model1StatefulAdapter, model_701, model_704},
+        adapters::{ReadBinding, WriteBinding},
+        models::{
+            model_1::{self, Model1StatefulAdapter},
+            model_701, model_704,
+        },
     };
 
     use super::*;
 
     #[test]
     fn simple_common_adapter() -> Result<(), ModbusException> {
-        let mut adapter = Model1StatefulAdapter {
+        struct SunspecModel {
+            model: model_1::Model1,
+        }
+        let adapter = RefCell::new(Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
             options: c_char_array!("opt_a_b_c"),
             version: c_char_array!("v0.1"),
             serial_number: c_char_array!("I-1"),
             device_address: 0,
-        };
+        });
 
-        let mut adapters = SunspecAdapters {
-            model_1_adapter: Some(&mut adapter),
-            ..SunspecAdapters::default()
-        };
+        impl ModelList for SunspecModel {
+            type ReadAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
+
+            type WriteAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
+
+            fn read_iter<'a>(
+                &'a self,
+                adapters: Self::ReadAdapters<'a>,
+            ) -> impl Iterator<Item = ReadBinding<'a>> {
+                Some(ReadBinding::Model1(&self.model, adapters.borrow())).into_iter()
+            }
+
+            fn write_iter<'a>(
+                &'a self,
+                adapter: Self::WriteAdapters<'a>,
+            ) -> impl Iterator<Item = WriteBinding<'a>> {
+                Some(WriteBinding::Model1(&self.model, adapter.borrow_mut())).into_iter()
+            }
+        }
+
+        let sunspec = Sunspec::new(SunspecModel {
+            model: model_1::Model1,
+        });
 
         const WORDS_TO_READ: u16 = 72;
 
         let mut init_buf = [0_u8; WORDS_TO_READ as usize * 2];
 
-        read_registers(&adapters, STARTING_REGISTER_OFFSET, init_buf.as_mut_slice())?;
+        sunspec.read_registers(STARTING_REGISTER_OFFSET, init_buf.as_mut_slice(), &adapter)?;
 
         assert_eq!(&init_buf[..4], b"SunS");
         assert_eq!(
@@ -154,19 +108,23 @@ mod tests {
             0
         );
 
-        write_single_register(&mut adapters, STARTING_REGISTER_OFFSET + 68, 1234)?;
+        sunspec.write_multiple_registers(
+            STARTING_REGISTER_OFFSET + 68,
+            [1234u16].as_slice(),
+            &adapter,
+        )?;
 
         assert_eq!(
-            adapters.model_1_adapter.as_ref().unwrap().device_address(),
+            model_1::ReadAdapter::device_address(&adapter.borrow() as &Model1StatefulAdapter),
             Some(1234)
         );
 
         let mut after_buf = [0_u8; 40];
 
-        read_registers(
-            &adapters,
+        sunspec.read_registers(
             STARTING_REGISTER_OFFSET + 52,
             after_buf.as_mut_slice(),
+            &adapter,
         )?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));
@@ -183,7 +141,107 @@ mod tests {
 
     #[test]
     fn write_model_704_sets_active_power_enable() -> Result<(), ModbusException> {
-        let mut common_model = Model1StatefulAdapter {
+        struct SunspecModel {
+            model_1: model_1::Model1,
+            model_701: model_701::Model701,
+            model_704: model_704::Model704,
+        }
+
+        struct SunspecReadAdapters<'a> {
+            model_1: &'a RefCell<dyn model_1::ReadAdapter>,
+            model_701: &'a RefCell<dyn model_701::ReadAdapter>,
+            model_704: &'a RefCell<dyn model_704::ReadAdapter>,
+        }
+
+        struct ReadAdapterIter<'a> {
+            model: &'a SunspecModel,
+            adapters: &'a SunspecReadAdapters<'a>,
+            state: usize,
+        }
+
+        impl<'a> Iterator for ReadAdapterIter<'a> {
+            type Item = ReadBinding<'a>;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                let result = match self.state {
+                    0 => Some(ReadBinding::Model1(
+                        &self.model.model_1,
+                        self.adapters.model_1.borrow(),
+                    )),
+                    1 => Some(ReadBinding::Model701(
+                        &self.model.model_701,
+                        self.adapters.model_701.borrow(),
+                    )),
+                    2 => Some(ReadBinding::Model704(
+                        &self.model.model_704,
+                        self.adapters.model_704.borrow(),
+                    )),
+                    _ => None,
+                };
+                self.state += 1;
+                result
+            }
+        }
+
+        struct SunspecWriteAdapters<'a> {
+            model_1: &'a RefCell<dyn model_1::WriteAdapter>,
+            model_704: &'a RefCell<dyn model_704::WriteAdapter>,
+        }
+        struct WriteAdapterIter<'a> {
+            model: &'a SunspecModel,
+            adapters: &'a SunspecWriteAdapters<'a>,
+            state: usize,
+        }
+        impl<'a> Iterator for WriteAdapterIter<'a> {
+            type Item = WriteBinding<'a>;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                let result: Option<WriteBinding<'a>> = match self.state {
+                    0 => Some(WriteBinding::Model1(
+                        &self.model.model_1,
+                        self.adapters.model_1.borrow_mut(),
+                    )),
+                    1 => Some(WriteBinding::Model701(&self.model.model_701)),
+                    2 => Some(WriteBinding::Model704(
+                        &self.model.model_704,
+                        self.adapters.model_704.borrow_mut(),
+                    )),
+                    _ => None,
+                };
+                self.state += 1;
+                result
+            }
+        }
+
+        impl ModelList for SunspecModel {
+            type ReadAdapters<'a> = &'a SunspecReadAdapters<'a>;
+
+            type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
+
+            fn read_iter<'a>(
+                &'a self,
+                adapters: Self::ReadAdapters<'a>,
+            ) -> impl Iterator<Item = ReadBinding<'a>> {
+                ReadAdapterIter {
+                    model: self,
+                    adapters,
+                    state: 0,
+                }
+            }
+
+            fn write_iter<'a>(
+                &'a self,
+                adapters: Self::WriteAdapters<'a>,
+            ) -> impl Iterator<Item = WriteBinding<'a>> {
+                WriteAdapterIter {
+                    model: self,
+                    adapters,
+                    state: 0,
+                }
+            }
+        }
+
+        let common_model = Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
             options: c_char_array!("opt_a_b_c"),
@@ -192,44 +250,38 @@ mod tests {
             device_address: 0,
         };
 
-        struct DerAcMeasurementModel;
-
-        impl model_701::ModelAdapter for DerAcMeasurementModel {
-            fn ac_wiring_type(&self) -> model_701::AcType {
-                model_701::AcType::ThreePhase
-            }
-        }
-
-        let mut der_ac_measurement = DerAcMeasurementModel;
-
         struct DerAcControlsModel {
             active_power_enable: bool,
         }
 
-        impl model_704::ModelAdapter for DerAcControlsModel {
+        impl model_704::WriteAdapter for DerAcControlsModel {
             fn set_active_power_enable(&mut self, value: model_704::WSetEna) {
                 self.active_power_enable = value == model_704::WSetEna::Enabled;
             }
         }
 
-        let mut der_ac_controls = DerAcControlsModel {
+        let sunspec = Sunspec::new(SunspecModel {
+            model_1: model_1::Model1,
+            model_701: model_701::Model701,
+            model_704: model_704::Model704,
+        });
+
+        let der_ac_controls = RefCell::new(DerAcControlsModel {
             active_power_enable: false,
+        });
+
+        let mut adapters = SunspecWriteAdapters {
+            model_1: &RefCell::new(common_model),
+            model_704: &der_ac_controls,
         };
 
-        let mut adapters = SunspecAdapters {
-            model_1_adapter: Some(&mut common_model),
-            model_701_adapter: Some(&mut der_ac_measurement),
-            model_704_adapter: Some(&mut der_ac_controls),
-            ..Default::default()
-        };
-
-        write_multiple_registers(
-            &mut adapters,
+        sunspec.write_multiple_registers(
             40247,
             hex::decode("0001").unwrap().as_slice(),
+            &mut adapters,
         )?;
 
-        assert!(der_ac_controls.active_power_enable);
+        assert!(der_ac_controls.borrow().active_power_enable);
 
         Ok(())
     }
