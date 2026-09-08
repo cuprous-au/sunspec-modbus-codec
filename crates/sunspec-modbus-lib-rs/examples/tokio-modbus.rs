@@ -154,27 +154,22 @@ impl model_103::ReadAdapter for InverterModel {
     }
 }
 
-struct SunspecModel {
-    model_1: model_1::Model1,
-    model_103: model_103::Model103,
-}
-
 struct SunspecReadAdapters<'a> {
     model_1: &'a RefCell<dyn model_1::ReadAdapter>,
     model_103: &'a RefCell<dyn model_103::ReadAdapter>,
 }
 
 struct ReadAdapterIter<'a> {
-    models: &'a SunspecModel,
+    models: &'a SunspecModels,
     adapters: &'a SunspecReadAdapters<'a>,
-    state: usize,
+    index: usize,
 }
 
 impl<'a> Iterator for ReadAdapterIter<'a> {
     type Item = ReadBinding<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let result = match self.state {
+        let result = match self.index {
             0 => Some(ReadBinding::Model1(
                 &self.models.model_1,
                 self.adapters.model_1.borrow(),
@@ -185,7 +180,7 @@ impl<'a> Iterator for ReadAdapterIter<'a> {
             )),
             _ => None,
         };
-        self.state += 1;
+        self.index += 1;
         result
     }
 }
@@ -195,16 +190,16 @@ struct SunspecWriteAdapters<'a> {
 }
 
 struct WriteAdapterIter<'a> {
-    models: &'a SunspecModel,
+    models: &'a SunspecModels,
     adapters: &'a SunspecWriteAdapters<'a>,
-    state: usize,
+    index: usize,
 }
 
 impl<'a> Iterator for WriteAdapterIter<'a> {
     type Item = WriteBinding<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let result = match self.state {
+        let result = match self.index {
             0 => Some(WriteBinding::Model1(
                 &self.models.model_1,
                 self.adapters.model_1.borrow_mut(),
@@ -212,12 +207,17 @@ impl<'a> Iterator for WriteAdapterIter<'a> {
             1 => Some(WriteBinding::Model103(&self.models.model_103)),
             _ => None,
         };
-        self.state += 1;
+        self.index += 1;
         result
     }
 }
 
-impl ModelList for SunspecModel {
+struct SunspecModels {
+    model_1: model_1::Model1,
+    model_103: model_103::Model103,
+}
+
+impl ModelList for SunspecModels {
     type ReadAdapters<'a> = &'a SunspecReadAdapters<'a>;
 
     type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
@@ -229,7 +229,7 @@ impl ModelList for SunspecModel {
         ReadAdapterIter {
             models: self,
             adapters,
-            state: 0,
+            index: 0,
         }
     }
 
@@ -240,14 +240,14 @@ impl ModelList for SunspecModel {
         WriteAdapterIter {
             models: self,
             adapters,
-            state: 0,
+            index: 0,
         }
     }
 }
 
 /// The device's register map: the common model followed by an inverter model. The same
 /// list backs both reads and writes.
-const SUNSPEC: Sunspec<SunspecModel> = Sunspec::new(SunspecModel {
+const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(SunspecModels {
     model_1: model_1::Model1,
     model_103: model_103::Model103,
 });

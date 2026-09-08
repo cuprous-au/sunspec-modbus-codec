@@ -58,16 +58,17 @@ pub const SUNSPEC_RC_ADAPTER_COUNT_MISMATCH: i32 = -2;
 /// lines up with (a misordered adapter array), or a map entry has a null `model`.
 pub const SUNSPEC_RC_ADAPTER_MODEL_MISMATCH: i32 = -3;
 
+/// A C-safe representation of a Model specification
 /// One model in the device's register map: which model, and its repeat counts. Pure layout —
 /// no adapters, so the array can be `static const` and built once.
 ///
 /// Build an array in the order the device publishes the models and pass it, with a matching
 /// [`SunspecAdapter`] array, to the service functions.
 #[repr(C)]
-pub struct SunspecModelBinding {
+pub struct CModelSpec {
     /// The model's dispatch descriptor: the codec's `SUNSPEC_MODEL_<id>` static, e.g.
     /// `&SUNSPEC_MODEL_103`.
-    pub model: *const StaticModelSpec,
+    pub model_spec: *const StaticModelSpec,
     /// First repeat count for repeating-group models; `0` for non-repeating models.
     pub repeat_count_0: u16,
     /// Second repeat count for models with two nested repeating groups; `0` otherwise.
@@ -75,14 +76,14 @@ pub struct SunspecModelBinding {
 }
 
 /// The adapter backing one model for a single request. Read requests supply one per model,
-/// index-aligned with the [`SunspecModelBinding`] array; write requests supply one per
+/// index-aligned with the [`CModelSpec`] array; write requests supply one per
 /// writable model, index-aligned with the writable subsequence of that array.
 #[repr(C)]
 pub struct SunspecAdapter {
-    /// Must equal the `model` of the binding this entry lines up with. This is the alignment
+    /// Must equal the `model` of the model this entry lines up with. This is the alignment
     /// guard: a mismatch (misordered or short adapter array) fails the request with
     /// [`SUNSPEC_RC_ADAPTER_MODEL_MISMATCH`] before any registers are touched.
-    pub model: *const StaticModelSpec,
+    pub model_spec: *const StaticModelSpec,
     /// `SUNSPEC_ADAPTER_NONE` / `_STATEFUL` / `_CALLBACK`. Repeating-group models support only
     /// `_CALLBACK`.
     pub kind: u8,
@@ -91,28 +92,28 @@ pub struct SunspecAdapter {
     pub adapter: *mut c_void,
 }
 
-/// Fails with [`SUNSPEC_RC_ADAPTER_MODEL_MISMATCH`] if any binding has a null `model`.
-fn check_no_null_models(bindings: &[SunspecModelBinding]) -> Result<(), i32> {
-    for binding in bindings {
-        if binding.model.is_null() {
+/// Fails with [`SUNSPEC_RC_ADAPTER_MODEL_MISMATCH`] if any model has a null `model`.
+fn check_no_null_models(models: &[CModelSpec]) -> Result<(), i32> {
+    for model in models {
+        if model.model_spec.is_null() {
             return Err(SUNSPEC_RC_ADAPTER_MODEL_MISMATCH);
         }
     }
     Ok(())
 }
 
-/// Checks that `adapters` is index-aligned with `bindings` for a read: no null map entries,
+/// Checks that `adapters` is index-aligned with `models` for a read: no null map entries,
 /// equal length, every `model` matching.
 fn check_read_alignment(
-    bindings: &[SunspecModelBinding],
+    models: &[CModelSpec],
     adapters: &[SunspecAdapter],
 ) -> Result<(), i32> {
-    check_no_null_models(bindings)?;
-    if adapters.len() != bindings.len() {
+    check_no_null_models(models)?;
+    if adapters.len() != models.len() {
         return Err(SUNSPEC_RC_ADAPTER_COUNT_MISMATCH);
     }
-    for (binding, adapter) in bindings.iter().zip(adapters) {
-        if adapter.model != binding.model {
+    for (model, adapter) in models.iter().zip(adapters) {
+        if adapter.model_spec != model.model_spec {
             return Err(SUNSPEC_RC_ADAPTER_MODEL_MISMATCH);
         }
     }
@@ -121,23 +122,23 @@ fn check_read_alignment(
 
 /// As [`check_read_alignment`], but `adapters` covers only the writable models: a
 /// non-writable model takes no write adapter, so the array is index-aligned with the
-/// writable bindings, in map order.
+/// writable models, in map order.
 fn check_write_alignment(
-    bindings: &[SunspecModelBinding],
+    models: &[CModelSpec],
     adapters: &[SunspecAdapter],
 ) -> Result<(), i32> {
-    check_no_null_models(bindings)?;
+    check_no_null_models(models)?;
     // SAFETY: `check_no_null_models` above rejected every null `model`.
     let writable = || {
-        bindings
+        models
             .iter()
-            .filter(|binding| unsafe { &*binding.model }.writable)
+            .filter(|model| unsafe { &*model.model_spec }.writable)
     };
     if adapters.len() != writable().count() {
         return Err(SUNSPEC_RC_ADAPTER_COUNT_MISMATCH);
     }
-    for (binding, adapter) in writable().zip(adapters) {
-        if adapter.model != binding.model {
+    for (model, adapter) in writable().zip(adapters) {
+        if adapter.model_spec != model.model_spec {
             return Err(SUNSPEC_RC_ADAPTER_MODEL_MISMATCH);
         }
     }
@@ -147,18 +148,18 @@ fn check_write_alignment(
 /// A [`ModelList`] view over a borrowed slice of C descriptors. Per-request adapters are
 /// threaded through [`ModelList::ReadAdapters`] / [`ModelList::WriteAdapters`].
 struct CModelList<'a> {
-    bindings: &'a [SunspecModelBinding],
+    models: &'a [CModelSpec],
 }
 
 impl CModelList<'_> {
-    /// Dispatch descriptor for `binding`.
+    /// Dispatch descriptor for `model`.
     ///
     /// # Safety
-    /// Every `binding.model` must be non-null — guaranteed by [`check_read_alignment`] /
+    /// Every `model.model_spec` must be non-null — guaranteed by [`check_read_alignment`] /
     /// [`check_write_alignment`], which the service functions run before constructing a
     /// `CModelList`.
-    unsafe fn descriptor(binding: &SunspecModelBinding) -> &StaticModelSpec {
-        unsafe { &*binding.model }
+    unsafe fn descriptor(model: &CModelSpec) -> &StaticModelSpec {
+        unsafe { &*model.model_spec }
     }
 }
 
@@ -172,28 +173,28 @@ impl ModelList for CModelList<'_> {
     where
         Self: 'a;
 
-    /// One [`ReadBinding::Extern`] per binding, in map order — the codec drives each through
-    /// its `StaticModelSpec` vtable. `adapters` is index-aligned with the bindings (checked by
+    /// One [`ReadBinding::Extern`] per model, in map order — the codec drives each through
+    /// its `StaticModelSpec` vtable. `adapters` is index-aligned with the models (checked by
     /// [`check_read_alignment`]), so each `kind` / pointer passes straight through.
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
     ) -> impl Iterator<Item = ReadBinding<'a>> {
-        self.bindings
+        self.models
             .iter()
             .zip(adapters)
-            .map(|(binding, adapter)| ReadBinding::Extern {
+            .map(|(model, adapter)| ReadBinding::Extern {
                 // SAFETY: `check_read_alignment` rejected every null `model` before the
                 // service function built this `CModelList`.
-                descriptor: unsafe { Self::descriptor(binding) },
+                descriptor: unsafe { Self::descriptor(model) },
                 kind: adapter.kind,
                 adapter: adapter.adapter,
-                repeat_count_0: binding.repeat_count_0,
-                repeat_count_1: binding.repeat_count_1,
+                repeat_count_0: model.repeat_count_0,
+                repeat_count_1: model.repeat_count_1,
             })
     }
 
-    /// One [`WriteBinding::Extern`] per binding, in map order. `adapters` carries an entry
+    /// One [`WriteBinding::Extern`] per model, in map order. `adapters` carries an entry
     /// only for the writable models (see [`check_write_alignment`]); it is consumed in order
     /// for those, and every other block — plus any writable block past the end of a short
     /// array — gets `SUNSPEC_ADAPTER_NONE` and rejects the write.
@@ -202,9 +203,9 @@ impl ModelList for CModelList<'_> {
         adapters: Self::WriteAdapters<'a>,
     ) -> impl Iterator<Item = WriteBinding<'a>> {
         let mut write_adapters = adapters.iter();
-        self.bindings.iter().map(move |binding| {
+        self.models.iter().map(move |model| {
             // SAFETY: as for `read_iter`.
-            let descriptor = unsafe { Self::descriptor(binding) };
+            let descriptor = unsafe { Self::descriptor(model) };
             let entry = if descriptor.writable {
                 write_adapters.next()
             } else {
@@ -218,8 +219,8 @@ impl ModelList for CModelList<'_> {
                 descriptor,
                 kind,
                 adapter,
-                repeat_count_0: binding.repeat_count_0,
-                repeat_count_1: binding.repeat_count_1,
+                repeat_count_0: model.repeat_count_0,
+                repeat_count_1: model.repeat_count_1,
             }
         })
     }
@@ -233,34 +234,34 @@ impl ModelList for CModelList<'_> {
 /// exception code (`0x01`..=`0x0B`) to reply with.
 ///
 /// # Safety
-/// - `bindings` must point to `binding_count` valid, live [`SunspecModelBinding`]s, each
+/// - `models` must point to `model_count` valid, live [`CModelSpec`]s, each
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `read_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, index-aligned
-///   with `bindings`, each `adapter` pointer matching its `kind`.
+///   with `models`, each `adapter` pointer matching its `kind`.
 /// - `response_buffer` must be a valid, writable buffer of at least `length * 2` bytes.
 /// - All pointers must remain valid for the duration of the call.
 pub unsafe extern "C" fn sunspec_service_read_registers(
-    bindings: *const SunspecModelBinding,
-    binding_count: usize,
+    models: *const CModelSpec,
+    model_count: usize,
     read_adapters: *const SunspecAdapter,
     adapter_count: usize,
     address: u16,
     length: u16,
     response_buffer: *mut u8,
 ) -> i32 {
-    if bindings.is_null() || read_adapters.is_null() || response_buffer.is_null() {
+    if models.is_null() || read_adapters.is_null() || response_buffer.is_null() {
         return SUNSPEC_RC_NULL_ARG;
     }
 
-    let bindings = unsafe { slice::from_raw_parts(bindings, binding_count) };
+    let models = unsafe { slice::from_raw_parts(models, model_count) };
     let adapters = unsafe { slice::from_raw_parts(read_adapters, adapter_count) };
-    if let Err(rc) = check_read_alignment(bindings, adapters) {
+    if let Err(rc) = check_read_alignment(models, adapters) {
         return rc;
     }
 
     let buffer = unsafe { slice::from_raw_parts_mut(response_buffer, (length as usize) * 2) };
 
-    let codec = Sunspec::new(CModelList { bindings });
+    let codec = Sunspec::new(CModelList { models });
     match codec.read_registers(address, buffer, adapters) {
         Ok(()) => SUNSPEC_RC_OK,
         Err(exception) => exception as i32,
@@ -274,36 +275,36 @@ pub unsafe extern "C" fn sunspec_service_read_registers(
 /// [`sunspec_service_read_registers`].
 ///
 /// # Safety
-/// - `bindings` must point to `binding_count` valid, live [`SunspecModelBinding`]s, each
+/// - `models` must point to `model_count` valid, live [`CModelSpec`]s, each
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `write_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, one per
 ///   **writable** model (a model whose `StaticModelSpec::writable` is set), index-aligned with the
-///   writable subsequence of `bindings` and in the same order; each `adapter` pointer must
+///   writable subsequence of `models` and in the same order; each `adapter` pointer must
 ///   match its `kind`. Non-writable models take no entry.
 /// - `request_buffer` must be a valid buffer of at least `length * 2` bytes.
 /// - All pointers must remain valid for the duration of the call.
 pub unsafe extern "C" fn sunspec_service_write_registers(
-    bindings: *const SunspecModelBinding,
-    binding_count: usize,
+    models: *const CModelSpec,
+    model_count: usize,
     write_adapters: *const SunspecAdapter,
     adapter_count: usize,
     address: u16,
     length: u16,
     request_buffer: *const u8,
 ) -> i32 {
-    if bindings.is_null() || write_adapters.is_null() || request_buffer.is_null() {
+    if models.is_null() || write_adapters.is_null() || request_buffer.is_null() {
         return SUNSPEC_RC_NULL_ARG;
     }
 
-    let bindings = unsafe { slice::from_raw_parts(bindings, binding_count) };
+    let models = unsafe { slice::from_raw_parts(models, model_count) };
     let adapters = unsafe { slice::from_raw_parts(write_adapters, adapter_count) };
-    if let Err(rc) = check_write_alignment(bindings, adapters) {
+    if let Err(rc) = check_write_alignment(models, adapters) {
         return rc;
     }
 
     let buffer = unsafe { slice::from_raw_parts(request_buffer, (length as usize) * 2) };
 
-    let codec = Sunspec::new(CModelList { bindings });
+    let codec = Sunspec::new(CModelList { models });
     match codec.write_multiple_registers(address, buffer, adapters) {
         Ok(()) => SUNSPEC_RC_OK,
         Err(exception) => exception as i32,
