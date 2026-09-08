@@ -23,23 +23,41 @@ However, many devices have no operating system and quite often in support of ser
 In this instance, the library could be used along with implementations of Rust's embedded-hal IO library.
 
 ## Data model
-For each SunSpec model to be exposed by the server, there are three key pieces of information required.
 
 ### Model specification
 A static description of a single specific SunSpec model, including the counts for any repeating groups. This must be static at runtime
-and is used identically for both reads and writes. Critically, this information is sufficient to fully calculate the register layout 
+and is used identically for both reads and writes. Critically, this information is sufficient to fully calculate the register layout
 of the model and its points.
 
-In Rust-facing interfaces, this is represented by an implementation of the ModelSpec trait. 
+In Rust-facing interfaces, this is represented by an implementation of the ModelSpec trait.
 
-### Read adapter
-An implementation that can provide a value for each point in a specific model. To handle a read operation, one such adapter
-must be provided for each specification as defined above.
+### Model list
+A model list is an ordered collection of [Model specification](#model-specification) objects - representing the full set 
+of models exposed by a Modbus server.
 
-### Write adapter
-An implementation that can handle an update to each point in a specific model. Similarly, handling write operations will
-require an adapter for each specification that supports writes. Importantly, this is not all models, since some have
-only readable points.
+In Rust-facing interfaces, a ModelList implementation can be defined for any arbitrary data structure, and it must expose 
+an iterator over each of its included Models bound to an appropriate Adapter for each of the read and write cases.
+
+### Read/write adapter
+An implementation that can provide a value or handle an update for each point in a specific model respectively. To handle 
+an operation for a given Model list, one such adapter must be provided for each specification as defined above.
+
+These are provided as Traits, and a Rust consumer of the library can implement this in any way they choose. For convenience and compatibility
+with the interface for C or other programming languages, two standard implementations of the adapters are provided:
+ - The Stateful adapter holds a representation of each point in a struct, and directly gets and sets these values according
+   to requests
+ - The Callback adapter holds function pointers for each method which are directly invoked, allowing more complex custom
+   behaviour in non-Rust languages
+
+### Adapter binding
+An adapter binding represents the pair of a Model specification with an adapter implementation. This is represented by the
+ReadBinding and WriteBinding enumerations. These are explicitly paired to ensure that the register layout is static, and 
+consistent between read and write.
+
+For Rust-facing interfaces, a binding is expected to be represented by the variant specific to the model being represented.
+For other languages, there is a single Extern variant which allows the adapter to be referenced by void pointer. This variant
+includes the other parameters required to safely cast to the specific implementation and map through to the correct point
+traversal methods.
 
 ## Crates
 ### sunspec-gen
