@@ -158,9 +158,9 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
 /// The `ReadBinding` / `WriteBinding` enums and their `read_model` / `write_model` drivers.
 ///
 /// Each enum has one variant per model, pairing the model marker (e.g. `model_1::Model1`)
-/// with a reference to that model's per-model adapter trait — shared for reads, uniquely
-/// borrowed (`RefMut`) for writes. `WriteBinding`'s model variants carry an adapter only for
-/// models with writable points.
+/// with a borrow of that model's per-model adapter trait out of a `RefCell` — shared (`Ref`)
+/// for reads, unique (`RefMut`) for writes. `WriteBinding`'s model variants carry an adapter
+/// only for models with writable points.
 ///
 /// Both enums also have a non-model `Extern` variant carrying a C [`StaticModelSpec`] vtable
 /// and an untyped adapter pointer, for maps whose models aren't known statically (the FFI
@@ -169,6 +169,7 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
 pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     let mut scope = Scope::new();
     scope.import("crate::sunspec::models", "*");
+    scope.import("core::cell", "Ref");
     scope.import("core::cell", "RefMut");
     scope.import("core::ffi", "c_void");
     scope.import("crate", "ModbusException");
@@ -184,7 +185,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         .generic("'a")
         .r#macro("#[non_exhaustive]")
         .doc(
-            "One model's read side: a statically known model paired with a shared reference to\n\
+            "One model's read side: a statically known model paired with a shared borrow of\n\
              its per-model [`ReadAdapter`](crate::sunspec::models) trait, or an\n\
              [`Extern`](ReadBinding::Extern) block dispatched through a C [`StaticModelSpec`] vtable.",
         );
@@ -194,7 +195,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         read_enum
             .new_variant(pc)
             .tuple(format!("&'a {sc}::{pc}"))
-            .tuple(format!("&'a dyn {sc}::ReadAdapter"));
+            .tuple(format!("Ref<'a, dyn {sc}::ReadAdapter>"));
     }
     read_enum
         .new_variant("Extern")
@@ -258,7 +259,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
 
         model_match.line("cursor.visit_source_block(");
         model_match.line("model.model_length(),");
-        model_match.line("|offset, from, len| { model.traverse_points_read(adapter, &mut buffer.slice(from, len), offset) }");
+        model_match.line("|offset, from, len| { model.traverse_points_read(&*adapter, &mut buffer.slice(from, len), offset) }");
         model_match.line(");");
         read_match.push_block(model_match);
     }

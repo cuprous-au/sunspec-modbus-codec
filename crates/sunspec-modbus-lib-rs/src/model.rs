@@ -56,9 +56,11 @@ pub trait ModelSpec<'a> {
 /// Implemented for tuples of 1..=16 models. The single list is the source of truth for
 /// layout in both directions; each request supplies the matching tuple of adapters:
 ///
-/// - [`ReadAdapters`](ModelList::ReadAdapters) — one `&ReadAdapter` per model, all required.
-/// - [`WriteAdapters`](ModelList::WriteAdapters) — one `Option<&mut WriteAdapter>` per model;
-///   a `None` (or a model with no writable points) rejects writes to that block.
+/// - [`ReadAdapters`](ModelList::ReadAdapters) — one `RefCell<ReadAdapter>` per model, all
+///   required; `read_iter` borrows each shared (`Ref`) into its [`ReadBinding`].
+/// - [`WriteAdapters`](ModelList::WriteAdapters) — one `RefCell<WriteAdapter>` per writable
+///   model; `write_iter` borrows each uniquely (`RefMut`) into its [`WriteBinding`]. A model
+///   with no adapter, or with no writable points, rejects writes to that block.
 pub trait ModelList {
     type ReadAdapters<'a>
     where

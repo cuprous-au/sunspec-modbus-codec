@@ -50,7 +50,7 @@ mod tests {
         });
 
         impl ModelList for SunspecModel {
-            type ReadAdapters<'a> = &'a Model1StatefulAdapter;
+            type ReadAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
 
             type WriteAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
 
@@ -58,7 +58,7 @@ mod tests {
                 &'a self,
                 adapters: Self::ReadAdapters<'a>,
             ) -> impl Iterator<Item = ReadBinding<'a>> {
-                Some(ReadBinding::Model1(&self.model, adapters)).into_iter()
+                Some(ReadBinding::Model1(&self.model, adapters.borrow())).into_iter()
             }
 
             fn write_iter<'a>(
@@ -77,11 +77,7 @@ mod tests {
 
         let mut init_buf = [0_u8; WORDS_TO_READ as usize * 2];
 
-        sunspec.read_registers(
-            STARTING_REGISTER_OFFSET,
-            init_buf.as_mut_slice(),
-            &adapter.borrow(),
-        )?;
+        sunspec.read_registers(STARTING_REGISTER_OFFSET, init_buf.as_mut_slice(), &adapter)?;
 
         assert_eq!(&init_buf[..4], b"SunS");
         assert_eq!(
@@ -128,7 +124,7 @@ mod tests {
         sunspec.read_registers(
             STARTING_REGISTER_OFFSET + 52,
             after_buf.as_mut_slice(),
-            &adapter.borrow(),
+            &adapter,
         )?;
 
         assert_eq!(CStr::from_bytes_until_nul(&after_buf[0..32]), Ok(c"I-1"));
@@ -152,9 +148,9 @@ mod tests {
         }
 
         struct SunspecReadAdapters<'a> {
-            model_1: &'a dyn model_1::ReadAdapter,
-            model_701: &'a dyn model_701::ReadAdapter,
-            model_704: &'a dyn model_704::ReadAdapter,
+            model_1: &'a RefCell<dyn model_1::ReadAdapter>,
+            model_701: &'a RefCell<dyn model_701::ReadAdapter>,
+            model_704: &'a RefCell<dyn model_704::ReadAdapter>,
         }
 
         struct ReadAdapterIter<'a> {
@@ -170,15 +166,15 @@ mod tests {
                 let result = match self.state {
                     0 => Some(ReadBinding::Model1(
                         &self.model.model_1,
-                        self.adapters.model_1,
+                        self.adapters.model_1.borrow(),
                     )),
                     1 => Some(ReadBinding::Model701(
                         &self.model.model_701,
-                        self.adapters.model_701,
+                        self.adapters.model_701.borrow(),
                     )),
                     2 => Some(ReadBinding::Model704(
                         &self.model.model_704,
-                        self.adapters.model_704,
+                        self.adapters.model_704.borrow(),
                     )),
                     _ => None,
                 };
