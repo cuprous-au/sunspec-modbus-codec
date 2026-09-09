@@ -199,10 +199,10 @@ impl<'a> Iterator for WriteAdapterIter<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         let result = match self.index {
-            0 => self.model_1.take().map(|adapter| WriteBinding::Model1(
-                &self.models.model_1,
-                adapter,
-            )),
+            0 => self
+                .model_1
+                .take()
+                .map(|adapter| WriteBinding::Model1(&self.models.model_1, adapter)),
             1 => Some(WriteBinding::Model103(&self.models.model_103)),
             _ => None,
         };
