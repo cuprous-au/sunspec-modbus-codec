@@ -253,7 +253,8 @@ pub unsafe extern "C" fn sunspec_read_registers(
         return rc;
     }
 
-    let buffer = unsafe { slice::from_raw_parts_mut(response_buffer, (buffer_length as usize) * 2) };
+    let buffer =
+        unsafe { slice::from_raw_parts_mut(response_buffer, (buffer_length as usize) * 2) };
 
     let codec = Sunspec::new(CModelList { models });
     match codec.read_registers(address, buffer, adapters) {
