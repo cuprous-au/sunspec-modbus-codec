@@ -13,9 +13,10 @@ strip = false
 panic = "abort"
 
 [profile.release]
+codegen-units = 1
 lto = true
-debug = true
-strip = false
+debug = false
+strip = true
 panic = "abort"
 
 [workspace.dependencies]
