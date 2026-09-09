@@ -262,9 +262,8 @@ impl tokio_modbus::server::Service for ExampleService {
     type Future = future::Ready<Result<Self::Response, Self::Exception>>;
 
     fn call(&self, req: Self::Request) -> Self::Future {
-        // `RefCell`s over zero-sized adapters, built fresh per request purely to satisfy
-        // `ReadBinding`/`WriteBinding`'s borrow-guard types — the models they front carry no
-        // data of their own, so there's no state here to race across requests.
+        // Zero-sized adapters, built fresh per request.
+        // The models they front carry no data of their own, so there's no state here to race across requests.
         let mut common_model = CommonModel;
         let inverter_model = InverterModel;
 

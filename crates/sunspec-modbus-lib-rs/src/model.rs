@@ -52,15 +52,11 @@ pub trait ModelSpec<'a> {
 }
 
 /// An ordered, heterogeneous list of [`ModelSpec`]s describing one device's register map.
-///
-/// Implemented for tuples of 1..=16 models. The single list is the source of truth for
-/// layout in both directions; each request supplies the matching tuple of adapters:
-///
-/// - [`ReadAdapters`](ModelList::ReadAdapters) — one `RefCell<ReadAdapter>` per model, all
-///   required; `read_iter` borrows each shared (`Ref`) into its [`ReadBinding`].
-/// - [`WriteAdapters`](ModelList::WriteAdapters) — one `RefCell<WriteAdapter>` per writable
-///   model; `write_iter` borrows each uniquely (`RefMut`) into its [`WriteBinding`]. A model
-///   with no adapter, or with no writable points, rejects writes to that block.
+/// 
+/// - [`ReadAdapters`](ModelList::ReadAdapters) — a ReadBinding binding per model in the list. Each will hold a reference
+///   to a ReadAdapter implementation specific to that model.
+/// - [`WriteAdapters`](ModelList::WriteAdapters) — a WriteBinding per model in the list. Only those for writeable models
+///   will hold a mutable reference to a WriteAdapter implementation specific to that model.
 pub trait ModelList {
     type ReadAdapters<'a>
     where
