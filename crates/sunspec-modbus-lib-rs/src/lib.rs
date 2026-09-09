@@ -23,7 +23,7 @@ pub enum ModbusException {
 
 #[cfg(test)]
 mod tests {
-    use core::{cell::RefCell, ffi::CStr};
+    use core::ffi::CStr;
 
     use crate::sunspec::{
         adapters::{ReadBinding, WriteBinding},
