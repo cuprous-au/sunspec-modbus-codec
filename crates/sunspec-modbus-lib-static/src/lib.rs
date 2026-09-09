@@ -232,16 +232,16 @@ impl ModelList for CModelList<'_> {
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `read_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, index-aligned
 ///   with `models`, each `adapter` pointer matching its `kind`.
-/// - `response_buffer` must be a valid, writable buffer of at least `length * 2` bytes.
+/// - `response_buffer` must be a valid, writable buffer of at least `buffer_length * 2` bytes.
 /// - All pointers must remain valid for the duration of the call.
-pub unsafe extern "C" fn sunspec_service_read_registers(
+pub unsafe extern "C" fn sunspec_read_registers(
     models: *const CModelSpec,
     model_count: usize,
+    address: u16,
+    response_buffer: *mut u8,
+    buffer_length: u16,
     read_adapters: *const SunspecAdapter,
     adapter_count: usize,
-    address: u16,
-    length: u16,
-    response_buffer: *mut u8,
 ) -> i32 {
     if models.is_null() || read_adapters.is_null() || response_buffer.is_null() {
         return SUNSPEC_RC_NULL_ARG;
@@ -253,7 +253,7 @@ pub unsafe extern "C" fn sunspec_service_read_registers(
         return rc;
     }
 
-    let buffer = unsafe { slice::from_raw_parts_mut(response_buffer, (length as usize) * 2) };
+    let buffer = unsafe { slice::from_raw_parts_mut(response_buffer, (buffer_length as usize) * 2) };
 
     let codec = Sunspec::new(CModelList { models });
     match codec.read_registers(address, buffer, adapters) {
@@ -266,7 +266,7 @@ pub unsafe extern "C" fn sunspec_service_read_registers(
 /// Handle a SunSpec Modbus write of multiple holding registers, decoding into the relevant
 /// models. A write that touches a block whose `kind` is `SUNSPEC_ADAPTER_NONE`, or a model
 /// with no writable points, is rejected with `IllegalDataAddress`. Return codes as for
-/// [`sunspec_service_read_registers`].
+/// [`sunspec_read_registers`].
 ///
 /// # Safety
 /// - `models` must point to `model_count` valid, live [`CModelSpec`]s, each
@@ -275,16 +275,16 @@ pub unsafe extern "C" fn sunspec_service_read_registers(
 ///   **writable** model (a model whose `StaticModelSpec::writable` is set), index-aligned with the
 ///   writable subsequence of `models` and in the same order; each `adapter` pointer must
 ///   match its `kind`. Non-writable models take no entry.
-/// - `request_buffer` must be a valid buffer of at least `length * 2` bytes.
+/// - `request_buffer` must be a valid buffer of at least `buffer_length * 2` bytes.
 /// - All pointers must remain valid for the duration of the call.
-pub unsafe extern "C" fn sunspec_service_write_registers(
+pub unsafe extern "C" fn sunspec_write_multiple_registers(
     models: *const CModelSpec,
     model_count: usize,
+    address: u16,
+    request_buffer: *const u8,
+    buffer_length: u16,
     write_adapters: *const SunspecAdapter,
     adapter_count: usize,
-    address: u16,
-    length: u16,
-    request_buffer: *const u8,
 ) -> i32 {
     if models.is_null() || write_adapters.is_null() || request_buffer.is_null() {
         return SUNSPEC_RC_NULL_ARG;
@@ -296,10 +296,49 @@ pub unsafe extern "C" fn sunspec_service_write_registers(
         return rc;
     }
 
-    let buffer = unsafe { slice::from_raw_parts(request_buffer, (length as usize) * 2) };
+    let buffer = unsafe { slice::from_raw_parts(request_buffer, (buffer_length as usize) * 2) };
 
     let codec = Sunspec::new(CModelList { models });
     match codec.write_multiple_registers(address, buffer, adapters) {
+        Ok(()) => SUNSPEC_RC_OK,
+        Err(exception) => exception as i32,
+    }
+}
+
+#[unsafe(no_mangle)]
+/// Handle a SunSpec Modbus write to a single holding register, decoding into the relevant
+/// models. A write that touches a block whose `kind` is `SUNSPEC_ADAPTER_NONE`, or a model
+/// with no writable points, is rejected with `IllegalDataAddress`. Return codes as for
+/// [`sunspec_read_registers`].
+///
+/// # Safety
+/// - `models` must point to `model_count` valid, live [`CModelSpec`]s, each
+///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
+/// - `write_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, one per
+///   **writable** model (a model whose `StaticModelSpec::writable` is set), index-aligned with the
+///   writable subsequence of `models` and in the same order; each `adapter` pointer must
+///   match its `kind`. Non-writable models take no entry.
+/// - All pointers must remain valid for the duration of the call.
+pub unsafe extern "C" fn sunspec_write_single_register(
+    models: *const CModelSpec,
+    model_count: usize,
+    address: u16,
+    value: u16,
+    write_adapters: *const SunspecAdapter,
+    adapter_count: usize,
+) -> i32 {
+    if models.is_null() || write_adapters.is_null() {
+        return SUNSPEC_RC_NULL_ARG;
+    }
+
+    let models = unsafe { slice::from_raw_parts(models, model_count) };
+    let adapters = unsafe { slice::from_raw_parts(write_adapters, adapter_count) };
+    if let Err(rc) = check_write_alignment(models, adapters) {
+        return rc;
+    }
+
+    let codec = Sunspec::new(CModelList { models });
+    match codec.write_single_register(address, value, adapters) {
         Ok(()) => SUNSPEC_RC_OK,
         Err(exception) => exception as i32,
     }
