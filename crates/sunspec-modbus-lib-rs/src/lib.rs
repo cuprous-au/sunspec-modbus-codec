@@ -40,32 +40,32 @@ mod tests {
         struct SunspecModel {
             model: model_1::Model1,
         }
-        let adapter = RefCell::new(Model1StatefulAdapter {
+        let mut adapter = Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
             options: c_char_array!("opt_a_b_c"),
             version: c_char_array!("v0.1"),
             serial_number: c_char_array!("I-1"),
             device_address: 0,
-        });
+        };
 
         impl ModelList for SunspecModel {
-            type ReadAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
+            type ReadAdapters<'a> = &'a Model1StatefulAdapter;
 
-            type WriteAdapters<'a> = &'a RefCell<Model1StatefulAdapter>;
+            type WriteAdapters<'a> = &'a mut Model1StatefulAdapter;
 
             fn read_iter<'a>(
                 &'a self,
-                adapters: Self::ReadAdapters<'a>,
+                adapter: Self::ReadAdapters<'a>,
             ) -> impl Iterator<Item = ReadBinding<'a>> {
-                Some(ReadBinding::Model1(&self.model, adapters.borrow())).into_iter()
+                Some(ReadBinding::Model1(&self.model, adapter)).into_iter()
             }
 
             fn write_iter<'a>(
                 &'a self,
                 adapter: Self::WriteAdapters<'a>,
             ) -> impl Iterator<Item = WriteBinding<'a>> {
-                Some(WriteBinding::Model1(&self.model, adapter.borrow_mut())).into_iter()
+                Some(WriteBinding::Model1(&self.model, adapter)).into_iter()
             }
         }
 
@@ -111,13 +111,10 @@ mod tests {
         sunspec.write_multiple_registers(
             STARTING_REGISTER_OFFSET + 68,
             [1234u16].as_slice(),
-            &adapter,
+            &mut adapter,
         )?;
 
-        assert_eq!(
-            model_1::ReadAdapter::device_address(&adapter.borrow() as &Model1StatefulAdapter),
-            Some(1234)
-        );
+        assert_eq!(model_1::ReadAdapter::device_address(&adapter), Some(1234));
 
         let mut after_buf = [0_u8; 40];
 
@@ -148,9 +145,9 @@ mod tests {
         }
 
         struct SunspecReadAdapters<'a> {
-            model_1: &'a RefCell<dyn model_1::ReadAdapter>,
-            model_701: &'a RefCell<dyn model_701::ReadAdapter>,
-            model_704: &'a RefCell<dyn model_704::ReadAdapter>,
+            model_1: &'a dyn model_1::ReadAdapter,
+            model_701: &'a dyn model_701::ReadAdapter,
+            model_704: &'a dyn model_704::ReadAdapter,
         }
 
         struct ReadAdapterIter<'a> {
@@ -166,15 +163,15 @@ mod tests {
                 let result = match self.state {
                     0 => Some(ReadBinding::Model1(
                         &self.model.model_1,
-                        self.adapters.model_1.borrow(),
+                        self.adapters.model_1,
                     )),
                     1 => Some(ReadBinding::Model701(
                         &self.model.model_701,
-                        self.adapters.model_701.borrow(),
+                        self.adapters.model_701,
                     )),
                     2 => Some(ReadBinding::Model704(
                         &self.model.model_704,
-                        self.adapters.model_704.borrow(),
+                        self.adapters.model_704,
                     )),
                     _ => None,
                 };
@@ -184,12 +181,13 @@ mod tests {
         }
 
         struct SunspecWriteAdapters<'a> {
-            model_1: &'a RefCell<dyn model_1::WriteAdapter>,
-            model_704: &'a RefCell<dyn model_704::WriteAdapter>,
+            model_1: &'a mut dyn model_1::WriteAdapter,
+            model_704: &'a mut dyn model_704::WriteAdapter,
         }
         struct WriteAdapterIter<'a> {
             model: &'a SunspecModel,
-            adapters: &'a SunspecWriteAdapters<'a>,
+            model_1: Option<&'a mut dyn model_1::WriteAdapter>,
+            model_704: Option<&'a mut dyn model_704::WriteAdapter>,
             state: usize,
         }
         impl<'a> Iterator for WriteAdapterIter<'a> {
@@ -197,15 +195,15 @@ mod tests {
 
             fn next(&mut self) -> Option<Self::Item> {
                 let result: Option<WriteBinding<'a>> = match self.state {
-                    0 => Some(WriteBinding::Model1(
-                        &self.model.model_1,
-                        self.adapters.model_1.borrow_mut(),
-                    )),
+                    0 => self
+                        .model_1
+                        .take()
+                        .map(|adapter| WriteBinding::Model1(&self.model.model_1, adapter)),
                     1 => Some(WriteBinding::Model701(&self.model.model_701)),
-                    2 => Some(WriteBinding::Model704(
-                        &self.model.model_704,
-                        self.adapters.model_704.borrow_mut(),
-                    )),
+                    2 => self
+                        .model_704
+                        .take()
+                        .map(|adapter| WriteBinding::Model704(&self.model.model_704, adapter)),
                     _ => None,
                 };
                 self.state += 1;
@@ -216,7 +214,7 @@ mod tests {
         impl ModelList for SunspecModel {
             type ReadAdapters<'a> = &'a SunspecReadAdapters<'a>;
 
-            type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
+            type WriteAdapters<'a> = &'a mut SunspecWriteAdapters<'a>;
 
             fn read_iter<'a>(
                 &'a self,
@@ -235,13 +233,14 @@ mod tests {
             ) -> impl Iterator<Item = WriteBinding<'a>> {
                 WriteAdapterIter {
                     model: self,
-                    adapters,
+                    model_1: Some(adapters.model_1),
+                    model_704: Some(adapters.model_704),
                     state: 0,
                 }
             }
         }
 
-        let common_model = Model1StatefulAdapter {
+        let mut common_model = Model1StatefulAdapter {
             manufacturer: c_char_array!("Cuprous"),
             model: c_char_array!("Inverter 1"),
             options: c_char_array!("opt_a_b_c"),
@@ -266,13 +265,13 @@ mod tests {
             model_704: model_704::Model704,
         });
 
-        let der_ac_controls = RefCell::new(DerAcControlsModel {
+        let mut der_ac_controls = DerAcControlsModel {
             active_power_enable: false,
-        });
+        };
 
         let mut adapters = SunspecWriteAdapters {
-            model_1: &RefCell::new(common_model),
-            model_704: &der_ac_controls,
+            model_1: &mut common_model,
+            model_704: &mut der_ac_controls,
         };
 
         sunspec.write_multiple_registers(
@@ -281,7 +280,7 @@ mod tests {
             &mut adapters,
         )?;
 
-        assert!(der_ac_controls.borrow().active_power_enable);
+        assert!(der_ac_controls.active_power_enable);
 
         Ok(())
     }

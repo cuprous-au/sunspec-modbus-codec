@@ -195,7 +195,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         read_enum
             .new_variant(pc)
             .tuple(format!("&'a {sc}::{pc}"))
-            .tuple(format!("Ref<'a, dyn {sc}::ReadAdapter>"));
+            .tuple(format!("&'a dyn {sc}::ReadAdapter"));
     }
     read_enum
         .new_variant("Extern")
@@ -231,7 +231,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         let pc = &model.name_pascal_case;
         let variant = write_enum.new_variant(pc).tuple(format!("&'a {sc}::{pc}"));
         if model.group.writable {
-            variant.tuple(format!("RefMut<'a, dyn {sc}::WriteAdapter>"));
+            variant.tuple(format!("&'a mut dyn {sc}::WriteAdapter"));
         }
     }
     write_enum
