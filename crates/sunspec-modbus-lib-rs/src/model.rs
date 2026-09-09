@@ -52,7 +52,7 @@ pub trait ModelSpec<'a> {
 }
 
 /// An ordered, heterogeneous list of [`ModelSpec`]s describing one device's register map.
-/// 
+///
 /// - [`ReadAdapters`](ModelList::ReadAdapters) — a ReadBinding binding per model in the list. Each will hold a reference
 ///   to a ReadAdapter implementation specific to that model.
 /// - [`WriteAdapters`](ModelList::WriteAdapters) — a WriteBinding per model in the list. Only those for writeable models
