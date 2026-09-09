@@ -281,6 +281,7 @@ int main(void)
         modbus_free(ctx);
         return 1;
     }
+    pthread_detach(voltage_thread);
 
     int server_socket = modbus_tcp_listen(ctx, 1);
     if (server_socket == -1)
