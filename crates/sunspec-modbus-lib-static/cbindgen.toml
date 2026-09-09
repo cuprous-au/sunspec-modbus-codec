@@ -14,9 +14,13 @@ usize_is_size_t = true
 parse_deps = true
 clean = true
 include = ["sunspec-modbus-lib-rs"]
+# Lets cbindgen export the per-model `SUNSPEC_MODEL_<id>` statics (and the typed adapter
+# constructors' `SUNSPEC_MODEL_<id>` references) straight from where they're defined, instead
+# of needing them hand-spliced into the header.
+extra_bindings = ["sunspec-modbus-lib-rs"]
 
 [export]
-item_types = ["constants", "functions", "typedefs", "structs", "enums"]
+item_types = ["constants", "functions", "typedefs", "structs", "enums", "globals", "opaque"]
 include = []
 
 [enum]

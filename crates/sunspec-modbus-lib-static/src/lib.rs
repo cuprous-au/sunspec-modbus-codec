@@ -1,5 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+mod generated;
+
 use core::ffi::c_void;
 use core::slice;
 
