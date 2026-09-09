@@ -109,8 +109,7 @@ Contributions via GitHub pull requests are gladly accepted from their original a
 
 This code is open source software licensed under the [Apache-2.0 license](./LICENSE).
 
-An AR-PST deliverable
-##
+## An AR-PST deliverable
 
 This repository is a deliverable of a research grant with the Australian Research in Power Systems Transition project
 ([AR-PST](https://www.csiro.au/en/research/technology-space/energy/electricity-transition/ar-pst));
