@@ -1,5 +1,4 @@
 use std::{
-    cell::RefCell,
     ffi::CStr,
     future,
     io::{self},
@@ -155,8 +154,8 @@ impl model_103::ReadAdapter for InverterModel {
 }
 
 struct SunspecReadAdapters<'a> {
-    model_1: &'a RefCell<dyn model_1::ReadAdapter>,
-    model_103: &'a RefCell<dyn model_103::ReadAdapter>,
+    model_1: &'a dyn model_1::ReadAdapter,
+    model_103: &'a dyn model_103::ReadAdapter,
 }
 
 struct ReadAdapterIter<'a> {
@@ -172,11 +171,11 @@ impl<'a> Iterator for ReadAdapterIter<'a> {
         let result = match self.index {
             0 => Some(ReadBinding::Model1(
                 &self.models.model_1,
-                self.adapters.model_1.borrow(),
+                self.adapters.model_1,
             )),
             1 => Some(ReadBinding::Model103(
                 &self.models.model_103,
-                self.adapters.model_103.borrow(),
+                self.adapters.model_103,
             )),
             _ => None,
         };
@@ -186,12 +185,12 @@ impl<'a> Iterator for ReadAdapterIter<'a> {
 }
 
 struct SunspecWriteAdapters<'a> {
-    model_1: &'a RefCell<dyn model_1::WriteAdapter>,
+    model_1: &'a mut dyn model_1::WriteAdapter,
 }
 
 struct WriteAdapterIter<'a> {
     models: &'a SunspecModels,
-    adapters: &'a SunspecWriteAdapters<'a>,
+    model_1: Option<&'a mut dyn model_1::WriteAdapter>,
     index: usize,
 }
 
@@ -200,10 +199,10 @@ impl<'a> Iterator for WriteAdapterIter<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         let result = match self.index {
-            0 => Some(WriteBinding::Model1(
-                &self.models.model_1,
-                self.adapters.model_1.borrow_mut(),
-            )),
+            0 => self
+                .model_1
+                .take()
+                .map(|adapter| WriteBinding::Model1(&self.models.model_1, adapter)),
             1 => Some(WriteBinding::Model103(&self.models.model_103)),
             _ => None,
         };
@@ -220,7 +219,7 @@ struct SunspecModels {
 impl ModelList for SunspecModels {
     type ReadAdapters<'a> = &'a SunspecReadAdapters<'a>;
 
-    type WriteAdapters<'a> = &'a SunspecWriteAdapters<'a>;
+    type WriteAdapters<'a> = &'a mut SunspecWriteAdapters<'a>;
 
     fn read_iter<'a>(
         &'a self,
@@ -239,7 +238,7 @@ impl ModelList for SunspecModels {
     ) -> impl Iterator<Item = WriteBinding<'a>> {
         WriteAdapterIter {
             models: self,
-            adapters,
+            model_1: Some(adapters.model_1),
             index: 0,
         }
     }
@@ -266,8 +265,8 @@ impl tokio_modbus::server::Service for ExampleService {
         // `RefCell`s over zero-sized adapters, built fresh per request purely to satisfy
         // `ReadBinding`/`WriteBinding`'s borrow-guard types — the models they front carry no
         // data of their own, so there's no state here to race across requests.
-        let common_model = RefCell::new(CommonModel);
-        let inverter_model = RefCell::new(InverterModel);
+        let mut common_model = CommonModel;
+        let inverter_model = InverterModel;
 
         println!("Handling {req:?}");
         let res = match req {
@@ -299,8 +298,8 @@ impl tokio_modbus::server::Service for ExampleService {
                 match SUNSPEC.write_multiple_registers(
                     addr,
                     buffer.as_ref(),
-                    &SunspecWriteAdapters {
-                        model_1: &common_model,
+                    &mut SunspecWriteAdapters {
+                        model_1: &mut common_model,
                     },
                 ) {
                     Ok(_) => Ok(Response::WriteMultipleRegisters(addr, len)),
@@ -311,8 +310,8 @@ impl tokio_modbus::server::Service for ExampleService {
                 match SUNSPEC.write_single_register(
                     addr,
                     value,
-                    &SunspecWriteAdapters {
-                        model_1: &common_model,
+                    &mut SunspecWriteAdapters {
+                        model_1: &mut common_model,
                     },
                 ) {
                     Ok(_) => Ok(Response::WriteSingleRegister(addr, value)),

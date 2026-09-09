@@ -158,9 +158,8 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
 /// The `ReadBinding` / `WriteBinding` enums and their `read_model` / `write_model` drivers.
 ///
 /// Each enum has one variant per model, pairing the model marker (e.g. `model_1::Model1`)
-/// with a borrow of that model's per-model adapter trait out of a `RefCell` — shared (`Ref`)
-/// for reads, unique (`RefMut`) for writes. `WriteBinding`'s model variants carry an adapter
-/// only for models with writable points.
+/// with a borrow of that model's per-model adapter trait - with the ref being mutable for writes.
+/// `WriteBinding`'s model variants carry an adapter only for models with writable points.
 ///
 /// Both enums also have a non-model `Extern` variant carrying a C [`StaticModelSpec`] vtable
 /// and an untyped adapter pointer, for maps whose models aren't known statically (the FFI
@@ -169,8 +168,6 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
 pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     let mut scope = Scope::new();
     scope.import("crate::sunspec::models", "*");
-    scope.import("core::cell", "Ref");
-    scope.import("core::cell", "RefMut");
     scope.import("core::ffi", "c_void");
     scope.import("crate", "ModbusException");
     scope.import("crate", "ModelSpec");
@@ -195,7 +192,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         read_enum
             .new_variant(pc)
             .tuple(format!("&'a {sc}::{pc}"))
-            .tuple(format!("Ref<'a, dyn {sc}::ReadAdapter>"));
+            .tuple(format!("&'a dyn {sc}::ReadAdapter"));
     }
     read_enum
         .new_variant("Extern")
@@ -231,7 +228,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         let pc = &model.name_pascal_case;
         let variant = write_enum.new_variant(pc).tuple(format!("&'a {sc}::{pc}"));
         if model.group.writable {
-            variant.tuple(format!("RefMut<'a, dyn {sc}::WriteAdapter>"));
+            variant.tuple(format!("&'a mut dyn {sc}::WriteAdapter"));
         }
     }
     write_enum
@@ -295,7 +292,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         let pc = &model.name_pascal_case;
 
         let mut model_match = Block::new(if model.group.writable {
-            format!("WriteBinding::{pc}(model, mut adapter) =>")
+            format!("WriteBinding::{pc}(model, adapter) =>")
         } else {
             format!("WriteBinding::{pc}(model) =>")
         });
@@ -305,7 +302,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
 
         if model.group.writable {
             model_match.line(
-                "|offset, from, len| { model.traverse_points_write(&mut *adapter, &buffer.slice(from, len), offset) }"
+                "|offset, from, len| { model.traverse_points_write(adapter, &buffer.slice(from, len), offset) }"
             );
         } else {
             model_match.line("|_, _, _| Err(ModbusException::IllegalDataAddress)");

@@ -92,6 +92,6 @@ cc crates/sunspec-modbus-lib-static/examples/libmodbus.c \
   -lmodbus \
   -L./target/release \
   -lsunspec_modbus_lib_static \
-  -lpthread
+  -pthread
 ./target/example-libmodbus.o
 ```

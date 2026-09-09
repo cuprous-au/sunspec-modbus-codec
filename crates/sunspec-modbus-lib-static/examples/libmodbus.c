@@ -281,6 +281,7 @@ int main(void)
         modbus_free(ctx);
         return 1;
     }
+    pthread_detach(voltage_thread);
 
     int server_socket = modbus_tcp_listen(ctx, 1);
     if (server_socket == -1)
@@ -318,8 +319,8 @@ int main(void)
                 uint16_t length = second_field;
                 int bytes = length * 2;
 
-                int32_t status = sunspec_service_read_registers(
-                    model_list, model_count, read_adapters, model_count, address, length, &res[3]);
+                int32_t status = sunspec_read_registers(
+                    model_list, model_count, address, &res[3], length, read_adapters, model_count);
                 if (status == SUNSPEC_RC_OK)
                 {
                     // Unit identifier
@@ -346,8 +347,8 @@ int main(void)
             {
                 uint16_t length = second_field;
 
-                int32_t status = sunspec_service_write_registers(
-                    model_list, model_count, write_adapters, write_adapter_count, address, length, &req[13]);
+                int32_t status = sunspec_write_multiple_registers(
+                    model_list, model_count, address, &req[13], length, write_adapters, write_adapter_count);
                 if (status == SUNSPEC_RC_OK)
                 {
                     modbus_send_raw_request_tid(ctx, &req[6], 6, tid);
@@ -366,12 +367,8 @@ int main(void)
             }
             else if (function_code == MODBUS_FC_WRITE_SINGLE_REGISTER)
             {
-                // Same layout as a one-register write via FC 0x10: address, then the value
-                // itself, big-endian.
-                uint8_t single_register[2] = {(uint8_t)(second_field >> 8), (uint8_t)(second_field & 0xFF)};
-
-                int32_t status = sunspec_service_write_registers(
-                    model_list, model_count, write_adapters, write_adapter_count, address, 1, single_register);
+                int32_t status = sunspec_write_single_register(
+                    model_list, model_count, address, second_field, write_adapters, write_adapter_count);
                 if (status == SUNSPEC_RC_OK)
                 {
                     // FC 0x06's response echoes the request unchanged.
