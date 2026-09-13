@@ -3,13 +3,9 @@ use glob::glob;
 use rustfmt_wrapper::config::{Config, Edition};
 use std::{ffi::OsStr, fs, path::Path};
 
-use crate::generate_adapters::{
-    generate_adapters_mod
-};
+use crate::generate_adapters::generate_adapters_mod;
 
-use crate::generate_models::{
-    generate_model, generate_models_mod
-};
+use crate::generate_models::{generate_model, generate_models_mod};
 use crate::generate_static_lib::generate_static_lib_adapter_ctors;
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::sunspec_schema::SunspecModel;
@@ -42,6 +38,39 @@ fn is_included_model(path: &Path) -> bool {
     !EXCLUDED_MODELS.contains(&model_name_from_path(path))
 }
 
+/// The `model_<id>` Cargo features enabled on the calling crate, read from the
+/// `CARGO_FEATURE_MODEL_<id>` environment variables Cargo sets for a build script.
+///
+/// Called from `build.rs` in `sunspec-modbus-lib-rs` and `sunspec-modbus-lib-static` to build
+/// the `included_models` list passed to [`generate`] / [`generate_static_lib`].
+pub fn enabled_model_features() -> Vec<String> {
+    std::env::vars()
+        .filter_map(|(key, _)| {
+            key.strip_prefix("CARGO_FEATURE_MODEL_")
+                .map(|suffix| format!("model_{suffix}"))
+        })
+        .collect()
+}
+
+/// Every `model_<id>` name sunspec-gen can generate (all non-excluded models), regardless of
+/// which are currently enabled.
+///
+/// `build.rs` uses this to emit `cargo:rerun-if-env-changed=CARGO_FEATURE_MODEL_<id>` for each
+/// one: once a build script emits any `cargo:rerun-if-changed`, Cargo stops implicitly
+/// rerunning it on other changes (env vars included), so without this, toggling `model_<id>`
+/// features would silently leave stale generated sources in place.
+pub fn all_model_names() -> Vec<String> {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_glob = format!("{project_root}/models/json/model_*.json");
+
+    glob(&model_glob)
+        .expect("Failed to find Sunspec model JSON files by glob pattern")
+        .filter_map(|entry| entry.ok())
+        .filter(|path| is_included_model(path))
+        .map(|path| model_name_from_path(&path).to_string())
+        .collect()
+}
+
 fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
     let mut vec: Vec<ResolvedModel> = glob(model_glob)
         .expect("Failed to find Sunspec model JSON files by glob pattern")
@@ -69,6 +98,19 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
     vec
 }
 
+/// `collect_models`, further filtered down to `included_models` (by `name_snake_case`, e.g.
+/// `"model_103"`) — the set of Cargo `model_<id>` features enabled on the calling crate.
+fn collect_included_models(model_glob: &str, included_models: &[String]) -> Vec<ResolvedModel> {
+    collect_models(model_glob)
+        .into_iter()
+        .filter(|model| {
+            included_models
+                .iter()
+                .any(|name| *name == model.name_snake_case)
+        })
+        .collect()
+}
+
 fn format_and_write(path: &Path, scope: &Scope) {
     let text_raw = scope.to_string();
 
@@ -87,7 +129,9 @@ fn format_and_write(path: &Path, scope: &Scope) {
     fs::write(path, text).expect("Failed to write generated source to file");
 }
 
-pub fn generate() {
+/// Generates `sunspec-modbus-lib-rs`'s model/adapter sources, restricted to `included_models`
+/// (the crate's enabled `model_<id>` Cargo features, by `name_snake_case`).
+pub fn generate(included_models: &[String]) {
     let project_root = env!("CARGO_MANIFEST_DIR");
     let model_glob = format!("{project_root}/models/json/model_*.json");
     let src_path = format!("{project_root}/../sunspec-modbus-lib-rs/src/sunspec");
@@ -96,7 +140,7 @@ pub fn generate() {
     fs::create_dir_all(generated_src_dir.join("models"))
         .expect("Failed to create generated source directories");
 
-    let models = collect_models(&model_glob);
+    let models = collect_included_models(&model_glob, included_models);
 
     for model in &models {
         format_and_write(
@@ -119,13 +163,14 @@ pub fn generate() {
 }
 
 /// Regenerates `sunspec-modbus-lib-static`'s typed `SunspecAdapter` constructors
-/// (`src/generated.rs`). Called from that crate's `build.rs`, before cbindgen runs.
-pub fn generate_static_lib() {
+/// (`src/generated.rs`), restricted to `included_models` (the crate's enabled `model_<id>`
+/// Cargo features, by `name_snake_case`). Called from that crate's `build.rs`, before cbindgen
+/// runs.
+pub fn generate_static_lib(included_models: &[String]) {
     let project_root = env!("CARGO_MANIFEST_DIR");
     let model_glob = format!("{project_root}/models/json/model_*.json");
-    let models = collect_models(&model_glob);
+    let models = collect_included_models(&model_glob, included_models);
 
-    let output_path =
-        Path::new(project_root).join("../sunspec-modbus-lib-static/src/generated.rs");
+    let output_path = Path::new(project_root).join("../sunspec-modbus-lib-static/src/generated.rs");
     format_and_write(&output_path, &generate_static_lib_adapter_ctors(&models));
 }
