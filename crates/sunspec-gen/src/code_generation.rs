@@ -4,6 +4,7 @@ use crate::model_resolution::{
     CodegenFeature, DocLines, PointValueType, ResolvedEnum, ResolvedGroup, ResolvedModel,
     ResolvedPoint,
 };
+use crate::naming::Named;
 use crate::sunspec_schema::{PointAccess, PointMandatory};
 
 fn doc_text(parts: &DocLines) -> String {
@@ -11,7 +12,7 @@ fn doc_text(parts: &DocLines) -> String {
 }
 
 fn generate_enum(resolved_enum: &ResolvedEnum, scope: &mut Scope) {
-    let enum_name = &resolved_enum.name_pascal_case;
+    let enum_name = &resolved_enum.name_pascal_case();
     let enum_def = scope.new_enum(enum_name);
 
     enum_def
@@ -58,7 +59,7 @@ fn option_unless_mandatory(point: &ResolvedPoint) -> Type {
 }
 
 fn generate_getter(point: &ResolvedPoint) -> Function {
-    let mut func = Function::new(&point.name_snake_case);
+    let mut func = Function::new(point.name_snake_case());
 
     if point.mandatory == PointMandatory::O {
         func.line("None");
@@ -73,7 +74,7 @@ fn generate_getter(point: &ResolvedPoint) -> Function {
 }
 
 fn generate_setter(point: &ResolvedPoint) -> Function {
-    let mut func = Function::new(format!("set_{}", point.name_snake_case));
+    let mut func = Function::new(format!("set_{}", point.name_snake_case()));
 
     if point.mandatory == PointMandatory::M {
         func.body = None;
@@ -105,11 +106,11 @@ fn generate_point_arrays(group: &ResolvedGroup, scope: &mut Scope, args: Vec<Str
     .into_iter()
     .chain(group.points.iter().map(|point| {
         let point_reference = if args.is_empty() {
-            format!("Point::{} ", point.name_pascal_case)
+            format!("Point::{} ", point.name_pascal_case())
         } else {
             format!(
                 "Point::{} {{ {} }}",
-                point.name_pascal_case,
+                point.name_pascal_case(),
                 args.join(", "),
             )
         };
@@ -149,7 +150,7 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     scope.raw("#![allow(unused_variables)]");
 
     models.iter().for_each(|model| {
-        scope.raw(format!("pub mod {};", model.name_snake_case));
+        scope.raw(format!("pub mod {};", model.name_snake_case()));
     });
 
     scope
@@ -187,8 +188,8 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
              [`Extern`](ReadBinding::Extern) block dispatched through a C [`StaticModelSpec`] vtable.",
         );
     for model in models {
-        let sc = &model.name_snake_case;
-        let pc = &model.name_pascal_case;
+        let sc = &model.name_snake_case();
+        let pc = &model.name_pascal_case();
         read_enum
             .new_variant(pc)
             .tuple(format!("&'a {sc}::{pc}"))
@@ -224,8 +225,8 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
              write in its block.",
         );
     for model in models {
-        let sc = &model.name_snake_case;
-        let pc = &model.name_pascal_case;
+        let sc = &model.name_snake_case();
+        let pc = &model.name_pascal_case();
         let variant = write_enum.new_variant(pc).tuple(format!("&'a {sc}::{pc}"));
         if model.group.writable {
             variant.tuple(format!("&'a mut dyn {sc}::WriteAdapter"));
@@ -251,7 +252,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
 
     let mut read_match = Block::new("match adapter");
     for model in models {
-        let pc = &model.name_pascal_case;
+        let pc = &model.name_pascal_case();
         let mut model_match = Block::new(format!("ReadBinding::{pc}(model, adapter) => "));
 
         model_match.line("cursor.visit_source_block(");
@@ -289,7 +290,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
 
     let mut write_match = Block::new("match adapter");
     for model in models {
-        let pc = &model.name_pascal_case;
+        let pc = &model.name_pascal_case();
 
         let mut model_match = Block::new(if model.group.writable {
             format!("WriteBinding::{pc}(model, adapter) =>")
@@ -346,7 +347,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
 /// Repeating-group models pull their repeat counts from the `repeat_count_0` /
 /// `repeat_count_1` handler parameters, in `count_points` order.
 fn model_marker_ctor(model: &ResolvedModel) -> String {
-    let path = model.name_pascal_case.clone();
+    let path = model.name_pascal_case();
     if model.count_points.is_empty() {
         path
     } else {
@@ -354,7 +355,9 @@ fn model_marker_ctor(model: &ResolvedModel) -> String {
             .count_points
             .iter()
             .enumerate()
-            .map(|(index, count)| format!("{}: repeat_count_{index}", count.point.name_snake_case))
+            .map(|(index, count)| {
+                format!("{}: repeat_count_{index}", count.point.name_snake_case())
+            })
             .collect();
         format!("{path} {{ {} }}", fields.join(", "))
     }
@@ -383,8 +386,8 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
     }
 
     let n = model.model_number;
-    let sc = &model.name_snake_case;
-    let pc = &model.name_pascal_case;
+    let sc = &model.name_snake_case();
+    let pc = &model.name_pascal_case();
     let ctor = model_marker_ctor(model);
     let repeating = model_is_repeating(model);
     let writable = model.group.writable;
@@ -531,7 +534,7 @@ fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Stru
         let fn_ptr = format!("extern \"C\" fn(*const c_void{group_index_args}) -> {c_type}");
         callback_struct
             .new_field(
-                format!("{}_callback", point.name_snake_case),
+                format!("{}_callback", point.name_snake_case()),
                 if point.mandatory == PointMandatory::M {
                     fn_ptr
                 } else {
@@ -544,7 +547,7 @@ fn generate_callback_functions(group: &ResolvedGroup, callback_struct: &mut Stru
             let set_fn_ptr = format!("extern \"C\" fn({c_type}, *mut c_void{group_index_args})");
             callback_struct
                 .new_field(
-                    format!("set_{}_callback", point.name_snake_case),
+                    format!("set_{}_callback", point.name_snake_case()),
                     if point.mandatory == PointMandatory::M {
                         set_fn_ptr
                     } else {
@@ -582,11 +585,11 @@ fn generate_callback_read_handlers(group: &ResolvedGroup, callback_impl: &mut Im
         getter.doc("");
 
         let callback_ref = if point.mandatory == PointMandatory::M {
-            format!("self.{}_callback", point.name_snake_case)
+            format!("self.{}_callback", point.name_snake_case())
         } else {
             getter.line(format!(
                 "self.{}_callback.map(|callback| {{",
-                point.name_snake_case
+                point.name_snake_case()
             ));
             "callback".to_string()
         };
@@ -627,11 +630,11 @@ fn generate_callback_write_handlers(group: &ResolvedGroup, callback_impl: &mut I
         let callback_ref = if point.mandatory == PointMandatory::O {
             setter.line(format!(
                 "if let Some(callback) = self.set_{}_callback {{",
-                point.name_snake_case,
+                point.name_snake_case(),
             ));
             "callback".to_string()
         } else {
-            format!("self.set_{}_callback", point.name_snake_case)
+            format!("self.set_{}_callback", point.name_snake_case())
         };
 
         setter.line(if point.point_type.cast_from_c.is_some() {
@@ -656,7 +659,7 @@ fn generate_callback_write_handlers(group: &ResolvedGroup, callback_impl: &mut I
 
 pub fn generate_callback_struct(model: &ResolvedModel, scope: &mut Scope) {
     let callback_struct = scope
-        .new_struct(format!("{}CallbackAdapter", model.name_pascal_case))
+        .new_struct(format!("{}CallbackAdapter", model.name_pascal_case()))
         .vis("pub")
         .repr("C");
 
@@ -665,13 +668,13 @@ pub fn generate_callback_struct(model: &ResolvedModel, scope: &mut Scope) {
     generate_callback_functions(&model.group, callback_struct);
 
     let reader_impl = scope
-        .new_impl(format!("{}CallbackAdapter", model.name_pascal_case))
+        .new_impl(format!("{}CallbackAdapter", model.name_pascal_case()))
         .impl_trait("ReadAdapter");
     generate_callback_read_handlers(&model.group, reader_impl);
 
     if model.group.writable {
         let writer_impl = scope
-            .new_impl(format!("{}CallbackAdapter", model.name_pascal_case))
+            .new_impl(format!("{}CallbackAdapter", model.name_pascal_case()))
             .impl_trait("WriteAdapter");
 
         generate_callback_write_handlers(&model.group, writer_impl);
@@ -683,7 +686,7 @@ fn generate_model_length_calculator(group: &ResolvedGroup) -> String {
         format!(
             "{} + self.{} * ({})",
             group.static_size,
-            repeat_count_pt.name_snake_case,
+            repeat_count_pt.name_snake_case(),
             generate_model_length_calculator(repeating_block)
         )
     } else {
@@ -717,21 +720,21 @@ pub fn populate_stateful_struct(
             point.point_type.c_type.clone()
         };
         stateful_struct
-            .new_field(format!("pub {}", point.name_snake_case), c_type)
+            .new_field(format!("pub {}", point.name_snake_case()), c_type)
             .doc(doc_text(&point.doc));
     }
 
     if let Some((_, inner_group)) = &group.repeating_child {
-        let name = format!("{model_name}{}", inner_group.name_pascal_case);
+        let name = format!("{model_name}{}", inner_group.name_pascal_case());
         if let Some((array_len, inner_generics)) = generics.split_first() {
             let generic_str = inner_generics.join(", ");
             stateful_struct.field(
-                format!("pub {}", inner_group.name_snake_case),
+                format!("pub {}", inner_group.name_snake_case()),
                 format!("[{name}<{generic_str}>; {array_len}]"),
             );
             populate_stateful_struct(
                 model_name,
-                inner_group.name_pascal_case.clone(),
+                inner_group.name_pascal_case(),
                 inner_group,
                 scope,
                 &generics[1..],
@@ -743,7 +746,7 @@ pub fn populate_stateful_struct(
 fn collect_struct_generics(group: &ResolvedGroup) -> Vec<String> {
     if let Some((count_point, inner_group)) = &group.repeating_child {
         let mut params = collect_struct_generics(inner_group);
-        params.insert(0, count_point.name_snake_case.to_uppercase());
+        params.insert(0, count_point.name_snake_case().to_uppercase());
         params
     } else {
         vec![]
@@ -779,10 +782,10 @@ fn generate_stateful_read_handlers(group: &ResolvedGroup, stateful_impl: &mut Im
         let field = if point.point_type.array_length.is_some() {
             format!(
                 "self{group_index_access}.{}.as_ptr()",
-                point.name_snake_case
+                point.name_snake_case()
             )
         } else {
-            format!("self{group_index_access}.{}", point.name_snake_case)
+            format!("self{group_index_access}.{}", point.name_snake_case())
         };
         if point.mandatory == PointMandatory::O {
             getter.line("Some(");
@@ -828,13 +831,14 @@ fn generate_stateful_write_handlers(group: &ResolvedGroup, stateful_impl: &mut I
         if point.point_type.array_length.is_none() {
             setter.line(format!(
                 "self{group_index_access}.{} = value;",
-                point.name_snake_case
+                point.name_snake_case()
             ));
         } else {
             const ITER: &str = "value.to_bytes_with_nul().iter()";
             let mut block = Block::new(format!(
                 "for (dest, src) in self{group_index_access}.{}.iter_mut().zip({})",
-                point.name_snake_case, ITER
+                point.name_snake_case(),
+                ITER
             ));
             block.line("*dest = *src as c_char;");
             setter.push_block(block);
@@ -851,7 +855,7 @@ fn generate_stateful_write_handlers(group: &ResolvedGroup, stateful_impl: &mut I
 pub fn generate_stateful_struct(model: &ResolvedModel, scope: &mut Scope) {
     let generics = collect_struct_generics(&model.group);
     populate_stateful_struct(
-        model.name_pascal_case.clone(),
+        model.name_pascal_case(),
         "StatefulAdapter".to_string(),
         &model.group,
         scope,
@@ -861,7 +865,7 @@ pub fn generate_stateful_struct(model: &ResolvedModel, scope: &mut Scope) {
     let stateful_impl = scope
         .new_impl(format!(
             "{}StatefulAdapter<{}>",
-            model.name_pascal_case,
+            model.name_pascal_case(),
             generics.join(", ")
         ))
         .impl_trait("ReadAdapter");
@@ -876,7 +880,7 @@ pub fn generate_stateful_struct(model: &ResolvedModel, scope: &mut Scope) {
         let write_impl = scope
             .new_impl(format!(
                 "{}StatefulAdapter<{}>",
-                model.name_pascal_case,
+                model.name_pascal_case(),
                 generics.join(", ")
             ))
             .impl_trait("WriteAdapter");
@@ -891,7 +895,7 @@ pub fn generate_stateful_struct(model: &ResolvedModel, scope: &mut Scope) {
 
 fn add_group_variants(group: &ResolvedGroup, target_enum: &mut Enum, counters: Vec<String>) {
     for point in &group.points {
-        let variant = target_enum.new_variant(&point.name_pascal_case);
+        let variant = target_enum.new_variant(point.name_pascal_case());
         for counter in &counters {
             variant.named(counter, "u16");
         }
@@ -952,11 +956,11 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
             .map(|block_index| block_index.index_name.clone())
             .collect();
         let match_arm = if index_args.is_empty() {
-            format!("Point::{} =>", point.name_pascal_case)
+            format!("Point::{} =>", point.name_pascal_case())
         } else {
             format!(
                 "Point::{} {{ {} }} =>",
-                point.name_pascal_case,
+                point.name_pascal_case(),
                 index_args.join(", ")
             )
         };
@@ -966,7 +970,7 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                     index_args.iter().map(|arg| format!("*{arg}")).collect();
                 let value_reader = format!(
                     "adapter.{}({})",
-                    point.name_snake_case,
+                    point.name_snake_case(),
                     dereferenced_args.join(", ")
                 );
                 let rest_args = if point.point_type.writer_allow_offset {
@@ -1033,11 +1037,11 @@ fn populate_model_reader(group: &ResolvedGroup, reader_block: &mut Block) {
             .map(|block_index| block_index.index_name.clone())
             .collect();
         let match_arm = if index_args.is_empty() {
-            format!("Point::{} =>", point.name_pascal_case)
+            format!("Point::{} =>", point.name_pascal_case())
         } else {
             format!(
                 "Point::{} {{ {} }} =>",
-                point.name_pascal_case,
+                point.name_pascal_case(),
                 index_args.join(", ")
             )
         };
@@ -1073,7 +1077,7 @@ fn populate_model_reader(group: &ResolvedGroup, reader_block: &mut Block) {
             match_block
                 .line(format!(
                     "adapter.set_{}({parsed_value_name}{rest_args});",
-                    point.name_snake_case
+                    point.name_snake_case()
                 ))
                 .line("Ok(())")
                 .after(",");
@@ -1177,7 +1181,7 @@ fn generate_traverse_points_fn(
         let prefix = &inner_group.name_short;
         fn_def.line(format!(
             "let {prefix}_count = self.{};",
-            count_point.name_snake_case
+            count_point.name_snake_case()
         ));
         if let Some(child) = child_group {
             fn_def.line(format!(
@@ -1283,7 +1287,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .field("start_address", "u16")
         .field("size", "u16");
 
-    let model_struct = scope.new_struct(&model.name_pascal_case).vis("pub");
+    let model_struct = scope.new_struct(model.name_pascal_case()).vis("pub");
 
     model_struct.doc(format!(
         "Marker for SunSpec model {}. Add it to a [`Sunspec`](crate::Sunspec) model list.",
@@ -1293,7 +1297,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     for count_point in &model.count_points {
         model_struct
             .new_field(
-                &count_point.point.name_snake_case,
+                count_point.point.name_snake_case(),
                 &count_point.point.point_type.rust_type,
             )
             .vis("pub")
@@ -1301,7 +1305,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
     }
 
     let model_impl = scope
-        .new_impl(&model.name_pascal_case)
+        .new_impl(model.name_pascal_case())
         .generic("'ad")
         .impl_trait("ModelSpec<'ad>");
 
@@ -1325,7 +1329,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .new_fn("write_point_to_buffer")
         .generic("'a")
         .vis("pub(crate)")
-        .arg("model", format!("&{}", model.name_pascal_case))
+        .arg("model", format!("&{}", model.name_pascal_case()))
         .arg("adapter", "&dyn ReadAdapter")
         .arg("point", "&Point")
         .arg("buffer", "&mut WritableRegisterBuffer<'a>")
@@ -1336,7 +1340,7 @@ pub fn generate_model(model: &ResolvedModel) -> Scope {
         .new_fn("read_point_from_buffer")
         .generic("'a")
         .vis("pub(crate)")
-        .arg("model", format!("&{}", model.name_pascal_case))
+        .arg("model", format!("&{}", model.name_pascal_case()))
         .arg("adapter", "&mut dyn WriteAdapter")
         .arg("point", "&Point")
         .arg("buffer", "&ReadableRegisterBuffer<'a>")

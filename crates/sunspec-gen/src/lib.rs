@@ -8,23 +8,13 @@ use crate::code_generation::{
     model_is_repeating,
 };
 use crate::model_resolution::{ResolvedModel, resolve_model};
+use crate::naming::{NameTable, Named};
 use crate::sunspec_schema::SunspecModel;
 
 mod code_generation;
 mod model_resolution;
+mod naming;
 mod sunspec_schema;
-const EXCLUDED_MODELS: [&str; 10] = [
-    "model_9",
-    "model_14",
-    "model_302",
-    "model_303",
-    "model_304",
-    "model_601",
-    "model_702",
-    "model_803",
-    "model_804",
-    "model_63002",
-];
 
 fn model_name_from_path(path: &Path) -> &str {
     path.file_prefix()
@@ -32,17 +22,9 @@ fn model_name_from_path(path: &Path) -> &str {
         .expect("Failed to convert Sunspec model JSON file name to string")
 }
 
-fn is_included_model(path: &Path) -> bool {
-    !EXCLUDED_MODELS.contains(&model_name_from_path(path))
-}
-
 fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
     let mut vec: Vec<ResolvedModel> = glob(model_glob)
         .expect("Failed to find Sunspec model JSON files by glob pattern")
-        .filter(|entry| match entry {
-            Ok(path) => is_included_model(path),
-            Err(_) => true,
-        })
         .flat_map(|entry| match entry {
             Ok(path) => {
                 let json = fs::read_to_string(&path).expect("Failed to read model JSON to string");
@@ -57,6 +39,16 @@ fn collect_models(model_glob: &str) -> Vec<ResolvedModel> {
             }
         })
         .collect();
+
+    // Model names are unique by construction (derived from each JSON file's own model number),
+    // but are still run through a NameTable for the same reason as points, groups and enums:
+    // a genuine collision then fails the build loudly instead of silently generating two
+    // colliding items.
+    let mut model_names = NameTable::default();
+    for model in &vec {
+        model_names.register_unique(model.name.clone());
+    }
+    model_names.deduplicate();
 
     vec.sort_unstable_by_key(|model| model.model_number);
 
@@ -96,7 +88,7 @@ pub fn generate() {
         format_and_write(
             &generated_src_dir
                 .join("models")
-                .join(format!("{}.rs", model.name_snake_case)),
+                .join(format!("{}.rs", model.name_snake_case())),
             &generate_model(model),
         );
     }
@@ -174,7 +166,7 @@ pub fn c_model_adapter_constructors() -> String {
 
     for model in models.iter().filter(|model| model_c_expressible(model)) {
         let n = model.model_number;
-        let pc = &model.name_pascal_case;
+        let pc = model.name_pascal_case();
 
         out.push_str(&format!(
             "static inline SunspecAdapter sunspec_model_{n}_callback({pc}CallbackAdapter *adapter) {{\n\
@@ -216,7 +208,7 @@ pub fn c_adapter_struct_names() -> Vec<String> {
 
     let mut names = Vec::new();
     for model in models.iter().filter(|model| model_c_expressible(model)) {
-        let pc = &model.name_pascal_case;
+        let pc = model.name_pascal_case();
         names.push(format!("{pc}CallbackAdapter"));
         if !model_is_repeating(model) {
             names.push(format!("{pc}StatefulAdapter"));

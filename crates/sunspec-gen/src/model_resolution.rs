@@ -1,6 +1,7 @@
 use heck::{ToPascalCase, ToSnakeCase};
 use std::collections::HashSet;
 
+use crate::naming::{Name, NameRef, NameTable, Named};
 use crate::sunspec_schema::{
     Group, GroupCount, Point, PointAccess, PointMandatory, PointType, SunspecModel,
 };
@@ -34,8 +35,7 @@ pub enum PointValueType {
 
 #[derive(Clone)]
 pub struct ResolvedPoint {
-    pub name_pascal_case: String,
-    pub name_snake_case: String,
+    pub name: NameRef,
     pub internal_name: String,
     pub value_type: PointValueType,
     pub point_type: ResolvedType,
@@ -46,6 +46,12 @@ pub struct ResolvedPoint {
     pub size: u16,
 }
 
+impl Named for ResolvedPoint {
+    fn name_ref(&self) -> &NameRef {
+        &self.name
+    }
+}
+
 #[derive(Clone)]
 pub struct BlockIndex {
     pub group_name: String,
@@ -54,10 +60,15 @@ pub struct BlockIndex {
 
 #[derive(Clone)]
 pub struct ResolvedEnum {
-    pub name_pascal_case: String,
-    pub name_snake_case: String,
+    pub name: NameRef,
     pub discriminant_type: String,
     pub values: Vec<EnumValue>,
+}
+
+impl Named for ResolvedEnum {
+    fn name_ref(&self) -> &NameRef {
+        &self.name
+    }
 }
 
 #[derive(Clone)]
@@ -72,23 +83,33 @@ pub struct CountPoint {
 }
 
 pub struct ResolvedModel {
-    pub name_pascal_case: String,
-    pub name_snake_case: String,
+    pub name: NameRef,
     pub features: HashSet<CodegenFeature>,
     pub model_number: u16,
     pub group: ResolvedGroup,
     pub count_points: Vec<CountPoint>,
 }
 
+impl Named for ResolvedModel {
+    fn name_ref(&self) -> &NameRef {
+        &self.name
+    }
+}
+
 pub struct ResolvedGroup {
-    pub name_pascal_case: String,
-    pub name_snake_case: String,
+    pub name: NameRef,
     pub name_short: String,
     pub static_size: u16,
     pub points: Vec<ResolvedPoint>,
     pub enums: Vec<ResolvedEnum>,
     pub repeating_child: Option<(ResolvedPoint, Box<ResolvedGroup>)>,
     pub writable: bool,
+}
+
+impl Named for ResolvedGroup {
+    fn name_ref(&self) -> &NameRef {
+        &self.name
+    }
 }
 
 fn cast_string_from_c(value: &str) -> String {
@@ -187,7 +208,7 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
     }
 }
 
-pub fn resolve_point(
+pub(crate) fn resolve_point(
     point: &Point,
     features: &mut HashSet<CodegenFeature>,
     block_indices: Vec<BlockIndex>,
@@ -235,8 +256,7 @@ pub fn resolve_point(
     };
 
     Some(ResolvedPoint {
-        name_snake_case: name.to_snake_case(),
-        name_pascal_case: name.to_pascal_case(),
+        name: Name::new(name.to_snake_case(), name.to_pascal_case()),
         internal_name: point.name.clone(),
         point_type,
         value_type,
@@ -271,8 +291,7 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
             None
         } else {
             Some(ResolvedEnum {
-                name_snake_case: point.name.to_snake_case(),
-                name_pascal_case: point.name.to_pascal_case(),
+                name: Name::new(point.name.to_snake_case(), point.name.to_pascal_case()),
                 discriminant_type: match point.type_ {
                     PointType::Enum16 => "u16".to_string(),
                     PointType::Enum32 => "u32".to_string(),
@@ -286,7 +305,7 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
     }
 }
 
-pub fn resolve_group(
+pub(crate) fn resolve_group(
     group: &Group,
     top_level_points_opt: Option<&[ResolvedPoint]>,
     features: &mut HashSet<CodegenFeature>,
@@ -349,10 +368,13 @@ pub fn resolve_group(
     let points: Vec<ResolvedPoint> = root_points
         .into_iter()
         .chain(groups.iter().flat_map(|g| {
-            g.points.iter().cloned().map(|p| ResolvedPoint {
-                name_pascal_case: format!("{}{}", g.name_pascal_case, p.name_pascal_case),
-                name_snake_case: format!("{}_{}", g.name_snake_case, p.name_snake_case),
-                ..p
+            g.points.iter().cloned().map(|p| {
+                let snake_case = format!("{}_{}", g.name_snake_case(), p.name_snake_case());
+                let pascal_case = format!("{}{}", g.name_pascal_case(), p.name_pascal_case());
+                ResolvedPoint {
+                    name: Name::new(snake_case, pascal_case),
+                    ..p
+                }
             })
         }))
         .collect();
@@ -369,8 +391,8 @@ pub fn resolve_group(
         )
         .collect();
 
-    enums.sort_by_key(|e| e.name_snake_case.clone());
-    enums.dedup_by_key(|e| e.name_snake_case.clone());
+    enums.sort_by_key(|e| e.name_snake_case());
+    enums.dedup_by_key(|e| e.name_snake_case());
 
     let size = points.iter().map(|point| point.size).sum();
 
@@ -380,8 +402,7 @@ pub fn resolve_group(
         || points.iter().any(|p| p.access == PointAccess::Rw);
 
     ResolvedGroup {
-        name_pascal_case: name.to_pascal_case(),
-        name_snake_case: name.to_snake_case(),
+        name: Name::new(name.to_snake_case(), name.to_pascal_case()),
         name_short: group.name.to_snake_case(),
         static_size: size,
         points,
@@ -397,6 +418,38 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
     );
     let mut features: HashSet<CodegenFeature> = HashSet::new();
     let group = resolve_group(&model.group, None, &mut features, vec![], None);
+
+    // Points and groups are each scoped to this one model: every point ends up in this
+    // model's single flat `Point` enum and adapter trait (root group plus each level of the
+    // `repeating_child` chain - see `add_group_variants` in code_generation.rs), and every
+    // group along that same chain gets its own generated stateful-adapter struct.
+    let mut point_names = NameTable::default();
+    let mut group_names = NameTable::default();
+    let mut current_group = Some(&group);
+    while let Some(g) = current_group {
+        group_names.register_unique(g.name.clone());
+        for point in &g.points {
+            point_names.register(
+                point.name.clone(),
+                (
+                    point.internal_name.to_snake_case(),
+                    point.internal_name.to_pascal_case(),
+                ),
+            );
+        }
+        current_group = g.repeating_child.as_ref().map(|(_, inner)| inner.as_ref());
+    }
+    point_names.deduplicate();
+    group_names.deduplicate();
+
+    // `group.enums` already collects every enum in the model: resolve_group bubbles them up
+    // through fixed subgroups and the repeating chain into the top-level group's own list.
+    let mut enum_names = NameTable::default();
+    for resolved_enum in &group.enums {
+        enum_names.register_unique(resolved_enum.name.clone());
+    }
+    enum_names.deduplicate();
+
     let mut count_points = vec![];
 
     let mut current_group = &group;
@@ -411,8 +464,7 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
 
     ResolvedModel {
         model_number,
-        name_snake_case: file_name.to_snake_case(),
-        name_pascal_case: file_name.to_pascal_case(),
+        name: Name::new(file_name.to_snake_case(), file_name.to_pascal_case()),
         group,
         features,
         count_points,
