@@ -847,7 +847,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AdptCrvRslt {
+pub enum Model708AdptCrvRslt {
     /// Update In Progress
     ///
     /// Curve update in progress.
@@ -862,20 +862,23 @@ pub enum AdptCrvRslt {
     Failed = 2,
 }
 
-impl AdptCrvRslt {
-    pub fn from_repr(repr: u16) -> Option<AdptCrvRslt> {
+impl Model708AdptCrvRslt {
+    pub fn from_repr(repr: u16) -> Option<Model708AdptCrvRslt> {
         match repr {
-            0 => Some(AdptCrvRslt::InProgress),
-            1 => Some(AdptCrvRslt::Completed),
-            2 => Some(AdptCrvRslt::Failed),
+            0 => Some(Model708AdptCrvRslt::InProgress),
+            1 => Some(Model708AdptCrvRslt::Completed),
+            2 => Some(Model708AdptCrvRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model708AdptCrvRslt`] - only `Model708AdptCrvRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AdptCrvRslt` distinct from another model's point of the same name.
+pub type AdptCrvRslt = Model708AdptCrvRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ena {
+pub enum Model708Ena {
     /// Disabled
     ///
     /// Function is disabled.
@@ -886,19 +889,22 @@ pub enum Ena {
     Enabled = 1,
 }
 
-impl Ena {
-    pub fn from_repr(repr: u16) -> Option<Ena> {
+impl Model708Ena {
+    pub fn from_repr(repr: u16) -> Option<Model708Ena> {
         match repr {
-            0 => Some(Ena::Disabled),
-            1 => Some(Ena::Enabled),
+            0 => Some(Model708Ena::Disabled),
+            1 => Some(Model708Ena::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model708Ena`] - only `Model708Ena` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ena` distinct from another model's point of the same name.
+pub type Ena = Model708Ena;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model708ReadOnly {
     /// Read-Write Access
     ///
     /// Curve has read-write access.
@@ -909,15 +915,18 @@ pub enum ReadOnly {
     R = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model708ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model708ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Rw),
-            1 => Some(ReadOnly::R),
+            0 => Some(Model708ReadOnly::Rw),
+            1 => Some(Model708ReadOnly::R),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model708ReadOnly`] - only `Model708ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model708ReadOnly;
 
 #[repr(C)]
 pub struct Model708CallbackAdapter {
@@ -925,11 +934,11 @@ pub struct Model708CallbackAdapter {
     /// DER Trip HV Module Enable (Ena)
     ///
     /// DER high voltage trip control enable.
-    der_trip_hv_module_enable_callback: extern "C" fn(*const c_void) -> Ena,
+    der_trip_hv_module_enable_callback: extern "C" fn(*const c_void) -> Model708Ena,
     /// DER Trip HV Module Enable (Ena)
     ///
     /// DER high voltage trip control enable.
-    set_der_trip_hv_module_enable_callback: extern "C" fn(Ena, *mut c_void),
+    set_der_trip_hv_module_enable_callback: extern "C" fn(Model708Ena, *mut c_void),
     /// Adopt Curve Request (AdptCrvReq)
     ///
     /// Index of curve points to adopt. First curve index is 1.
@@ -941,7 +950,7 @@ pub struct Model708CallbackAdapter {
     /// Adopt Curve Result (AdptCrvRslt)
     ///
     /// Result of last adopt curve operation.
-    adopt_curve_result_callback: extern "C" fn(*const c_void) -> AdptCrvRslt,
+    adopt_curve_result_callback: extern "C" fn(*const c_void) -> Model708AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -961,7 +970,7 @@ pub struct Model708CallbackAdapter {
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> Model708ReadOnly,
     /// Number Of Active Points (ActPt)
     ///
     /// Number of active points in must trip curve.
@@ -1265,7 +1274,7 @@ pub struct Model708StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// DER Trip HV Module Enable (Ena)
     ///
     /// DER high voltage trip control enable.
-    pub der_trip_hv_module_enable: Ena,
+    pub der_trip_hv_module_enable: Model708Ena,
     /// Adopt Curve Request (AdptCrvReq)
     ///
     /// Index of curve points to adopt. First curve index is 1.
@@ -1273,7 +1282,7 @@ pub struct Model708StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// Adopt Curve Result (AdptCrvRslt)
     ///
     /// Result of last adopt curve operation.
-    pub adopt_curve_result: AdptCrvRslt,
+    pub adopt_curve_result: Model708AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -1298,7 +1307,7 @@ pub struct Model708StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    pub crv_curve_access: ReadOnly,
+    pub crv_curve_access: Model708ReadOnly,
     /// Number Of Active Points (ActPt)
     ///
     /// Number of active points in must trip curve.

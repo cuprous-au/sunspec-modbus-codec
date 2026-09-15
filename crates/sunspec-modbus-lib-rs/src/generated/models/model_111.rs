@@ -700,7 +700,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum St {
+pub enum Model111St {
     GgOff = 1,
     GgSleeping = 2,
     GgStarting = 3,
@@ -711,21 +711,24 @@ pub enum St {
     GgStandby = 8,
 }
 
-impl St {
-    pub fn from_repr(repr: u16) -> Option<St> {
+impl Model111St {
+    pub fn from_repr(repr: u16) -> Option<Model111St> {
         match repr {
-            1 => Some(St::GgOff),
-            2 => Some(St::GgSleeping),
-            3 => Some(St::GgStarting),
-            4 => Some(St::GgMppt),
-            5 => Some(St::GgThrottled),
-            6 => Some(St::GgShuttingDown),
-            7 => Some(St::GgFault),
-            8 => Some(St::GgStandby),
+            1 => Some(Model111St::GgOff),
+            2 => Some(Model111St::GgSleeping),
+            3 => Some(Model111St::GgStarting),
+            4 => Some(Model111St::GgMppt),
+            5 => Some(Model111St::GgThrottled),
+            6 => Some(Model111St::GgShuttingDown),
+            7 => Some(Model111St::GgFault),
+            8 => Some(Model111St::GgStandby),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model111St`] - only `Model111St` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `St` distinct from another model's point of the same name.
+pub type St = Model111St;
 
 #[repr(C)]
 pub struct Model111CallbackAdapter {
@@ -827,7 +830,7 @@ pub struct Model111CallbackAdapter {
     /// Operating State (St)
     ///
     /// Operating state
-    operating_state_callback: extern "C" fn(*const c_void) -> St,
+    operating_state_callback: extern "C" fn(*const c_void) -> Model111St,
     /// Vendor Operating State (StVnd)
     ///
     /// Vendor specific operating state code
@@ -1101,7 +1104,7 @@ pub struct Model111StatefulAdapter {
     /// Operating State (St)
     ///
     /// Operating state
-    pub operating_state: St,
+    pub operating_state: Model111St,
     /// Vendor Operating State (StVnd)
     ///
     /// Vendor specific operating state code

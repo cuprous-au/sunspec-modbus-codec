@@ -48,6 +48,14 @@ fn generate_enum(resolved_enum: &ResolvedEnum, scope: &mut Scope) {
     repr_match.line("_ => None");
 
     fn_impl.push_block(repr_match);
+
+    let short_name = &resolved_enum.short_name_pascal_case;
+    scope.raw(format!(
+        "/// Short, spec-matching alias for [`{enum_name}`] - only `{enum_name}` (unique per \
+         model) reaches the generated C header, since cbindgen has no module system to keep \
+         `{short_name}` distinct from another model's point of the same name.\n\
+         pub type {short_name} = {enum_name};"
+    ));
 }
 
 fn option_unless_mandatory(point: &ResolvedPoint) -> Type {
@@ -168,7 +176,11 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
     scope.raw("#![allow(unused_variables)]");
 
     models.iter().for_each(|model| {
-        scope.raw(format!("pub mod {};", model.name_snake_case()));
+        scope.raw(format!(
+            "{}\npub mod {};",
+            model_cfg_attribute(model),
+            model.name_snake_case()
+        ));
     });
 
     scope
@@ -210,6 +222,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         let pc = &model.name_pascal_case();
         read_enum
             .new_variant(pc)
+            .annotation(model_cfg_attribute(model))
             .tuple(format!("&'a {sc}::{pc}"))
             .tuple(format!("&'a dyn {sc}::ReadAdapter"));
     }
@@ -245,7 +258,10 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     for model in models {
         let sc = &model.name_snake_case();
         let pc = &model.name_pascal_case();
-        let variant = write_enum.new_variant(pc).tuple(format!("&'a {sc}::{pc}"));
+        let variant = write_enum
+            .new_variant(pc)
+            .annotation(model_cfg_attribute(model))
+            .tuple(format!("&'a {sc}::{pc}"));
         if model.group.writable {
             variant.tuple(format!("&'a mut dyn {sc}::WriteAdapter"));
         }
@@ -271,7 +287,10 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     let mut read_match = Block::new("match adapter");
     for model in models {
         let pc = &model.name_pascal_case();
-        let mut model_match = Block::new(format!("ReadBinding::{pc}(model, adapter) => "));
+        let mut model_match = Block::new(format!(
+            "{}\nReadBinding::{pc}(model, adapter) => ",
+            model_cfg_attribute(model)
+        ));
 
         model_match.line("cursor.visit_source_block(");
         model_match.line("model.model_length(),");
@@ -310,11 +329,12 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     for model in models {
         let pc = &model.name_pascal_case();
 
-        let mut model_match = Block::new(if model.group.writable {
+        let arm = if model.group.writable {
             format!("WriteBinding::{pc}(model, adapter) =>")
         } else {
             format!("WriteBinding::{pc}(model) =>")
-        });
+        };
+        let mut model_match = Block::new(format!("{}\n{arm}", model_cfg_attribute(model)));
 
         model_match.line("cursor.visit_source_block(");
         model_match.line("model.model_length(),");
@@ -389,6 +409,18 @@ pub(crate) fn model_c_expressible(model: &ResolvedModel) -> bool {
 
 pub(crate) fn model_is_repeating(model: &ResolvedModel) -> bool {
     !model.count_points.is_empty()
+}
+
+/// The Cargo feature that gates a model's generated code - named after its SunSpec model
+/// number rather than its (label-derived, possibly-deduplicated) name, so it stays stable and
+/// predictable regardless of naming changes elsewhere.
+pub(crate) fn model_feature_name(model: &ResolvedModel) -> String {
+    format!("model_{}", model.model_number)
+}
+
+/// The `#[cfg(...)]` attribute text gating a model's generated code on [`model_feature_name`].
+pub(crate) fn model_cfg_attribute(model: &ResolvedModel) -> String {
+    format!("#[cfg(feature = \"{}\")]", model_feature_name(model))
 }
 
 /// The per-model C-FFI dispatch appended to a model's module: a `#[unsafe(no_mangle)] pub

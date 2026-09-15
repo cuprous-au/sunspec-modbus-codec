@@ -1512,7 +1512,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ChangeCommonModelId {
+pub enum Model64412ChangeCommonModelId {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1523,19 +1523,22 @@ pub enum ChangeCommonModelId {
     On = 1,
 }
 
-impl ChangeCommonModelId {
-    pub fn from_repr(repr: u16) -> Option<ChangeCommonModelId> {
+impl Model64412ChangeCommonModelId {
+    pub fn from_repr(repr: u16) -> Option<Model64412ChangeCommonModelId> {
         match repr {
-            0 => Some(ChangeCommonModelId::Off),
-            1 => Some(ChangeCommonModelId::On),
+            0 => Some(Model64412ChangeCommonModelId::Off),
+            1 => Some(Model64412ChangeCommonModelId::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412ChangeCommonModelId`] - only `Model64412ChangeCommonModelId` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ChangeCommonModelId` distinct from another model's point of the same name.
+pub type ChangeCommonModelId = Model64412ChangeCommonModelId;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ChangeCommonModelLength {
+pub enum Model64412ChangeCommonModelLength {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1546,19 +1549,22 @@ pub enum ChangeCommonModelLength {
     On = 1,
 }
 
-impl ChangeCommonModelLength {
-    pub fn from_repr(repr: u16) -> Option<ChangeCommonModelLength> {
+impl Model64412ChangeCommonModelLength {
+    pub fn from_repr(repr: u16) -> Option<Model64412ChangeCommonModelLength> {
         match repr {
-            0 => Some(ChangeCommonModelLength::Off),
-            1 => Some(ChangeCommonModelLength::On),
+            0 => Some(Model64412ChangeCommonModelLength::Off),
+            1 => Some(Model64412ChangeCommonModelLength::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412ChangeCommonModelLength`] - only `Model64412ChangeCommonModelLength` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ChangeCommonModelLength` distinct from another model's point of the same name.
+pub type ChangeCommonModelLength = Model64412ChangeCommonModelLength;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DaManipulation {
+pub enum Model64412DaManipulation {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1569,19 +1575,22 @@ pub enum DaManipulation {
     On = 1,
 }
 
-impl DaManipulation {
-    pub fn from_repr(repr: u16) -> Option<DaManipulation> {
+impl Model64412DaManipulation {
+    pub fn from_repr(repr: u16) -> Option<Model64412DaManipulation> {
         match repr {
-            0 => Some(DaManipulation::Off),
-            1 => Some(DaManipulation::On),
+            0 => Some(Model64412DaManipulation::Off),
+            1 => Some(Model64412DaManipulation::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412DaManipulation`] - only `Model64412DaManipulation` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DaManipulation` distinct from another model's point of the same name.
+pub type DaManipulation = Model64412DaManipulation;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum FalsifyDeviceIdentity {
+pub enum Model64412FalsifyDeviceIdentity {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1592,19 +1601,22 @@ pub enum FalsifyDeviceIdentity {
     On = 1,
 }
 
-impl FalsifyDeviceIdentity {
-    pub fn from_repr(repr: u16) -> Option<FalsifyDeviceIdentity> {
+impl Model64412FalsifyDeviceIdentity {
+    pub fn from_repr(repr: u16) -> Option<Model64412FalsifyDeviceIdentity> {
         match repr {
-            0 => Some(FalsifyDeviceIdentity::Off),
-            1 => Some(FalsifyDeviceIdentity::On),
+            0 => Some(Model64412FalsifyDeviceIdentity::Off),
+            1 => Some(Model64412FalsifyDeviceIdentity::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412FalsifyDeviceIdentity`] - only `Model64412FalsifyDeviceIdentity` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `FalsifyDeviceIdentity` distinct from another model's point of the same name.
+pub type FalsifyDeviceIdentity = Model64412FalsifyDeviceIdentity;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasHighAmps {
+pub enum Model64412MeasHighAmps {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1615,19 +1627,22 @@ pub enum MeasHighAmps {
     On = 1,
 }
 
-impl MeasHighAmps {
-    pub fn from_repr(repr: u16) -> Option<MeasHighAmps> {
+impl Model64412MeasHighAmps {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasHighAmps> {
         match repr {
-            0 => Some(MeasHighAmps::Off),
-            1 => Some(MeasHighAmps::On),
+            0 => Some(Model64412MeasHighAmps::Off),
+            1 => Some(Model64412MeasHighAmps::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasHighAmps`] - only `Model64412MeasHighAmps` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasHighAmps` distinct from another model's point of the same name.
+pub type MeasHighAmps = Model64412MeasHighAmps;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasHighF {
+pub enum Model64412MeasHighF {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1638,19 +1653,22 @@ pub enum MeasHighF {
     On = 1,
 }
 
-impl MeasHighF {
-    pub fn from_repr(repr: u16) -> Option<MeasHighF> {
+impl Model64412MeasHighF {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasHighF> {
         match repr {
-            0 => Some(MeasHighF::Off),
-            1 => Some(MeasHighF::On),
+            0 => Some(Model64412MeasHighF::Off),
+            1 => Some(Model64412MeasHighF::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasHighF`] - only `Model64412MeasHighF` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasHighF` distinct from another model's point of the same name.
+pub type MeasHighF = Model64412MeasHighF;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasHighL1v {
+pub enum Model64412MeasHighL1v {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1661,19 +1679,22 @@ pub enum MeasHighL1v {
     On = 1,
 }
 
-impl MeasHighL1v {
-    pub fn from_repr(repr: u16) -> Option<MeasHighL1v> {
+impl Model64412MeasHighL1v {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasHighL1v> {
         match repr {
-            0 => Some(MeasHighL1v::Off),
-            1 => Some(MeasHighL1v::On),
+            0 => Some(Model64412MeasHighL1v::Off),
+            1 => Some(Model64412MeasHighL1v::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasHighL1v`] - only `Model64412MeasHighL1v` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasHighL1v` distinct from another model's point of the same name.
+pub type MeasHighL1v = Model64412MeasHighL1v;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasHighQ {
+pub enum Model64412MeasHighQ {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1684,19 +1705,22 @@ pub enum MeasHighQ {
     On = 1,
 }
 
-impl MeasHighQ {
-    pub fn from_repr(repr: u16) -> Option<MeasHighQ> {
+impl Model64412MeasHighQ {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasHighQ> {
         match repr {
-            0 => Some(MeasHighQ::Off),
-            1 => Some(MeasHighQ::On),
+            0 => Some(Model64412MeasHighQ::Off),
+            1 => Some(Model64412MeasHighQ::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasHighQ`] - only `Model64412MeasHighQ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasHighQ` distinct from another model's point of the same name.
+pub type MeasHighQ = Model64412MeasHighQ;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasHighS {
+pub enum Model64412MeasHighS {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1707,19 +1731,22 @@ pub enum MeasHighS {
     On = 1,
 }
 
-impl MeasHighS {
-    pub fn from_repr(repr: u16) -> Option<MeasHighS> {
+impl Model64412MeasHighS {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasHighS> {
         match repr {
-            0 => Some(MeasHighS::Off),
-            1 => Some(MeasHighS::On),
+            0 => Some(Model64412MeasHighS::Off),
+            1 => Some(Model64412MeasHighS::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasHighS`] - only `Model64412MeasHighS` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasHighS` distinct from another model's point of the same name.
+pub type MeasHighS = Model64412MeasHighS;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasHighV {
+pub enum Model64412MeasHighV {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1730,19 +1757,22 @@ pub enum MeasHighV {
     On = 1,
 }
 
-impl MeasHighV {
-    pub fn from_repr(repr: u16) -> Option<MeasHighV> {
+impl Model64412MeasHighV {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasHighV> {
         match repr {
-            0 => Some(MeasHighV::Off),
-            1 => Some(MeasHighV::On),
+            0 => Some(Model64412MeasHighV::Off),
+            1 => Some(Model64412MeasHighV::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasHighV`] - only `Model64412MeasHighV` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasHighV` distinct from another model's point of the same name.
+pub type MeasHighV = Model64412MeasHighV;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasInvertQ {
+pub enum Model64412MeasInvertQ {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1753,19 +1783,22 @@ pub enum MeasInvertQ {
     On = 1,
 }
 
-impl MeasInvertQ {
-    pub fn from_repr(repr: u16) -> Option<MeasInvertQ> {
+impl Model64412MeasInvertQ {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasInvertQ> {
         match repr {
-            0 => Some(MeasInvertQ::Off),
-            1 => Some(MeasInvertQ::On),
+            0 => Some(Model64412MeasInvertQ::Off),
+            1 => Some(Model64412MeasInvertQ::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasInvertQ`] - only `Model64412MeasInvertQ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasInvertQ` distinct from another model's point of the same name.
+pub type MeasInvertQ = Model64412MeasInvertQ;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowAmps {
+pub enum Model64412MeasLowAmps {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1776,19 +1809,22 @@ pub enum MeasLowAmps {
     On = 1,
 }
 
-impl MeasLowAmps {
-    pub fn from_repr(repr: u16) -> Option<MeasLowAmps> {
+impl Model64412MeasLowAmps {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowAmps> {
         match repr {
-            0 => Some(MeasLowAmps::Off),
-            1 => Some(MeasLowAmps::On),
+            0 => Some(Model64412MeasLowAmps::Off),
+            1 => Some(Model64412MeasLowAmps::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowAmps`] - only `Model64412MeasLowAmps` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowAmps` distinct from another model's point of the same name.
+pub type MeasLowAmps = Model64412MeasLowAmps;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowF {
+pub enum Model64412MeasLowF {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1799,19 +1835,22 @@ pub enum MeasLowF {
     On = 1,
 }
 
-impl MeasLowF {
-    pub fn from_repr(repr: u16) -> Option<MeasLowF> {
+impl Model64412MeasLowF {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowF> {
         match repr {
-            0 => Some(MeasLowF::Off),
-            1 => Some(MeasLowF::On),
+            0 => Some(Model64412MeasLowF::Off),
+            1 => Some(Model64412MeasLowF::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowF`] - only `Model64412MeasLowF` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowF` distinct from another model's point of the same name.
+pub type MeasLowF = Model64412MeasLowF;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowL1v {
+pub enum Model64412MeasLowL1v {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1822,19 +1861,22 @@ pub enum MeasLowL1v {
     On = 1,
 }
 
-impl MeasLowL1v {
-    pub fn from_repr(repr: u16) -> Option<MeasLowL1v> {
+impl Model64412MeasLowL1v {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowL1v> {
         match repr {
-            0 => Some(MeasLowL1v::Off),
-            1 => Some(MeasLowL1v::On),
+            0 => Some(Model64412MeasLowL1v::Off),
+            1 => Some(Model64412MeasLowL1v::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowL1v`] - only `Model64412MeasLowL1v` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowL1v` distinct from another model's point of the same name.
+pub type MeasLowL1v = Model64412MeasLowL1v;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowPf {
+pub enum Model64412MeasLowPf {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1845,19 +1887,22 @@ pub enum MeasLowPf {
     On = 1,
 }
 
-impl MeasLowPf {
-    pub fn from_repr(repr: u16) -> Option<MeasLowPf> {
+impl Model64412MeasLowPf {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowPf> {
         match repr {
-            0 => Some(MeasLowPf::Off),
-            1 => Some(MeasLowPf::On),
+            0 => Some(Model64412MeasLowPf::Off),
+            1 => Some(Model64412MeasLowPf::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowPf`] - only `Model64412MeasLowPf` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowPf` distinct from another model's point of the same name.
+pub type MeasLowPf = Model64412MeasLowPf;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowQ {
+pub enum Model64412MeasLowQ {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1868,19 +1913,22 @@ pub enum MeasLowQ {
     On = 1,
 }
 
-impl MeasLowQ {
-    pub fn from_repr(repr: u16) -> Option<MeasLowQ> {
+impl Model64412MeasLowQ {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowQ> {
         match repr {
-            0 => Some(MeasLowQ::Off),
-            1 => Some(MeasLowQ::On),
+            0 => Some(Model64412MeasLowQ::Off),
+            1 => Some(Model64412MeasLowQ::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowQ`] - only `Model64412MeasLowQ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowQ` distinct from another model's point of the same name.
+pub type MeasLowQ = Model64412MeasLowQ;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowReversedPf {
+pub enum Model64412MeasLowReversedPf {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1891,19 +1939,22 @@ pub enum MeasLowReversedPf {
     On = 1,
 }
 
-impl MeasLowReversedPf {
-    pub fn from_repr(repr: u16) -> Option<MeasLowReversedPf> {
+impl Model64412MeasLowReversedPf {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowReversedPf> {
         match repr {
-            0 => Some(MeasLowReversedPf::Off),
-            1 => Some(MeasLowReversedPf::On),
+            0 => Some(Model64412MeasLowReversedPf::Off),
+            1 => Some(Model64412MeasLowReversedPf::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowReversedPf`] - only `Model64412MeasLowReversedPf` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowReversedPf` distinct from another model's point of the same name.
+pub type MeasLowReversedPf = Model64412MeasLowReversedPf;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowS {
+pub enum Model64412MeasLowS {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1914,19 +1965,22 @@ pub enum MeasLowS {
     On = 1,
 }
 
-impl MeasLowS {
-    pub fn from_repr(repr: u16) -> Option<MeasLowS> {
+impl Model64412MeasLowS {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowS> {
         match repr {
-            0 => Some(MeasLowS::Off),
-            1 => Some(MeasLowS::On),
+            0 => Some(Model64412MeasLowS::Off),
+            1 => Some(Model64412MeasLowS::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowS`] - only `Model64412MeasLowS` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowS` distinct from another model's point of the same name.
+pub type MeasLowS = Model64412MeasLowS;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasLowV {
+pub enum Model64412MeasLowV {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1937,19 +1991,22 @@ pub enum MeasLowV {
     On = 1,
 }
 
-impl MeasLowV {
-    pub fn from_repr(repr: u16) -> Option<MeasLowV> {
+impl Model64412MeasLowV {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasLowV> {
         match repr {
-            0 => Some(MeasLowV::Off),
-            1 => Some(MeasLowV::On),
+            0 => Some(Model64412MeasLowV::Off),
+            1 => Some(Model64412MeasLowV::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasLowV`] - only `Model64412MeasLowV` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasLowV` distinct from another model's point of the same name.
+pub type MeasLowV = Model64412MeasLowV;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasPAlwaysNameplate {
+pub enum Model64412MeasPAlwaysNameplate {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1960,19 +2017,22 @@ pub enum MeasPAlwaysNameplate {
     On = 1,
 }
 
-impl MeasPAlwaysNameplate {
-    pub fn from_repr(repr: u16) -> Option<MeasPAlwaysNameplate> {
+impl Model64412MeasPAlwaysNameplate {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasPAlwaysNameplate> {
         match repr {
-            0 => Some(MeasPAlwaysNameplate::Off),
-            1 => Some(MeasPAlwaysNameplate::On),
+            0 => Some(Model64412MeasPAlwaysNameplate::Off),
+            1 => Some(Model64412MeasPAlwaysNameplate::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasPAlwaysNameplate`] - only `Model64412MeasPAlwaysNameplate` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasPAlwaysNameplate` distinct from another model's point of the same name.
+pub type MeasPAlwaysNameplate = Model64412MeasPAlwaysNameplate;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasQAlwaysMaximum {
+pub enum Model64412MeasQAlwaysMaximum {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -1983,19 +2043,22 @@ pub enum MeasQAlwaysMaximum {
     On = 1,
 }
 
-impl MeasQAlwaysMaximum {
-    pub fn from_repr(repr: u16) -> Option<MeasQAlwaysMaximum> {
+impl Model64412MeasQAlwaysMaximum {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasQAlwaysMaximum> {
         match repr {
-            0 => Some(MeasQAlwaysMaximum::Off),
-            1 => Some(MeasQAlwaysMaximum::On),
+            0 => Some(Model64412MeasQAlwaysMaximum::Off),
+            1 => Some(Model64412MeasQAlwaysMaximum::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasQAlwaysMaximum`] - only `Model64412MeasQAlwaysMaximum` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasQAlwaysMaximum` distinct from another model's point of the same name.
+pub type MeasQAlwaysMaximum = Model64412MeasQAlwaysMaximum;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasQAlwaysMinimum {
+pub enum Model64412MeasQAlwaysMinimum {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2006,19 +2069,22 @@ pub enum MeasQAlwaysMinimum {
     On = 1,
 }
 
-impl MeasQAlwaysMinimum {
-    pub fn from_repr(repr: u16) -> Option<MeasQAlwaysMinimum> {
+impl Model64412MeasQAlwaysMinimum {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasQAlwaysMinimum> {
         match repr {
-            0 => Some(MeasQAlwaysMinimum::Off),
-            1 => Some(MeasQAlwaysMinimum::On),
+            0 => Some(Model64412MeasQAlwaysMinimum::Off),
+            1 => Some(Model64412MeasQAlwaysMinimum::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasQAlwaysMinimum`] - only `Model64412MeasQAlwaysMinimum` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasQAlwaysMinimum` distinct from another model's point of the same name.
+pub type MeasQAlwaysMinimum = Model64412MeasQAlwaysMinimum;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasQAlwaysZero {
+pub enum Model64412MeasQAlwaysZero {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2029,19 +2095,22 @@ pub enum MeasQAlwaysZero {
     On = 1,
 }
 
-impl MeasQAlwaysZero {
-    pub fn from_repr(repr: u16) -> Option<MeasQAlwaysZero> {
+impl Model64412MeasQAlwaysZero {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasQAlwaysZero> {
         match repr {
-            0 => Some(MeasQAlwaysZero::Off),
-            1 => Some(MeasQAlwaysZero::On),
+            0 => Some(Model64412MeasQAlwaysZero::Off),
+            1 => Some(Model64412MeasQAlwaysZero::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasQAlwaysZero`] - only `Model64412MeasQAlwaysZero` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasQAlwaysZero` distinct from another model's point of the same name.
+pub type MeasQAlwaysZero = Model64412MeasQAlwaysZero;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum MeasZeroP {
+pub enum Model64412MeasZeroP {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2052,19 +2121,22 @@ pub enum MeasZeroP {
     On = 1,
 }
 
-impl MeasZeroP {
-    pub fn from_repr(repr: u16) -> Option<MeasZeroP> {
+impl Model64412MeasZeroP {
+    pub fn from_repr(repr: u16) -> Option<Model64412MeasZeroP> {
         match repr {
-            0 => Some(MeasZeroP::Off),
-            1 => Some(MeasZeroP::On),
+            0 => Some(Model64412MeasZeroP::Off),
+            1 => Some(Model64412MeasZeroP::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412MeasZeroP`] - only `Model64412MeasZeroP` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `MeasZeroP` distinct from another model's point of the same name.
+pub type MeasZeroP = Model64412MeasZeroP;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateHighNomV {
+pub enum Model64412NameplateHighNomV {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2075,19 +2147,22 @@ pub enum NameplateHighNomV {
     On = 1,
 }
 
-impl NameplateHighNomV {
-    pub fn from_repr(repr: u16) -> Option<NameplateHighNomV> {
+impl Model64412NameplateHighNomV {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateHighNomV> {
         match repr {
-            0 => Some(NameplateHighNomV::Off),
-            1 => Some(NameplateHighNomV::On),
+            0 => Some(Model64412NameplateHighNomV::Off),
+            1 => Some(Model64412NameplateHighNomV::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateHighNomV`] - only `Model64412NameplateHighNomV` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateHighNomV` distinct from another model's point of the same name.
+pub type NameplateHighNomV = Model64412NameplateHighNomV;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateHighP {
+pub enum Model64412NameplateHighP {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2098,19 +2173,22 @@ pub enum NameplateHighP {
     On = 1,
 }
 
-impl NameplateHighP {
-    pub fn from_repr(repr: u16) -> Option<NameplateHighP> {
+impl Model64412NameplateHighP {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateHighP> {
         match repr {
-            0 => Some(NameplateHighP::Off),
-            1 => Some(NameplateHighP::On),
+            0 => Some(Model64412NameplateHighP::Off),
+            1 => Some(Model64412NameplateHighP::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateHighP`] - only `Model64412NameplateHighP` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateHighP` distinct from another model's point of the same name.
+pub type NameplateHighP = Model64412NameplateHighP;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateHighQ {
+pub enum Model64412NameplateHighQ {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2121,19 +2199,22 @@ pub enum NameplateHighQ {
     On = 1,
 }
 
-impl NameplateHighQ {
-    pub fn from_repr(repr: u16) -> Option<NameplateHighQ> {
+impl Model64412NameplateHighQ {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateHighQ> {
         match repr {
-            0 => Some(NameplateHighQ::Off),
-            1 => Some(NameplateHighQ::On),
+            0 => Some(Model64412NameplateHighQ::Off),
+            1 => Some(Model64412NameplateHighQ::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateHighQ`] - only `Model64412NameplateHighQ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateHighQ` distinct from another model's point of the same name.
+pub type NameplateHighQ = Model64412NameplateHighQ;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateHighS {
+pub enum Model64412NameplateHighS {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2144,19 +2225,22 @@ pub enum NameplateHighS {
     On = 1,
 }
 
-impl NameplateHighS {
-    pub fn from_repr(repr: u16) -> Option<NameplateHighS> {
+impl Model64412NameplateHighS {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateHighS> {
         match repr {
-            0 => Some(NameplateHighS::Off),
-            1 => Some(NameplateHighS::On),
+            0 => Some(Model64412NameplateHighS::Off),
+            1 => Some(Model64412NameplateHighS::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateHighS`] - only `Model64412NameplateHighS` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateHighS` distinct from another model's point of the same name.
+pub type NameplateHighS = Model64412NameplateHighS;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowAmps {
+pub enum Model64412NameplateLowAmps {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2167,19 +2251,22 @@ pub enum NameplateLowAmps {
     On = 1,
 }
 
-impl NameplateLowAmps {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowAmps> {
+impl Model64412NameplateLowAmps {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowAmps> {
         match repr {
-            0 => Some(NameplateLowAmps::Off),
-            1 => Some(NameplateLowAmps::On),
+            0 => Some(Model64412NameplateLowAmps::Off),
+            1 => Some(Model64412NameplateLowAmps::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowAmps`] - only `Model64412NameplateLowAmps` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowAmps` distinct from another model's point of the same name.
+pub type NameplateLowAmps = Model64412NameplateLowAmps;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowNomV {
+pub enum Model64412NameplateLowNomV {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2190,19 +2277,22 @@ pub enum NameplateLowNomV {
     On = 1,
 }
 
-impl NameplateLowNomV {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowNomV> {
+impl Model64412NameplateLowNomV {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowNomV> {
         match repr {
-            0 => Some(NameplateLowNomV::Off),
-            1 => Some(NameplateLowNomV::On),
+            0 => Some(Model64412NameplateLowNomV::Off),
+            1 => Some(Model64412NameplateLowNomV::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowNomV`] - only `Model64412NameplateLowNomV` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowNomV` distinct from another model's point of the same name.
+pub type NameplateLowNomV = Model64412NameplateLowNomV;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowP {
+pub enum Model64412NameplateLowP {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2213,19 +2303,22 @@ pub enum NameplateLowP {
     On = 1,
 }
 
-impl NameplateLowP {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowP> {
+impl Model64412NameplateLowP {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowP> {
         match repr {
-            0 => Some(NameplateLowP::Off),
-            1 => Some(NameplateLowP::On),
+            0 => Some(Model64412NameplateLowP::Off),
+            1 => Some(Model64412NameplateLowP::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowP`] - only `Model64412NameplateLowP` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowP` distinct from another model's point of the same name.
+pub type NameplateLowP = Model64412NameplateLowP;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowPf {
+pub enum Model64412NameplateLowPf {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2236,19 +2329,22 @@ pub enum NameplateLowPf {
     On = 1,
 }
 
-impl NameplateLowPf {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowPf> {
+impl Model64412NameplateLowPf {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowPf> {
         match repr {
-            0 => Some(NameplateLowPf::Off),
-            1 => Some(NameplateLowPf::On),
+            0 => Some(Model64412NameplateLowPf::Off),
+            1 => Some(Model64412NameplateLowPf::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowPf`] - only `Model64412NameplateLowPf` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowPf` distinct from another model's point of the same name.
+pub type NameplateLowPf = Model64412NameplateLowPf;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowQ {
+pub enum Model64412NameplateLowQ {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2259,19 +2355,22 @@ pub enum NameplateLowQ {
     On = 1,
 }
 
-impl NameplateLowQ {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowQ> {
+impl Model64412NameplateLowQ {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowQ> {
         match repr {
-            0 => Some(NameplateLowQ::Off),
-            1 => Some(NameplateLowQ::On),
+            0 => Some(Model64412NameplateLowQ::Off),
+            1 => Some(Model64412NameplateLowQ::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowQ`] - only `Model64412NameplateLowQ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowQ` distinct from another model's point of the same name.
+pub type NameplateLowQ = Model64412NameplateLowQ;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowS {
+pub enum Model64412NameplateLowS {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2282,19 +2381,22 @@ pub enum NameplateLowS {
     On = 1,
 }
 
-impl NameplateLowS {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowS> {
+impl Model64412NameplateLowS {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowS> {
         match repr {
-            0 => Some(NameplateLowS::Off),
-            1 => Some(NameplateLowS::On),
+            0 => Some(Model64412NameplateLowS::Off),
+            1 => Some(Model64412NameplateLowS::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowS`] - only `Model64412NameplateLowS` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowS` distinct from another model's point of the same name.
+pub type NameplateLowS = Model64412NameplateLowS;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowVarmaxabs {
+pub enum Model64412NameplateLowVarmaxabs {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2305,19 +2407,22 @@ pub enum NameplateLowVarmaxabs {
     On = 1,
 }
 
-impl NameplateLowVarmaxabs {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowVarmaxabs> {
+impl Model64412NameplateLowVarmaxabs {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowVarmaxabs> {
         match repr {
-            0 => Some(NameplateLowVarmaxabs::Off),
-            1 => Some(NameplateLowVarmaxabs::On),
+            0 => Some(Model64412NameplateLowVarmaxabs::Off),
+            1 => Some(Model64412NameplateLowVarmaxabs::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowVarmaxabs`] - only `Model64412NameplateLowVarmaxabs` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowVarmaxabs` distinct from another model's point of the same name.
+pub type NameplateLowVarmaxabs = Model64412NameplateLowVarmaxabs;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NameplateLowVarmaxinj {
+pub enum Model64412NameplateLowVarmaxinj {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2328,19 +2433,22 @@ pub enum NameplateLowVarmaxinj {
     On = 1,
 }
 
-impl NameplateLowVarmaxinj {
-    pub fn from_repr(repr: u16) -> Option<NameplateLowVarmaxinj> {
+impl Model64412NameplateLowVarmaxinj {
+    pub fn from_repr(repr: u16) -> Option<Model64412NameplateLowVarmaxinj> {
         match repr {
-            0 => Some(NameplateLowVarmaxinj::Off),
-            1 => Some(NameplateLowVarmaxinj::On),
+            0 => Some(Model64412NameplateLowVarmaxinj::Off),
+            1 => Some(Model64412NameplateLowVarmaxinj::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412NameplateLowVarmaxinj`] - only `Model64412NameplateLowVarmaxinj` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NameplateLowVarmaxinj` distinct from another model's point of the same name.
+pub type NameplateLowVarmaxinj = Model64412NameplateLowVarmaxinj;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsHighNomV {
+pub enum Model64412SettingsHighNomV {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2351,19 +2459,22 @@ pub enum SettingsHighNomV {
     On = 1,
 }
 
-impl SettingsHighNomV {
-    pub fn from_repr(repr: u16) -> Option<SettingsHighNomV> {
+impl Model64412SettingsHighNomV {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsHighNomV> {
         match repr {
-            0 => Some(SettingsHighNomV::Off),
-            1 => Some(SettingsHighNomV::On),
+            0 => Some(Model64412SettingsHighNomV::Off),
+            1 => Some(Model64412SettingsHighNomV::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsHighNomV`] - only `Model64412SettingsHighNomV` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsHighNomV` distinct from another model's point of the same name.
+pub type SettingsHighNomV = Model64412SettingsHighNomV;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsHighP {
+pub enum Model64412SettingsHighP {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2374,19 +2485,22 @@ pub enum SettingsHighP {
     On = 1,
 }
 
-impl SettingsHighP {
-    pub fn from_repr(repr: u16) -> Option<SettingsHighP> {
+impl Model64412SettingsHighP {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsHighP> {
         match repr {
-            0 => Some(SettingsHighP::Off),
-            1 => Some(SettingsHighP::On),
+            0 => Some(Model64412SettingsHighP::Off),
+            1 => Some(Model64412SettingsHighP::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsHighP`] - only `Model64412SettingsHighP` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsHighP` distinct from another model's point of the same name.
+pub type SettingsHighP = Model64412SettingsHighP;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsHighVaMax {
+pub enum Model64412SettingsHighVaMax {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2397,19 +2511,22 @@ pub enum SettingsHighVaMax {
     On = 1,
 }
 
-impl SettingsHighVaMax {
-    pub fn from_repr(repr: u16) -> Option<SettingsHighVaMax> {
+impl Model64412SettingsHighVaMax {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsHighVaMax> {
         match repr {
-            0 => Some(SettingsHighVaMax::Off),
-            1 => Some(SettingsHighVaMax::On),
+            0 => Some(Model64412SettingsHighVaMax::Off),
+            1 => Some(Model64412SettingsHighVaMax::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsHighVaMax`] - only `Model64412SettingsHighVaMax` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsHighVaMax` distinct from another model's point of the same name.
+pub type SettingsHighVaMax = Model64412SettingsHighVaMax;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsHighVarmaxabs {
+pub enum Model64412SettingsHighVarmaxabs {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2420,19 +2537,22 @@ pub enum SettingsHighVarmaxabs {
     On = 1,
 }
 
-impl SettingsHighVarmaxabs {
-    pub fn from_repr(repr: u16) -> Option<SettingsHighVarmaxabs> {
+impl Model64412SettingsHighVarmaxabs {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsHighVarmaxabs> {
         match repr {
-            0 => Some(SettingsHighVarmaxabs::Off),
-            1 => Some(SettingsHighVarmaxabs::On),
+            0 => Some(Model64412SettingsHighVarmaxabs::Off),
+            1 => Some(Model64412SettingsHighVarmaxabs::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsHighVarmaxabs`] - only `Model64412SettingsHighVarmaxabs` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsHighVarmaxabs` distinct from another model's point of the same name.
+pub type SettingsHighVarmaxabs = Model64412SettingsHighVarmaxabs;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsHighVarmaxinj {
+pub enum Model64412SettingsHighVarmaxinj {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2443,19 +2563,22 @@ pub enum SettingsHighVarmaxinj {
     On = 1,
 }
 
-impl SettingsHighVarmaxinj {
-    pub fn from_repr(repr: u16) -> Option<SettingsHighVarmaxinj> {
+impl Model64412SettingsHighVarmaxinj {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsHighVarmaxinj> {
         match repr {
-            0 => Some(SettingsHighVarmaxinj::Off),
-            1 => Some(SettingsHighVarmaxinj::On),
+            0 => Some(Model64412SettingsHighVarmaxinj::Off),
+            1 => Some(Model64412SettingsHighVarmaxinj::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsHighVarmaxinj`] - only `Model64412SettingsHighVarmaxinj` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsHighVarmaxinj` distinct from another model's point of the same name.
+pub type SettingsHighVarmaxinj = Model64412SettingsHighVarmaxinj;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsLowAmps {
+pub enum Model64412SettingsLowAmps {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2466,19 +2589,22 @@ pub enum SettingsLowAmps {
     On = 1,
 }
 
-impl SettingsLowAmps {
-    pub fn from_repr(repr: u16) -> Option<SettingsLowAmps> {
+impl Model64412SettingsLowAmps {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsLowAmps> {
         match repr {
-            0 => Some(SettingsLowAmps::Off),
-            1 => Some(SettingsLowAmps::On),
+            0 => Some(Model64412SettingsLowAmps::Off),
+            1 => Some(Model64412SettingsLowAmps::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsLowAmps`] - only `Model64412SettingsLowAmps` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsLowAmps` distinct from another model's point of the same name.
+pub type SettingsLowAmps = Model64412SettingsLowAmps;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SettingsLowP {
+pub enum Model64412SettingsLowP {
     /// Data Unaffected
     ///
     /// Modbus Falsification Disabled
@@ -2489,15 +2615,18 @@ pub enum SettingsLowP {
     On = 1,
 }
 
-impl SettingsLowP {
-    pub fn from_repr(repr: u16) -> Option<SettingsLowP> {
+impl Model64412SettingsLowP {
+    pub fn from_repr(repr: u16) -> Option<Model64412SettingsLowP> {
         match repr {
-            0 => Some(SettingsLowP::Off),
-            1 => Some(SettingsLowP::On),
+            0 => Some(Model64412SettingsLowP::Off),
+            1 => Some(Model64412SettingsLowP::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64412SettingsLowP`] - only `Model64412SettingsLowP` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SettingsLowP` distinct from another model's point of the same name.
+pub type SettingsLowP = Model64412SettingsLowP;
 
 #[repr(C)]
 pub struct Model64412CallbackAdapter {
@@ -2505,349 +2634,377 @@ pub struct Model64412CallbackAdapter {
     /// DA Manipulation (DAManipulation)
     ///
     /// Modify the device ID of the DER
-    da_manipulation_callback: Option<extern "C" fn(*const c_void) -> DaManipulation>,
+    da_manipulation_callback: Option<extern "C" fn(*const c_void) -> Model64412DaManipulation>,
     /// DA Manipulation (DAManipulation)
     ///
     /// Modify the device ID of the DER
-    set_da_manipulation_callback: Option<extern "C" fn(DaManipulation, *mut c_void)>,
+    set_da_manipulation_callback: Option<extern "C" fn(Model64412DaManipulation, *mut c_void)>,
     /// Falsify Device Identity (FalsifyDeviceIdentity)
     ///
     /// Change the DER manufacturer and model
-    falsify_device_identity_callback: Option<extern "C" fn(*const c_void) -> FalsifyDeviceIdentity>,
+    falsify_device_identity_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412FalsifyDeviceIdentity>,
     /// Falsify Device Identity (FalsifyDeviceIdentity)
     ///
     /// Change the DER manufacturer and model
-    set_falsify_device_identity_callback: Option<extern "C" fn(FalsifyDeviceIdentity, *mut c_void)>,
+    set_falsify_device_identity_callback:
+        Option<extern "C" fn(Model64412FalsifyDeviceIdentity, *mut c_void)>,
     /// Meas P Always Nameplate (MeasPAlwaysNameplate)
     ///
     /// Set the DER meas to always be at nameplate power
-    meas_p_always_nameplate_callback: Option<extern "C" fn(*const c_void) -> MeasPAlwaysNameplate>,
+    meas_p_always_nameplate_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412MeasPAlwaysNameplate>,
     /// Meas P Always Nameplate (MeasPAlwaysNameplate)
     ///
     /// Set the DER meas to always be at nameplate power
-    set_meas_p_always_nameplate_callback: Option<extern "C" fn(MeasPAlwaysNameplate, *mut c_void)>,
+    set_meas_p_always_nameplate_callback:
+        Option<extern "C" fn(Model64412MeasPAlwaysNameplate, *mut c_void)>,
     /// Meas Q Always Minimum (MeasQAlwaysMinimum)
     ///
     /// Set the DER to always be at minimum reactive power
-    meas_q_always_minimum_callback: Option<extern "C" fn(*const c_void) -> MeasQAlwaysMinimum>,
+    meas_q_always_minimum_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412MeasQAlwaysMinimum>,
     /// Meas Q Always Minimum (MeasQAlwaysMinimum)
     ///
     /// Set the DER to always be at minimum reactive power
-    set_meas_q_always_minimum_callback: Option<extern "C" fn(MeasQAlwaysMinimum, *mut c_void)>,
+    set_meas_q_always_minimum_callback:
+        Option<extern "C" fn(Model64412MeasQAlwaysMinimum, *mut c_void)>,
     /// Meas Q Always Maximum (MeasQAlwaysMaximum)
     ///
     /// Set the DER to always be at maximum reactive power
-    meas_q_always_maximum_callback: Option<extern "C" fn(*const c_void) -> MeasQAlwaysMaximum>,
+    meas_q_always_maximum_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412MeasQAlwaysMaximum>,
     /// Meas Q Always Maximum (MeasQAlwaysMaximum)
     ///
     /// Set the DER to always be at maximum reactive power
-    set_meas_q_always_maximum_callback: Option<extern "C" fn(MeasQAlwaysMaximum, *mut c_void)>,
+    set_meas_q_always_maximum_callback:
+        Option<extern "C" fn(Model64412MeasQAlwaysMaximum, *mut c_void)>,
     /// Meas Q Always Zero (MeasQAlwaysZero)
     ///
     /// Set the DER to always be at zero reactive power
-    meas_q_always_zero_callback: Option<extern "C" fn(*const c_void) -> MeasQAlwaysZero>,
+    meas_q_always_zero_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasQAlwaysZero>,
     /// Meas Q Always Zero (MeasQAlwaysZero)
     ///
     /// Set the DER to always be at zero reactive power
-    set_meas_q_always_zero_callback: Option<extern "C" fn(MeasQAlwaysZero, *mut c_void)>,
+    set_meas_q_always_zero_callback: Option<extern "C" fn(Model64412MeasQAlwaysZero, *mut c_void)>,
     /// Meas Zero P (MeasZeroP)
     ///
     /// Set the DER to always be at zero P, Q, and S
-    meas_zero_p_callback: Option<extern "C" fn(*const c_void) -> MeasZeroP>,
+    meas_zero_p_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasZeroP>,
     /// Meas Zero P (MeasZeroP)
     ///
     /// Set the DER to always be at zero P, Q, and S
-    set_meas_zero_p_callback: Option<extern "C" fn(MeasZeroP, *mut c_void)>,
+    set_meas_zero_p_callback: Option<extern "C" fn(Model64412MeasZeroP, *mut c_void)>,
     /// Meas Invert Q (MeasInvertQ)
     ///
     /// Set the DER to reverse the Q measurement data
-    meas_invert_q_callback: Option<extern "C" fn(*const c_void) -> MeasInvertQ>,
+    meas_invert_q_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasInvertQ>,
     /// Meas Invert Q (MeasInvertQ)
     ///
     /// Set the DER to reverse the Q measurement data
-    set_meas_invert_q_callback: Option<extern "C" fn(MeasInvertQ, *mut c_void)>,
+    set_meas_invert_q_callback: Option<extern "C" fn(Model64412MeasInvertQ, *mut c_void)>,
     /// Meas Low V (MeasLowV)
     ///
     /// Set the DER to always measure low voltage
-    meas_low_v_callback: Option<extern "C" fn(*const c_void) -> MeasLowV>,
+    meas_low_v_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowV>,
     /// Meas Low V (MeasLowV)
     ///
     /// Set the DER to always measure low voltage
-    set_meas_low_v_callback: Option<extern "C" fn(MeasLowV, *mut c_void)>,
+    set_meas_low_v_callback: Option<extern "C" fn(Model64412MeasLowV, *mut c_void)>,
     /// Meas High V (MeasHighV)
     ///
     /// Set the DER to always measure high voltage
-    meas_high_v_callback: Option<extern "C" fn(*const c_void) -> MeasHighV>,
+    meas_high_v_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasHighV>,
     /// Meas High V (MeasHighV)
     ///
     /// Set the DER to always measure high voltage
-    set_meas_high_v_callback: Option<extern "C" fn(MeasHighV, *mut c_void)>,
+    set_meas_high_v_callback: Option<extern "C" fn(Model64412MeasHighV, *mut c_void)>,
     /// Meas Low L1 V (MeasLowL1V)
     ///
     /// Set the DER to always measure low line 1 voltage
-    meas_low_l1_v_callback: Option<extern "C" fn(*const c_void) -> MeasLowL1v>,
+    meas_low_l1_v_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowL1v>,
     /// Meas Low L1 V (MeasLowL1V)
     ///
     /// Set the DER to always measure low line 1 voltage
-    set_meas_low_l1_v_callback: Option<extern "C" fn(MeasLowL1v, *mut c_void)>,
+    set_meas_low_l1_v_callback: Option<extern "C" fn(Model64412MeasLowL1v, *mut c_void)>,
     /// Meas High L1 V (MeasHighL1V)
     ///
     /// Set the DER to always measure high line 1 voltage
-    meas_high_l1_v_callback: Option<extern "C" fn(*const c_void) -> MeasHighL1v>,
+    meas_high_l1_v_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasHighL1v>,
     /// Meas High L1 V (MeasHighL1V)
     ///
     /// Set the DER to always measure high line 1 voltage
-    set_meas_high_l1_v_callback: Option<extern "C" fn(MeasHighL1v, *mut c_void)>,
+    set_meas_high_l1_v_callback: Option<extern "C" fn(Model64412MeasHighL1v, *mut c_void)>,
     /// Meas Low F (MeasLowF)
     ///
     /// Set the DER to always measure low frequency
-    meas_low_f_callback: Option<extern "C" fn(*const c_void) -> MeasLowF>,
+    meas_low_f_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowF>,
     /// Meas Low F (MeasLowF)
     ///
     /// Set the DER to always measure low frequency
-    set_meas_low_f_callback: Option<extern "C" fn(MeasLowF, *mut c_void)>,
+    set_meas_low_f_callback: Option<extern "C" fn(Model64412MeasLowF, *mut c_void)>,
     /// Meas High F (MeasHighF)
     ///
     /// Set the DER to always measure high frequency
-    meas_high_f_callback: Option<extern "C" fn(*const c_void) -> MeasHighF>,
+    meas_high_f_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasHighF>,
     /// Meas High F (MeasHighF)
     ///
     /// Set the DER to always measure high frequency
-    set_meas_high_f_callback: Option<extern "C" fn(MeasHighF, *mut c_void)>,
+    set_meas_high_f_callback: Option<extern "C" fn(Model64412MeasHighF, *mut c_void)>,
     /// Meas Low Amps (MeasLowAmps)
     ///
     /// Set the DER to always measure low current
-    meas_low_amps_callback: Option<extern "C" fn(*const c_void) -> MeasLowAmps>,
+    meas_low_amps_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowAmps>,
     /// Meas Low Amps (MeasLowAmps)
     ///
     /// Set the DER to always measure low current
-    set_meas_low_amps_callback: Option<extern "C" fn(MeasLowAmps, *mut c_void)>,
+    set_meas_low_amps_callback: Option<extern "C" fn(Model64412MeasLowAmps, *mut c_void)>,
     /// Meas High Amps (MeasHighAmps)
     ///
     /// Set the DER to always measure high current
-    meas_high_amps_callback: Option<extern "C" fn(*const c_void) -> MeasHighAmps>,
+    meas_high_amps_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasHighAmps>,
     /// Meas High Amps (MeasHighAmps)
     ///
     /// Set the DER to always measure high current
-    set_meas_high_amps_callback: Option<extern "C" fn(MeasHighAmps, *mut c_void)>,
+    set_meas_high_amps_callback: Option<extern "C" fn(Model64412MeasHighAmps, *mut c_void)>,
     /// Meas High S (MeasHighS)
     ///
     /// Set the DER to always measure high apparent power
-    meas_high_s_callback: Option<extern "C" fn(*const c_void) -> MeasHighS>,
+    meas_high_s_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasHighS>,
     /// Meas High S (MeasHighS)
     ///
     /// Set the DER to always measure high apparent power
-    set_meas_high_s_callback: Option<extern "C" fn(MeasHighS, *mut c_void)>,
+    set_meas_high_s_callback: Option<extern "C" fn(Model64412MeasHighS, *mut c_void)>,
     /// Meas Low S (MeasLowS)
     ///
     /// Set the DER to always measure low apparent power
-    meas_low_s_callback: Option<extern "C" fn(*const c_void) -> MeasLowS>,
+    meas_low_s_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowS>,
     /// Meas Low S (MeasLowS)
     ///
     /// Set the DER to always measure low apparent power
-    set_meas_low_s_callback: Option<extern "C" fn(MeasLowS, *mut c_void)>,
+    set_meas_low_s_callback: Option<extern "C" fn(Model64412MeasLowS, *mut c_void)>,
     /// Meas High Q (MeasHighQ)
     ///
     /// Set the DER to always measure high reactive power
-    meas_high_q_callback: Option<extern "C" fn(*const c_void) -> MeasHighQ>,
+    meas_high_q_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasHighQ>,
     /// Meas High Q (MeasHighQ)
     ///
     /// Set the DER to always measure high reactive power
-    set_meas_high_q_callback: Option<extern "C" fn(MeasHighQ, *mut c_void)>,
+    set_meas_high_q_callback: Option<extern "C" fn(Model64412MeasHighQ, *mut c_void)>,
     /// Meas Low Q (MeasLowQ)
     ///
     /// Set the DER to always measure low reactive power
-    meas_low_q_callback: Option<extern "C" fn(*const c_void) -> MeasLowQ>,
+    meas_low_q_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowQ>,
     /// Meas Low Q (MeasLowQ)
     ///
     /// Set the DER to always measure low reactive power
-    set_meas_low_q_callback: Option<extern "C" fn(MeasLowQ, *mut c_void)>,
+    set_meas_low_q_callback: Option<extern "C" fn(Model64412MeasLowQ, *mut c_void)>,
     /// Meas Low PF (MeasLowPF)
     ///
     /// Set the DER to always measure low power factor
-    meas_low_pf_callback: Option<extern "C" fn(*const c_void) -> MeasLowPf>,
+    meas_low_pf_callback: Option<extern "C" fn(*const c_void) -> Model64412MeasLowPf>,
     /// Meas Low PF (MeasLowPF)
     ///
     /// Set the DER to always measure low power factor
-    set_meas_low_pf_callback: Option<extern "C" fn(MeasLowPf, *mut c_void)>,
+    set_meas_low_pf_callback: Option<extern "C" fn(Model64412MeasLowPf, *mut c_void)>,
     /// Meas Low Reversed PF (MeasLowReversedPF)
     ///
     /// Set the DER to always measure low reversed power factor
-    meas_low_reversed_pf_callback: Option<extern "C" fn(*const c_void) -> MeasLowReversedPf>,
+    meas_low_reversed_pf_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412MeasLowReversedPf>,
     /// Meas Low Reversed PF (MeasLowReversedPF)
     ///
     /// Set the DER to always measure low reversed power factor
-    set_meas_low_reversed_pf_callback: Option<extern "C" fn(MeasLowReversedPf, *mut c_void)>,
+    set_meas_low_reversed_pf_callback:
+        Option<extern "C" fn(Model64412MeasLowReversedPf, *mut c_void)>,
     /// Nameplate High P (NameplateHighP)
     ///
     /// Set the DER nameplate power to be high
-    nameplate_high_p_callback: Option<extern "C" fn(*const c_void) -> NameplateHighP>,
+    nameplate_high_p_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateHighP>,
     /// Nameplate High P (NameplateHighP)
     ///
     /// Set the DER nameplate power to be high
-    set_nameplate_high_p_callback: Option<extern "C" fn(NameplateHighP, *mut c_void)>,
+    set_nameplate_high_p_callback: Option<extern "C" fn(Model64412NameplateHighP, *mut c_void)>,
     /// Nameplate Low P (NameplateLowP)
     ///
     /// Set the DER nameplate power to be low
-    nameplate_low_p_callback: Option<extern "C" fn(*const c_void) -> NameplateLowP>,
+    nameplate_low_p_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateLowP>,
     /// Nameplate Low P (NameplateLowP)
     ///
     /// Set the DER nameplate power to be low
-    set_nameplate_low_p_callback: Option<extern "C" fn(NameplateLowP, *mut c_void)>,
+    set_nameplate_low_p_callback: Option<extern "C" fn(Model64412NameplateLowP, *mut c_void)>,
     /// Nameplate High S (NameplateHighS)
     ///
     /// Set the DER nameplate apparent power to be high
-    nameplate_high_s_callback: Option<extern "C" fn(*const c_void) -> NameplateHighS>,
+    nameplate_high_s_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateHighS>,
     /// Nameplate High S (NameplateHighS)
     ///
     /// Set the DER nameplate apparent power to be high
-    set_nameplate_high_s_callback: Option<extern "C" fn(NameplateHighS, *mut c_void)>,
+    set_nameplate_high_s_callback: Option<extern "C" fn(Model64412NameplateHighS, *mut c_void)>,
     /// Nameplate Low S (NameplateLowS)
     ///
     /// Set the DER nameplate apparent power to be low
-    nameplate_low_s_callback: Option<extern "C" fn(*const c_void) -> NameplateLowS>,
+    nameplate_low_s_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateLowS>,
     /// Nameplate Low S (NameplateLowS)
     ///
     /// Set the DER nameplate apparent power to be low
-    set_nameplate_low_s_callback: Option<extern "C" fn(NameplateLowS, *mut c_void)>,
+    set_nameplate_low_s_callback: Option<extern "C" fn(Model64412NameplateLowS, *mut c_void)>,
     /// Nameplate High Q (NameplateHighQ)
     ///
     /// Set the DER nameplate reactive power to be high
-    nameplate_high_q_callback: Option<extern "C" fn(*const c_void) -> NameplateHighQ>,
+    nameplate_high_q_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateHighQ>,
     /// Nameplate High Q (NameplateHighQ)
     ///
     /// Set the DER nameplate reactive power to be high
-    set_nameplate_high_q_callback: Option<extern "C" fn(NameplateHighQ, *mut c_void)>,
+    set_nameplate_high_q_callback: Option<extern "C" fn(Model64412NameplateHighQ, *mut c_void)>,
     /// Nameplate Low Q (NameplateLowQ)
     ///
     /// Set the DER nameplate reactive power to be low
-    nameplate_low_q_callback: Option<extern "C" fn(*const c_void) -> NameplateLowQ>,
+    nameplate_low_q_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateLowQ>,
     /// Nameplate Low Q (NameplateLowQ)
     ///
     /// Set the DER nameplate reactive power to be low
-    set_nameplate_low_q_callback: Option<extern "C" fn(NameplateLowQ, *mut c_void)>,
+    set_nameplate_low_q_callback: Option<extern "C" fn(Model64412NameplateLowQ, *mut c_void)>,
     /// Nameplate High Nom V (NameplateHighNomV)
     ///
     /// Set the DER nameplate voltage to be high
-    nameplate_high_nom_v_callback: Option<extern "C" fn(*const c_void) -> NameplateHighNomV>,
+    nameplate_high_nom_v_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412NameplateHighNomV>,
     /// Nameplate High Nom V (NameplateHighNomV)
     ///
     /// Set the DER nameplate voltage to be high
-    set_nameplate_high_nom_v_callback: Option<extern "C" fn(NameplateHighNomV, *mut c_void)>,
+    set_nameplate_high_nom_v_callback:
+        Option<extern "C" fn(Model64412NameplateHighNomV, *mut c_void)>,
     /// Nameplate Low Nom V (NameplateLowNomV)
     ///
     /// Set the DER nameplate voltage to be low
-    nameplate_low_nom_v_callback: Option<extern "C" fn(*const c_void) -> NameplateLowNomV>,
+    nameplate_low_nom_v_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412NameplateLowNomV>,
     /// Nameplate Low Nom V (NameplateLowNomV)
     ///
     /// Set the DER nameplate voltage to be low
-    set_nameplate_low_nom_v_callback: Option<extern "C" fn(NameplateLowNomV, *mut c_void)>,
+    set_nameplate_low_nom_v_callback:
+        Option<extern "C" fn(Model64412NameplateLowNomV, *mut c_void)>,
     /// Nameplate Low Amps (NameplateLowAmps)
     ///
     /// Set the DER nameplate current to be low
-    nameplate_low_amps_callback: Option<extern "C" fn(*const c_void) -> NameplateLowAmps>,
+    nameplate_low_amps_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateLowAmps>,
     /// Nameplate Low Amps (NameplateLowAmps)
     ///
     /// Set the DER nameplate current to be low
-    set_nameplate_low_amps_callback: Option<extern "C" fn(NameplateLowAmps, *mut c_void)>,
+    set_nameplate_low_amps_callback: Option<extern "C" fn(Model64412NameplateLowAmps, *mut c_void)>,
     /// Nameplate Low Varmaxinj (NameplateLowVarmaxinj)
     ///
     /// Set the DER nameplate VarMaxInj to be low
-    nameplate_low_varmaxinj_callback: Option<extern "C" fn(*const c_void) -> NameplateLowVarmaxinj>,
+    nameplate_low_varmaxinj_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412NameplateLowVarmaxinj>,
     /// Nameplate Low Varmaxinj (NameplateLowVarmaxinj)
     ///
     /// Set the DER nameplate VarMaxInj to be low
-    set_nameplate_low_varmaxinj_callback: Option<extern "C" fn(NameplateLowVarmaxinj, *mut c_void)>,
+    set_nameplate_low_varmaxinj_callback:
+        Option<extern "C" fn(Model64412NameplateLowVarmaxinj, *mut c_void)>,
     /// Nameplate Low Varmaxabs (NameplateLowVarmaxabs)
     ///
     /// Set the DER nameplate VarMaxAbs to be low
-    nameplate_low_varmaxabs_callback: Option<extern "C" fn(*const c_void) -> NameplateLowVarmaxabs>,
+    nameplate_low_varmaxabs_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412NameplateLowVarmaxabs>,
     /// Nameplate Low Varmaxabs (NameplateLowVarmaxabs)
     ///
     /// Set the DER nameplate VarMaxAbs to be low
-    set_nameplate_low_varmaxabs_callback: Option<extern "C" fn(NameplateLowVarmaxabs, *mut c_void)>,
+    set_nameplate_low_varmaxabs_callback:
+        Option<extern "C" fn(Model64412NameplateLowVarmaxabs, *mut c_void)>,
     /// Nameplate Low PF (NameplateLowPF)
     ///
     /// Set the DER nameplate power factor to be low
-    nameplate_low_pf_callback: Option<extern "C" fn(*const c_void) -> NameplateLowPf>,
+    nameplate_low_pf_callback: Option<extern "C" fn(*const c_void) -> Model64412NameplateLowPf>,
     /// Nameplate Low PF (NameplateLowPF)
     ///
     /// Set the DER nameplate power factor to be low
-    set_nameplate_low_pf_callback: Option<extern "C" fn(NameplateLowPf, *mut c_void)>,
+    set_nameplate_low_pf_callback: Option<extern "C" fn(Model64412NameplateLowPf, *mut c_void)>,
     /// Settings High Nom V (SettingsHighNomV)
     ///
     /// Set the DER settings voltage to be high
-    settings_high_nom_v_callback: Option<extern "C" fn(*const c_void) -> SettingsHighNomV>,
+    settings_high_nom_v_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412SettingsHighNomV>,
     /// Settings High Nom V (SettingsHighNomV)
     ///
     /// Set the DER settings voltage to be high
-    set_settings_high_nom_v_callback: Option<extern "C" fn(SettingsHighNomV, *mut c_void)>,
+    set_settings_high_nom_v_callback:
+        Option<extern "C" fn(Model64412SettingsHighNomV, *mut c_void)>,
     /// Settings Low Amps (SettingsLowAmps)
     ///
     /// Set the DER settings current to be low
-    settings_low_amps_callback: Option<extern "C" fn(*const c_void) -> SettingsLowAmps>,
+    settings_low_amps_callback: Option<extern "C" fn(*const c_void) -> Model64412SettingsLowAmps>,
     /// Settings Low Amps (SettingsLowAmps)
     ///
     /// Set the DER settings current to be low
-    set_settings_low_amps_callback: Option<extern "C" fn(SettingsLowAmps, *mut c_void)>,
+    set_settings_low_amps_callback: Option<extern "C" fn(Model64412SettingsLowAmps, *mut c_void)>,
     /// Settings High P (SettingsHighP)
     ///
     /// Set the DER settings power to be high
-    settings_high_p_callback: Option<extern "C" fn(*const c_void) -> SettingsHighP>,
+    settings_high_p_callback: Option<extern "C" fn(*const c_void) -> Model64412SettingsHighP>,
     /// Settings High P (SettingsHighP)
     ///
     /// Set the DER settings power to be high
-    set_settings_high_p_callback: Option<extern "C" fn(SettingsHighP, *mut c_void)>,
+    set_settings_high_p_callback: Option<extern "C" fn(Model64412SettingsHighP, *mut c_void)>,
     /// Settings Low P (SettingsLowP)
     ///
     /// Set the DER settings power to be low
-    settings_low_p_callback: Option<extern "C" fn(*const c_void) -> SettingsLowP>,
+    settings_low_p_callback: Option<extern "C" fn(*const c_void) -> Model64412SettingsLowP>,
     /// Settings Low P (SettingsLowP)
     ///
     /// Set the DER settings power to be low
-    set_settings_low_p_callback: Option<extern "C" fn(SettingsLowP, *mut c_void)>,
+    set_settings_low_p_callback: Option<extern "C" fn(Model64412SettingsLowP, *mut c_void)>,
     /// Settings High VAMax (SettingsHighVAMax)
     ///
     /// Set the DER settings VAMax to be high
-    settings_high_va_max_callback: Option<extern "C" fn(*const c_void) -> SettingsHighVaMax>,
+    settings_high_va_max_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412SettingsHighVaMax>,
     /// Settings High VAMax (SettingsHighVAMax)
     ///
     /// Set the DER settings VAMax to be high
-    set_settings_high_va_max_callback: Option<extern "C" fn(SettingsHighVaMax, *mut c_void)>,
+    set_settings_high_va_max_callback:
+        Option<extern "C" fn(Model64412SettingsHighVaMax, *mut c_void)>,
     /// Settings High Varmaxinj (SettingsHighVarmaxinj)
     ///
     /// Set the DER settings VarMaxInj to be high
-    settings_high_varmaxinj_callback: Option<extern "C" fn(*const c_void) -> SettingsHighVarmaxinj>,
+    settings_high_varmaxinj_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412SettingsHighVarmaxinj>,
     /// Settings High Varmaxinj (SettingsHighVarmaxinj)
     ///
     /// Set the DER settings VarMaxInj to be high
-    set_settings_high_varmaxinj_callback: Option<extern "C" fn(SettingsHighVarmaxinj, *mut c_void)>,
+    set_settings_high_varmaxinj_callback:
+        Option<extern "C" fn(Model64412SettingsHighVarmaxinj, *mut c_void)>,
     /// Settings High Varmaxabs (SettingsHighVarmaxabs)
     ///
     /// Set the DER settings VarMaxAbs to be high
-    settings_high_varmaxabs_callback: Option<extern "C" fn(*const c_void) -> SettingsHighVarmaxabs>,
+    settings_high_varmaxabs_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412SettingsHighVarmaxabs>,
     /// Settings High Varmaxabs (SettingsHighVarmaxabs)
     ///
     /// Set the DER settings VarMaxAbs to be high
-    set_settings_high_varmaxabs_callback: Option<extern "C" fn(SettingsHighVarmaxabs, *mut c_void)>,
+    set_settings_high_varmaxabs_callback:
+        Option<extern "C" fn(Model64412SettingsHighVarmaxabs, *mut c_void)>,
     /// Change Common Model ID (ChangeCommonModelID)
     ///
     /// Change the common model ID
-    change_common_model_id_callback: Option<extern "C" fn(*const c_void) -> ChangeCommonModelId>,
+    change_common_model_id_callback:
+        Option<extern "C" fn(*const c_void) -> Model64412ChangeCommonModelId>,
     /// Change Common Model ID (ChangeCommonModelID)
     ///
     /// Change the common model ID
-    set_change_common_model_id_callback: Option<extern "C" fn(ChangeCommonModelId, *mut c_void)>,
+    set_change_common_model_id_callback:
+        Option<extern "C" fn(Model64412ChangeCommonModelId, *mut c_void)>,
     /// Change Common Model Length (ChangeCommonModelLength)
     ///
     /// Change the common model length
     change_common_model_length_callback:
-        Option<extern "C" fn(*const c_void) -> ChangeCommonModelLength>,
+        Option<extern "C" fn(*const c_void) -> Model64412ChangeCommonModelLength>,
     /// Change Common Model Length (ChangeCommonModelLength)
     ///
     /// Change the common model length
     set_change_common_model_length_callback:
-        Option<extern "C" fn(ChangeCommonModelLength, *mut c_void)>,
+        Option<extern "C" fn(Model64412ChangeCommonModelLength, *mut c_void)>,
 }
 
 impl ReadAdapter for Model64412CallbackAdapter {
@@ -3461,175 +3618,175 @@ pub struct Model64412StatefulAdapter {
     /// DA Manipulation (DAManipulation)
     ///
     /// Modify the device ID of the DER
-    pub da_manipulation: DaManipulation,
+    pub da_manipulation: Model64412DaManipulation,
     /// Falsify Device Identity (FalsifyDeviceIdentity)
     ///
     /// Change the DER manufacturer and model
-    pub falsify_device_identity: FalsifyDeviceIdentity,
+    pub falsify_device_identity: Model64412FalsifyDeviceIdentity,
     /// Meas P Always Nameplate (MeasPAlwaysNameplate)
     ///
     /// Set the DER meas to always be at nameplate power
-    pub meas_p_always_nameplate: MeasPAlwaysNameplate,
+    pub meas_p_always_nameplate: Model64412MeasPAlwaysNameplate,
     /// Meas Q Always Minimum (MeasQAlwaysMinimum)
     ///
     /// Set the DER to always be at minimum reactive power
-    pub meas_q_always_minimum: MeasQAlwaysMinimum,
+    pub meas_q_always_minimum: Model64412MeasQAlwaysMinimum,
     /// Meas Q Always Maximum (MeasQAlwaysMaximum)
     ///
     /// Set the DER to always be at maximum reactive power
-    pub meas_q_always_maximum: MeasQAlwaysMaximum,
+    pub meas_q_always_maximum: Model64412MeasQAlwaysMaximum,
     /// Meas Q Always Zero (MeasQAlwaysZero)
     ///
     /// Set the DER to always be at zero reactive power
-    pub meas_q_always_zero: MeasQAlwaysZero,
+    pub meas_q_always_zero: Model64412MeasQAlwaysZero,
     /// Meas Zero P (MeasZeroP)
     ///
     /// Set the DER to always be at zero P, Q, and S
-    pub meas_zero_p: MeasZeroP,
+    pub meas_zero_p: Model64412MeasZeroP,
     /// Meas Invert Q (MeasInvertQ)
     ///
     /// Set the DER to reverse the Q measurement data
-    pub meas_invert_q: MeasInvertQ,
+    pub meas_invert_q: Model64412MeasInvertQ,
     /// Meas Low V (MeasLowV)
     ///
     /// Set the DER to always measure low voltage
-    pub meas_low_v: MeasLowV,
+    pub meas_low_v: Model64412MeasLowV,
     /// Meas High V (MeasHighV)
     ///
     /// Set the DER to always measure high voltage
-    pub meas_high_v: MeasHighV,
+    pub meas_high_v: Model64412MeasHighV,
     /// Meas Low L1 V (MeasLowL1V)
     ///
     /// Set the DER to always measure low line 1 voltage
-    pub meas_low_l1_v: MeasLowL1v,
+    pub meas_low_l1_v: Model64412MeasLowL1v,
     /// Meas High L1 V (MeasHighL1V)
     ///
     /// Set the DER to always measure high line 1 voltage
-    pub meas_high_l1_v: MeasHighL1v,
+    pub meas_high_l1_v: Model64412MeasHighL1v,
     /// Meas Low F (MeasLowF)
     ///
     /// Set the DER to always measure low frequency
-    pub meas_low_f: MeasLowF,
+    pub meas_low_f: Model64412MeasLowF,
     /// Meas High F (MeasHighF)
     ///
     /// Set the DER to always measure high frequency
-    pub meas_high_f: MeasHighF,
+    pub meas_high_f: Model64412MeasHighF,
     /// Meas Low Amps (MeasLowAmps)
     ///
     /// Set the DER to always measure low current
-    pub meas_low_amps: MeasLowAmps,
+    pub meas_low_amps: Model64412MeasLowAmps,
     /// Meas High Amps (MeasHighAmps)
     ///
     /// Set the DER to always measure high current
-    pub meas_high_amps: MeasHighAmps,
+    pub meas_high_amps: Model64412MeasHighAmps,
     /// Meas High S (MeasHighS)
     ///
     /// Set the DER to always measure high apparent power
-    pub meas_high_s: MeasHighS,
+    pub meas_high_s: Model64412MeasHighS,
     /// Meas Low S (MeasLowS)
     ///
     /// Set the DER to always measure low apparent power
-    pub meas_low_s: MeasLowS,
+    pub meas_low_s: Model64412MeasLowS,
     /// Meas High Q (MeasHighQ)
     ///
     /// Set the DER to always measure high reactive power
-    pub meas_high_q: MeasHighQ,
+    pub meas_high_q: Model64412MeasHighQ,
     /// Meas Low Q (MeasLowQ)
     ///
     /// Set the DER to always measure low reactive power
-    pub meas_low_q: MeasLowQ,
+    pub meas_low_q: Model64412MeasLowQ,
     /// Meas Low PF (MeasLowPF)
     ///
     /// Set the DER to always measure low power factor
-    pub meas_low_pf: MeasLowPf,
+    pub meas_low_pf: Model64412MeasLowPf,
     /// Meas Low Reversed PF (MeasLowReversedPF)
     ///
     /// Set the DER to always measure low reversed power factor
-    pub meas_low_reversed_pf: MeasLowReversedPf,
+    pub meas_low_reversed_pf: Model64412MeasLowReversedPf,
     /// Nameplate High P (NameplateHighP)
     ///
     /// Set the DER nameplate power to be high
-    pub nameplate_high_p: NameplateHighP,
+    pub nameplate_high_p: Model64412NameplateHighP,
     /// Nameplate Low P (NameplateLowP)
     ///
     /// Set the DER nameplate power to be low
-    pub nameplate_low_p: NameplateLowP,
+    pub nameplate_low_p: Model64412NameplateLowP,
     /// Nameplate High S (NameplateHighS)
     ///
     /// Set the DER nameplate apparent power to be high
-    pub nameplate_high_s: NameplateHighS,
+    pub nameplate_high_s: Model64412NameplateHighS,
     /// Nameplate Low S (NameplateLowS)
     ///
     /// Set the DER nameplate apparent power to be low
-    pub nameplate_low_s: NameplateLowS,
+    pub nameplate_low_s: Model64412NameplateLowS,
     /// Nameplate High Q (NameplateHighQ)
     ///
     /// Set the DER nameplate reactive power to be high
-    pub nameplate_high_q: NameplateHighQ,
+    pub nameplate_high_q: Model64412NameplateHighQ,
     /// Nameplate Low Q (NameplateLowQ)
     ///
     /// Set the DER nameplate reactive power to be low
-    pub nameplate_low_q: NameplateLowQ,
+    pub nameplate_low_q: Model64412NameplateLowQ,
     /// Nameplate High Nom V (NameplateHighNomV)
     ///
     /// Set the DER nameplate voltage to be high
-    pub nameplate_high_nom_v: NameplateHighNomV,
+    pub nameplate_high_nom_v: Model64412NameplateHighNomV,
     /// Nameplate Low Nom V (NameplateLowNomV)
     ///
     /// Set the DER nameplate voltage to be low
-    pub nameplate_low_nom_v: NameplateLowNomV,
+    pub nameplate_low_nom_v: Model64412NameplateLowNomV,
     /// Nameplate Low Amps (NameplateLowAmps)
     ///
     /// Set the DER nameplate current to be low
-    pub nameplate_low_amps: NameplateLowAmps,
+    pub nameplate_low_amps: Model64412NameplateLowAmps,
     /// Nameplate Low Varmaxinj (NameplateLowVarmaxinj)
     ///
     /// Set the DER nameplate VarMaxInj to be low
-    pub nameplate_low_varmaxinj: NameplateLowVarmaxinj,
+    pub nameplate_low_varmaxinj: Model64412NameplateLowVarmaxinj,
     /// Nameplate Low Varmaxabs (NameplateLowVarmaxabs)
     ///
     /// Set the DER nameplate VarMaxAbs to be low
-    pub nameplate_low_varmaxabs: NameplateLowVarmaxabs,
+    pub nameplate_low_varmaxabs: Model64412NameplateLowVarmaxabs,
     /// Nameplate Low PF (NameplateLowPF)
     ///
     /// Set the DER nameplate power factor to be low
-    pub nameplate_low_pf: NameplateLowPf,
+    pub nameplate_low_pf: Model64412NameplateLowPf,
     /// Settings High Nom V (SettingsHighNomV)
     ///
     /// Set the DER settings voltage to be high
-    pub settings_high_nom_v: SettingsHighNomV,
+    pub settings_high_nom_v: Model64412SettingsHighNomV,
     /// Settings Low Amps (SettingsLowAmps)
     ///
     /// Set the DER settings current to be low
-    pub settings_low_amps: SettingsLowAmps,
+    pub settings_low_amps: Model64412SettingsLowAmps,
     /// Settings High P (SettingsHighP)
     ///
     /// Set the DER settings power to be high
-    pub settings_high_p: SettingsHighP,
+    pub settings_high_p: Model64412SettingsHighP,
     /// Settings Low P (SettingsLowP)
     ///
     /// Set the DER settings power to be low
-    pub settings_low_p: SettingsLowP,
+    pub settings_low_p: Model64412SettingsLowP,
     /// Settings High VAMax (SettingsHighVAMax)
     ///
     /// Set the DER settings VAMax to be high
-    pub settings_high_va_max: SettingsHighVaMax,
+    pub settings_high_va_max: Model64412SettingsHighVaMax,
     /// Settings High Varmaxinj (SettingsHighVarmaxinj)
     ///
     /// Set the DER settings VarMaxInj to be high
-    pub settings_high_varmaxinj: SettingsHighVarmaxinj,
+    pub settings_high_varmaxinj: Model64412SettingsHighVarmaxinj,
     /// Settings High Varmaxabs (SettingsHighVarmaxabs)
     ///
     /// Set the DER settings VarMaxAbs to be high
-    pub settings_high_varmaxabs: SettingsHighVarmaxabs,
+    pub settings_high_varmaxabs: Model64412SettingsHighVarmaxabs,
     /// Change Common Model ID (ChangeCommonModelID)
     ///
     /// Change the common model ID
-    pub change_common_model_id: ChangeCommonModelId,
+    pub change_common_model_id: Model64412ChangeCommonModelId,
     /// Change Common Model Length (ChangeCommonModelLength)
     ///
     /// Change the common model length
-    pub change_common_model_length: ChangeCommonModelLength,
+    pub change_common_model_length: Model64412ChangeCommonModelLength,
 }
 
 impl ReadAdapter for Model64412StatefulAdapter {

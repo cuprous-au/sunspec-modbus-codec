@@ -490,20 +490,23 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ArGraMod {
+pub enum Model128ArGraMod {
     Edge = 0,
     Center = 1,
 }
 
-impl ArGraMod {
-    pub fn from_repr(repr: u16) -> Option<ArGraMod> {
+impl Model128ArGraMod {
+    pub fn from_repr(repr: u16) -> Option<Model128ArGraMod> {
         match repr {
-            0 => Some(ArGraMod::Edge),
-            1 => Some(ArGraMod::Center),
+            0 => Some(Model128ArGraMod::Edge),
+            1 => Some(Model128ArGraMod::Center),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model128ArGraMod`] - only `Model128ArGraMod` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ArGraMod` distinct from another model's point of the same name.
+pub type ArGraMod = Model128ArGraMod;
 
 #[repr(C)]
 pub struct Model128CallbackAdapter {
@@ -511,11 +514,11 @@ pub struct Model128CallbackAdapter {
     /// ArGraMod (ArGraMod)
     ///
     /// Indicates if gradients trend toward zero at the edges of the deadband or trend toward zero at the center of the deadband.
-    ar_gra_mod_callback: extern "C" fn(*const c_void) -> ArGraMod,
+    ar_gra_mod_callback: extern "C" fn(*const c_void) -> Model128ArGraMod,
     /// ArGraMod (ArGraMod)
     ///
     /// Indicates if gradients trend toward zero at the edges of the deadband or trend toward zero at the center of the deadband.
-    set_ar_gra_mod_callback: extern "C" fn(ArGraMod, *mut c_void),
+    set_ar_gra_mod_callback: extern "C" fn(Model128ArGraMod, *mut c_void),
     /// ArGraSag (ArGraSag)
     ///
     /// The gradient used to increase capacitive dynamic current. A value of 0 indicates no additional reactive current support.
@@ -766,7 +769,7 @@ pub struct Model128StatefulAdapter {
     /// ArGraMod (ArGraMod)
     ///
     /// Indicates if gradients trend toward zero at the edges of the deadband or trend toward zero at the center of the deadband.
-    pub ar_gra_mod: ArGraMod,
+    pub ar_gra_mod: Model128ArGraMod,
     /// ArGraSag (ArGraSag)
     ///
     /// The gradient used to increase capacitive dynamic current. A value of 0 indicates no additional reactive current support.

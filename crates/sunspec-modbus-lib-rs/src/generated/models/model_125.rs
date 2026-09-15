@@ -332,7 +332,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SigType {
+pub enum Model125SigType {
     Unknown = 0,
     Absolute = 1,
     Relative = 2,
@@ -340,18 +340,21 @@ pub enum SigType {
     Level = 4,
 }
 
-impl SigType {
-    pub fn from_repr(repr: u16) -> Option<SigType> {
+impl Model125SigType {
+    pub fn from_repr(repr: u16) -> Option<Model125SigType> {
         match repr {
-            0 => Some(SigType::Unknown),
-            1 => Some(SigType::Absolute),
-            2 => Some(SigType::Relative),
-            3 => Some(SigType::Multiplier),
-            4 => Some(SigType::Level),
+            0 => Some(Model125SigType::Unknown),
+            1 => Some(Model125SigType::Absolute),
+            2 => Some(Model125SigType::Relative),
+            3 => Some(Model125SigType::Multiplier),
+            4 => Some(Model125SigType::Level),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model125SigType`] - only `Model125SigType` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SigType` distinct from another model's point of the same name.
+pub type SigType = Model125SigType;
 
 #[repr(C)]
 pub struct Model125CallbackAdapter {
@@ -367,11 +370,11 @@ pub struct Model125CallbackAdapter {
     /// SigType (SigType)
     ///
     /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
-    sig_type_callback: Option<extern "C" fn(*const c_void) -> SigType>,
+    sig_type_callback: Option<extern "C" fn(*const c_void) -> Model125SigType>,
     /// SigType (SigType)
     ///
     /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
-    set_sig_type_callback: Option<extern "C" fn(SigType, *mut c_void)>,
+    set_sig_type_callback: Option<extern "C" fn(Model125SigType, *mut c_void)>,
     /// Sig (Sig)
     ///
     /// Utility/ESP specific pricing signal. Content depends on pricing signal type. When H/M/L type is specified. Low=0; Med=1; High=2.
@@ -505,7 +508,7 @@ pub struct Model125StatefulAdapter {
     /// SigType (SigType)
     ///
     /// Meaning of the pricing signal. When a Price schedule is used, type must match the schedule range variable description.
-    pub sig_type: SigType,
+    pub sig_type: Model125SigType,
     /// Sig (Sig)
     ///
     /// Utility/ESP specific pricing signal. Content depends on pricing signal type. When H/M/L type is specified. Low=0; Med=1; High=2.

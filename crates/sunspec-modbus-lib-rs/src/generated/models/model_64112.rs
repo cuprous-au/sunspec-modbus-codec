@@ -906,45 +906,51 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigAutoRestart {
+pub enum Model64112CcConfigAutoRestart {
     Off = 0,
     Every90Minutes = 1,
     Every90MinutesIfAbsorbOrFloat = 2,
 }
 
-impl CcConfigAutoRestart {
-    pub fn from_repr(repr: u16) -> Option<CcConfigAutoRestart> {
+impl Model64112CcConfigAutoRestart {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigAutoRestart> {
         match repr {
-            0 => Some(CcConfigAutoRestart::Off),
-            1 => Some(CcConfigAutoRestart::Every90Minutes),
-            2 => Some(CcConfigAutoRestart::Every90MinutesIfAbsorbOrFloat),
+            0 => Some(Model64112CcConfigAutoRestart::Off),
+            1 => Some(Model64112CcConfigAutoRestart::Every90Minutes),
+            2 => Some(Model64112CcConfigAutoRestart::Every90MinutesIfAbsorbOrFloat),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigAutoRestart`] - only `Model64112CcConfigAutoRestart` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigAutoRestart` distinct from another model's point of the same name.
+pub type CcConfigAutoRestart = Model64112CcConfigAutoRestart;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigAuxControl {
+pub enum Model64112CcConfigAuxControl {
     Off = 0,
     Auto = 1,
     On = 2,
 }
 
-impl CcConfigAuxControl {
-    pub fn from_repr(repr: u16) -> Option<CcConfigAuxControl> {
+impl Model64112CcConfigAuxControl {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigAuxControl> {
         match repr {
-            0 => Some(CcConfigAuxControl::Off),
-            1 => Some(CcConfigAuxControl::Auto),
-            2 => Some(CcConfigAuxControl::On),
+            0 => Some(Model64112CcConfigAuxControl::Off),
+            1 => Some(Model64112CcConfigAuxControl::Auto),
+            2 => Some(Model64112CcConfigAuxControl::On),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigAuxControl`] - only `Model64112CcConfigAuxControl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigAuxControl` distinct from another model's point of the same name.
+pub type CcConfigAuxControl = Model64112CcConfigAuxControl;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigAuxMode {
+pub enum Model64112CcConfigAuxMode {
     Float = 0,
     DiversionRelay = 1,
     DiversionSolidSt = 2,
@@ -956,147 +962,171 @@ pub enum CcConfigAuxMode {
     NightLight = 8,
 }
 
-impl CcConfigAuxMode {
-    pub fn from_repr(repr: u16) -> Option<CcConfigAuxMode> {
+impl Model64112CcConfigAuxMode {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigAuxMode> {
         match repr {
-            0 => Some(CcConfigAuxMode::Float),
-            1 => Some(CcConfigAuxMode::DiversionRelay),
-            2 => Some(CcConfigAuxMode::DiversionSolidSt),
-            3 => Some(CcConfigAuxMode::LowBattDisconnect),
-            4 => Some(CcConfigAuxMode::Remote),
-            5 => Some(CcConfigAuxMode::VentFan),
-            6 => Some(CcConfigAuxMode::PvTrigger),
-            7 => Some(CcConfigAuxMode::ErrorOutput),
-            8 => Some(CcConfigAuxMode::NightLight),
+            0 => Some(Model64112CcConfigAuxMode::Float),
+            1 => Some(Model64112CcConfigAuxMode::DiversionRelay),
+            2 => Some(Model64112CcConfigAuxMode::DiversionSolidSt),
+            3 => Some(Model64112CcConfigAuxMode::LowBattDisconnect),
+            4 => Some(Model64112CcConfigAuxMode::Remote),
+            5 => Some(Model64112CcConfigAuxMode::VentFan),
+            6 => Some(Model64112CcConfigAuxMode::PvTrigger),
+            7 => Some(Model64112CcConfigAuxMode::ErrorOutput),
+            8 => Some(Model64112CcConfigAuxMode::NightLight),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigAuxMode`] - only `Model64112CcConfigAuxMode` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigAuxMode` distinct from another model's point of the same name.
+pub type CcConfigAuxMode = Model64112CcConfigAuxMode;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigAuxPolarity {
+pub enum Model64112CcConfigAuxPolarity {
     Low = 0,
     High = 1,
 }
 
-impl CcConfigAuxPolarity {
-    pub fn from_repr(repr: u16) -> Option<CcConfigAuxPolarity> {
+impl Model64112CcConfigAuxPolarity {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigAuxPolarity> {
         match repr {
-            0 => Some(CcConfigAuxPolarity::Low),
-            1 => Some(CcConfigAuxPolarity::High),
+            0 => Some(Model64112CcConfigAuxPolarity::Low),
+            1 => Some(Model64112CcConfigAuxPolarity::High),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigAuxPolarity`] - only `Model64112CcConfigAuxPolarity` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigAuxPolarity` distinct from another model's point of the same name.
+pub type CcConfigAuxPolarity = Model64112CcConfigAuxPolarity;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigAuxState {
+pub enum Model64112CcConfigAuxState {
     Disabled = 0,
     Enabled = 1,
 }
 
-impl CcConfigAuxState {
-    pub fn from_repr(repr: u16) -> Option<CcConfigAuxState> {
+impl Model64112CcConfigAuxState {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigAuxState> {
         match repr {
-            0 => Some(CcConfigAuxState::Disabled),
-            1 => Some(CcConfigAuxState::Enabled),
+            0 => Some(Model64112CcConfigAuxState::Disabled),
+            1 => Some(Model64112CcConfigAuxState::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigAuxState`] - only `Model64112CcConfigAuxState` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigAuxState` distinct from another model's point of the same name.
+pub type CcConfigAuxState = Model64112CcConfigAuxState;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigGridTie {
+pub enum Model64112CcConfigGridTie {
     Disabled = 0,
     Enabled = 1,
 }
 
-impl CcConfigGridTie {
-    pub fn from_repr(repr: u16) -> Option<CcConfigGridTie> {
+impl Model64112CcConfigGridTie {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigGridTie> {
         match repr {
-            0 => Some(CcConfigGridTie::Disabled),
-            1 => Some(CcConfigGridTie::Enabled),
+            0 => Some(Model64112CcConfigGridTie::Disabled),
+            1 => Some(Model64112CcConfigGridTie::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigGridTie`] - only `Model64112CcConfigGridTie` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigGridTie` distinct from another model's point of the same name.
+pub type CcConfigGridTie = Model64112CcConfigGridTie;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigMpptMode {
+pub enum Model64112CcConfigMpptMode {
     Auto = 0,
     UPick = 1,
     Wind = 2,
 }
 
-impl CcConfigMpptMode {
-    pub fn from_repr(repr: u16) -> Option<CcConfigMpptMode> {
+impl Model64112CcConfigMpptMode {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigMpptMode> {
         match repr {
-            0 => Some(CcConfigMpptMode::Auto),
-            1 => Some(CcConfigMpptMode::UPick),
-            2 => Some(CcConfigMpptMode::Wind),
+            0 => Some(Model64112CcConfigMpptMode::Auto),
+            1 => Some(Model64112CcConfigMpptMode::UPick),
+            2 => Some(Model64112CcConfigMpptMode::Wind),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigMpptMode`] - only `Model64112CcConfigMpptMode` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigMpptMode` distinct from another model's point of the same name.
+pub type CcConfigMpptMode = Model64112CcConfigMpptMode;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigSweepMax {
+pub enum Model64112CcConfigSweepMax {
     EightyPercent = 0,
     EightyFivePercent = 1,
     NintyPercent = 2,
     NintyNinePercent = 3,
 }
 
-impl CcConfigSweepMax {
-    pub fn from_repr(repr: u16) -> Option<CcConfigSweepMax> {
+impl Model64112CcConfigSweepMax {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigSweepMax> {
         match repr {
-            0 => Some(CcConfigSweepMax::EightyPercent),
-            1 => Some(CcConfigSweepMax::EightyFivePercent),
-            2 => Some(CcConfigSweepMax::NintyPercent),
-            3 => Some(CcConfigSweepMax::NintyNinePercent),
+            0 => Some(Model64112CcConfigSweepMax::EightyPercent),
+            1 => Some(Model64112CcConfigSweepMax::EightyFivePercent),
+            2 => Some(Model64112CcConfigSweepMax::NintyPercent),
+            3 => Some(Model64112CcConfigSweepMax::NintyNinePercent),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigSweepMax`] - only `Model64112CcConfigSweepMax` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigSweepMax` distinct from another model's point of the same name.
+pub type CcConfigSweepMax = Model64112CcConfigSweepMax;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigSweepWidth {
+pub enum Model64112CcConfigSweepWidth {
     Half = 0,
     Full = 1,
 }
 
-impl CcConfigSweepWidth {
-    pub fn from_repr(repr: u16) -> Option<CcConfigSweepWidth> {
+impl Model64112CcConfigSweepWidth {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigSweepWidth> {
         match repr {
-            0 => Some(CcConfigSweepWidth::Half),
-            1 => Some(CcConfigSweepWidth::Full),
+            0 => Some(Model64112CcConfigSweepWidth::Half),
+            1 => Some(Model64112CcConfigSweepWidth::Full),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64112CcConfigSweepWidth`] - only `Model64112CcConfigSweepWidth` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigSweepWidth` distinct from another model's point of the same name.
+pub type CcConfigSweepWidth = Model64112CcConfigSweepWidth;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CcConfigTempComp {
+pub enum Model64112CcConfigTempComp {
     Wide = 0,
     Limited = 1,
 }
 
-impl CcConfigTempComp {
-    pub fn from_repr(repr: u16) -> Option<CcConfigTempComp> {
+impl Model64112CcConfigTempComp {
+    pub fn from_repr(repr: u16) -> Option<Model64112CcConfigTempComp> {
         match repr {
-            0 => Some(CcConfigTempComp::Wide),
-            1 => Some(CcConfigTempComp::Limited),
+            0 => Some(Model64112CcConfigTempComp::Wide),
+            1 => Some(Model64112CcConfigTempComp::Limited),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64112CcConfigTempComp`] - only `Model64112CcConfigTempComp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CcConfigTempComp` distinct from another model's point of the same name.
+pub type CcConfigTempComp = Model64112CcConfigTempComp;
 
 #[repr(C)]
 pub struct Model64112CallbackAdapter {
@@ -1136,23 +1166,23 @@ pub struct Model64112CallbackAdapter {
     /// Auto Equalize Interval (CC_Config_auto_equalize)
     auto_equalize_interval_callback: extern "C" fn(*const c_void) -> u16,
     /// MPPT mode (CC_Config_MPPT_mode)
-    mppt_mode_callback: extern "C" fn(*const c_void) -> CcConfigMpptMode,
+    mppt_mode_callback: extern "C" fn(*const c_void) -> Model64112CcConfigMpptMode,
     /// Sweep Width (CC_Config_sweep_width)
-    sweep_width_callback: extern "C" fn(*const c_void) -> CcConfigSweepWidth,
+    sweep_width_callback: extern "C" fn(*const c_void) -> Model64112CcConfigSweepWidth,
     /// Sweep Maximum (CC_Config_sweep_max)
-    sweep_maximum_callback: extern "C" fn(*const c_void) -> CcConfigSweepMax,
+    sweep_maximum_callback: extern "C" fn(*const c_void) -> Model64112CcConfigSweepMax,
     /// U-Pick PWM Duty Cycle (CC_Config_U_Pick_Duty_cyc)
     u_pick_pwm_duty_cycle_callback: extern "C" fn(*const c_void) -> u16,
     /// Grid Tie Mode (CC_Config_grid_tie)
-    grid_tie_mode_callback: extern "C" fn(*const c_void) -> CcConfigGridTie,
+    grid_tie_mode_callback: extern "C" fn(*const c_void) -> Model64112CcConfigGridTie,
     /// Temp Comp Mode (CC_Config_temp_comp)
-    temp_comp_mode_callback: extern "C" fn(*const c_void) -> CcConfigTempComp,
+    temp_comp_mode_callback: extern "C" fn(*const c_void) -> Model64112CcConfigTempComp,
     /// Temp Comp Lower Limit (CC_Config_temp_comp_llimt)
     temp_comp_lower_limit_callback: extern "C" fn(*const c_void) -> u16,
     /// Temp Comp Upper Limit (CC_Config_temp_comp_hlimt)
     temp_comp_upper_limit_callback: extern "C" fn(*const c_void) -> u16,
     /// Auto Restart Mode (CC_Config_auto_restart)
-    auto_restart_mode_callback: extern "C" fn(*const c_void) -> CcConfigAutoRestart,
+    auto_restart_mode_callback: extern "C" fn(*const c_void) -> Model64112CcConfigAutoRestart,
     /// Wakeup VOC Change (CC_Config_wakeup_VOC)
     wakeup_voc_change_callback: extern "C" fn(*const c_void) -> u16,
     /// Snooze Mode (CC_Config_snooze_mode_A)
@@ -1160,13 +1190,13 @@ pub struct Model64112CallbackAdapter {
     /// Wakeup Interval (CC_Config_wakeup_interval)
     wakeup_interval_callback: extern "C" fn(*const c_void) -> u16,
     /// AUX Output Mode (CC_Config_AUX_mode)
-    aux_output_mode_callback: extern "C" fn(*const c_void) -> CcConfigAuxMode,
+    aux_output_mode_callback: extern "C" fn(*const c_void) -> Model64112CcConfigAuxMode,
     /// AUX Output Control (CC_Config_AUX_control)
-    aux_output_control_callback: extern "C" fn(*const c_void) -> CcConfigAuxControl,
+    aux_output_control_callback: extern "C" fn(*const c_void) -> Model64112CcConfigAuxControl,
     /// AUX Output State (CC_Config_AUX_state)
-    aux_output_state_callback: extern "C" fn(*const c_void) -> CcConfigAuxState,
+    aux_output_state_callback: extern "C" fn(*const c_void) -> Model64112CcConfigAuxState,
     /// AUX Output Polarity (CC_Config_AUX_polarity)
-    aux_output_polarity_callback: extern "C" fn(*const c_void) -> CcConfigAuxPolarity,
+    aux_output_polarity_callback: extern "C" fn(*const c_void) -> Model64112CcConfigAuxPolarity,
     /// AUX Low Battery Disconnect (CC_Config_AUX_L_Batt_disc)
     aux_low_battery_disconnect_callback: extern "C" fn(*const c_void) -> u16,
     /// AUX Low Battery Reconnect (CC_Config_AUX_L_Batt_rcon)
@@ -1526,23 +1556,23 @@ pub struct Model64112StatefulAdapter {
     /// Auto Equalize Interval (CC_Config_auto_equalize)
     pub auto_equalize_interval: u16,
     /// MPPT mode (CC_Config_MPPT_mode)
-    pub mppt_mode: CcConfigMpptMode,
+    pub mppt_mode: Model64112CcConfigMpptMode,
     /// Sweep Width (CC_Config_sweep_width)
-    pub sweep_width: CcConfigSweepWidth,
+    pub sweep_width: Model64112CcConfigSweepWidth,
     /// Sweep Maximum (CC_Config_sweep_max)
-    pub sweep_maximum: CcConfigSweepMax,
+    pub sweep_maximum: Model64112CcConfigSweepMax,
     /// U-Pick PWM Duty Cycle (CC_Config_U_Pick_Duty_cyc)
     pub u_pick_pwm_duty_cycle: u16,
     /// Grid Tie Mode (CC_Config_grid_tie)
-    pub grid_tie_mode: CcConfigGridTie,
+    pub grid_tie_mode: Model64112CcConfigGridTie,
     /// Temp Comp Mode (CC_Config_temp_comp)
-    pub temp_comp_mode: CcConfigTempComp,
+    pub temp_comp_mode: Model64112CcConfigTempComp,
     /// Temp Comp Lower Limit (CC_Config_temp_comp_llimt)
     pub temp_comp_lower_limit: u16,
     /// Temp Comp Upper Limit (CC_Config_temp_comp_hlimt)
     pub temp_comp_upper_limit: u16,
     /// Auto Restart Mode (CC_Config_auto_restart)
-    pub auto_restart_mode: CcConfigAutoRestart,
+    pub auto_restart_mode: Model64112CcConfigAutoRestart,
     /// Wakeup VOC Change (CC_Config_wakeup_VOC)
     pub wakeup_voc_change: u16,
     /// Snooze Mode (CC_Config_snooze_mode_A)
@@ -1550,13 +1580,13 @@ pub struct Model64112StatefulAdapter {
     /// Wakeup Interval (CC_Config_wakeup_interval)
     pub wakeup_interval: u16,
     /// AUX Output Mode (CC_Config_AUX_mode)
-    pub aux_output_mode: CcConfigAuxMode,
+    pub aux_output_mode: Model64112CcConfigAuxMode,
     /// AUX Output Control (CC_Config_AUX_control)
-    pub aux_output_control: CcConfigAuxControl,
+    pub aux_output_control: Model64112CcConfigAuxControl,
     /// AUX Output State (CC_Config_AUX_state)
-    pub aux_output_state: CcConfigAuxState,
+    pub aux_output_state: Model64112CcConfigAuxState,
     /// AUX Output Polarity (CC_Config_AUX_polarity)
-    pub aux_output_polarity: CcConfigAuxPolarity,
+    pub aux_output_polarity: Model64112CcConfigAuxPolarity,
     /// AUX Low Battery Disconnect (CC_Config_AUX_L_Batt_disc)
     pub aux_low_battery_disconnect: u16,
     /// AUX Low Battery Reconnect (CC_Config_AUX_L_Batt_rcon)

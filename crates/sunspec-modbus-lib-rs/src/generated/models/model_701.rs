@@ -1532,7 +1532,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AcType {
+pub enum Model701AcType {
     /// Single Phase
     SinglePhase = 0,
     /// Split Phase
@@ -1541,20 +1541,23 @@ pub enum AcType {
     ThreePhase = 2,
 }
 
-impl AcType {
-    pub fn from_repr(repr: u16) -> Option<AcType> {
+impl Model701AcType {
+    pub fn from_repr(repr: u16) -> Option<Model701AcType> {
         match repr {
-            0 => Some(AcType::SinglePhase),
-            1 => Some(AcType::SplitPhase),
-            2 => Some(AcType::ThreePhase),
+            0 => Some(Model701AcType::SinglePhase),
+            1 => Some(Model701AcType::SplitPhase),
+            2 => Some(Model701AcType::ThreePhase),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model701AcType`] - only `Model701AcType` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AcType` distinct from another model's point of the same name.
+pub type AcType = Model701AcType;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ConnSt {
+pub enum Model701ConnSt {
     /// Disconnected
     ///
     /// Disconnected from the grid.
@@ -1565,19 +1568,22 @@ pub enum ConnSt {
     Connected = 1,
 }
 
-impl ConnSt {
-    pub fn from_repr(repr: u16) -> Option<ConnSt> {
+impl Model701ConnSt {
+    pub fn from_repr(repr: u16) -> Option<Model701ConnSt> {
         match repr {
-            0 => Some(ConnSt::Disconnected),
-            1 => Some(ConnSt::Connected),
+            0 => Some(Model701ConnSt::Disconnected),
+            1 => Some(Model701ConnSt::Connected),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model701ConnSt`] - only `Model701ConnSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ConnSt` distinct from another model's point of the same name.
+pub type ConnSt = Model701ConnSt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum InvSt {
+pub enum Model701InvSt {
     Off = 0,
     Sleeping = 1,
     Starting = 2,
@@ -1588,40 +1594,46 @@ pub enum InvSt {
     Standby = 7,
 }
 
-impl InvSt {
-    pub fn from_repr(repr: u16) -> Option<InvSt> {
+impl Model701InvSt {
+    pub fn from_repr(repr: u16) -> Option<Model701InvSt> {
         match repr {
-            0 => Some(InvSt::Off),
-            1 => Some(InvSt::Sleeping),
-            2 => Some(InvSt::Starting),
-            3 => Some(InvSt::Running),
-            4 => Some(InvSt::Throttled),
-            5 => Some(InvSt::ShuttingDown),
-            6 => Some(InvSt::Fault),
-            7 => Some(InvSt::Standby),
+            0 => Some(Model701InvSt::Off),
+            1 => Some(Model701InvSt::Sleeping),
+            2 => Some(Model701InvSt::Starting),
+            3 => Some(Model701InvSt::Running),
+            4 => Some(Model701InvSt::Throttled),
+            5 => Some(Model701InvSt::ShuttingDown),
+            6 => Some(Model701InvSt::Fault),
+            7 => Some(Model701InvSt::Standby),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model701InvSt`] - only `Model701InvSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `InvSt` distinct from another model's point of the same name.
+pub type InvSt = Model701InvSt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum St {
+pub enum Model701St {
     /// Off
     Off = 0,
     /// On
     On = 1,
 }
 
-impl St {
-    pub fn from_repr(repr: u16) -> Option<St> {
+impl Model701St {
+    pub fn from_repr(repr: u16) -> Option<Model701St> {
         match repr {
-            0 => Some(St::Off),
-            1 => Some(St::On),
+            0 => Some(Model701St::Off),
+            1 => Some(Model701St::On),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model701St`] - only `Model701St` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `St` distinct from another model's point of the same name.
+pub type St = Model701St;
 
 #[repr(C)]
 pub struct Model701CallbackAdapter {
@@ -1629,19 +1641,19 @@ pub struct Model701CallbackAdapter {
     /// AC Wiring Type (ACType)
     ///
     /// AC wiring type.
-    ac_wiring_type_callback: extern "C" fn(*const c_void) -> AcType,
+    ac_wiring_type_callback: extern "C" fn(*const c_void) -> Model701AcType,
     /// Operating State (St)
     ///
     /// Operating state of the DER.
-    operating_state_callback: Option<extern "C" fn(*const c_void) -> St>,
+    operating_state_callback: Option<extern "C" fn(*const c_void) -> Model701St>,
     /// Inverter State (InvSt)
     ///
     /// Inverter state.
-    inverter_state_callback: Option<extern "C" fn(*const c_void) -> InvSt>,
+    inverter_state_callback: Option<extern "C" fn(*const c_void) -> Model701InvSt>,
     /// Grid Connection State (ConnSt)
     ///
     /// Grid connection state of the DER.
-    grid_connection_state_callback: Option<extern "C" fn(*const c_void) -> ConnSt>,
+    grid_connection_state_callback: Option<extern "C" fn(*const c_void) -> Model701ConnSt>,
     /// Alarm Bitfield (Alrm)
     ///
     /// Active alarms for the DER.
@@ -2258,19 +2270,19 @@ pub struct Model701StatefulAdapter {
     /// AC Wiring Type (ACType)
     ///
     /// AC wiring type.
-    pub ac_wiring_type: AcType,
+    pub ac_wiring_type: Model701AcType,
     /// Operating State (St)
     ///
     /// Operating state of the DER.
-    pub operating_state: St,
+    pub operating_state: Model701St,
     /// Inverter State (InvSt)
     ///
     /// Inverter state.
-    pub inverter_state: InvSt,
+    pub inverter_state: Model701InvSt,
     /// Grid Connection State (ConnSt)
     ///
     /// Grid connection state of the DER.
-    pub grid_connection_state: ConnSt,
+    pub grid_connection_state: Model701ConnSt,
     /// Alarm Bitfield (Alrm)
     ///
     /// Active alarms for the DER.

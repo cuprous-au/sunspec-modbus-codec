@@ -555,20 +555,23 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DerTyp {
+pub enum Model120DerTyp {
     Pv = 4,
     PvStor = 82,
 }
 
-impl DerTyp {
-    pub fn from_repr(repr: u16) -> Option<DerTyp> {
+impl Model120DerTyp {
+    pub fn from_repr(repr: u16) -> Option<Model120DerTyp> {
         match repr {
-            4 => Some(DerTyp::Pv),
-            82 => Some(DerTyp::PvStor),
+            4 => Some(Model120DerTyp::Pv),
+            82 => Some(Model120DerTyp::PvStor),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model120DerTyp`] - only `Model120DerTyp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DerTyp` distinct from another model's point of the same name.
+pub type DerTyp = Model120DerTyp;
 
 #[repr(C)]
 pub struct Model120CallbackAdapter {
@@ -576,7 +579,7 @@ pub struct Model120CallbackAdapter {
     /// DERTyp (DERTyp)
     ///
     /// Type of DER device. Default value is 4 to indicate PV device.
-    der_typ_callback: extern "C" fn(*const c_void) -> DerTyp,
+    der_typ_callback: extern "C" fn(*const c_void) -> Model120DerTyp,
     /// WRtg (WRtg)
     ///
     /// Continuous power output capability of the inverter.
@@ -800,7 +803,7 @@ pub struct Model120StatefulAdapter {
     /// DERTyp (DERTyp)
     ///
     /// Type of DER device. Default value is 4 to indicate PV device.
-    pub der_typ: DerTyp,
+    pub der_typ: Model120DerTyp,
     /// WRtg (WRtg)
     ///
     /// Continuous power output capability of the inverter.

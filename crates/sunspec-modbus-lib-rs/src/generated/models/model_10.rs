@@ -213,26 +213,29 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum St {
+pub enum Model10St {
     Down = 0,
     Up = 1,
     Fault = 2,
 }
 
-impl St {
-    pub fn from_repr(repr: u16) -> Option<St> {
+impl Model10St {
+    pub fn from_repr(repr: u16) -> Option<Model10St> {
         match repr {
-            0 => Some(St::Down),
-            1 => Some(St::Up),
-            2 => Some(St::Fault),
+            0 => Some(Model10St::Down),
+            1 => Some(Model10St::Up),
+            2 => Some(Model10St::Fault),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model10St`] - only `Model10St` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `St` distinct from another model's point of the same name.
+pub type St = Model10St;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Typ {
+pub enum Model10Typ {
     Unknown = 0,
     Internal = 1,
     TwistedPair = 2,
@@ -240,18 +243,21 @@ pub enum Typ {
     Wireless = 4,
 }
 
-impl Typ {
-    pub fn from_repr(repr: u16) -> Option<Typ> {
+impl Model10Typ {
+    pub fn from_repr(repr: u16) -> Option<Model10Typ> {
         match repr {
-            0 => Some(Typ::Unknown),
-            1 => Some(Typ::Internal),
-            2 => Some(Typ::TwistedPair),
-            3 => Some(Typ::Fiber),
-            4 => Some(Typ::Wireless),
+            0 => Some(Model10Typ::Unknown),
+            1 => Some(Model10Typ::Internal),
+            2 => Some(Model10Typ::TwistedPair),
+            3 => Some(Model10Typ::Fiber),
+            4 => Some(Model10Typ::Wireless),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model10Typ`] - only `Model10Typ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Typ` distinct from another model's point of the same name.
+pub type Typ = Model10Typ;
 
 #[repr(C)]
 pub struct Model10CallbackAdapter {
@@ -259,7 +265,7 @@ pub struct Model10CallbackAdapter {
     /// Interface Status (St)
     ///
     /// Overall interface status
-    interface_status_callback: extern "C" fn(*const c_void) -> St,
+    interface_status_callback: extern "C" fn(*const c_void) -> Model10St,
     /// Interface Control (Ctl)
     ///
     /// Overall interface control (TBD)
@@ -271,7 +277,7 @@ pub struct Model10CallbackAdapter {
     /// Physical Access Type (Typ)
     ///
     /// Type of physical media
-    physical_access_type_callback: Option<extern "C" fn(*const c_void) -> Typ>,
+    physical_access_type_callback: Option<extern "C" fn(*const c_void) -> Model10Typ>,
 }
 
 impl ReadAdapter for Model10CallbackAdapter {
@@ -306,7 +312,7 @@ pub struct Model10StatefulAdapter {
     /// Interface Status (St)
     ///
     /// Overall interface status
-    pub interface_status: St,
+    pub interface_status: Model10St,
     /// Interface Control (Ctl)
     ///
     /// Overall interface control (TBD)
@@ -314,7 +320,7 @@ pub struct Model10StatefulAdapter {
     /// Physical Access Type (Typ)
     ///
     /// Type of physical media
-    pub physical_access_type: Typ,
+    pub physical_access_type: Model10Typ,
 }
 
 impl ReadAdapter for Model10StatefulAdapter {

@@ -1020,7 +1020,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ModConFail {
+pub enum Model807ModConFail {
     NoFailure = 0,
     ButtonPushed = 1,
     ModuleGroundFault = 2,
@@ -1032,26 +1032,29 @@ pub enum ModConFail {
     ModuleFault = 8,
 }
 
-impl ModConFail {
-    pub fn from_repr(repr: u16) -> Option<ModConFail> {
+impl Model807ModConFail {
+    pub fn from_repr(repr: u16) -> Option<Model807ModConFail> {
         match repr {
-            0 => Some(ModConFail::NoFailure),
-            1 => Some(ModConFail::ButtonPushed),
-            2 => Some(ModConFail::ModuleGroundFault),
-            3 => Some(ModConFail::OutsideVoltageRange),
-            4 => Some(ModConFail::ModuleNotEnabled),
-            5 => Some(ModConFail::FuseOpen),
-            6 => Some(ModConFail::ContactorFailure),
-            7 => Some(ModConFail::PrechargeFailure),
-            8 => Some(ModConFail::ModuleFault),
+            0 => Some(Model807ModConFail::NoFailure),
+            1 => Some(Model807ModConFail::ButtonPushed),
+            2 => Some(Model807ModConFail::ModuleGroundFault),
+            3 => Some(Model807ModConFail::OutsideVoltageRange),
+            4 => Some(Model807ModConFail::ModuleNotEnabled),
+            5 => Some(Model807ModConFail::FuseOpen),
+            6 => Some(Model807ModConFail::ContactorFailure),
+            7 => Some(Model807ModConFail::PrechargeFailure),
+            8 => Some(Model807ModConFail::ModuleFault),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model807ModConFail`] - only `Model807ModConFail` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ModConFail` distinct from another model's point of the same name.
+pub type ModConFail = Model807ModConFail;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ModDisRsn {
+pub enum Model807ModDisRsn {
     None = 0,
     Fault = 1,
     Maintenance = 2,
@@ -1059,52 +1062,61 @@ pub enum ModDisRsn {
     Other = 4,
 }
 
-impl ModDisRsn {
-    pub fn from_repr(repr: u16) -> Option<ModDisRsn> {
+impl Model807ModDisRsn {
+    pub fn from_repr(repr: u16) -> Option<Model807ModDisRsn> {
         match repr {
-            0 => Some(ModDisRsn::None),
-            1 => Some(ModDisRsn::Fault),
-            2 => Some(ModDisRsn::Maintenance),
-            3 => Some(ModDisRsn::External),
-            4 => Some(ModDisRsn::Other),
+            0 => Some(Model807ModDisRsn::None),
+            1 => Some(Model807ModDisRsn::Fault),
+            2 => Some(Model807ModDisRsn::Maintenance),
+            3 => Some(Model807ModDisRsn::External),
+            4 => Some(Model807ModDisRsn::Other),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model807ModDisRsn`] - only `Model807ModDisRsn` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ModDisRsn` distinct from another model's point of the same name.
+pub type ModDisRsn = Model807ModDisRsn;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ModSetCon {
+pub enum Model807ModSetCon {
     ConnectModule = 1,
     DisconnectModule = 2,
 }
 
-impl ModSetCon {
-    pub fn from_repr(repr: u16) -> Option<ModSetCon> {
+impl Model807ModSetCon {
+    pub fn from_repr(repr: u16) -> Option<Model807ModSetCon> {
         match repr {
-            1 => Some(ModSetCon::ConnectModule),
-            2 => Some(ModSetCon::DisconnectModule),
+            1 => Some(Model807ModSetCon::ConnectModule),
+            2 => Some(Model807ModSetCon::DisconnectModule),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model807ModSetCon`] - only `Model807ModSetCon` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ModSetCon` distinct from another model's point of the same name.
+pub type ModSetCon = Model807ModSetCon;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ModSetEna {
+pub enum Model807ModSetEna {
     EnableModule = 1,
     DisableModule = 2,
 }
 
-impl ModSetEna {
-    pub fn from_repr(repr: u16) -> Option<ModSetEna> {
+impl Model807ModSetEna {
+    pub fn from_repr(repr: u16) -> Option<Model807ModSetEna> {
         match repr {
-            1 => Some(ModSetEna::EnableModule),
-            2 => Some(ModSetEna::DisableModule),
+            1 => Some(Model807ModSetEna::EnableModule),
+            2 => Some(Model807ModSetEna::DisableModule),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model807ModSetEna`] - only `Model807ModSetEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ModSetEna` distinct from another model's point of the same name.
+pub type ModSetEna = Model807ModSetEna;
 
 #[repr(C)]
 pub struct Model807CallbackAdapter {
@@ -1302,27 +1314,32 @@ pub struct Model807CallbackAdapter {
     /// Alarms, warnings and status values.
     module_module_event_2_callback: extern "C" fn(*const c_void) -> u32,
     /// Connection Failure Reason (ModConFail)
-    module_connection_failure_reason_callback: Option<extern "C" fn(*const c_void) -> ModConFail>,
+    module_connection_failure_reason_callback:
+        Option<extern "C" fn(*const c_void) -> Model807ModConFail>,
     /// Enable/Disable Module (ModSetEna)
     ///
     /// Enables and disables the module.
-    module_enable_disable_module_callback: Option<extern "C" fn(*const c_void) -> ModSetEna>,
+    module_enable_disable_module_callback:
+        Option<extern "C" fn(*const c_void) -> Model807ModSetEna>,
     /// Enable/Disable Module (ModSetEna)
     ///
     /// Enables and disables the module.
-    set_module_enable_disable_module_callback: Option<extern "C" fn(ModSetEna, *mut c_void)>,
+    set_module_enable_disable_module_callback:
+        Option<extern "C" fn(Model807ModSetEna, *mut c_void)>,
     /// Connect/Disconnect Module  (ModSetCon)
     ///
     /// Connects and disconnects the module.
-    module_connect_disconnect_module_callback: Option<extern "C" fn(*const c_void) -> ModSetCon>,
+    module_connect_disconnect_module_callback:
+        Option<extern "C" fn(*const c_void) -> Model807ModSetCon>,
     /// Connect/Disconnect Module  (ModSetCon)
     ///
     /// Connects and disconnects the module.
-    set_module_connect_disconnect_module_callback: Option<extern "C" fn(ModSetCon, *mut c_void)>,
+    set_module_connect_disconnect_module_callback:
+        Option<extern "C" fn(Model807ModSetCon, *mut c_void)>,
     /// Disabled Reason (ModDisRsn)
     ///
     /// Reason why the module is currently disabled.
-    module_disabled_reason_callback: Option<extern "C" fn(*const c_void) -> ModDisRsn>,
+    module_disabled_reason_callback: Option<extern "C" fn(*const c_void) -> Model807ModDisRsn>,
 }
 
 impl ReadAdapter for Model807CallbackAdapter {
@@ -1761,19 +1778,19 @@ pub struct Model807StatefulAdapter {
     /// Alarms, warnings and status values.
     pub module_module_event_2: u32,
     /// Connection Failure Reason (ModConFail)
-    pub module_connection_failure_reason: ModConFail,
+    pub module_connection_failure_reason: Model807ModConFail,
     /// Enable/Disable Module (ModSetEna)
     ///
     /// Enables and disables the module.
-    pub module_enable_disable_module: ModSetEna,
+    pub module_enable_disable_module: Model807ModSetEna,
     /// Connect/Disconnect Module  (ModSetCon)
     ///
     /// Connects and disconnects the module.
-    pub module_connect_disconnect_module: ModSetCon,
+    pub module_connect_disconnect_module: Model807ModSetCon,
     /// Disabled Reason (ModDisRsn)
     ///
     /// Reason why the module is currently disabled.
-    pub module_disabled_reason: ModDisRsn,
+    pub module_disabled_reason: Model807ModDisRsn,
 }
 
 impl ReadAdapter for Model807StatefulAdapter {

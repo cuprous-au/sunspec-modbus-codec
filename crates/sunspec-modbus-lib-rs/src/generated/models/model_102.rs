@@ -872,7 +872,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum St {
+pub enum Model102St {
     Off = 1,
     Sleeping = 2,
     Starting = 3,
@@ -883,21 +883,24 @@ pub enum St {
     Standby = 8,
 }
 
-impl St {
-    pub fn from_repr(repr: u16) -> Option<St> {
+impl Model102St {
+    pub fn from_repr(repr: u16) -> Option<Model102St> {
         match repr {
-            1 => Some(St::Off),
-            2 => Some(St::Sleeping),
-            3 => Some(St::Starting),
-            4 => Some(St::Mppt),
-            5 => Some(St::Throttled),
-            6 => Some(St::ShuttingDown),
-            7 => Some(St::Fault),
-            8 => Some(St::Standby),
+            1 => Some(Model102St::Off),
+            2 => Some(Model102St::Sleeping),
+            3 => Some(Model102St::Starting),
+            4 => Some(Model102St::Mppt),
+            5 => Some(Model102St::Throttled),
+            6 => Some(Model102St::ShuttingDown),
+            7 => Some(Model102St::Fault),
+            8 => Some(Model102St::Standby),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model102St`] - only `Model102St` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `St` distinct from another model's point of the same name.
+pub type St = Model102St;
 
 #[repr(C)]
 pub struct Model102CallbackAdapter {
@@ -1027,7 +1030,7 @@ pub struct Model102CallbackAdapter {
     /// Operating State (St)
     ///
     /// Operating state
-    operating_state_callback: extern "C" fn(*const c_void) -> St,
+    operating_state_callback: extern "C" fn(*const c_void) -> Model102St,
     /// Vendor Operating State (StVnd)
     ///
     /// Vendor specific operating state code
@@ -1379,7 +1382,7 @@ pub struct Model102StatefulAdapter {
     /// Operating State (St)
     ///
     /// Operating state
-    pub operating_state: St,
+    pub operating_state: Model102St,
     /// Vendor Operating State (StVnd)
     ///
     /// Vendor specific operating state code

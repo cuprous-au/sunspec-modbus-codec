@@ -11,6 +11,7 @@ use crate::{
 };
 
 /// Build a [`SunspecAdapter`] for model 1 backed by a callback adapter.
+#[cfg(feature = "model_1")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_1_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_1::Model1CallbackAdapter,
@@ -23,6 +24,7 @@ pub extern "C" fn sunspec_model_1_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 1 backed by a stateful adapter.
+#[cfg(feature = "model_1")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_1_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_1::Model1StatefulAdapter,
@@ -35,6 +37,7 @@ pub extern "C" fn sunspec_model_1_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 2 backed by a callback adapter.
+#[cfg(feature = "model_2")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_2_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_2::Model2CallbackAdapter,
@@ -47,6 +50,7 @@ pub extern "C" fn sunspec_model_2_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 2 backed by a stateful adapter.
+#[cfg(feature = "model_2")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_2_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_2::Model2StatefulAdapter,
@@ -59,6 +63,7 @@ pub extern "C" fn sunspec_model_2_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 3 backed by a callback adapter.
+#[cfg(feature = "model_3")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_3_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_3::Model3CallbackAdapter,
@@ -71,6 +76,7 @@ pub extern "C" fn sunspec_model_3_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 3 backed by a stateful adapter.
+#[cfg(feature = "model_3")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_3_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_3::Model3StatefulAdapter,
@@ -83,6 +89,7 @@ pub extern "C" fn sunspec_model_3_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 4 backed by a callback adapter.
+#[cfg(feature = "model_4")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_4_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_4::Model4CallbackAdapter,
@@ -95,6 +102,7 @@ pub extern "C" fn sunspec_model_4_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 4 backed by a stateful adapter.
+#[cfg(feature = "model_4")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_4_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_4::Model4StatefulAdapter,
@@ -107,6 +115,7 @@ pub extern "C" fn sunspec_model_4_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 5 backed by a callback adapter.
+#[cfg(feature = "model_5")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_5_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_5::Model5CallbackAdapter,
@@ -119,6 +128,7 @@ pub extern "C" fn sunspec_model_5_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 5 backed by a stateful adapter.
+#[cfg(feature = "model_5")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_5_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_5::Model5StatefulAdapter,
@@ -131,6 +141,7 @@ pub extern "C" fn sunspec_model_5_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 6 backed by a callback adapter.
+#[cfg(feature = "model_6")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_6_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_6::Model6CallbackAdapter,
@@ -143,6 +154,7 @@ pub extern "C" fn sunspec_model_6_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 6 backed by a stateful adapter.
+#[cfg(feature = "model_6")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_6_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_6::Model6StatefulAdapter,
@@ -155,6 +167,7 @@ pub extern "C" fn sunspec_model_6_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 7 backed by a callback adapter.
+#[cfg(feature = "model_7")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_7_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_7::Model7CallbackAdapter,
@@ -167,6 +180,7 @@ pub extern "C" fn sunspec_model_7_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 7 backed by a stateful adapter.
+#[cfg(feature = "model_7")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_7_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_7::Model7StatefulAdapter,
@@ -179,6 +193,7 @@ pub extern "C" fn sunspec_model_7_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 8 backed by a callback adapter.
+#[cfg(feature = "model_8")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_8_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_8::Model8CallbackAdapter,
@@ -191,6 +206,7 @@ pub extern "C" fn sunspec_model_8_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 8 backed by a stateful adapter.
+#[cfg(feature = "model_8")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_8_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_8::Model8StatefulAdapter,
@@ -203,6 +219,7 @@ pub extern "C" fn sunspec_model_8_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 9 backed by a callback adapter.
+#[cfg(feature = "model_9")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_9_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_9::Model9CallbackAdapter,
@@ -215,6 +232,7 @@ pub extern "C" fn sunspec_model_9_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 9 backed by a stateful adapter.
+#[cfg(feature = "model_9")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_9_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_9::Model9StatefulAdapter,
@@ -227,6 +245,7 @@ pub extern "C" fn sunspec_model_9_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 10 backed by a callback adapter.
+#[cfg(feature = "model_10")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_10_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_10::Model10CallbackAdapter,
@@ -239,6 +258,7 @@ pub extern "C" fn sunspec_model_10_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 10 backed by a stateful adapter.
+#[cfg(feature = "model_10")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_10_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_10::Model10StatefulAdapter,
@@ -251,6 +271,7 @@ pub extern "C" fn sunspec_model_10_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 11 backed by a callback adapter.
+#[cfg(feature = "model_11")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_11_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_11::Model11CallbackAdapter,
@@ -263,6 +284,7 @@ pub extern "C" fn sunspec_model_11_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 11 backed by a stateful adapter.
+#[cfg(feature = "model_11")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_11_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_11::Model11StatefulAdapter,
@@ -275,6 +297,7 @@ pub extern "C" fn sunspec_model_11_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 12 backed by a callback adapter.
+#[cfg(feature = "model_12")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_12_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_12::Model12CallbackAdapter,
@@ -287,6 +310,7 @@ pub extern "C" fn sunspec_model_12_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 12 backed by a stateful adapter.
+#[cfg(feature = "model_12")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_12_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_12::Model12StatefulAdapter,
@@ -299,6 +323,7 @@ pub extern "C" fn sunspec_model_12_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 13 backed by a callback adapter.
+#[cfg(feature = "model_13")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_13_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_13::Model13CallbackAdapter,
@@ -311,6 +336,7 @@ pub extern "C" fn sunspec_model_13_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 13 backed by a stateful adapter.
+#[cfg(feature = "model_13")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_13_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_13::Model13StatefulAdapter,
@@ -323,6 +349,7 @@ pub extern "C" fn sunspec_model_13_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 14 backed by a callback adapter.
+#[cfg(feature = "model_14")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_14_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_14::Model14CallbackAdapter,
@@ -335,6 +362,7 @@ pub extern "C" fn sunspec_model_14_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 14 backed by a stateful adapter.
+#[cfg(feature = "model_14")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_14_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_14::Model14StatefulAdapter,
@@ -347,6 +375,7 @@ pub extern "C" fn sunspec_model_14_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 15 backed by a callback adapter.
+#[cfg(feature = "model_15")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_15_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_15::Model15CallbackAdapter,
@@ -359,6 +388,7 @@ pub extern "C" fn sunspec_model_15_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 15 backed by a stateful adapter.
+#[cfg(feature = "model_15")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_15_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_15::Model15StatefulAdapter,
@@ -371,6 +401,7 @@ pub extern "C" fn sunspec_model_15_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 16 backed by a callback adapter.
+#[cfg(feature = "model_16")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_16_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_16::Model16CallbackAdapter,
@@ -383,6 +414,7 @@ pub extern "C" fn sunspec_model_16_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 16 backed by a stateful adapter.
+#[cfg(feature = "model_16")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_16_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_16::Model16StatefulAdapter,
@@ -395,6 +427,7 @@ pub extern "C" fn sunspec_model_16_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 17 backed by a callback adapter.
+#[cfg(feature = "model_17")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_17_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_17::Model17CallbackAdapter,
@@ -407,6 +440,7 @@ pub extern "C" fn sunspec_model_17_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 17 backed by a stateful adapter.
+#[cfg(feature = "model_17")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_17_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_17::Model17StatefulAdapter,
@@ -419,6 +453,7 @@ pub extern "C" fn sunspec_model_17_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 18 backed by a callback adapter.
+#[cfg(feature = "model_18")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_18_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_18::Model18CallbackAdapter,
@@ -431,6 +466,7 @@ pub extern "C" fn sunspec_model_18_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 18 backed by a stateful adapter.
+#[cfg(feature = "model_18")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_18_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_18::Model18StatefulAdapter,
@@ -443,6 +479,7 @@ pub extern "C" fn sunspec_model_18_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 19 backed by a callback adapter.
+#[cfg(feature = "model_19")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_19_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_19::Model19CallbackAdapter,
@@ -455,6 +492,7 @@ pub extern "C" fn sunspec_model_19_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 19 backed by a stateful adapter.
+#[cfg(feature = "model_19")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_19_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_19::Model19StatefulAdapter,
@@ -467,6 +505,7 @@ pub extern "C" fn sunspec_model_19_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 101 backed by a callback adapter.
+#[cfg(feature = "model_101")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_101_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_101::Model101CallbackAdapter,
@@ -479,6 +518,7 @@ pub extern "C" fn sunspec_model_101_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 101 backed by a stateful adapter.
+#[cfg(feature = "model_101")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_101_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_101::Model101StatefulAdapter,
@@ -491,6 +531,7 @@ pub extern "C" fn sunspec_model_101_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 102 backed by a callback adapter.
+#[cfg(feature = "model_102")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_102_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_102::Model102CallbackAdapter,
@@ -503,6 +544,7 @@ pub extern "C" fn sunspec_model_102_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 102 backed by a stateful adapter.
+#[cfg(feature = "model_102")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_102_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_102::Model102StatefulAdapter,
@@ -515,6 +557,7 @@ pub extern "C" fn sunspec_model_102_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 103 backed by a callback adapter.
+#[cfg(feature = "model_103")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_103_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_103::Model103CallbackAdapter,
@@ -527,6 +570,7 @@ pub extern "C" fn sunspec_model_103_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 103 backed by a stateful adapter.
+#[cfg(feature = "model_103")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_103_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_103::Model103StatefulAdapter,
@@ -539,6 +583,7 @@ pub extern "C" fn sunspec_model_103_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 111 backed by a callback adapter.
+#[cfg(feature = "model_111")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_111_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_111::Model111CallbackAdapter,
@@ -551,6 +596,7 @@ pub extern "C" fn sunspec_model_111_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 111 backed by a stateful adapter.
+#[cfg(feature = "model_111")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_111_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_111::Model111StatefulAdapter,
@@ -563,6 +609,7 @@ pub extern "C" fn sunspec_model_111_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 112 backed by a callback adapter.
+#[cfg(feature = "model_112")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_112_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_112::Model112CallbackAdapter,
@@ -575,6 +622,7 @@ pub extern "C" fn sunspec_model_112_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 112 backed by a stateful adapter.
+#[cfg(feature = "model_112")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_112_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_112::Model112StatefulAdapter,
@@ -587,6 +635,7 @@ pub extern "C" fn sunspec_model_112_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 113 backed by a callback adapter.
+#[cfg(feature = "model_113")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_113_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_113::Model113CallbackAdapter,
@@ -599,6 +648,7 @@ pub extern "C" fn sunspec_model_113_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 113 backed by a stateful adapter.
+#[cfg(feature = "model_113")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_113_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_113::Model113StatefulAdapter,
@@ -611,6 +661,7 @@ pub extern "C" fn sunspec_model_113_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 120 backed by a callback adapter.
+#[cfg(feature = "model_120")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_120_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_120::Model120CallbackAdapter,
@@ -623,6 +674,7 @@ pub extern "C" fn sunspec_model_120_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 120 backed by a stateful adapter.
+#[cfg(feature = "model_120")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_120_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_120::Model120StatefulAdapter,
@@ -635,6 +687,7 @@ pub extern "C" fn sunspec_model_120_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 121 backed by a callback adapter.
+#[cfg(feature = "model_121")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_121_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_121::Model121CallbackAdapter,
@@ -647,6 +700,7 @@ pub extern "C" fn sunspec_model_121_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 121 backed by a stateful adapter.
+#[cfg(feature = "model_121")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_121_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_121::Model121StatefulAdapter,
@@ -659,6 +713,7 @@ pub extern "C" fn sunspec_model_121_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 122 backed by a callback adapter.
+#[cfg(feature = "model_122")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_122_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_122::Model122CallbackAdapter,
@@ -671,6 +726,7 @@ pub extern "C" fn sunspec_model_122_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 122 backed by a stateful adapter.
+#[cfg(feature = "model_122")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_122_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_122::Model122StatefulAdapter,
@@ -683,6 +739,7 @@ pub extern "C" fn sunspec_model_122_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 123 backed by a callback adapter.
+#[cfg(feature = "model_123")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_123_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_123::Model123CallbackAdapter,
@@ -695,6 +752,7 @@ pub extern "C" fn sunspec_model_123_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 123 backed by a stateful adapter.
+#[cfg(feature = "model_123")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_123_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_123::Model123StatefulAdapter,
@@ -707,6 +765,7 @@ pub extern "C" fn sunspec_model_123_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 124 backed by a callback adapter.
+#[cfg(feature = "model_124")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_124_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_124::Model124CallbackAdapter,
@@ -719,6 +778,7 @@ pub extern "C" fn sunspec_model_124_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 124 backed by a stateful adapter.
+#[cfg(feature = "model_124")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_124_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_124::Model124StatefulAdapter,
@@ -731,6 +791,7 @@ pub extern "C" fn sunspec_model_124_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 125 backed by a callback adapter.
+#[cfg(feature = "model_125")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_125_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_125::Model125CallbackAdapter,
@@ -743,6 +804,7 @@ pub extern "C" fn sunspec_model_125_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 125 backed by a stateful adapter.
+#[cfg(feature = "model_125")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_125_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_125::Model125StatefulAdapter,
@@ -755,6 +817,7 @@ pub extern "C" fn sunspec_model_125_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 126 backed by a callback adapter.
+#[cfg(feature = "model_126")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_126_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_126::Model126CallbackAdapter,
@@ -767,6 +830,7 @@ pub extern "C" fn sunspec_model_126_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 126 backed by a stateful adapter.
+#[cfg(feature = "model_126")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_126_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_126::Model126StatefulAdapter,
@@ -779,6 +843,7 @@ pub extern "C" fn sunspec_model_126_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 127 backed by a callback adapter.
+#[cfg(feature = "model_127")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_127_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_127::Model127CallbackAdapter,
@@ -791,6 +856,7 @@ pub extern "C" fn sunspec_model_127_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 127 backed by a stateful adapter.
+#[cfg(feature = "model_127")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_127_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_127::Model127StatefulAdapter,
@@ -803,6 +869,7 @@ pub extern "C" fn sunspec_model_127_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 128 backed by a callback adapter.
+#[cfg(feature = "model_128")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_128_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_128::Model128CallbackAdapter,
@@ -815,6 +882,7 @@ pub extern "C" fn sunspec_model_128_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 128 backed by a stateful adapter.
+#[cfg(feature = "model_128")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_128_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_128::Model128StatefulAdapter,
@@ -827,6 +895,7 @@ pub extern "C" fn sunspec_model_128_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 129 backed by a callback adapter.
+#[cfg(feature = "model_129")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_129_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_129::Model129CallbackAdapter,
@@ -839,6 +908,7 @@ pub extern "C" fn sunspec_model_129_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 129 backed by a stateful adapter.
+#[cfg(feature = "model_129")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_129_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_129::Model129StatefulAdapter,
@@ -851,6 +921,7 @@ pub extern "C" fn sunspec_model_129_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 130 backed by a callback adapter.
+#[cfg(feature = "model_130")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_130_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_130::Model130CallbackAdapter,
@@ -863,6 +934,7 @@ pub extern "C" fn sunspec_model_130_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 130 backed by a stateful adapter.
+#[cfg(feature = "model_130")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_130_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_130::Model130StatefulAdapter,
@@ -875,6 +947,7 @@ pub extern "C" fn sunspec_model_130_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 131 backed by a callback adapter.
+#[cfg(feature = "model_131")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_131_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_131::Model131CallbackAdapter,
@@ -887,6 +960,7 @@ pub extern "C" fn sunspec_model_131_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 131 backed by a stateful adapter.
+#[cfg(feature = "model_131")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_131_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_131::Model131StatefulAdapter,
@@ -899,6 +973,7 @@ pub extern "C" fn sunspec_model_131_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 132 backed by a callback adapter.
+#[cfg(feature = "model_132")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_132_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_132::Model132CallbackAdapter,
@@ -911,6 +986,7 @@ pub extern "C" fn sunspec_model_132_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 132 backed by a stateful adapter.
+#[cfg(feature = "model_132")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_132_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_132::Model132StatefulAdapter,
@@ -923,6 +999,7 @@ pub extern "C" fn sunspec_model_132_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 133 backed by a callback adapter.
+#[cfg(feature = "model_133")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_133_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_133::Model133CallbackAdapter,
@@ -935,6 +1012,7 @@ pub extern "C" fn sunspec_model_133_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 133 backed by a stateful adapter.
+#[cfg(feature = "model_133")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_133_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_133::Model133StatefulAdapter,
@@ -947,6 +1025,7 @@ pub extern "C" fn sunspec_model_133_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 134 backed by a callback adapter.
+#[cfg(feature = "model_134")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_134_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_134::Model134CallbackAdapter,
@@ -959,6 +1038,7 @@ pub extern "C" fn sunspec_model_134_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 134 backed by a stateful adapter.
+#[cfg(feature = "model_134")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_134_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_134::Model134StatefulAdapter,
@@ -971,6 +1051,7 @@ pub extern "C" fn sunspec_model_134_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 135 backed by a callback adapter.
+#[cfg(feature = "model_135")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_135_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_135::Model135CallbackAdapter,
@@ -983,6 +1064,7 @@ pub extern "C" fn sunspec_model_135_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 135 backed by a stateful adapter.
+#[cfg(feature = "model_135")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_135_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_135::Model135StatefulAdapter,
@@ -995,6 +1077,7 @@ pub extern "C" fn sunspec_model_135_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 136 backed by a callback adapter.
+#[cfg(feature = "model_136")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_136_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_136::Model136CallbackAdapter,
@@ -1007,6 +1090,7 @@ pub extern "C" fn sunspec_model_136_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 136 backed by a stateful adapter.
+#[cfg(feature = "model_136")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_136_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_136::Model136StatefulAdapter,
@@ -1019,6 +1103,7 @@ pub extern "C" fn sunspec_model_136_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 137 backed by a callback adapter.
+#[cfg(feature = "model_137")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_137_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_137::Model137CallbackAdapter,
@@ -1031,6 +1116,7 @@ pub extern "C" fn sunspec_model_137_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 137 backed by a stateful adapter.
+#[cfg(feature = "model_137")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_137_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_137::Model137StatefulAdapter,
@@ -1043,6 +1129,7 @@ pub extern "C" fn sunspec_model_137_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 138 backed by a callback adapter.
+#[cfg(feature = "model_138")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_138_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_138::Model138CallbackAdapter,
@@ -1055,6 +1142,7 @@ pub extern "C" fn sunspec_model_138_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 138 backed by a stateful adapter.
+#[cfg(feature = "model_138")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_138_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_138::Model138StatefulAdapter,
@@ -1067,6 +1155,7 @@ pub extern "C" fn sunspec_model_138_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 139 backed by a callback adapter.
+#[cfg(feature = "model_139")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_139_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_139::Model139CallbackAdapter,
@@ -1079,6 +1168,7 @@ pub extern "C" fn sunspec_model_139_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 139 backed by a stateful adapter.
+#[cfg(feature = "model_139")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_139_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_139::Model139StatefulAdapter,
@@ -1091,6 +1181,7 @@ pub extern "C" fn sunspec_model_139_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 140 backed by a callback adapter.
+#[cfg(feature = "model_140")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_140_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_140::Model140CallbackAdapter,
@@ -1103,6 +1194,7 @@ pub extern "C" fn sunspec_model_140_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 140 backed by a stateful adapter.
+#[cfg(feature = "model_140")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_140_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_140::Model140StatefulAdapter,
@@ -1115,6 +1207,7 @@ pub extern "C" fn sunspec_model_140_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 141 backed by a callback adapter.
+#[cfg(feature = "model_141")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_141_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_141::Model141CallbackAdapter,
@@ -1127,6 +1220,7 @@ pub extern "C" fn sunspec_model_141_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 141 backed by a stateful adapter.
+#[cfg(feature = "model_141")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_141_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_141::Model141StatefulAdapter,
@@ -1139,6 +1233,7 @@ pub extern "C" fn sunspec_model_141_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 142 backed by a callback adapter.
+#[cfg(feature = "model_142")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_142_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_142::Model142CallbackAdapter,
@@ -1151,6 +1246,7 @@ pub extern "C" fn sunspec_model_142_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 142 backed by a stateful adapter.
+#[cfg(feature = "model_142")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_142_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_142::Model142StatefulAdapter,
@@ -1163,6 +1259,7 @@ pub extern "C" fn sunspec_model_142_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 143 backed by a callback adapter.
+#[cfg(feature = "model_143")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_143_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_143::Model143CallbackAdapter,
@@ -1175,6 +1272,7 @@ pub extern "C" fn sunspec_model_143_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 143 backed by a stateful adapter.
+#[cfg(feature = "model_143")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_143_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_143::Model143StatefulAdapter,
@@ -1187,6 +1285,7 @@ pub extern "C" fn sunspec_model_143_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 144 backed by a callback adapter.
+#[cfg(feature = "model_144")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_144_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_144::Model144CallbackAdapter,
@@ -1199,6 +1298,7 @@ pub extern "C" fn sunspec_model_144_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 144 backed by a stateful adapter.
+#[cfg(feature = "model_144")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_144_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_144::Model144StatefulAdapter,
@@ -1211,6 +1311,7 @@ pub extern "C" fn sunspec_model_144_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 145 backed by a callback adapter.
+#[cfg(feature = "model_145")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_145_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_145::Model145CallbackAdapter,
@@ -1223,6 +1324,7 @@ pub extern "C" fn sunspec_model_145_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 145 backed by a stateful adapter.
+#[cfg(feature = "model_145")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_145_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_145::Model145StatefulAdapter,
@@ -1235,6 +1337,7 @@ pub extern "C" fn sunspec_model_145_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 160 backed by a callback adapter.
+#[cfg(feature = "model_160")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_160_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_160::Model160CallbackAdapter,
@@ -1247,6 +1350,7 @@ pub extern "C" fn sunspec_model_160_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 160 backed by a stateful adapter.
+#[cfg(feature = "model_160")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_160_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_160::Model160StatefulAdapter,
@@ -1259,6 +1363,7 @@ pub extern "C" fn sunspec_model_160_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 201 backed by a callback adapter.
+#[cfg(feature = "model_201")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_201_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_201::Model201CallbackAdapter,
@@ -1271,6 +1376,7 @@ pub extern "C" fn sunspec_model_201_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 201 backed by a stateful adapter.
+#[cfg(feature = "model_201")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_201_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_201::Model201StatefulAdapter,
@@ -1283,6 +1389,7 @@ pub extern "C" fn sunspec_model_201_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 202 backed by a callback adapter.
+#[cfg(feature = "model_202")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_202_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_202::Model202CallbackAdapter,
@@ -1295,6 +1402,7 @@ pub extern "C" fn sunspec_model_202_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 202 backed by a stateful adapter.
+#[cfg(feature = "model_202")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_202_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_202::Model202StatefulAdapter,
@@ -1307,6 +1415,7 @@ pub extern "C" fn sunspec_model_202_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 203 backed by a callback adapter.
+#[cfg(feature = "model_203")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_203_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_203::Model203CallbackAdapter,
@@ -1319,6 +1428,7 @@ pub extern "C" fn sunspec_model_203_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 203 backed by a stateful adapter.
+#[cfg(feature = "model_203")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_203_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_203::Model203StatefulAdapter,
@@ -1331,6 +1441,7 @@ pub extern "C" fn sunspec_model_203_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 204 backed by a callback adapter.
+#[cfg(feature = "model_204")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_204_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_204::Model204CallbackAdapter,
@@ -1343,6 +1454,7 @@ pub extern "C" fn sunspec_model_204_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 204 backed by a stateful adapter.
+#[cfg(feature = "model_204")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_204_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_204::Model204StatefulAdapter,
@@ -1355,6 +1467,7 @@ pub extern "C" fn sunspec_model_204_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 211 backed by a callback adapter.
+#[cfg(feature = "model_211")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_211_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_211::Model211CallbackAdapter,
@@ -1367,6 +1480,7 @@ pub extern "C" fn sunspec_model_211_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 211 backed by a stateful adapter.
+#[cfg(feature = "model_211")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_211_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_211::Model211StatefulAdapter,
@@ -1379,6 +1493,7 @@ pub extern "C" fn sunspec_model_211_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 212 backed by a callback adapter.
+#[cfg(feature = "model_212")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_212_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_212::Model212CallbackAdapter,
@@ -1391,6 +1506,7 @@ pub extern "C" fn sunspec_model_212_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 212 backed by a stateful adapter.
+#[cfg(feature = "model_212")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_212_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_212::Model212StatefulAdapter,
@@ -1403,6 +1519,7 @@ pub extern "C" fn sunspec_model_212_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 213 backed by a callback adapter.
+#[cfg(feature = "model_213")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_213_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_213::Model213CallbackAdapter,
@@ -1415,6 +1532,7 @@ pub extern "C" fn sunspec_model_213_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 213 backed by a stateful adapter.
+#[cfg(feature = "model_213")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_213_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_213::Model213StatefulAdapter,
@@ -1427,6 +1545,7 @@ pub extern "C" fn sunspec_model_213_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 214 backed by a callback adapter.
+#[cfg(feature = "model_214")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_214_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_214::Model214CallbackAdapter,
@@ -1439,6 +1558,7 @@ pub extern "C" fn sunspec_model_214_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 214 backed by a stateful adapter.
+#[cfg(feature = "model_214")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_214_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_214::Model214StatefulAdapter,
@@ -1451,6 +1571,7 @@ pub extern "C" fn sunspec_model_214_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 220 backed by a callback adapter.
+#[cfg(feature = "model_220")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_220_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_220::Model220CallbackAdapter,
@@ -1463,6 +1584,7 @@ pub extern "C" fn sunspec_model_220_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 220 backed by a stateful adapter.
+#[cfg(feature = "model_220")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_220_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_220::Model220StatefulAdapter,
@@ -1475,6 +1597,7 @@ pub extern "C" fn sunspec_model_220_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 302 backed by a callback adapter.
+#[cfg(feature = "model_302")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_302_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_302::Model302CallbackAdapter,
@@ -1487,6 +1610,7 @@ pub extern "C" fn sunspec_model_302_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 302 backed by a stateful adapter.
+#[cfg(feature = "model_302")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_302_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_302::Model302StatefulAdapter,
@@ -1499,6 +1623,7 @@ pub extern "C" fn sunspec_model_302_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 303 backed by a callback adapter.
+#[cfg(feature = "model_303")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_303_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_303::Model303CallbackAdapter,
@@ -1511,6 +1636,7 @@ pub extern "C" fn sunspec_model_303_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 303 backed by a stateful adapter.
+#[cfg(feature = "model_303")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_303_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_303::Model303StatefulAdapter,
@@ -1523,6 +1649,7 @@ pub extern "C" fn sunspec_model_303_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 304 backed by a callback adapter.
+#[cfg(feature = "model_304")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_304_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_304::Model304CallbackAdapter,
@@ -1535,6 +1662,7 @@ pub extern "C" fn sunspec_model_304_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 304 backed by a stateful adapter.
+#[cfg(feature = "model_304")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_304_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_304::Model304StatefulAdapter,
@@ -1547,6 +1675,7 @@ pub extern "C" fn sunspec_model_304_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 305 backed by a callback adapter.
+#[cfg(feature = "model_305")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_305_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_305::Model305CallbackAdapter,
@@ -1559,6 +1688,7 @@ pub extern "C" fn sunspec_model_305_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 305 backed by a stateful adapter.
+#[cfg(feature = "model_305")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_305_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_305::Model305StatefulAdapter,
@@ -1571,6 +1701,7 @@ pub extern "C" fn sunspec_model_305_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 306 backed by a callback adapter.
+#[cfg(feature = "model_306")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_306_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_306::Model306CallbackAdapter,
@@ -1583,6 +1714,7 @@ pub extern "C" fn sunspec_model_306_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 306 backed by a stateful adapter.
+#[cfg(feature = "model_306")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_306_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_306::Model306StatefulAdapter,
@@ -1595,6 +1727,7 @@ pub extern "C" fn sunspec_model_306_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 307 backed by a callback adapter.
+#[cfg(feature = "model_307")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_307_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_307::Model307CallbackAdapter,
@@ -1607,6 +1740,7 @@ pub extern "C" fn sunspec_model_307_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 307 backed by a stateful adapter.
+#[cfg(feature = "model_307")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_307_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_307::Model307StatefulAdapter,
@@ -1619,6 +1753,7 @@ pub extern "C" fn sunspec_model_307_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 308 backed by a callback adapter.
+#[cfg(feature = "model_308")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_308_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_308::Model308CallbackAdapter,
@@ -1631,6 +1766,7 @@ pub extern "C" fn sunspec_model_308_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 308 backed by a stateful adapter.
+#[cfg(feature = "model_308")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_308_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_308::Model308StatefulAdapter,
@@ -1643,6 +1779,7 @@ pub extern "C" fn sunspec_model_308_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 401 backed by a callback adapter.
+#[cfg(feature = "model_401")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_401_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_401::Model401CallbackAdapter,
@@ -1655,6 +1792,7 @@ pub extern "C" fn sunspec_model_401_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 401 backed by a stateful adapter.
+#[cfg(feature = "model_401")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_401_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_401::Model401StatefulAdapter,
@@ -1667,6 +1805,7 @@ pub extern "C" fn sunspec_model_401_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 402 backed by a callback adapter.
+#[cfg(feature = "model_402")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_402_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_402::Model402CallbackAdapter,
@@ -1679,6 +1818,7 @@ pub extern "C" fn sunspec_model_402_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 402 backed by a stateful adapter.
+#[cfg(feature = "model_402")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_402_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_402::Model402StatefulAdapter,
@@ -1691,6 +1831,7 @@ pub extern "C" fn sunspec_model_402_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 403 backed by a callback adapter.
+#[cfg(feature = "model_403")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_403_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_403::Model403CallbackAdapter,
@@ -1703,6 +1844,7 @@ pub extern "C" fn sunspec_model_403_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 403 backed by a stateful adapter.
+#[cfg(feature = "model_403")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_403_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_403::Model403StatefulAdapter,
@@ -1715,6 +1857,7 @@ pub extern "C" fn sunspec_model_403_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 404 backed by a callback adapter.
+#[cfg(feature = "model_404")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_404_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_404::Model404CallbackAdapter,
@@ -1727,6 +1870,7 @@ pub extern "C" fn sunspec_model_404_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 404 backed by a stateful adapter.
+#[cfg(feature = "model_404")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_404_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_404::Model404StatefulAdapter,
@@ -1739,6 +1883,7 @@ pub extern "C" fn sunspec_model_404_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 501 backed by a callback adapter.
+#[cfg(feature = "model_501")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_501_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_501::Model501CallbackAdapter,
@@ -1751,6 +1896,7 @@ pub extern "C" fn sunspec_model_501_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 501 backed by a stateful adapter.
+#[cfg(feature = "model_501")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_501_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_501::Model501StatefulAdapter,
@@ -1763,6 +1909,7 @@ pub extern "C" fn sunspec_model_501_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 502 backed by a callback adapter.
+#[cfg(feature = "model_502")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_502_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_502::Model502CallbackAdapter,
@@ -1775,6 +1922,7 @@ pub extern "C" fn sunspec_model_502_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 502 backed by a stateful adapter.
+#[cfg(feature = "model_502")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_502_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_502::Model502StatefulAdapter,
@@ -1787,6 +1935,7 @@ pub extern "C" fn sunspec_model_502_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 601 backed by a callback adapter.
+#[cfg(feature = "model_601")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_601_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_601::Model601CallbackAdapter,
@@ -1799,6 +1948,7 @@ pub extern "C" fn sunspec_model_601_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 601 backed by a stateful adapter.
+#[cfg(feature = "model_601")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_601_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_601::Model601StatefulAdapter,
@@ -1811,6 +1961,7 @@ pub extern "C" fn sunspec_model_601_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 701 backed by a callback adapter.
+#[cfg(feature = "model_701")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_701_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_701::Model701CallbackAdapter,
@@ -1823,6 +1974,7 @@ pub extern "C" fn sunspec_model_701_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 701 backed by a stateful adapter.
+#[cfg(feature = "model_701")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_701_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_701::Model701StatefulAdapter,
@@ -1835,6 +1987,7 @@ pub extern "C" fn sunspec_model_701_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 702 backed by a callback adapter.
+#[cfg(feature = "model_702")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_702_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_702::Model702CallbackAdapter,
@@ -1847,6 +2000,7 @@ pub extern "C" fn sunspec_model_702_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 702 backed by a stateful adapter.
+#[cfg(feature = "model_702")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_702_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_702::Model702StatefulAdapter,
@@ -1859,6 +2013,7 @@ pub extern "C" fn sunspec_model_702_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 703 backed by a callback adapter.
+#[cfg(feature = "model_703")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_703_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_703::Model703CallbackAdapter,
@@ -1871,6 +2026,7 @@ pub extern "C" fn sunspec_model_703_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 703 backed by a stateful adapter.
+#[cfg(feature = "model_703")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_703_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_703::Model703StatefulAdapter,
@@ -1883,6 +2039,7 @@ pub extern "C" fn sunspec_model_703_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 704 backed by a callback adapter.
+#[cfg(feature = "model_704")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_704_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_704::Model704CallbackAdapter,
@@ -1895,6 +2052,7 @@ pub extern "C" fn sunspec_model_704_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 704 backed by a stateful adapter.
+#[cfg(feature = "model_704")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_704_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_704::Model704StatefulAdapter,
@@ -1907,6 +2065,7 @@ pub extern "C" fn sunspec_model_704_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 705 backed by a callback adapter.
+#[cfg(feature = "model_705")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_705_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_705::Model705CallbackAdapter,
@@ -1919,6 +2078,7 @@ pub extern "C" fn sunspec_model_705_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 706 backed by a callback adapter.
+#[cfg(feature = "model_706")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_706_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_706::Model706CallbackAdapter,
@@ -1931,6 +2091,7 @@ pub extern "C" fn sunspec_model_706_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 707 backed by a callback adapter.
+#[cfg(feature = "model_707")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_707_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_707::Model707CallbackAdapter,
@@ -1943,6 +2104,7 @@ pub extern "C" fn sunspec_model_707_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 708 backed by a callback adapter.
+#[cfg(feature = "model_708")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_708_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_708::Model708CallbackAdapter,
@@ -1955,6 +2117,7 @@ pub extern "C" fn sunspec_model_708_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 709 backed by a callback adapter.
+#[cfg(feature = "model_709")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_709_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_709::Model709CallbackAdapter,
@@ -1967,6 +2130,7 @@ pub extern "C" fn sunspec_model_709_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 710 backed by a callback adapter.
+#[cfg(feature = "model_710")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_710_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_710::Model710CallbackAdapter,
@@ -1979,6 +2143,7 @@ pub extern "C" fn sunspec_model_710_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 711 backed by a callback adapter.
+#[cfg(feature = "model_711")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_711_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_711::Model711CallbackAdapter,
@@ -1991,6 +2156,7 @@ pub extern "C" fn sunspec_model_711_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 712 backed by a callback adapter.
+#[cfg(feature = "model_712")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_712_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_712::Model712CallbackAdapter,
@@ -2003,6 +2169,7 @@ pub extern "C" fn sunspec_model_712_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 713 backed by a callback adapter.
+#[cfg(feature = "model_713")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_713_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_713::Model713CallbackAdapter,
@@ -2015,6 +2182,7 @@ pub extern "C" fn sunspec_model_713_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 713 backed by a stateful adapter.
+#[cfg(feature = "model_713")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_713_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_713::Model713StatefulAdapter,
@@ -2027,6 +2195,7 @@ pub extern "C" fn sunspec_model_713_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 714 backed by a callback adapter.
+#[cfg(feature = "model_714")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_714_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_714::Model714CallbackAdapter,
@@ -2039,6 +2208,7 @@ pub extern "C" fn sunspec_model_714_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 715 backed by a callback adapter.
+#[cfg(feature = "model_715")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_715_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_715::Model715CallbackAdapter,
@@ -2051,6 +2221,7 @@ pub extern "C" fn sunspec_model_715_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 715 backed by a stateful adapter.
+#[cfg(feature = "model_715")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_715_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_715::Model715StatefulAdapter,
@@ -2063,6 +2234,7 @@ pub extern "C" fn sunspec_model_715_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 801 backed by a callback adapter.
+#[cfg(feature = "model_801")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_801_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_801::Model801CallbackAdapter,
@@ -2075,6 +2247,7 @@ pub extern "C" fn sunspec_model_801_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 801 backed by a stateful adapter.
+#[cfg(feature = "model_801")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_801_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_801::Model801StatefulAdapter,
@@ -2087,6 +2260,7 @@ pub extern "C" fn sunspec_model_801_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 802 backed by a callback adapter.
+#[cfg(feature = "model_802")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_802_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_802::Model802CallbackAdapter,
@@ -2099,6 +2273,7 @@ pub extern "C" fn sunspec_model_802_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 802 backed by a stateful adapter.
+#[cfg(feature = "model_802")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_802_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_802::Model802StatefulAdapter,
@@ -2111,6 +2286,7 @@ pub extern "C" fn sunspec_model_802_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 803 backed by a callback adapter.
+#[cfg(feature = "model_803")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_803_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_803::Model803CallbackAdapter,
@@ -2123,6 +2299,7 @@ pub extern "C" fn sunspec_model_803_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 804 backed by a callback adapter.
+#[cfg(feature = "model_804")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_804_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_804::Model804CallbackAdapter,
@@ -2135,6 +2312,7 @@ pub extern "C" fn sunspec_model_804_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 805 backed by a callback adapter.
+#[cfg(feature = "model_805")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_805_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_805::Model805CallbackAdapter,
@@ -2147,6 +2325,7 @@ pub extern "C" fn sunspec_model_805_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 805 backed by a stateful adapter.
+#[cfg(feature = "model_805")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_805_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_805::Model805StatefulAdapter,
@@ -2159,6 +2338,7 @@ pub extern "C" fn sunspec_model_805_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 806 backed by a callback adapter.
+#[cfg(feature = "model_806")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_806_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_806::Model806CallbackAdapter,
@@ -2171,6 +2351,7 @@ pub extern "C" fn sunspec_model_806_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 806 backed by a stateful adapter.
+#[cfg(feature = "model_806")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_806_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_806::Model806StatefulAdapter,
@@ -2183,6 +2364,7 @@ pub extern "C" fn sunspec_model_806_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 807 backed by a callback adapter.
+#[cfg(feature = "model_807")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_807_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_807::Model807CallbackAdapter,
@@ -2195,6 +2377,7 @@ pub extern "C" fn sunspec_model_807_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 807 backed by a stateful adapter.
+#[cfg(feature = "model_807")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_807_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_807::Model807StatefulAdapter,
@@ -2207,6 +2390,7 @@ pub extern "C" fn sunspec_model_807_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 808 backed by a callback adapter.
+#[cfg(feature = "model_808")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_808_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_808::Model808CallbackAdapter,
@@ -2219,6 +2403,7 @@ pub extern "C" fn sunspec_model_808_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 808 backed by a stateful adapter.
+#[cfg(feature = "model_808")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_808_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_808::Model808StatefulAdapter,
@@ -2231,6 +2416,7 @@ pub extern "C" fn sunspec_model_808_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 809 backed by a callback adapter.
+#[cfg(feature = "model_809")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_809_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_809::Model809CallbackAdapter,
@@ -2243,6 +2429,7 @@ pub extern "C" fn sunspec_model_809_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 809 backed by a stateful adapter.
+#[cfg(feature = "model_809")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_809_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_809::Model809StatefulAdapter,
@@ -2255,6 +2442,7 @@ pub extern "C" fn sunspec_model_809_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 63001 backed by a callback adapter.
+#[cfg(feature = "model_63001")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_63001_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_63001::Model63001CallbackAdapter,
@@ -2267,6 +2455,7 @@ pub extern "C" fn sunspec_model_63001_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 63001 backed by a stateful adapter.
+#[cfg(feature = "model_63001")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_63001_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_63001::Model63001StatefulAdapter,
@@ -2279,6 +2468,7 @@ pub extern "C" fn sunspec_model_63001_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 63002 backed by a callback adapter.
+#[cfg(feature = "model_63002")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_63002_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_63002::Model63002CallbackAdapter,
@@ -2291,6 +2481,7 @@ pub extern "C" fn sunspec_model_63002_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 63002 backed by a stateful adapter.
+#[cfg(feature = "model_63002")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_63002_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_63002::Model63002StatefulAdapter,
@@ -2303,6 +2494,7 @@ pub extern "C" fn sunspec_model_63002_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64001 backed by a callback adapter.
+#[cfg(feature = "model_64001")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64001_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64001::Model64001CallbackAdapter,
@@ -2315,6 +2507,7 @@ pub extern "C" fn sunspec_model_64001_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64001 backed by a stateful adapter.
+#[cfg(feature = "model_64001")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64001_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64001::Model64001StatefulAdapter,
@@ -2327,6 +2520,7 @@ pub extern "C" fn sunspec_model_64001_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64020 backed by a callback adapter.
+#[cfg(feature = "model_64020")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64020_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64020::Model64020CallbackAdapter,
@@ -2339,6 +2533,7 @@ pub extern "C" fn sunspec_model_64020_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64020 backed by a stateful adapter.
+#[cfg(feature = "model_64020")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64020_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64020::Model64020StatefulAdapter,
@@ -2351,6 +2546,7 @@ pub extern "C" fn sunspec_model_64020_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64101 backed by a callback adapter.
+#[cfg(feature = "model_64101")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64101_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64101::Model64101CallbackAdapter,
@@ -2363,6 +2559,7 @@ pub extern "C" fn sunspec_model_64101_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64101 backed by a stateful adapter.
+#[cfg(feature = "model_64101")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64101_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64101::Model64101StatefulAdapter,
@@ -2375,6 +2572,7 @@ pub extern "C" fn sunspec_model_64101_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64111 backed by a callback adapter.
+#[cfg(feature = "model_64111")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64111_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64111::Model64111CallbackAdapter,
@@ -2387,6 +2585,7 @@ pub extern "C" fn sunspec_model_64111_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64111 backed by a stateful adapter.
+#[cfg(feature = "model_64111")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64111_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64111::Model64111StatefulAdapter,
@@ -2399,6 +2598,7 @@ pub extern "C" fn sunspec_model_64111_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64112 backed by a callback adapter.
+#[cfg(feature = "model_64112")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64112_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64112::Model64112CallbackAdapter,
@@ -2411,6 +2611,7 @@ pub extern "C" fn sunspec_model_64112_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64112 backed by a stateful adapter.
+#[cfg(feature = "model_64112")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64112_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64112::Model64112StatefulAdapter,
@@ -2423,6 +2624,7 @@ pub extern "C" fn sunspec_model_64112_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64410 backed by a callback adapter.
+#[cfg(feature = "model_64410")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64410_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64410::Model64410CallbackAdapter,
@@ -2435,6 +2637,7 @@ pub extern "C" fn sunspec_model_64410_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64411 backed by a callback adapter.
+#[cfg(feature = "model_64411")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64411_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64411::Model64411CallbackAdapter,
@@ -2447,6 +2650,7 @@ pub extern "C" fn sunspec_model_64411_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64412 backed by a callback adapter.
+#[cfg(feature = "model_64412")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64412_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64412::Model64412CallbackAdapter,
@@ -2459,6 +2663,7 @@ pub extern "C" fn sunspec_model_64412_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64412 backed by a stateful adapter.
+#[cfg(feature = "model_64412")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64412_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64412::Model64412StatefulAdapter,
@@ -2471,6 +2676,7 @@ pub extern "C" fn sunspec_model_64412_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64413 backed by a callback adapter.
+#[cfg(feature = "model_64413")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64413_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64413::Model64413CallbackAdapter,
@@ -2483,6 +2689,7 @@ pub extern "C" fn sunspec_model_64413_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64414 backed by a callback adapter.
+#[cfg(feature = "model_64414")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64414_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64414::Model64414CallbackAdapter,
@@ -2495,6 +2702,7 @@ pub extern "C" fn sunspec_model_64414_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64414 backed by a stateful adapter.
+#[cfg(feature = "model_64414")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64414_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64414::Model64414StatefulAdapter,
@@ -2507,6 +2715,7 @@ pub extern "C" fn sunspec_model_64414_stateful(
 }
 
 /// Build a [`SunspecAdapter`] for model 64415 backed by a callback adapter.
+#[cfg(feature = "model_64415")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64415_callback(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64415::Model64415CallbackAdapter,
@@ -2519,6 +2728,7 @@ pub extern "C" fn sunspec_model_64415_callback(
 }
 
 /// Build a [`SunspecAdapter`] for model 64415 backed by a stateful adapter.
+#[cfg(feature = "model_64415")]
 #[unsafe(no_mangle)]
 pub extern "C" fn sunspec_model_64415_stateful(
     adapter: *mut sunspec_modbus_lib_rs::generated::models::model_64415::Model64415StatefulAdapter,

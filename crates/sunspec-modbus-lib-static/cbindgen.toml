@@ -10,6 +10,354 @@ style = "both"
 sort_by = "Name"
 usize_is_size_t = true
 
+# Default-defines every model's `SUNSPEC_MODEL_<id>_ENABLED` macro (see `[defines]` below),
+# matching the Rust side's `all-models` default feature, so the header's declarations are all
+# visible without a C caller having to name each one. Define `SUNSPEC_NO_DEFAULT_MODELS` before
+# `#include`ing the header to opt out and name an explicit subset instead - see crates/sunspec-gen.
+after_includes = """
+// @generated:start
+#if !defined(SUNSPEC_NO_DEFAULT_MODELS)
+#ifndef SUNSPEC_MODEL_1_ENABLED
+#define SUNSPEC_MODEL_1_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_2_ENABLED
+#define SUNSPEC_MODEL_2_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_3_ENABLED
+#define SUNSPEC_MODEL_3_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_4_ENABLED
+#define SUNSPEC_MODEL_4_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_5_ENABLED
+#define SUNSPEC_MODEL_5_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_6_ENABLED
+#define SUNSPEC_MODEL_6_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_7_ENABLED
+#define SUNSPEC_MODEL_7_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_8_ENABLED
+#define SUNSPEC_MODEL_8_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_9_ENABLED
+#define SUNSPEC_MODEL_9_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_10_ENABLED
+#define SUNSPEC_MODEL_10_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_11_ENABLED
+#define SUNSPEC_MODEL_11_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_12_ENABLED
+#define SUNSPEC_MODEL_12_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_13_ENABLED
+#define SUNSPEC_MODEL_13_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_14_ENABLED
+#define SUNSPEC_MODEL_14_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_15_ENABLED
+#define SUNSPEC_MODEL_15_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_16_ENABLED
+#define SUNSPEC_MODEL_16_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_17_ENABLED
+#define SUNSPEC_MODEL_17_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_18_ENABLED
+#define SUNSPEC_MODEL_18_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_19_ENABLED
+#define SUNSPEC_MODEL_19_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_101_ENABLED
+#define SUNSPEC_MODEL_101_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_102_ENABLED
+#define SUNSPEC_MODEL_102_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_103_ENABLED
+#define SUNSPEC_MODEL_103_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_111_ENABLED
+#define SUNSPEC_MODEL_111_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_112_ENABLED
+#define SUNSPEC_MODEL_112_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_113_ENABLED
+#define SUNSPEC_MODEL_113_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_120_ENABLED
+#define SUNSPEC_MODEL_120_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_121_ENABLED
+#define SUNSPEC_MODEL_121_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_122_ENABLED
+#define SUNSPEC_MODEL_122_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_123_ENABLED
+#define SUNSPEC_MODEL_123_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_124_ENABLED
+#define SUNSPEC_MODEL_124_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_125_ENABLED
+#define SUNSPEC_MODEL_125_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_126_ENABLED
+#define SUNSPEC_MODEL_126_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_127_ENABLED
+#define SUNSPEC_MODEL_127_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_128_ENABLED
+#define SUNSPEC_MODEL_128_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_129_ENABLED
+#define SUNSPEC_MODEL_129_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_130_ENABLED
+#define SUNSPEC_MODEL_130_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_131_ENABLED
+#define SUNSPEC_MODEL_131_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_132_ENABLED
+#define SUNSPEC_MODEL_132_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_133_ENABLED
+#define SUNSPEC_MODEL_133_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_134_ENABLED
+#define SUNSPEC_MODEL_134_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_135_ENABLED
+#define SUNSPEC_MODEL_135_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_136_ENABLED
+#define SUNSPEC_MODEL_136_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_137_ENABLED
+#define SUNSPEC_MODEL_137_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_138_ENABLED
+#define SUNSPEC_MODEL_138_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_139_ENABLED
+#define SUNSPEC_MODEL_139_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_140_ENABLED
+#define SUNSPEC_MODEL_140_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_141_ENABLED
+#define SUNSPEC_MODEL_141_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_142_ENABLED
+#define SUNSPEC_MODEL_142_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_143_ENABLED
+#define SUNSPEC_MODEL_143_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_144_ENABLED
+#define SUNSPEC_MODEL_144_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_145_ENABLED
+#define SUNSPEC_MODEL_145_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_160_ENABLED
+#define SUNSPEC_MODEL_160_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_201_ENABLED
+#define SUNSPEC_MODEL_201_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_202_ENABLED
+#define SUNSPEC_MODEL_202_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_203_ENABLED
+#define SUNSPEC_MODEL_203_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_204_ENABLED
+#define SUNSPEC_MODEL_204_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_211_ENABLED
+#define SUNSPEC_MODEL_211_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_212_ENABLED
+#define SUNSPEC_MODEL_212_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_213_ENABLED
+#define SUNSPEC_MODEL_213_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_214_ENABLED
+#define SUNSPEC_MODEL_214_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_220_ENABLED
+#define SUNSPEC_MODEL_220_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_302_ENABLED
+#define SUNSPEC_MODEL_302_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_303_ENABLED
+#define SUNSPEC_MODEL_303_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_304_ENABLED
+#define SUNSPEC_MODEL_304_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_305_ENABLED
+#define SUNSPEC_MODEL_305_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_306_ENABLED
+#define SUNSPEC_MODEL_306_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_307_ENABLED
+#define SUNSPEC_MODEL_307_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_308_ENABLED
+#define SUNSPEC_MODEL_308_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_401_ENABLED
+#define SUNSPEC_MODEL_401_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_402_ENABLED
+#define SUNSPEC_MODEL_402_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_403_ENABLED
+#define SUNSPEC_MODEL_403_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_404_ENABLED
+#define SUNSPEC_MODEL_404_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_501_ENABLED
+#define SUNSPEC_MODEL_501_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_502_ENABLED
+#define SUNSPEC_MODEL_502_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_601_ENABLED
+#define SUNSPEC_MODEL_601_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_701_ENABLED
+#define SUNSPEC_MODEL_701_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_702_ENABLED
+#define SUNSPEC_MODEL_702_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_703_ENABLED
+#define SUNSPEC_MODEL_703_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_704_ENABLED
+#define SUNSPEC_MODEL_704_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_705_ENABLED
+#define SUNSPEC_MODEL_705_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_706_ENABLED
+#define SUNSPEC_MODEL_706_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_707_ENABLED
+#define SUNSPEC_MODEL_707_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_708_ENABLED
+#define SUNSPEC_MODEL_708_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_709_ENABLED
+#define SUNSPEC_MODEL_709_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_710_ENABLED
+#define SUNSPEC_MODEL_710_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_711_ENABLED
+#define SUNSPEC_MODEL_711_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_712_ENABLED
+#define SUNSPEC_MODEL_712_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_713_ENABLED
+#define SUNSPEC_MODEL_713_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_714_ENABLED
+#define SUNSPEC_MODEL_714_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_715_ENABLED
+#define SUNSPEC_MODEL_715_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_801_ENABLED
+#define SUNSPEC_MODEL_801_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_802_ENABLED
+#define SUNSPEC_MODEL_802_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_803_ENABLED
+#define SUNSPEC_MODEL_803_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_804_ENABLED
+#define SUNSPEC_MODEL_804_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_805_ENABLED
+#define SUNSPEC_MODEL_805_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_806_ENABLED
+#define SUNSPEC_MODEL_806_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_807_ENABLED
+#define SUNSPEC_MODEL_807_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_808_ENABLED
+#define SUNSPEC_MODEL_808_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_809_ENABLED
+#define SUNSPEC_MODEL_809_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_63001_ENABLED
+#define SUNSPEC_MODEL_63001_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_63002_ENABLED
+#define SUNSPEC_MODEL_63002_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64001_ENABLED
+#define SUNSPEC_MODEL_64001_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64020_ENABLED
+#define SUNSPEC_MODEL_64020_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64101_ENABLED
+#define SUNSPEC_MODEL_64101_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64111_ENABLED
+#define SUNSPEC_MODEL_64111_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64112_ENABLED
+#define SUNSPEC_MODEL_64112_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64410_ENABLED
+#define SUNSPEC_MODEL_64410_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64411_ENABLED
+#define SUNSPEC_MODEL_64411_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64412_ENABLED
+#define SUNSPEC_MODEL_64412_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64413_ENABLED
+#define SUNSPEC_MODEL_64413_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64414_ENABLED
+#define SUNSPEC_MODEL_64414_ENABLED
+#endif
+#ifndef SUNSPEC_MODEL_64415_ENABLED
+#define SUNSPEC_MODEL_64415_ENABLED
+#endif
+#endif // !defined(SUNSPEC_NO_DEFAULT_MODELS)
+
+// @generated:end
+"""
+
 [parse]
 parse_deps = true
 clean = true
@@ -25,3 +373,124 @@ include = []
 
 [enum]
 prefix_with_name = true
+
+# One entry per generated model, mapping its Cargo feature to the C preprocessor guard its
+# declarations get wrapped in - see crates/sunspec-gen. A C caller must define the matching
+# `SUNSPEC_MODEL_<id>_ENABLED` macro for exactly the models the linked static library was built
+# with (default: all of them).
+[defines]
+# @generated:start
+"feature = model_1" = "SUNSPEC_MODEL_1_ENABLED"
+"feature = model_2" = "SUNSPEC_MODEL_2_ENABLED"
+"feature = model_3" = "SUNSPEC_MODEL_3_ENABLED"
+"feature = model_4" = "SUNSPEC_MODEL_4_ENABLED"
+"feature = model_5" = "SUNSPEC_MODEL_5_ENABLED"
+"feature = model_6" = "SUNSPEC_MODEL_6_ENABLED"
+"feature = model_7" = "SUNSPEC_MODEL_7_ENABLED"
+"feature = model_8" = "SUNSPEC_MODEL_8_ENABLED"
+"feature = model_9" = "SUNSPEC_MODEL_9_ENABLED"
+"feature = model_10" = "SUNSPEC_MODEL_10_ENABLED"
+"feature = model_11" = "SUNSPEC_MODEL_11_ENABLED"
+"feature = model_12" = "SUNSPEC_MODEL_12_ENABLED"
+"feature = model_13" = "SUNSPEC_MODEL_13_ENABLED"
+"feature = model_14" = "SUNSPEC_MODEL_14_ENABLED"
+"feature = model_15" = "SUNSPEC_MODEL_15_ENABLED"
+"feature = model_16" = "SUNSPEC_MODEL_16_ENABLED"
+"feature = model_17" = "SUNSPEC_MODEL_17_ENABLED"
+"feature = model_18" = "SUNSPEC_MODEL_18_ENABLED"
+"feature = model_19" = "SUNSPEC_MODEL_19_ENABLED"
+"feature = model_101" = "SUNSPEC_MODEL_101_ENABLED"
+"feature = model_102" = "SUNSPEC_MODEL_102_ENABLED"
+"feature = model_103" = "SUNSPEC_MODEL_103_ENABLED"
+"feature = model_111" = "SUNSPEC_MODEL_111_ENABLED"
+"feature = model_112" = "SUNSPEC_MODEL_112_ENABLED"
+"feature = model_113" = "SUNSPEC_MODEL_113_ENABLED"
+"feature = model_120" = "SUNSPEC_MODEL_120_ENABLED"
+"feature = model_121" = "SUNSPEC_MODEL_121_ENABLED"
+"feature = model_122" = "SUNSPEC_MODEL_122_ENABLED"
+"feature = model_123" = "SUNSPEC_MODEL_123_ENABLED"
+"feature = model_124" = "SUNSPEC_MODEL_124_ENABLED"
+"feature = model_125" = "SUNSPEC_MODEL_125_ENABLED"
+"feature = model_126" = "SUNSPEC_MODEL_126_ENABLED"
+"feature = model_127" = "SUNSPEC_MODEL_127_ENABLED"
+"feature = model_128" = "SUNSPEC_MODEL_128_ENABLED"
+"feature = model_129" = "SUNSPEC_MODEL_129_ENABLED"
+"feature = model_130" = "SUNSPEC_MODEL_130_ENABLED"
+"feature = model_131" = "SUNSPEC_MODEL_131_ENABLED"
+"feature = model_132" = "SUNSPEC_MODEL_132_ENABLED"
+"feature = model_133" = "SUNSPEC_MODEL_133_ENABLED"
+"feature = model_134" = "SUNSPEC_MODEL_134_ENABLED"
+"feature = model_135" = "SUNSPEC_MODEL_135_ENABLED"
+"feature = model_136" = "SUNSPEC_MODEL_136_ENABLED"
+"feature = model_137" = "SUNSPEC_MODEL_137_ENABLED"
+"feature = model_138" = "SUNSPEC_MODEL_138_ENABLED"
+"feature = model_139" = "SUNSPEC_MODEL_139_ENABLED"
+"feature = model_140" = "SUNSPEC_MODEL_140_ENABLED"
+"feature = model_141" = "SUNSPEC_MODEL_141_ENABLED"
+"feature = model_142" = "SUNSPEC_MODEL_142_ENABLED"
+"feature = model_143" = "SUNSPEC_MODEL_143_ENABLED"
+"feature = model_144" = "SUNSPEC_MODEL_144_ENABLED"
+"feature = model_145" = "SUNSPEC_MODEL_145_ENABLED"
+"feature = model_160" = "SUNSPEC_MODEL_160_ENABLED"
+"feature = model_201" = "SUNSPEC_MODEL_201_ENABLED"
+"feature = model_202" = "SUNSPEC_MODEL_202_ENABLED"
+"feature = model_203" = "SUNSPEC_MODEL_203_ENABLED"
+"feature = model_204" = "SUNSPEC_MODEL_204_ENABLED"
+"feature = model_211" = "SUNSPEC_MODEL_211_ENABLED"
+"feature = model_212" = "SUNSPEC_MODEL_212_ENABLED"
+"feature = model_213" = "SUNSPEC_MODEL_213_ENABLED"
+"feature = model_214" = "SUNSPEC_MODEL_214_ENABLED"
+"feature = model_220" = "SUNSPEC_MODEL_220_ENABLED"
+"feature = model_302" = "SUNSPEC_MODEL_302_ENABLED"
+"feature = model_303" = "SUNSPEC_MODEL_303_ENABLED"
+"feature = model_304" = "SUNSPEC_MODEL_304_ENABLED"
+"feature = model_305" = "SUNSPEC_MODEL_305_ENABLED"
+"feature = model_306" = "SUNSPEC_MODEL_306_ENABLED"
+"feature = model_307" = "SUNSPEC_MODEL_307_ENABLED"
+"feature = model_308" = "SUNSPEC_MODEL_308_ENABLED"
+"feature = model_401" = "SUNSPEC_MODEL_401_ENABLED"
+"feature = model_402" = "SUNSPEC_MODEL_402_ENABLED"
+"feature = model_403" = "SUNSPEC_MODEL_403_ENABLED"
+"feature = model_404" = "SUNSPEC_MODEL_404_ENABLED"
+"feature = model_501" = "SUNSPEC_MODEL_501_ENABLED"
+"feature = model_502" = "SUNSPEC_MODEL_502_ENABLED"
+"feature = model_601" = "SUNSPEC_MODEL_601_ENABLED"
+"feature = model_701" = "SUNSPEC_MODEL_701_ENABLED"
+"feature = model_702" = "SUNSPEC_MODEL_702_ENABLED"
+"feature = model_703" = "SUNSPEC_MODEL_703_ENABLED"
+"feature = model_704" = "SUNSPEC_MODEL_704_ENABLED"
+"feature = model_705" = "SUNSPEC_MODEL_705_ENABLED"
+"feature = model_706" = "SUNSPEC_MODEL_706_ENABLED"
+"feature = model_707" = "SUNSPEC_MODEL_707_ENABLED"
+"feature = model_708" = "SUNSPEC_MODEL_708_ENABLED"
+"feature = model_709" = "SUNSPEC_MODEL_709_ENABLED"
+"feature = model_710" = "SUNSPEC_MODEL_710_ENABLED"
+"feature = model_711" = "SUNSPEC_MODEL_711_ENABLED"
+"feature = model_712" = "SUNSPEC_MODEL_712_ENABLED"
+"feature = model_713" = "SUNSPEC_MODEL_713_ENABLED"
+"feature = model_714" = "SUNSPEC_MODEL_714_ENABLED"
+"feature = model_715" = "SUNSPEC_MODEL_715_ENABLED"
+"feature = model_801" = "SUNSPEC_MODEL_801_ENABLED"
+"feature = model_802" = "SUNSPEC_MODEL_802_ENABLED"
+"feature = model_803" = "SUNSPEC_MODEL_803_ENABLED"
+"feature = model_804" = "SUNSPEC_MODEL_804_ENABLED"
+"feature = model_805" = "SUNSPEC_MODEL_805_ENABLED"
+"feature = model_806" = "SUNSPEC_MODEL_806_ENABLED"
+"feature = model_807" = "SUNSPEC_MODEL_807_ENABLED"
+"feature = model_808" = "SUNSPEC_MODEL_808_ENABLED"
+"feature = model_809" = "SUNSPEC_MODEL_809_ENABLED"
+"feature = model_63001" = "SUNSPEC_MODEL_63001_ENABLED"
+"feature = model_63002" = "SUNSPEC_MODEL_63002_ENABLED"
+"feature = model_64001" = "SUNSPEC_MODEL_64001_ENABLED"
+"feature = model_64020" = "SUNSPEC_MODEL_64020_ENABLED"
+"feature = model_64101" = "SUNSPEC_MODEL_64101_ENABLED"
+"feature = model_64111" = "SUNSPEC_MODEL_64111_ENABLED"
+"feature = model_64112" = "SUNSPEC_MODEL_64112_ENABLED"
+"feature = model_64410" = "SUNSPEC_MODEL_64410_ENABLED"
+"feature = model_64411" = "SUNSPEC_MODEL_64411_ENABLED"
+"feature = model_64412" = "SUNSPEC_MODEL_64412_ENABLED"
+"feature = model_64413" = "SUNSPEC_MODEL_64413_ENABLED"
+"feature = model_64414" = "SUNSPEC_MODEL_64414_ENABLED"
+"feature = model_64415" = "SUNSPEC_MODEL_64415_ENABLED"
+
+# @generated:end

@@ -730,7 +730,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AdptCrvRslt {
+pub enum Model705AdptCrvRslt {
     /// Update In Progress
     ///
     /// Curve update in progress.
@@ -745,20 +745,23 @@ pub enum AdptCrvRslt {
     Failed = 2,
 }
 
-impl AdptCrvRslt {
-    pub fn from_repr(repr: u16) -> Option<AdptCrvRslt> {
+impl Model705AdptCrvRslt {
+    pub fn from_repr(repr: u16) -> Option<Model705AdptCrvRslt> {
         match repr {
-            0 => Some(AdptCrvRslt::InProgress),
-            1 => Some(AdptCrvRslt::Completed),
-            2 => Some(AdptCrvRslt::Failed),
+            0 => Some(Model705AdptCrvRslt::InProgress),
+            1 => Some(Model705AdptCrvRslt::Completed),
+            2 => Some(Model705AdptCrvRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model705AdptCrvRslt`] - only `Model705AdptCrvRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AdptCrvRslt` distinct from another model's point of the same name.
+pub type AdptCrvRslt = Model705AdptCrvRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DeptRef {
+pub enum Model705DeptRef {
     /// Percent Max Watts
     WMaxPct = 0,
     /// Percent Max Vars
@@ -769,21 +772,24 @@ pub enum DeptRef {
     VaMaxPct = 3,
 }
 
-impl DeptRef {
-    pub fn from_repr(repr: u16) -> Option<DeptRef> {
+impl Model705DeptRef {
+    pub fn from_repr(repr: u16) -> Option<Model705DeptRef> {
         match repr {
-            0 => Some(DeptRef::WMaxPct),
-            1 => Some(DeptRef::VarMaxPct),
-            2 => Some(DeptRef::VarAvalPct),
-            3 => Some(DeptRef::VaMaxPct),
+            0 => Some(Model705DeptRef::WMaxPct),
+            1 => Some(Model705DeptRef::VarMaxPct),
+            2 => Some(Model705DeptRef::VarAvalPct),
+            3 => Some(Model705DeptRef::VaMaxPct),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model705DeptRef`] - only `Model705DeptRef` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DeptRef` distinct from another model's point of the same name.
+pub type DeptRef = Model705DeptRef;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ena {
+pub enum Model705Ena {
     /// Disabled
     ///
     /// Function is disabled.
@@ -794,19 +800,22 @@ pub enum Ena {
     Enabled = 1,
 }
 
-impl Ena {
-    pub fn from_repr(repr: u16) -> Option<Ena> {
+impl Model705Ena {
+    pub fn from_repr(repr: u16) -> Option<Model705Ena> {
         match repr {
-            0 => Some(Ena::Disabled),
-            1 => Some(Ena::Enabled),
+            0 => Some(Model705Ena::Disabled),
+            1 => Some(Model705Ena::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model705Ena`] - only `Model705Ena` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ena` distinct from another model's point of the same name.
+pub type Ena = Model705Ena;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Pri {
+pub enum Model705Pri {
     /// Active Power Priority
     ///
     /// Active power priority.
@@ -821,20 +830,23 @@ pub enum Pri {
     Vendor = 2,
 }
 
-impl Pri {
-    pub fn from_repr(repr: u16) -> Option<Pri> {
+impl Model705Pri {
+    pub fn from_repr(repr: u16) -> Option<Model705Pri> {
         match repr {
-            0 => Some(Pri::Active),
-            1 => Some(Pri::Reactive),
-            2 => Some(Pri::Vendor),
+            0 => Some(Model705Pri::Active),
+            1 => Some(Model705Pri::Reactive),
+            2 => Some(Model705Pri::Vendor),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model705Pri`] - only `Model705Pri` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Pri` distinct from another model's point of the same name.
+pub type Pri = Model705Pri;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model705ReadOnly {
     /// Read-Write Access
     ///
     /// Curve has read-write access.
@@ -845,19 +857,22 @@ pub enum ReadOnly {
     R = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model705ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model705ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Rw),
-            1 => Some(ReadOnly::R),
+            0 => Some(Model705ReadOnly::Rw),
+            1 => Some(Model705ReadOnly::R),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model705ReadOnly`] - only `Model705ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model705ReadOnly;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VRefAutoEna {
+pub enum Model705VRefAutoEna {
     /// Disabled Flag
     ///
     /// Disabled flag (Disabled = 0, Enabled = 1).
@@ -868,15 +883,18 @@ pub enum VRefAutoEna {
     Enabled = 1,
 }
 
-impl VRefAutoEna {
-    pub fn from_repr(repr: u16) -> Option<VRefAutoEna> {
+impl Model705VRefAutoEna {
+    pub fn from_repr(repr: u16) -> Option<Model705VRefAutoEna> {
         match repr {
-            0 => Some(VRefAutoEna::Disabled),
-            1 => Some(VRefAutoEna::Enabled),
+            0 => Some(Model705VRefAutoEna::Disabled),
+            1 => Some(Model705VRefAutoEna::Enabled),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model705VRefAutoEna`] - only `Model705VRefAutoEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VRefAutoEna` distinct from another model's point of the same name.
+pub type VRefAutoEna = Model705VRefAutoEna;
 
 #[repr(C)]
 pub struct Model705CallbackAdapter {
@@ -884,11 +902,11 @@ pub struct Model705CallbackAdapter {
     /// DER Volt-Var Module Enable (Ena)
     ///
     /// Volt-Var control enable.
-    der_volt_var_module_enable_callback: extern "C" fn(*const c_void) -> Ena,
+    der_volt_var_module_enable_callback: extern "C" fn(*const c_void) -> Model705Ena,
     /// DER Volt-Var Module Enable (Ena)
     ///
     /// Volt-Var control enable.
-    set_der_volt_var_module_enable_callback: extern "C" fn(Ena, *mut c_void),
+    set_der_volt_var_module_enable_callback: extern "C" fn(Model705Ena, *mut c_void),
     /// Adopt Curve Request (AdptCrvReq)
     ///
     /// Index of curve points to adopt. First curve index is 1.
@@ -900,7 +918,7 @@ pub struct Model705CallbackAdapter {
     /// Adopt Curve Result (AdptCrvRslt)
     ///
     /// Result of last adopt curve operation.
-    adopt_curve_result_callback: extern "C" fn(*const c_void) -> AdptCrvRslt,
+    adopt_curve_result_callback: extern "C" fn(*const c_void) -> Model705AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -952,19 +970,19 @@ pub struct Model705CallbackAdapter {
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> DeptRef,
+    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> Model705DeptRef,
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    set_crv_dependent_reference_callback: extern "C" fn(DeptRef, *mut c_void, u16),
+    set_crv_dependent_reference_callback: extern "C" fn(Model705DeptRef, *mut c_void, u16),
     /// Power Priority (Pri)
     ///
     /// Power priority.
-    crv_power_priority_callback: Option<extern "C" fn(*const c_void, u16) -> Pri>,
+    crv_power_priority_callback: Option<extern "C" fn(*const c_void, u16) -> Model705Pri>,
     /// Power Priority (Pri)
     ///
     /// Power priority.
-    set_crv_power_priority_callback: Option<extern "C" fn(Pri, *mut c_void, u16)>,
+    set_crv_power_priority_callback: Option<extern "C" fn(Model705Pri, *mut c_void, u16)>,
     /// Vref Adjustment (VRef)
     ///
     /// Vref adjustment as percentage of nominal voltage.
@@ -980,11 +998,13 @@ pub struct Model705CallbackAdapter {
     /// Autonomous Vref Enable (VRefAutoEna)
     ///
     /// Enable autonomous vref.
-    crv_autonomous_vref_enable_callback: Option<extern "C" fn(*const c_void, u16) -> VRefAutoEna>,
+    crv_autonomous_vref_enable_callback:
+        Option<extern "C" fn(*const c_void, u16) -> Model705VRefAutoEna>,
     /// Autonomous Vref Enable (VRefAutoEna)
     ///
     /// Enable autonomous vref.
-    set_crv_autonomous_vref_enable_callback: Option<extern "C" fn(VRefAutoEna, *mut c_void, u16)>,
+    set_crv_autonomous_vref_enable_callback:
+        Option<extern "C" fn(Model705VRefAutoEna, *mut c_void, u16)>,
     /// Auto Vref Time Constant (VRefAutoTms)
     ///
     /// Autonomous vref time constant.
@@ -1004,7 +1024,7 @@ pub struct Model705CallbackAdapter {
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> Model705ReadOnly,
     /// Voltage Point (V)
     ///
     /// Curve voltage point as percentage.
@@ -1252,7 +1272,7 @@ pub struct Model705StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// DER Volt-Var Module Enable (Ena)
     ///
     /// Volt-Var control enable.
-    pub der_volt_var_module_enable: Ena,
+    pub der_volt_var_module_enable: Model705Ena,
     /// Adopt Curve Request (AdptCrvReq)
     ///
     /// Index of curve points to adopt. First curve index is 1.
@@ -1260,7 +1280,7 @@ pub struct Model705StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// Adopt Curve Result (AdptCrvRslt)
     ///
     /// Result of last adopt curve operation.
-    pub adopt_curve_result: AdptCrvRslt,
+    pub adopt_curve_result: Model705AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -1305,11 +1325,11 @@ pub struct Model705StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    pub crv_dependent_reference: DeptRef,
+    pub crv_dependent_reference: Model705DeptRef,
     /// Power Priority (Pri)
     ///
     /// Power priority.
-    pub crv_power_priority: Pri,
+    pub crv_power_priority: Model705Pri,
     /// Vref Adjustment (VRef)
     ///
     /// Vref adjustment as percentage of nominal voltage.
@@ -1321,7 +1341,7 @@ pub struct Model705StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Autonomous Vref Enable (VRefAutoEna)
     ///
     /// Enable autonomous vref.
-    pub crv_autonomous_vref_enable: VRefAutoEna,
+    pub crv_autonomous_vref_enable: Model705VRefAutoEna,
     /// Auto Vref Time Constant (VRefAutoTms)
     ///
     /// Autonomous vref time constant.
@@ -1333,7 +1353,7 @@ pub struct Model705StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    pub crv_curve_access: ReadOnly,
+    pub crv_curve_access: Model705ReadOnly,
     pub stored_curve_points: [Model705StoredCurvePoints; NUMBER_OF_POINTS],
 }
 

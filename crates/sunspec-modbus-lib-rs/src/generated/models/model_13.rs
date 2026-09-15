@@ -555,60 +555,69 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Cfg {
+pub enum Model13Cfg {
     Static = 0,
     Dhcp = 1,
     Bootp = 2,
     Zeroconf = 3,
 }
 
-impl Cfg {
-    pub fn from_repr(repr: u16) -> Option<Cfg> {
+impl Model13Cfg {
+    pub fn from_repr(repr: u16) -> Option<Model13Cfg> {
         match repr {
-            0 => Some(Cfg::Static),
-            1 => Some(Cfg::Dhcp),
-            2 => Some(Cfg::Bootp),
-            3 => Some(Cfg::Zeroconf),
+            0 => Some(Model13Cfg::Static),
+            1 => Some(Model13Cfg::Dhcp),
+            2 => Some(Model13Cfg::Bootp),
+            3 => Some(Model13Cfg::Zeroconf),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model13Cfg`] - only `Model13Cfg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Cfg` distinct from another model's point of the same name.
+pub type Cfg = Model13Cfg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CfgSt {
+pub enum Model13CfgSt {
     NotConfigured = 0,
     ValidSetting = 1,
     ValidHw = 2,
 }
 
-impl CfgSt {
-    pub fn from_repr(repr: u16) -> Option<CfgSt> {
+impl Model13CfgSt {
+    pub fn from_repr(repr: u16) -> Option<Model13CfgSt> {
         match repr {
-            0 => Some(CfgSt::NotConfigured),
-            1 => Some(CfgSt::ValidSetting),
-            2 => Some(CfgSt::ValidHw),
+            0 => Some(Model13CfgSt::NotConfigured),
+            1 => Some(Model13CfgSt::ValidSetting),
+            2 => Some(Model13CfgSt::ValidHw),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model13CfgSt`] - only `Model13CfgSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CfgSt` distinct from another model's point of the same name.
+pub type CfgSt = Model13CfgSt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ctl {
+pub enum Model13Ctl {
     EnableDns = 0,
     EnableNtp = 1,
 }
 
-impl Ctl {
-    pub fn from_repr(repr: u16) -> Option<Ctl> {
+impl Model13Ctl {
+    pub fn from_repr(repr: u16) -> Option<Model13Ctl> {
         match repr {
-            0 => Some(Ctl::EnableDns),
-            1 => Some(Ctl::EnableNtp),
+            0 => Some(Model13Ctl::EnableDns),
+            1 => Some(Model13Ctl::EnableNtp),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model13Ctl`] - only `Model13Ctl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ctl` distinct from another model's point of the same name.
+pub type Ctl = Model13Ctl;
 
 #[repr(C)]
 pub struct Model13CallbackAdapter {
@@ -624,7 +633,7 @@ pub struct Model13CallbackAdapter {
     /// Config Status (CfgSt)
     ///
     /// Configuration status
-    config_status_callback: extern "C" fn(*const c_void) -> CfgSt,
+    config_status_callback: extern "C" fn(*const c_void) -> Model13CfgSt,
     /// Change Status (ChgSt)
     ///
     /// A configuration change is pending
@@ -636,19 +645,19 @@ pub struct Model13CallbackAdapter {
     /// IPv6 Config (Cfg)
     ///
     /// Configuration method used.
-    i_pv6_config_callback: extern "C" fn(*const c_void) -> Cfg,
+    i_pv6_config_callback: extern "C" fn(*const c_void) -> Model13Cfg,
     /// IPv6 Config (Cfg)
     ///
     /// Configuration method used.
-    set_i_pv6_config_callback: extern "C" fn(Cfg, *mut c_void),
+    set_i_pv6_config_callback: extern "C" fn(Model13Cfg, *mut c_void),
     /// Control (Ctl)
     ///
     /// Configure use of services
-    control_callback: extern "C" fn(*const c_void) -> Ctl,
+    control_callback: extern "C" fn(*const c_void) -> Model13Ctl,
     /// Control (Ctl)
     ///
     /// Configure use of services
-    set_control_callback: extern "C" fn(Ctl, *mut c_void),
+    set_control_callback: extern "C" fn(Model13Ctl, *mut c_void),
     /// IP (Addr)
     ///
     /// IPv6 numeric address as a dotted string xxxx.xxxx.xxxx.xxxx
@@ -907,7 +916,7 @@ pub struct Model13StatefulAdapter {
     /// Config Status (CfgSt)
     ///
     /// Configuration status
-    pub config_status: CfgSt,
+    pub config_status: Model13CfgSt,
     /// Change Status (ChgSt)
     ///
     /// A configuration change is pending
@@ -919,11 +928,11 @@ pub struct Model13StatefulAdapter {
     /// IPv6 Config (Cfg)
     ///
     /// Configuration method used.
-    pub i_pv6_config: Cfg,
+    pub i_pv6_config: Model13Cfg,
     /// Control (Ctl)
     ///
     /// Configure use of services
-    pub control: Ctl,
+    pub control: Model13Ctl,
     /// IP (Addr)
     ///
     /// IPv6 numeric address as a dotted string xxxx.xxxx.xxxx.xxxx

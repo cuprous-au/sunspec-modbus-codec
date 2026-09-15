@@ -191,22 +191,25 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Fmt {
+pub enum Model8Fmt {
     None = 0,
     X509Pem = 1,
     X509Der = 2,
 }
 
-impl Fmt {
-    pub fn from_repr(repr: u16) -> Option<Fmt> {
+impl Model8Fmt {
+    pub fn from_repr(repr: u16) -> Option<Model8Fmt> {
         match repr {
-            0 => Some(Fmt::None),
-            1 => Some(Fmt::X509Pem),
-            2 => Some(Fmt::X509Der),
+            0 => Some(Model8Fmt::None),
+            1 => Some(Model8Fmt::X509Pem),
+            2 => Some(Model8Fmt::X509Der),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model8Fmt`] - only `Model8Fmt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Fmt` distinct from another model's point of the same name.
+pub type Fmt = Model8Fmt;
 
 #[repr(C)]
 pub struct Model8CallbackAdapter {
@@ -214,7 +217,7 @@ pub struct Model8CallbackAdapter {
     /// Format (Fmt)
     ///
     /// X.509 format of the certificate. DER or PEM.
-    format_callback: extern "C" fn(*const c_void) -> Fmt,
+    format_callback: extern "C" fn(*const c_void) -> Model8Fmt,
     /// N (N)
     ///
     /// Number of registers to follow for the certificate
@@ -244,7 +247,7 @@ pub struct Model8StatefulAdapter {
     /// Format (Fmt)
     ///
     /// X.509 format of the certificate. DER or PEM.
-    pub format: Fmt,
+    pub format: Model8Fmt,
     /// N (N)
     ///
     /// Number of registers to follow for the certificate

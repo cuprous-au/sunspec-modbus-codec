@@ -1333,23 +1333,26 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Alg {
+pub enum Model3Alg {
     /// For test purposes only
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
 }
 
-impl Alg {
-    pub fn from_repr(repr: u16) -> Option<Alg> {
+impl Model3Alg {
+    pub fn from_repr(repr: u16) -> Option<Model3Alg> {
         match repr {
-            0 => Some(Alg::None),
-            1 => Some(Alg::AesGmac64),
-            2 => Some(Alg::Ecc256),
+            0 => Some(Model3Alg::None),
+            1 => Some(Model3Alg::AesGmac64),
+            2 => Some(Model3Alg::Ecc256),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model3Alg`] - only `Model3Alg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Alg` distinct from another model's point of the same name.
+pub type Alg = Model3Alg;
 
 #[repr(C)]
 pub struct Model3CallbackAdapter {
@@ -1615,7 +1618,7 @@ pub struct Model3CallbackAdapter {
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    algorithm_callback: extern "C" fn(*const c_void) -> Alg,
+    algorithm_callback: extern "C" fn(*const c_void) -> Model3Alg,
     /// N (N)
     ///
     /// Number of registers comprising the digital signature.
@@ -2292,7 +2295,7 @@ pub struct Model3StatefulAdapter {
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    pub algorithm: Alg,
+    pub algorithm: Model3Alg,
     /// N (N)
     ///
     /// Number of registers comprising the digital signature.

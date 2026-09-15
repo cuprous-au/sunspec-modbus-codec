@@ -5,7 +5,7 @@ use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
     generate_adapters_mod, generate_model, generate_models_mod, model_c_expressible,
-    model_is_repeating,
+    model_cfg_attribute, model_feature_name, model_is_repeating,
 };
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::naming::{NameTable, Named};
@@ -137,6 +137,120 @@ pub fn generate_static_lib() {
     format_and_write(&output_path, &generate_static_lib_adapter_ctors());
 }
 
+/// Replaces the text between a `{marker_prefix} @generated:start` / `{marker_prefix}
+/// @generated:end` marker pair in `path` with `content`, leaving everything else in the file
+/// untouched. Used to keep the per-model feature/define lists in `Cargo.toml`/`cbindgen.toml`
+/// in sync with the actual model set without needing to own the whole file, which also carries
+/// hand-maintained content - dependencies, package metadata, other cbindgen settings.
+fn replace_generated_region(path: &Path, marker_prefix: &str, content: &str) {
+    let existing =
+        fs::read_to_string(path).unwrap_or_else(|error| panic!("failed to read {path:?}: {error}"));
+
+    let start_marker = format!("{marker_prefix} @generated:start");
+    let end_marker = format!("{marker_prefix} @generated:end");
+
+    let start = existing
+        .find(&start_marker)
+        .unwrap_or_else(|| panic!("{path:?} is missing `{start_marker}`"));
+    let end = existing
+        .find(&end_marker)
+        .unwrap_or_else(|| panic!("{path:?} is missing `{end_marker}`"));
+    assert!(
+        start < end,
+        "{path:?}: `{start_marker}` must appear before `{end_marker}`"
+    );
+
+    let before = &existing[..start + start_marker.len()];
+    let after = &existing[end..];
+    fs::write(path, format!("{before}\n{content}\n{after}"))
+        .unwrap_or_else(|error| panic!("failed to write {path:?}: {error}"));
+}
+
+/// Renders the `[features]` block managed in a crate's `Cargo.toml`: one `model_<id> = [...]`
+/// entry per model - forwarding to the same feature on each of `forward_to` too, for a crate
+/// that depends on `sunspec-modbus-lib-rs` rather than generating that model's code itself -
+/// plus an `all-models` feature aggregating every one of them, so `default` only needs to name
+/// that instead of carrying the whole list.
+fn render_cargo_features(models: &[ResolvedModel], forward_to: &[&str]) -> String {
+    let mut out = String::from("all-models = [\n");
+    for model in models {
+        out.push_str(&format!("    \"{}\",\n", model_feature_name(model)));
+    }
+    out.push_str("]\n");
+
+    for model in models {
+        let name = model_feature_name(model);
+        let deps: Vec<String> = forward_to
+            .iter()
+            .map(|dep| format!("\"{dep}/{name}\""))
+            .collect();
+        out.push_str(&format!("{name} = [{}]\n", deps.join(", ")));
+    }
+    out
+}
+
+/// Renders the `[defines]` block managed in `sunspec-modbus-lib-static`'s `cbindgen.toml`: one
+/// entry per model, mapping its Cargo feature to the C preprocessor guard cbindgen wraps that
+/// model's declarations in - see [`model_cfg_attribute`].
+fn render_cbindgen_defines(models: &[ResolvedModel]) -> String {
+    let mut out = String::new();
+    for model in models {
+        out.push_str(&format!(
+            "\"feature = {}\" = \"SUNSPEC_MODEL_{}_ENABLED\"\n",
+            model_feature_name(model),
+            model.model_number
+        ));
+    }
+    out
+}
+
+/// Renders the body of the `after_includes` block managed in `sunspec-modbus-lib-static`'s
+/// `cbindgen.toml`: one `#ifndef`/`#define`/`#endif` per model, default-defining its
+/// `SUNSPEC_MODEL_<id>_ENABLED` macro so the generated header's declarations are all visible
+/// out of the box - matching the Rust side's `all-models` default feature - unless the includer
+/// defines `SUNSPEC_NO_DEFAULT_MODELS` before `#include`ing the header, opting into naming an
+/// explicit subset instead.
+fn render_cbindgen_default_models(models: &[ResolvedModel]) -> String {
+    let mut out = String::from("#if !defined(SUNSPEC_NO_DEFAULT_MODELS)\n");
+    for model in models {
+        let define = format!("SUNSPEC_MODEL_{}_ENABLED", model.model_number);
+        out.push_str(&format!("#ifndef {define}\n#define {define}\n#endif\n"));
+    }
+    out.push_str("#endif // !defined(SUNSPEC_NO_DEFAULT_MODELS)\n");
+    out
+}
+
+/// Regenerates the per-model `[features]` block in `sunspec-modbus-lib-rs`'s and
+/// `sunspec-modbus-lib-static`'s `Cargo.toml`, and the matching `[defines]`/`after_includes`
+/// blocks in `sunspec-modbus-lib-static`'s `cbindgen.toml` (see `replace_generated_region`), so
+/// each model's generated code - and, in the C header, its declarations - can be compiled in or
+/// out independently. All 112-odd models are on by default: each crate's `default` feature
+/// includes `all-models`, and the header default-defines every `SUNSPEC_MODEL_<id>_ENABLED`
+/// macro to match.
+pub fn generate_model_features() {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_glob = format!("{project_root}/models/json/model_*.json");
+    let models = collect_models(&model_glob);
+
+    replace_generated_region(
+        &Path::new(project_root).join("../sunspec-modbus-lib-rs/Cargo.toml"),
+        "#",
+        &render_cargo_features(&models, &[]),
+    );
+    replace_generated_region(
+        &Path::new(project_root).join("../sunspec-modbus-lib-static/Cargo.toml"),
+        "#",
+        &render_cargo_features(&models, &["sunspec-modbus-lib-rs"]),
+    );
+    let cbindgen_toml = Path::new(project_root).join("../sunspec-modbus-lib-static/cbindgen.toml");
+    replace_generated_region(&cbindgen_toml, "#", &render_cbindgen_defines(&models));
+    replace_generated_region(
+        &cbindgen_toml,
+        "//",
+        &render_cbindgen_default_models(&models),
+    );
+}
+
 /// Typed `SunspecAdapter` constructors, one set per C-expressible model.
 ///
 /// `sunspec_model_<id>_callback(*mut Model<id>CallbackAdapter)` /
@@ -168,9 +282,11 @@ fn generate_static_lib_adapter_ctors() -> Scope {
         let sc = &model.name_snake_case();
         let pc = &model.name_pascal_case();
         let module = format!("sunspec_modbus_lib_rs::generated::models::{sc}");
+        let cfg = model_cfg_attribute(model);
 
         scope.raw(format!(
             "/// Build a [`SunspecAdapter`] for model {n} backed by a callback adapter.\n\
+             {cfg}\n\
              #[unsafe(no_mangle)]\n\
              pub extern \"C\" fn sunspec_model_{n}_callback(\n\
              \x20   adapter: *mut {module}::{pc}CallbackAdapter,\n\
@@ -186,6 +302,7 @@ fn generate_static_lib_adapter_ctors() -> Scope {
         if !model_is_repeating(model) {
             scope.raw(format!(
                 "/// Build a [`SunspecAdapter`] for model {n} backed by a stateful adapter.\n\
+                 {cfg}\n\
                  #[unsafe(no_mangle)]\n\
                  pub extern \"C\" fn sunspec_model_{n}_stateful(\n\
                  \x20   adapter: *mut {module}::{pc}StatefulAdapter,\n\

@@ -1127,7 +1127,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum IntvTyp {
+pub enum Model133IntvTyp {
     Onetime = 0,
     Daily = 1,
     Weekly = 2,
@@ -1138,25 +1138,28 @@ pub enum IntvTyp {
     Yearly = 7,
 }
 
-impl IntvTyp {
-    pub fn from_repr(repr: u16) -> Option<IntvTyp> {
+impl Model133IntvTyp {
+    pub fn from_repr(repr: u16) -> Option<Model133IntvTyp> {
         match repr {
-            0 => Some(IntvTyp::Onetime),
-            1 => Some(IntvTyp::Daily),
-            2 => Some(IntvTyp::Weekly),
-            3 => Some(IntvTyp::Monthly),
-            4 => Some(IntvTyp::Weekday),
-            5 => Some(IntvTyp::Holiday),
-            6 => Some(IntvTyp::Weekend),
-            7 => Some(IntvTyp::Yearly),
+            0 => Some(Model133IntvTyp::Onetime),
+            1 => Some(Model133IntvTyp::Daily),
+            2 => Some(Model133IntvTyp::Weekly),
+            3 => Some(Model133IntvTyp::Monthly),
+            4 => Some(Model133IntvTyp::Weekday),
+            5 => Some(Model133IntvTyp::Holiday),
+            6 => Some(Model133IntvTyp::Weekend),
+            7 => Some(Model133IntvTyp::Yearly),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model133IntvTyp`] - only `Model133IntvTyp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `IntvTyp` distinct from another model's point of the same name.
+pub type IntvTyp = Model133IntvTyp;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum XTyp {
+pub enum Model133XTyp {
     Unset = 0,
     Time = 1,
     Temp = 2,
@@ -1164,22 +1167,25 @@ pub enum XTyp {
     Other = 99,
 }
 
-impl XTyp {
-    pub fn from_repr(repr: u16) -> Option<XTyp> {
+impl Model133XTyp {
+    pub fn from_repr(repr: u16) -> Option<Model133XTyp> {
         match repr {
-            0 => Some(XTyp::Unset),
-            1 => Some(XTyp::Time),
-            2 => Some(XTyp::Temp),
-            3 => Some(XTyp::Price),
-            99 => Some(XTyp::Other),
+            0 => Some(Model133XTyp::Unset),
+            1 => Some(Model133XTyp::Time),
+            2 => Some(Model133XTyp::Temp),
+            3 => Some(Model133XTyp::Price),
+            99 => Some(Model133XTyp::Other),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model133XTyp`] - only `Model133XTyp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `XTyp` distinct from another model's point of the same name.
+pub type XTyp = Model133XTyp;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum YTyp {
+pub enum Model133YTyp {
     Unset = 0,
     WMax = 1,
     Rsrvd2 = 2,
@@ -1196,27 +1202,30 @@ pub enum YTyp {
     Other = 99,
 }
 
-impl YTyp {
-    pub fn from_repr(repr: u16) -> Option<YTyp> {
+impl Model133YTyp {
+    pub fn from_repr(repr: u16) -> Option<Model133YTyp> {
         match repr {
-            0 => Some(YTyp::Unset),
-            1 => Some(YTyp::WMax),
-            2 => Some(YTyp::Rsrvd2),
-            3 => Some(YTyp::Pf),
-            4 => Some(YTyp::Rsrvd4),
-            5 => Some(YTyp::WattPrice),
-            6 => Some(YTyp::VarPrice),
-            7 => Some(YTyp::Rsrvd7),
-            8 => Some(YTyp::VoltVarArray),
-            9 => Some(YTyp::WChaGra),
-            10 => Some(YTyp::WDisChaGra),
-            11 => Some(YTyp::VArAval),
-            12 => Some(YTyp::Schedule),
-            99 => Some(YTyp::Other),
+            0 => Some(Model133YTyp::Unset),
+            1 => Some(Model133YTyp::WMax),
+            2 => Some(Model133YTyp::Rsrvd2),
+            3 => Some(Model133YTyp::Pf),
+            4 => Some(Model133YTyp::Rsrvd4),
+            5 => Some(Model133YTyp::WattPrice),
+            6 => Some(Model133YTyp::VarPrice),
+            7 => Some(Model133YTyp::Rsrvd7),
+            8 => Some(Model133YTyp::VoltVarArray),
+            9 => Some(Model133YTyp::WChaGra),
+            10 => Some(Model133YTyp::WDisChaGra),
+            11 => Some(Model133YTyp::VArAval),
+            12 => Some(Model133YTyp::Schedule),
+            99 => Some(Model133YTyp::Other),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model133YTyp`] - only `Model133YTyp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `YTyp` distinct from another model's point of the same name.
+pub type YTyp = Model133YTyp;
 
 #[repr(C)]
 pub struct Model133CallbackAdapter {
@@ -1272,19 +1281,19 @@ pub struct Model133CallbackAdapter {
     /// SchdTyp (IntvTyp)
     ///
     /// The repetition frequency for time-based schedules: no repeat=0
-    repeating_schd_typ_callback: extern "C" fn(*const c_void) -> IntvTyp,
+    repeating_schd_typ_callback: extern "C" fn(*const c_void) -> Model133IntvTyp,
     /// SchdTyp (IntvTyp)
     ///
     /// The repetition frequency for time-based schedules: no repeat=0
-    set_repeating_schd_typ_callback: extern "C" fn(IntvTyp, *mut c_void),
+    set_repeating_schd_typ_callback: extern "C" fn(Model133IntvTyp, *mut c_void),
     /// XTyp (XTyp)
     ///
     /// The meaning of the X-values in the array.
-    repeating_x_typ_callback: extern "C" fn(*const c_void) -> XTyp,
+    repeating_x_typ_callback: extern "C" fn(*const c_void) -> Model133XTyp,
     /// XTyp (XTyp)
     ///
     /// The meaning of the X-values in the array.
-    set_repeating_x_typ_callback: extern "C" fn(XTyp, *mut c_void),
+    set_repeating_x_typ_callback: extern "C" fn(Model133XTyp, *mut c_void),
     /// X_SF (X_SF)
     ///
     /// Scale factor for schedule range values.
@@ -1296,11 +1305,11 @@ pub struct Model133CallbackAdapter {
     /// YTyp (YTyp)
     ///
     /// The meaning of the Y-values in the array.
-    repeating_y_typ_callback: extern "C" fn(*const c_void) -> YTyp,
+    repeating_y_typ_callback: extern "C" fn(*const c_void) -> Model133YTyp,
     /// YTyp (YTyp)
     ///
     /// The meaning of the Y-values in the array.
-    set_repeating_y_typ_callback: extern "C" fn(YTyp, *mut c_void),
+    set_repeating_y_typ_callback: extern "C" fn(Model133YTyp, *mut c_void),
     /// Y_SF (Y_SF)
     ///
     /// Scale factor for schedule target values.
@@ -1974,11 +1983,11 @@ pub struct Model133StatefulAdapter {
     /// SchdTyp (IntvTyp)
     ///
     /// The repetition frequency for time-based schedules: no repeat=0
-    pub repeating_schd_typ: IntvTyp,
+    pub repeating_schd_typ: Model133IntvTyp,
     /// XTyp (XTyp)
     ///
     /// The meaning of the X-values in the array.
-    pub repeating_x_typ: XTyp,
+    pub repeating_x_typ: Model133XTyp,
     /// X_SF (X_SF)
     ///
     /// Scale factor for schedule range values.
@@ -1986,7 +1995,7 @@ pub struct Model133StatefulAdapter {
     /// YTyp (YTyp)
     ///
     /// The meaning of the Y-values in the array.
-    pub repeating_y_typ: YTyp,
+    pub repeating_y_typ: Model133YTyp,
     /// Y_SF (Y_SF)
     ///
     /// Scale factor for schedule target values.

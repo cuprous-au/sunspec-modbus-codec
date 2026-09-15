@@ -271,7 +271,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum LocRemCtl {
+pub enum Model715LocRemCtl {
     /// Remote Control
     Remote = 0,
     /// Local Control
@@ -280,19 +280,22 @@ pub enum LocRemCtl {
     Local = 1,
 }
 
-impl LocRemCtl {
-    pub fn from_repr(repr: u16) -> Option<LocRemCtl> {
+impl Model715LocRemCtl {
+    pub fn from_repr(repr: u16) -> Option<Model715LocRemCtl> {
         match repr {
-            0 => Some(LocRemCtl::Remote),
-            1 => Some(LocRemCtl::Local),
+            0 => Some(Model715LocRemCtl::Remote),
+            1 => Some(Model715LocRemCtl::Local),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model715LocRemCtl`] - only `Model715LocRemCtl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `LocRemCtl` distinct from another model's point of the same name.
+pub type LocRemCtl = Model715LocRemCtl;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum OpCtl {
+pub enum Model715OpCtl {
     /// Stop the DER
     Stop = 0,
     /// Start the DER
@@ -303,17 +306,20 @@ pub enum OpCtl {
     ExitStandby = 3,
 }
 
-impl OpCtl {
-    pub fn from_repr(repr: u16) -> Option<OpCtl> {
+impl Model715OpCtl {
+    pub fn from_repr(repr: u16) -> Option<Model715OpCtl> {
         match repr {
-            0 => Some(OpCtl::Stop),
-            1 => Some(OpCtl::Start),
-            2 => Some(OpCtl::EnterStandby),
-            3 => Some(OpCtl::ExitStandby),
+            0 => Some(Model715OpCtl::Stop),
+            1 => Some(Model715OpCtl::Start),
+            2 => Some(Model715OpCtl::EnterStandby),
+            3 => Some(Model715OpCtl::ExitStandby),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model715OpCtl`] - only `Model715OpCtl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `OpCtl` distinct from another model's point of the same name.
+pub type OpCtl = Model715OpCtl;
 
 #[repr(C)]
 pub struct Model715CallbackAdapter {
@@ -321,7 +327,7 @@ pub struct Model715CallbackAdapter {
     /// Control Mode (LocRemCtl)
     ///
     /// DER control mode. Enumeration.
-    control_mode_callback: Option<extern "C" fn(*const c_void) -> LocRemCtl>,
+    control_mode_callback: Option<extern "C" fn(*const c_void) -> Model715LocRemCtl>,
     /// DER Heartbeat (DERHb)
     ///
     /// Value is incremented every second by the DER with periodic resets to zero.
@@ -345,11 +351,11 @@ pub struct Model715CallbackAdapter {
     /// Set Operation (OpCtl)
     ///
     /// Commands to PCS.
-    operation_callback: Option<extern "C" fn(*const c_void) -> OpCtl>,
+    operation_callback: Option<extern "C" fn(*const c_void) -> Model715OpCtl>,
     /// Set Operation (OpCtl)
     ///
     /// Commands to PCS.
-    set_operation_callback: Option<extern "C" fn(OpCtl, *mut c_void)>,
+    set_operation_callback: Option<extern "C" fn(Model715OpCtl, *mut c_void)>,
 }
 
 impl ReadAdapter for Model715CallbackAdapter {
@@ -413,7 +419,7 @@ pub struct Model715StatefulAdapter {
     /// Control Mode (LocRemCtl)
     ///
     /// DER control mode. Enumeration.
-    pub control_mode: LocRemCtl,
+    pub control_mode: Model715LocRemCtl,
     /// DER Heartbeat (DERHb)
     ///
     /// Value is incremented every second by the DER with periodic resets to zero.
@@ -429,7 +435,7 @@ pub struct Model715StatefulAdapter {
     /// Set Operation (OpCtl)
     ///
     /// Commands to PCS.
-    pub operation: OpCtl,
+    pub operation: Model715OpCtl,
 }
 
 impl ReadAdapter for Model715StatefulAdapter {

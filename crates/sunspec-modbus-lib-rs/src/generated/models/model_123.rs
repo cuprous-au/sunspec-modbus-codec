@@ -791,92 +791,107 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Conn {
+pub enum Model123Conn {
     Disconnect = 0,
     Connect = 1,
 }
 
-impl Conn {
-    pub fn from_repr(repr: u16) -> Option<Conn> {
+impl Model123Conn {
+    pub fn from_repr(repr: u16) -> Option<Model123Conn> {
         match repr {
-            0 => Some(Conn::Disconnect),
-            1 => Some(Conn::Connect),
+            0 => Some(Model123Conn::Disconnect),
+            1 => Some(Model123Conn::Connect),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model123Conn`] - only `Model123Conn` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Conn` distinct from another model's point of the same name.
+pub type Conn = Model123Conn;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum OutPfSetEna {
+pub enum Model123OutPfSetEna {
     Disabled = 0,
     Enabled = 1,
 }
 
-impl OutPfSetEna {
-    pub fn from_repr(repr: u16) -> Option<OutPfSetEna> {
+impl Model123OutPfSetEna {
+    pub fn from_repr(repr: u16) -> Option<Model123OutPfSetEna> {
         match repr {
-            0 => Some(OutPfSetEna::Disabled),
-            1 => Some(OutPfSetEna::Enabled),
+            0 => Some(Model123OutPfSetEna::Disabled),
+            1 => Some(Model123OutPfSetEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model123OutPfSetEna`] - only `Model123OutPfSetEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `OutPfSetEna` distinct from another model's point of the same name.
+pub type OutPfSetEna = Model123OutPfSetEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VArPctEna {
+pub enum Model123VArPctEna {
     Disabled = 0,
     Enabled = 1,
 }
 
-impl VArPctEna {
-    pub fn from_repr(repr: u16) -> Option<VArPctEna> {
+impl Model123VArPctEna {
+    pub fn from_repr(repr: u16) -> Option<Model123VArPctEna> {
         match repr {
-            0 => Some(VArPctEna::Disabled),
-            1 => Some(VArPctEna::Enabled),
+            0 => Some(Model123VArPctEna::Disabled),
+            1 => Some(Model123VArPctEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model123VArPctEna`] - only `Model123VArPctEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VArPctEna` distinct from another model's point of the same name.
+pub type VArPctEna = Model123VArPctEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VArPctMod {
+pub enum Model123VArPctMod {
     None = 0,
     WMax = 1,
     VArMax = 2,
     VArAval = 3,
 }
 
-impl VArPctMod {
-    pub fn from_repr(repr: u16) -> Option<VArPctMod> {
+impl Model123VArPctMod {
+    pub fn from_repr(repr: u16) -> Option<Model123VArPctMod> {
         match repr {
-            0 => Some(VArPctMod::None),
-            1 => Some(VArPctMod::WMax),
-            2 => Some(VArPctMod::VArMax),
-            3 => Some(VArPctMod::VArAval),
+            0 => Some(Model123VArPctMod::None),
+            1 => Some(Model123VArPctMod::WMax),
+            2 => Some(Model123VArPctMod::VArMax),
+            3 => Some(Model123VArPctMod::VArAval),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model123VArPctMod`] - only `Model123VArPctMod` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VArPctMod` distinct from another model's point of the same name.
+pub type VArPctMod = Model123VArPctMod;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WMaxLimEna {
+pub enum Model123WMaxLimEna {
     Disabled = 0,
     Enabled = 1,
 }
 
-impl WMaxLimEna {
-    pub fn from_repr(repr: u16) -> Option<WMaxLimEna> {
+impl Model123WMaxLimEna {
+    pub fn from_repr(repr: u16) -> Option<Model123WMaxLimEna> {
         match repr {
-            0 => Some(WMaxLimEna::Disabled),
-            1 => Some(WMaxLimEna::Enabled),
+            0 => Some(Model123WMaxLimEna::Disabled),
+            1 => Some(Model123WMaxLimEna::Enabled),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model123WMaxLimEna`] - only `Model123WMaxLimEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WMaxLimEna` distinct from another model's point of the same name.
+pub type WMaxLimEna = Model123WMaxLimEna;
 
 #[repr(C)]
 pub struct Model123CallbackAdapter {
@@ -900,11 +915,11 @@ pub struct Model123CallbackAdapter {
     /// Conn (Conn)
     ///
     /// Connection control.
-    conn_callback: extern "C" fn(*const c_void) -> Conn,
+    conn_callback: extern "C" fn(*const c_void) -> Model123Conn,
     /// Conn (Conn)
     ///
     /// Connection control.
-    set_conn_callback: extern "C" fn(Conn, *mut c_void),
+    set_conn_callback: extern "C" fn(Model123Conn, *mut c_void),
     /// WMaxLimPct (WMaxLimPct)
     ///
     /// Set power output to specified level.
@@ -940,11 +955,11 @@ pub struct Model123CallbackAdapter {
     /// WMaxLim_Ena (WMaxLim_Ena)
     ///
     /// Throttle enable/disable control.
-    w_max_lim_ena_callback: extern "C" fn(*const c_void) -> WMaxLimEna,
+    w_max_lim_ena_callback: extern "C" fn(*const c_void) -> Model123WMaxLimEna,
     /// WMaxLim_Ena (WMaxLim_Ena)
     ///
     /// Throttle enable/disable control.
-    set_w_max_lim_ena_callback: extern "C" fn(WMaxLimEna, *mut c_void),
+    set_w_max_lim_ena_callback: extern "C" fn(Model123WMaxLimEna, *mut c_void),
     /// OutPFSet (OutPFSet)
     ///
     /// Set power factor to specific value - cosine of angle.
@@ -980,11 +995,11 @@ pub struct Model123CallbackAdapter {
     /// OutPFSet_Ena (OutPFSet_Ena)
     ///
     /// Fixed power factor enable/disable control.
-    out_pf_set_ena_callback: extern "C" fn(*const c_void) -> OutPfSetEna,
+    out_pf_set_ena_callback: extern "C" fn(*const c_void) -> Model123OutPfSetEna,
     /// OutPFSet_Ena (OutPFSet_Ena)
     ///
     /// Fixed power factor enable/disable control.
-    set_out_pf_set_ena_callback: extern "C" fn(OutPfSetEna, *mut c_void),
+    set_out_pf_set_ena_callback: extern "C" fn(Model123OutPfSetEna, *mut c_void),
     /// VArWMaxPct (VArWMaxPct)
     ///
     /// Reactive power in percent of WMax.
@@ -1036,19 +1051,19 @@ pub struct Model123CallbackAdapter {
     /// VArPct_Mod (VArPct_Mod)
     ///
     /// VAR percent limit mode.
-    v_ar_pct_mod_callback: Option<extern "C" fn(*const c_void) -> VArPctMod>,
+    v_ar_pct_mod_callback: Option<extern "C" fn(*const c_void) -> Model123VArPctMod>,
     /// VArPct_Mod (VArPct_Mod)
     ///
     /// VAR percent limit mode.
-    set_v_ar_pct_mod_callback: Option<extern "C" fn(VArPctMod, *mut c_void)>,
+    set_v_ar_pct_mod_callback: Option<extern "C" fn(Model123VArPctMod, *mut c_void)>,
     /// VArPct_Ena (VArPct_Ena)
     ///
     /// Percent limit VAr enable/disable control.
-    v_ar_pct_ena_callback: extern "C" fn(*const c_void) -> VArPctEna,
+    v_ar_pct_ena_callback: extern "C" fn(*const c_void) -> Model123VArPctEna,
     /// VArPct_Ena (VArPct_Ena)
     ///
     /// Percent limit VAr enable/disable control.
-    set_v_ar_pct_ena_callback: extern "C" fn(VArPctEna, *mut c_void),
+    set_v_ar_pct_ena_callback: extern "C" fn(Model123VArPctEna, *mut c_void),
     /// WMaxLimPct_SF (WMaxLimPct_SF)
     ///
     /// Scale factor for power output percent.
@@ -1369,7 +1384,7 @@ pub struct Model123StatefulAdapter {
     /// Conn (Conn)
     ///
     /// Connection control.
-    pub conn: Conn,
+    pub conn: Model123Conn,
     /// WMaxLimPct (WMaxLimPct)
     ///
     /// Set power output to specified level.
@@ -1389,7 +1404,7 @@ pub struct Model123StatefulAdapter {
     /// WMaxLim_Ena (WMaxLim_Ena)
     ///
     /// Throttle enable/disable control.
-    pub w_max_lim_ena: WMaxLimEna,
+    pub w_max_lim_ena: Model123WMaxLimEna,
     /// OutPFSet (OutPFSet)
     ///
     /// Set power factor to specific value - cosine of angle.
@@ -1409,7 +1424,7 @@ pub struct Model123StatefulAdapter {
     /// OutPFSet_Ena (OutPFSet_Ena)
     ///
     /// Fixed power factor enable/disable control.
-    pub out_pf_set_ena: OutPfSetEna,
+    pub out_pf_set_ena: Model123OutPfSetEna,
     /// VArWMaxPct (VArWMaxPct)
     ///
     /// Reactive power in percent of WMax.
@@ -1437,11 +1452,11 @@ pub struct Model123StatefulAdapter {
     /// VArPct_Mod (VArPct_Mod)
     ///
     /// VAR percent limit mode.
-    pub v_ar_pct_mod: VArPctMod,
+    pub v_ar_pct_mod: Model123VArPctMod,
     /// VArPct_Ena (VArPct_Ena)
     ///
     /// Percent limit VAr enable/disable control.
-    pub v_ar_pct_ena: VArPctEna,
+    pub v_ar_pct_ena: Model123VArPctEna,
     /// WMaxLimPct_SF (WMaxLimPct_SF)
     ///
     /// Scale factor for power output percent.

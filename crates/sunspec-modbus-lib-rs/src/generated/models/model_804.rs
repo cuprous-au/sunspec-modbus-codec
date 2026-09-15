@@ -1276,7 +1276,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ConFail {
+pub enum Model804ConFail {
     NoFailure = 0,
     ButtonPushed = 1,
     StrGroundFault = 2,
@@ -1289,39 +1289,45 @@ pub enum ConFail {
     StringFault = 8,
 }
 
-impl ConFail {
-    pub fn from_repr(repr: u16) -> Option<ConFail> {
+impl Model804ConFail {
+    pub fn from_repr(repr: u16) -> Option<Model804ConFail> {
         match repr {
-            0 => Some(ConFail::NoFailure),
-            1 => Some(ConFail::ButtonPushed),
-            2 => Some(ConFail::StrGroundFault),
-            3 => Some(ConFail::OutsideVoltageRange),
-            4 => Some(ConFail::StringNotEnabled),
-            5 => Some(ConFail::FuseOpen),
-            6 => Some(ConFail::ContactorFailure),
-            7 => Some(ConFail::PrechargeFailure),
-            8 => Some(ConFail::StringFault),
+            0 => Some(Model804ConFail::NoFailure),
+            1 => Some(Model804ConFail::ButtonPushed),
+            2 => Some(Model804ConFail::StrGroundFault),
+            3 => Some(Model804ConFail::OutsideVoltageRange),
+            4 => Some(Model804ConFail::StringNotEnabled),
+            5 => Some(Model804ConFail::FuseOpen),
+            6 => Some(Model804ConFail::ContactorFailure),
+            7 => Some(Model804ConFail::PrechargeFailure),
+            8 => Some(Model804ConFail::StringFault),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model804ConFail`] - only `Model804ConFail` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ConFail` distinct from another model's point of the same name.
+pub type ConFail = Model804ConFail;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SetCon {
+pub enum Model804SetCon {
     ConnectString = 1,
     DisconnectString = 2,
 }
 
-impl SetCon {
-    pub fn from_repr(repr: u16) -> Option<SetCon> {
+impl Model804SetCon {
+    pub fn from_repr(repr: u16) -> Option<Model804SetCon> {
         match repr {
-            1 => Some(SetCon::ConnectString),
-            2 => Some(SetCon::DisconnectString),
+            1 => Some(Model804SetCon::ConnectString),
+            2 => Some(Model804SetCon::DisconnectString),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model804SetCon`] - only `Model804SetCon` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SetCon` distinct from another model's point of the same name.
+pub type SetCon = Model804SetCon;
 
 #[repr(C)]
 pub struct Model804CallbackAdapter {
@@ -1341,7 +1347,7 @@ pub struct Model804CallbackAdapter {
     /// Current status of the string.
     string_status_callback: extern "C" fn(*const c_void) -> u32,
     /// Connection Failure Reason (ConFail)
-    connection_failure_reason_callback: Option<extern "C" fn(*const c_void) -> ConFail>,
+    connection_failure_reason_callback: Option<extern "C" fn(*const c_void) -> Model804ConFail>,
     /// String Cell Balancing Count (NCellBal)
     ///
     /// Number of cells currently being balanced in the string.
@@ -1467,13 +1473,13 @@ pub struct Model804CallbackAdapter {
     /// Connects and disconnects the string.
     ///
     /// Should reset to 0 upon completion.
-    connect_disconnect_string_callback: Option<extern "C" fn(*const c_void) -> SetCon>,
+    connect_disconnect_string_callback: Option<extern "C" fn(*const c_void) -> Model804SetCon>,
     /// Connect/Disconnect String (SetCon)
     ///
     /// Connects and disconnects the string.
     ///
     /// Should reset to 0 upon completion.
-    set_connect_disconnect_string_callback: Option<extern "C" fn(SetCon, *mut c_void)>,
+    set_connect_disconnect_string_callback: Option<extern "C" fn(Model804SetCon, *mut c_void)>,
     /// SoC_SF
     ///
     /// Scale factor for string state of charge.
@@ -1881,7 +1887,7 @@ pub struct Model804StatefulAdapter<const MODULE_COUNT: usize> {
     /// Current status of the string.
     pub string_status: u32,
     /// Connection Failure Reason (ConFail)
-    pub connection_failure_reason: ConFail,
+    pub connection_failure_reason: Model804ConFail,
     /// String Cell Balancing Count (NCellBal)
     ///
     /// Number of cells currently being balanced in the string.
@@ -2003,7 +2009,7 @@ pub struct Model804StatefulAdapter<const MODULE_COUNT: usize> {
     /// Connects and disconnects the string.
     ///
     /// Should reset to 0 upon completion.
-    pub connect_disconnect_string: SetCon,
+    pub connect_disconnect_string: Model804SetCon,
     /// SoC_SF
     ///
     /// Scale factor for string state of charge.

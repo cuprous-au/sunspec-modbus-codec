@@ -1333,7 +1333,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AdptProfRslt {
+pub enum Model64410AdptProfRslt {
     /// Update In Progress
     ///
     /// Profile update in progress.
@@ -1348,20 +1348,23 @@ pub enum AdptProfRslt {
     Failed = 2,
 }
 
-impl AdptProfRslt {
-    pub fn from_repr(repr: u16) -> Option<AdptProfRslt> {
+impl Model64410AdptProfRslt {
+    pub fn from_repr(repr: u16) -> Option<Model64410AdptProfRslt> {
         match repr {
-            0 => Some(AdptProfRslt::InProgress),
-            1 => Some(AdptProfRslt::Completed),
-            2 => Some(AdptProfRslt::Failed),
+            0 => Some(Model64410AdptProfRslt::InProgress),
+            1 => Some(Model64410AdptProfRslt::Completed),
+            2 => Some(Model64410AdptProfRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64410AdptProfRslt`] - only `Model64410AdptProfRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AdptProfRslt` distinct from another model's point of the same name.
+pub type AdptProfRslt = Model64410AdptProfRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum En50530 {
+pub enum Model64410En50530 {
     /// EN50530 Mode
     ///
     /// EN50530 Mode
@@ -1372,19 +1375,22 @@ pub enum En50530 {
     DoNotEn50530 = 0,
 }
 
-impl En50530 {
-    pub fn from_repr(repr: u16) -> Option<En50530> {
+impl Model64410En50530 {
+    pub fn from_repr(repr: u16) -> Option<Model64410En50530> {
         match repr {
-            1 => Some(En50530::En50530),
-            0 => Some(En50530::DoNotEn50530),
+            1 => Some(Model64410En50530::En50530),
+            0 => Some(Model64410En50530::DoNotEn50530),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64410En50530`] - only `Model64410En50530` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `En50530` distinct from another model's point of the same name.
+pub type En50530 = Model64410En50530;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ena {
+pub enum Model64410Ena {
     /// Power On
     ///
     /// Power On
@@ -1395,19 +1401,22 @@ pub enum Ena {
     Off = 0,
 }
 
-impl Ena {
-    pub fn from_repr(repr: u16) -> Option<Ena> {
+impl Model64410Ena {
+    pub fn from_repr(repr: u16) -> Option<Model64410Ena> {
         match repr {
-            1 => Some(Ena::On),
-            0 => Some(Ena::Off),
+            1 => Some(Model64410Ena::On),
+            0 => Some(Model64410Ena::Off),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64410Ena`] - only `Model64410Ena` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ena` distinct from another model's point of the same name.
+pub type Ena = Model64410Ena;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum EnaProf {
+pub enum Model64410EnaProf {
     /// Start Profile
     ///
     /// Start the Profile
@@ -1418,19 +1427,22 @@ pub enum EnaProf {
     Stop = 0,
 }
 
-impl EnaProf {
-    pub fn from_repr(repr: u16) -> Option<EnaProf> {
+impl Model64410EnaProf {
+    pub fn from_repr(repr: u16) -> Option<Model64410EnaProf> {
         match repr {
-            1 => Some(EnaProf::Start),
-            0 => Some(EnaProf::Stop),
+            1 => Some(Model64410EnaProf::Start),
+            0 => Some(Model64410EnaProf::Stop),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64410EnaProf`] - only `Model64410EnaProf` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `EnaProf` distinct from another model's point of the same name.
+pub type EnaProf = Model64410EnaProf;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Mode {
+pub enum Model64410Mode {
     /// CV Mode
     ///
     /// Constant Voltage (CV) Mode
@@ -1441,19 +1453,22 @@ pub enum Mode {
     Cc = 1,
 }
 
-impl Mode {
-    pub fn from_repr(repr: u16) -> Option<Mode> {
+impl Model64410Mode {
+    pub fn from_repr(repr: u16) -> Option<Model64410Mode> {
         match repr {
-            0 => Some(Mode::Cv),
-            1 => Some(Mode::Cc),
+            0 => Some(Model64410Mode::Cv),
+            1 => Some(Model64410Mode::Cc),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64410Mode`] - only `Model64410Mode` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Mode` distinct from another model's point of the same name.
+pub type Mode = Model64410Mode;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Reset {
+pub enum Model64410Reset {
     /// Reset Device
     ///
     /// Reset Device
@@ -1464,15 +1479,18 @@ pub enum Reset {
     DoNotReset = 0,
 }
 
-impl Reset {
-    pub fn from_repr(repr: u16) -> Option<Reset> {
+impl Model64410Reset {
+    pub fn from_repr(repr: u16) -> Option<Model64410Reset> {
         match repr {
-            1 => Some(Reset::Reset),
-            0 => Some(Reset::DoNotReset),
+            1 => Some(Model64410Reset::Reset),
+            0 => Some(Model64410Reset::DoNotReset),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64410Reset`] - only `Model64410Reset` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Reset` distinct from another model's point of the same name.
+pub type Reset = Model64410Reset;
 
 #[repr(C)]
 pub struct Model64410CallbackAdapter {
@@ -1504,27 +1522,27 @@ pub struct Model64410CallbackAdapter {
     /// CV or CC Mode (Mode)
     ///
     /// Constant Voltage (CV) or Constant Current (CC) Mode
-    cv_or_cc_mode_callback: Option<extern "C" fn(*const c_void) -> Mode>,
+    cv_or_cc_mode_callback: Option<extern "C" fn(*const c_void) -> Model64410Mode>,
     /// CV or CC Mode (Mode)
     ///
     /// Constant Voltage (CV) or Constant Current (CC) Mode
-    set_cv_or_cc_mode_callback: Option<extern "C" fn(Mode, *mut c_void)>,
+    set_cv_or_cc_mode_callback: Option<extern "C" fn(Model64410Mode, *mut c_void)>,
     /// Power On/Off (Ena)
     ///
     /// Power On/Off
-    power_on_off_callback: Option<extern "C" fn(*const c_void) -> Ena>,
+    power_on_off_callback: Option<extern "C" fn(*const c_void) -> Model64410Ena>,
     /// Power On/Off (Ena)
     ///
     /// Power On/Off
-    set_power_on_off_callback: Option<extern "C" fn(Ena, *mut c_void)>,
+    set_power_on_off_callback: Option<extern "C" fn(Model64410Ena, *mut c_void)>,
     /// Reset Device (Reset)
     ///
     /// Reset Device
-    reset_device_callback: Option<extern "C" fn(*const c_void) -> Reset>,
+    reset_device_callback: Option<extern "C" fn(*const c_void) -> Model64410Reset>,
     /// Reset Device (Reset)
     ///
     /// Reset Device
-    set_reset_device_callback: Option<extern "C" fn(Reset, *mut c_void)>,
+    set_reset_device_callback: Option<extern "C" fn(Model64410Reset, *mut c_void)>,
     /// Voltage Setpoint (VSet)
     ///
     /// Voltage Setpoint
@@ -1552,11 +1570,11 @@ pub struct Model64410CallbackAdapter {
     /// EN50530 Mode (EN50530)
     ///
     /// EN50530 Mode - Enable or disable EN50530 profile mode
-    en50530_mode_callback: Option<extern "C" fn(*const c_void) -> En50530>,
+    en50530_mode_callback: Option<extern "C" fn(*const c_void) -> Model64410En50530>,
     /// EN50530 Mode (EN50530)
     ///
     /// EN50530 Mode - Enable or disable EN50530 profile mode
-    set_en50530_mode_callback: Option<extern "C" fn(En50530, *mut c_void)>,
+    set_en50530_mode_callback: Option<extern "C" fn(Model64410En50530, *mut c_void)>,
     /// EN50530 MPP Voltage (Vmpp)
     ///
     /// EN50530 MPP Voltage
@@ -1608,11 +1626,11 @@ pub struct Model64410CallbackAdapter {
     /// Enable Profile (EnaProf)
     ///
     /// Start/Stop the Profile
-    enable_profile_callback: Option<extern "C" fn(*const c_void) -> EnaProf>,
+    enable_profile_callback: Option<extern "C" fn(*const c_void) -> Model64410EnaProf>,
     /// Enable Profile (EnaProf)
     ///
     /// Start/Stop the Profile
-    set_enable_profile_callback: Option<extern "C" fn(EnaProf, *mut c_void)>,
+    set_enable_profile_callback: Option<extern "C" fn(Model64410EnaProf, *mut c_void)>,
     /// Profile Adoption Request (AdptProfReq)
     ///
     /// Index of profile points to adopt. First curve index is 1.
@@ -1624,7 +1642,7 @@ pub struct Model64410CallbackAdapter {
     /// Adopt Profile Result (AdptProfRslt)
     ///
     /// Result of last adopt profile operation.
-    adopt_profile_result_callback: extern "C" fn(*const c_void) -> AdptProfRslt,
+    adopt_profile_result_callback: extern "C" fn(*const c_void) -> Model64410AdptProfRslt,
     /// Measured Voltage (V)
     ///
     /// Measured Voltage
@@ -2278,15 +2296,15 @@ pub struct Model64410StatefulAdapter<
     /// CV or CC Mode (Mode)
     ///
     /// Constant Voltage (CV) or Constant Current (CC) Mode
-    pub cv_or_cc_mode: Mode,
+    pub cv_or_cc_mode: Model64410Mode,
     /// Power On/Off (Ena)
     ///
     /// Power On/Off
-    pub power_on_off: Ena,
+    pub power_on_off: Model64410Ena,
     /// Reset Device (Reset)
     ///
     /// Reset Device
-    pub reset_device: Reset,
+    pub reset_device: Model64410Reset,
     /// Voltage Setpoint (VSet)
     ///
     /// Voltage Setpoint
@@ -2302,7 +2320,7 @@ pub struct Model64410StatefulAdapter<
     /// EN50530 Mode (EN50530)
     ///
     /// EN50530 Mode - Enable or disable EN50530 profile mode
-    pub en50530_mode: En50530,
+    pub en50530_mode: Model64410En50530,
     /// EN50530 MPP Voltage (Vmpp)
     ///
     /// EN50530 MPP Voltage
@@ -2330,7 +2348,7 @@ pub struct Model64410StatefulAdapter<
     /// Enable Profile (EnaProf)
     ///
     /// Start/Stop the Profile
-    pub enable_profile: EnaProf,
+    pub enable_profile: Model64410EnaProf,
     /// Profile Adoption Request (AdptProfReq)
     ///
     /// Index of profile points to adopt. First curve index is 1.
@@ -2338,7 +2356,7 @@ pub struct Model64410StatefulAdapter<
     /// Adopt Profile Result (AdptProfRslt)
     ///
     /// Result of last adopt profile operation.
-    pub adopt_profile_result: AdptProfRslt,
+    pub adopt_profile_result: Model64410AdptProfRslt,
     /// Measured Voltage (V)
     ///
     /// Measured Voltage

@@ -376,77 +376,89 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Auth {
+pub enum Model19Auth {
     None = 0,
     Pap = 1,
     Chap = 2,
 }
 
-impl Auth {
-    pub fn from_repr(repr: u16) -> Option<Auth> {
+impl Model19Auth {
+    pub fn from_repr(repr: u16) -> Option<Model19Auth> {
         match repr {
-            0 => Some(Auth::None),
-            1 => Some(Auth::Pap),
-            2 => Some(Auth::Chap),
+            0 => Some(Model19Auth::None),
+            1 => Some(Model19Auth::Pap),
+            2 => Some(Model19Auth::Chap),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model19Auth`] - only `Model19Auth` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Auth` distinct from another model's point of the same name.
+pub type Auth = Model19Auth;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Dup {
+pub enum Model19Dup {
     Full = 0,
     Half = 1,
 }
 
-impl Dup {
-    pub fn from_repr(repr: u16) -> Option<Dup> {
+impl Model19Dup {
+    pub fn from_repr(repr: u16) -> Option<Model19Dup> {
         match repr {
-            0 => Some(Dup::Full),
-            1 => Some(Dup::Half),
+            0 => Some(Model19Dup::Full),
+            1 => Some(Model19Dup::Half),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model19Dup`] - only `Model19Dup` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Dup` distinct from another model's point of the same name.
+pub type Dup = Model19Dup;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Flw {
+pub enum Model19Flw {
     None = 0,
     Hw = 1,
     Xonxoff = 2,
 }
 
-impl Flw {
-    pub fn from_repr(repr: u16) -> Option<Flw> {
+impl Model19Flw {
+    pub fn from_repr(repr: u16) -> Option<Model19Flw> {
         match repr {
-            0 => Some(Flw::None),
-            1 => Some(Flw::Hw),
-            2 => Some(Flw::Xonxoff),
+            0 => Some(Model19Flw::None),
+            1 => Some(Model19Flw::Hw),
+            2 => Some(Model19Flw::Xonxoff),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model19Flw`] - only `Model19Flw` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Flw` distinct from another model's point of the same name.
+pub type Flw = Model19Flw;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Pty {
+pub enum Model19Pty {
     None = 0,
     Odd = 1,
     Even = 2,
 }
 
-impl Pty {
-    pub fn from_repr(repr: u16) -> Option<Pty> {
+impl Model19Pty {
+    pub fn from_repr(repr: u16) -> Option<Model19Pty> {
         match repr {
-            0 => Some(Pty::None),
-            1 => Some(Pty::Odd),
-            2 => Some(Pty::Even),
+            0 => Some(Model19Pty::None),
+            1 => Some(Model19Pty::Odd),
+            2 => Some(Model19Pty::Even),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model19Pty`] - only `Model19Pty` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Pty` distinct from another model's point of the same name.
+pub type Pty = Model19Pty;
 
 #[repr(C)]
 pub struct Model19CallbackAdapter {
@@ -478,31 +490,31 @@ pub struct Model19CallbackAdapter {
     /// Parity (Pty)
     ///
     /// Parity setting
-    parity_callback: extern "C" fn(*const c_void) -> Pty,
+    parity_callback: extern "C" fn(*const c_void) -> Model19Pty,
     /// Parity (Pty)
     ///
     /// Parity setting
-    set_parity_callback: extern "C" fn(Pty, *mut c_void),
+    set_parity_callback: extern "C" fn(Model19Pty, *mut c_void),
     /// Duplex (Dup)
     ///
     /// Duplex mode
-    duplex_callback: Option<extern "C" fn(*const c_void) -> Dup>,
+    duplex_callback: Option<extern "C" fn(*const c_void) -> Model19Dup>,
     /// Duplex (Dup)
     ///
     /// Duplex mode
-    set_duplex_callback: Option<extern "C" fn(Dup, *mut c_void)>,
+    set_duplex_callback: Option<extern "C" fn(Model19Dup, *mut c_void)>,
     /// Flow Control (Flw)
     ///
     /// Flow Control Method
-    flow_control_callback: Option<extern "C" fn(*const c_void) -> Flw>,
+    flow_control_callback: Option<extern "C" fn(*const c_void) -> Model19Flw>,
     /// Flow Control (Flw)
     ///
     /// Flow Control Method
-    set_flow_control_callback: Option<extern "C" fn(Flw, *mut c_void)>,
+    set_flow_control_callback: Option<extern "C" fn(Model19Flw, *mut c_void)>,
     /// Authentication (Auth)
     ///
     /// Authentication method
-    authentication_callback: Option<extern "C" fn(*const c_void) -> Auth>,
+    authentication_callback: Option<extern "C" fn(*const c_void) -> Model19Auth>,
     /// Username (UsrNam)
     ///
     /// Username for authentication
@@ -624,19 +636,19 @@ pub struct Model19StatefulAdapter {
     /// Parity (Pty)
     ///
     /// Parity setting
-    pub parity: Pty,
+    pub parity: Model19Pty,
     /// Duplex (Dup)
     ///
     /// Duplex mode
-    pub duplex: Dup,
+    pub duplex: Model19Dup,
     /// Flow Control (Flw)
     ///
     /// Flow Control Method
-    pub flow_control: Flw,
+    pub flow_control: Model19Flw,
     /// Authentication (Auth)
     ///
     /// Authentication method
-    pub authentication: Auth,
+    pub authentication: Model19Auth,
     /// Username (UsrNam)
     ///
     /// Username for authentication

@@ -578,7 +578,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Stat {
+pub enum Model502Stat {
     Off = 1,
     Sleeping = 2,
     Starting = 3,
@@ -591,23 +591,26 @@ pub enum Stat {
     Other = 10,
 }
 
-impl Stat {
-    pub fn from_repr(repr: u16) -> Option<Stat> {
+impl Model502Stat {
+    pub fn from_repr(repr: u16) -> Option<Model502Stat> {
         match repr {
-            1 => Some(Stat::Off),
-            2 => Some(Stat::Sleeping),
-            3 => Some(Stat::Starting),
-            4 => Some(Stat::Mppt),
-            5 => Some(Stat::Throttled),
-            6 => Some(Stat::ShuttingDown),
-            7 => Some(Stat::Fault),
-            8 => Some(Stat::Standby),
-            9 => Some(Stat::Test),
-            10 => Some(Stat::Other),
+            1 => Some(Model502Stat::Off),
+            2 => Some(Model502Stat::Sleeping),
+            3 => Some(Model502Stat::Starting),
+            4 => Some(Model502Stat::Mppt),
+            5 => Some(Model502Stat::Throttled),
+            6 => Some(Model502Stat::ShuttingDown),
+            7 => Some(Model502Stat::Fault),
+            8 => Some(Model502Stat::Standby),
+            9 => Some(Model502Stat::Test),
+            10 => Some(Model502Stat::Other),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model502Stat`] - only `Model502Stat` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Stat` distinct from another model's point of the same name.
+pub type Stat = Model502Stat;
 
 #[repr(C)]
 pub struct Model502CallbackAdapter {
@@ -631,7 +634,7 @@ pub struct Model502CallbackAdapter {
     /// Status (Stat)
     ///
     /// Module Status Code
-    status_callback: extern "C" fn(*const c_void) -> Stat,
+    status_callback: extern "C" fn(*const c_void) -> Model502Stat,
     /// Vendor Status (StatVend)
     ///
     /// Module Vendor Status Code
@@ -860,7 +863,7 @@ pub struct Model502StatefulAdapter {
     /// Status (Stat)
     ///
     /// Module Status Code
-    pub status: Stat,
+    pub status: Model502Stat,
     /// Vendor Status (StatVend)
     ///
     /// Module Vendor Status Code

@@ -1213,7 +1213,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ChaSt {
+pub enum Model802ChaSt {
     Off = 1,
     Empty = 2,
     Discharging = 3,
@@ -1223,43 +1223,49 @@ pub enum ChaSt {
     Testing = 7,
 }
 
-impl ChaSt {
-    pub fn from_repr(repr: u16) -> Option<ChaSt> {
+impl Model802ChaSt {
+    pub fn from_repr(repr: u16) -> Option<Model802ChaSt> {
         match repr {
-            1 => Some(ChaSt::Off),
-            2 => Some(ChaSt::Empty),
-            3 => Some(ChaSt::Discharging),
-            4 => Some(ChaSt::Charging),
-            5 => Some(ChaSt::Full),
-            6 => Some(ChaSt::Holding),
-            7 => Some(ChaSt::Testing),
+            1 => Some(Model802ChaSt::Off),
+            2 => Some(Model802ChaSt::Empty),
+            3 => Some(Model802ChaSt::Discharging),
+            4 => Some(Model802ChaSt::Charging),
+            5 => Some(Model802ChaSt::Full),
+            6 => Some(Model802ChaSt::Holding),
+            7 => Some(Model802ChaSt::Testing),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model802ChaSt`] - only `Model802ChaSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ChaSt` distinct from another model's point of the same name.
+pub type ChaSt = Model802ChaSt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum LocRemCtl {
+pub enum Model802LocRemCtl {
     /// Value of 0 matches LocRemCtl in IEC 61850.
     Remote = 0,
     /// Value of 1 matches LocRemCtl in IEC 61850.
     Local = 1,
 }
 
-impl LocRemCtl {
-    pub fn from_repr(repr: u16) -> Option<LocRemCtl> {
+impl Model802LocRemCtl {
+    pub fn from_repr(repr: u16) -> Option<Model802LocRemCtl> {
         match repr {
-            0 => Some(LocRemCtl::Remote),
-            1 => Some(LocRemCtl::Local),
+            0 => Some(Model802LocRemCtl::Remote),
+            1 => Some(Model802LocRemCtl::Local),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model802LocRemCtl`] - only `Model802LocRemCtl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `LocRemCtl` distinct from another model's point of the same name.
+pub type LocRemCtl = Model802LocRemCtl;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReqInvState {
+pub enum Model802ReqInvState {
     NoRequest = 0,
     /// Battery is notified of inverter state change through SetInvState.
     Start = 1,
@@ -1267,56 +1273,65 @@ pub enum ReqInvState {
     Stop = 2,
 }
 
-impl ReqInvState {
-    pub fn from_repr(repr: u16) -> Option<ReqInvState> {
+impl Model802ReqInvState {
+    pub fn from_repr(repr: u16) -> Option<Model802ReqInvState> {
         match repr {
-            0 => Some(ReqInvState::NoRequest),
-            1 => Some(ReqInvState::Start),
-            2 => Some(ReqInvState::Stop),
+            0 => Some(Model802ReqInvState::NoRequest),
+            1 => Some(Model802ReqInvState::Start),
+            2 => Some(Model802ReqInvState::Stop),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model802ReqInvState`] - only `Model802ReqInvState` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReqInvState` distinct from another model's point of the same name.
+pub type ReqInvState = Model802ReqInvState;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SetInvState {
+pub enum Model802SetInvState {
     InverterStopped = 1,
     InverterStandby = 2,
     InverterStarted = 3,
 }
 
-impl SetInvState {
-    pub fn from_repr(repr: u16) -> Option<SetInvState> {
+impl Model802SetInvState {
+    pub fn from_repr(repr: u16) -> Option<Model802SetInvState> {
         match repr {
-            1 => Some(SetInvState::InverterStopped),
-            2 => Some(SetInvState::InverterStandby),
-            3 => Some(SetInvState::InverterStarted),
+            1 => Some(Model802SetInvState::InverterStopped),
+            2 => Some(Model802SetInvState::InverterStandby),
+            3 => Some(Model802SetInvState::InverterStarted),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model802SetInvState`] - only `Model802SetInvState` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SetInvState` distinct from another model's point of the same name.
+pub type SetInvState = Model802SetInvState;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SetOp {
+pub enum Model802SetOp {
     Connect = 1,
     Disconnect = 2,
 }
 
-impl SetOp {
-    pub fn from_repr(repr: u16) -> Option<SetOp> {
+impl Model802SetOp {
+    pub fn from_repr(repr: u16) -> Option<Model802SetOp> {
         match repr {
-            1 => Some(SetOp::Connect),
-            2 => Some(SetOp::Disconnect),
+            1 => Some(Model802SetOp::Connect),
+            2 => Some(Model802SetOp::Disconnect),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model802SetOp`] - only `Model802SetOp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SetOp` distinct from another model's point of the same name.
+pub type SetOp = Model802SetOp;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum State {
+pub enum Model802State {
     Disconnected = 1,
     Initializing = 2,
     Connected = 3,
@@ -1326,24 +1341,27 @@ pub enum State {
     Fault = 99,
 }
 
-impl State {
-    pub fn from_repr(repr: u16) -> Option<State> {
+impl Model802State {
+    pub fn from_repr(repr: u16) -> Option<Model802State> {
         match repr {
-            1 => Some(State::Disconnected),
-            2 => Some(State::Initializing),
-            3 => Some(State::Connected),
-            4 => Some(State::Standby),
-            5 => Some(State::SocProtection),
-            6 => Some(State::Suspending),
-            99 => Some(State::Fault),
+            1 => Some(Model802State::Disconnected),
+            2 => Some(Model802State::Initializing),
+            3 => Some(Model802State::Connected),
+            4 => Some(Model802State::Standby),
+            5 => Some(Model802State::SocProtection),
+            6 => Some(Model802State::Suspending),
+            99 => Some(Model802State::Fault),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model802State`] - only `Model802State` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `State` distinct from another model's point of the same name.
+pub type State = Model802State;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Typ {
+pub enum Model802Typ {
     NotApplicableUnknown = 0,
     LeadAcid = 1,
     NickelMetalHydrate = 2,
@@ -1358,25 +1376,28 @@ pub enum Typ {
     Other = 99,
 }
 
-impl Typ {
-    pub fn from_repr(repr: u16) -> Option<Typ> {
+impl Model802Typ {
+    pub fn from_repr(repr: u16) -> Option<Model802Typ> {
         match repr {
-            0 => Some(Typ::NotApplicableUnknown),
-            1 => Some(Typ::LeadAcid),
-            2 => Some(Typ::NickelMetalHydrate),
-            3 => Some(Typ::NickelCadmium),
-            4 => Some(Typ::LithiumIon),
-            5 => Some(Typ::CarbonZinc),
-            6 => Some(Typ::ZincChloride),
-            7 => Some(Typ::Alkaline),
-            8 => Some(Typ::RechargeableAlkaline),
-            9 => Some(Typ::SodiumSulfur),
-            10 => Some(Typ::Flow),
-            99 => Some(Typ::Other),
+            0 => Some(Model802Typ::NotApplicableUnknown),
+            1 => Some(Model802Typ::LeadAcid),
+            2 => Some(Model802Typ::NickelMetalHydrate),
+            3 => Some(Model802Typ::NickelCadmium),
+            4 => Some(Model802Typ::LithiumIon),
+            5 => Some(Model802Typ::CarbonZinc),
+            6 => Some(Model802Typ::ZincChloride),
+            7 => Some(Model802Typ::Alkaline),
+            8 => Some(Model802Typ::RechargeableAlkaline),
+            9 => Some(Model802Typ::SodiumSulfur),
+            10 => Some(Model802Typ::Flow),
+            99 => Some(Model802Typ::Other),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model802Typ`] - only `Model802Typ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Typ` distinct from another model's point of the same name.
+pub type Typ = Model802Typ;
 
 #[repr(C)]
 pub struct Model802CallbackAdapter {
@@ -1448,13 +1469,13 @@ pub struct Model802CallbackAdapter {
     /// Charge Status (ChaSt)
     ///
     /// Charge status of storage device. Enumeration.
-    charge_status_callback: Option<extern "C" fn(*const c_void) -> ChaSt>,
+    charge_status_callback: Option<extern "C" fn(*const c_void) -> Model802ChaSt>,
     /// Control Mode (LocRemCtl)
     ///
     /// Battery control mode. Enumeration.
     ///
     /// Maps to DRCC.LocRemCtl in IEC 61850.
-    control_mode_callback: extern "C" fn(*const c_void) -> LocRemCtl,
+    control_mode_callback: extern "C" fn(*const c_void) -> Model802LocRemCtl,
     /// Battery Heartbeat (Hb)
     ///
     /// Value is incremented every second with periodic resets to zero.
@@ -1484,13 +1505,13 @@ pub struct Model802CallbackAdapter {
     /// Type of battery. Enumeration.
     ///
     /// Maps to DBAT.BatTyp in 61850.
-    battery_type_callback: extern "C" fn(*const c_void) -> Typ,
+    battery_type_callback: extern "C" fn(*const c_void) -> Model802Typ,
     /// State of the Battery Bank (State)
     ///
     /// State of the battery bank. Enumeration.
     ///
     /// Must be reconciled with State in IEC 61850.
-    state_of_the_battery_bank_callback: extern "C" fn(*const c_void) -> State,
+    state_of_the_battery_bank_callback: extern "C" fn(*const c_void) -> Model802State,
     /// Vendor Battery Bank State (StateVnd)
     ///
     /// Vendor specific battery bank state. Enumeration.
@@ -1600,7 +1621,7 @@ pub struct Model802CallbackAdapter {
     /// Request from battery to start or stop the inverter. Enumeration.
     ///
     /// Used in special states such as manual battery charging.
-    inverter_state_request_callback: Option<extern "C" fn(*const c_void) -> ReqInvState>,
+    inverter_state_request_callback: Option<extern "C" fn(*const c_void) -> Model802ReqInvState>,
     /// Battery Power Request (ReqW)
     ///
     /// AC Power requested by battery.
@@ -1610,23 +1631,23 @@ pub struct Model802CallbackAdapter {
     /// Set Operation (SetOp)
     ///
     /// Instruct the battery bank to perform an operation such as connecting. Enumeration.
-    operation_callback: extern "C" fn(*const c_void) -> SetOp,
+    operation_callback: extern "C" fn(*const c_void) -> Model802SetOp,
     /// Set Operation (SetOp)
     ///
     /// Instruct the battery bank to perform an operation such as connecting. Enumeration.
-    set_operation_callback: extern "C" fn(SetOp, *mut c_void),
+    set_operation_callback: extern "C" fn(Model802SetOp, *mut c_void),
     /// Set Inverter State (SetInvState)
     ///
     /// Set the current state of the inverter.
     ///
     /// Information needed by battery for some operations.
-    inverter_state_callback: extern "C" fn(*const c_void) -> SetInvState,
+    inverter_state_callback: extern "C" fn(*const c_void) -> Model802SetInvState,
     /// Set Inverter State (SetInvState)
     ///
     /// Set the current state of the inverter.
     ///
     /// Information needed by battery for some operations.
-    set_inverter_state_callback: extern "C" fn(SetInvState, *mut c_void),
+    set_inverter_state_callback: extern "C" fn(Model802SetInvState, *mut c_void),
     /// AHRtg_SF
     ///
     /// Scale factor for charge capacity.
@@ -2047,13 +2068,13 @@ pub struct Model802StatefulAdapter {
     /// Charge Status (ChaSt)
     ///
     /// Charge status of storage device. Enumeration.
-    pub charge_status: ChaSt,
+    pub charge_status: Model802ChaSt,
     /// Control Mode (LocRemCtl)
     ///
     /// Battery control mode. Enumeration.
     ///
     /// Maps to DRCC.LocRemCtl in IEC 61850.
-    pub control_mode: LocRemCtl,
+    pub control_mode: Model802LocRemCtl,
     /// Battery Heartbeat (Hb)
     ///
     /// Value is incremented every second with periodic resets to zero.
@@ -2073,13 +2094,13 @@ pub struct Model802StatefulAdapter {
     /// Type of battery. Enumeration.
     ///
     /// Maps to DBAT.BatTyp in 61850.
-    pub battery_type: Typ,
+    pub battery_type: Model802Typ,
     /// State of the Battery Bank (State)
     ///
     /// State of the battery bank. Enumeration.
     ///
     /// Must be reconciled with State in IEC 61850.
-    pub state_of_the_battery_bank: State,
+    pub state_of_the_battery_bank: Model802State,
     /// Vendor Battery Bank State (StateVnd)
     ///
     /// Vendor specific battery bank state. Enumeration.
@@ -2189,7 +2210,7 @@ pub struct Model802StatefulAdapter {
     /// Request from battery to start or stop the inverter. Enumeration.
     ///
     /// Used in special states such as manual battery charging.
-    pub inverter_state_request: ReqInvState,
+    pub inverter_state_request: Model802ReqInvState,
     /// Battery Power Request (ReqW)
     ///
     /// AC Power requested by battery.
@@ -2199,13 +2220,13 @@ pub struct Model802StatefulAdapter {
     /// Set Operation (SetOp)
     ///
     /// Instruct the battery bank to perform an operation such as connecting. Enumeration.
-    pub operation: SetOp,
+    pub operation: Model802SetOp,
     /// Set Inverter State (SetInvState)
     ///
     /// Set the current state of the inverter.
     ///
     /// Information needed by battery for some operations.
-    pub inverter_state: SetInvState,
+    pub inverter_state: Model802SetInvState,
     /// AHRtg_SF
     ///
     /// Scale factor for charge capacity.

@@ -923,56 +923,65 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ClcTotVa {
+pub enum Model121ClcTotVa {
     Vector = 1,
     Arithmetic = 2,
 }
 
-impl ClcTotVa {
-    pub fn from_repr(repr: u16) -> Option<ClcTotVa> {
+impl Model121ClcTotVa {
+    pub fn from_repr(repr: u16) -> Option<Model121ClcTotVa> {
         match repr {
-            1 => Some(ClcTotVa::Vector),
-            2 => Some(ClcTotVa::Arithmetic),
+            1 => Some(Model121ClcTotVa::Vector),
+            2 => Some(Model121ClcTotVa::Arithmetic),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model121ClcTotVa`] - only `Model121ClcTotVa` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ClcTotVa` distinct from another model's point of the same name.
+pub type ClcTotVa = Model121ClcTotVa;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ConnPh {
+pub enum Model121ConnPh {
     A = 1,
     B = 2,
     C = 3,
 }
 
-impl ConnPh {
-    pub fn from_repr(repr: u16) -> Option<ConnPh> {
+impl Model121ConnPh {
+    pub fn from_repr(repr: u16) -> Option<Model121ConnPh> {
         match repr {
-            1 => Some(ConnPh::A),
-            2 => Some(ConnPh::B),
-            3 => Some(ConnPh::C),
+            1 => Some(Model121ConnPh::A),
+            2 => Some(Model121ConnPh::B),
+            3 => Some(Model121ConnPh::C),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model121ConnPh`] - only `Model121ConnPh` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ConnPh` distinct from another model's point of the same name.
+pub type ConnPh = Model121ConnPh;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VArAct {
+pub enum Model121VArAct {
     Switch = 1,
     Maintain = 2,
 }
 
-impl VArAct {
-    pub fn from_repr(repr: u16) -> Option<VArAct> {
+impl Model121VArAct {
+    pub fn from_repr(repr: u16) -> Option<Model121VArAct> {
         match repr {
-            1 => Some(VArAct::Switch),
-            2 => Some(VArAct::Maintain),
+            1 => Some(Model121VArAct::Switch),
+            2 => Some(Model121VArAct::Maintain),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model121VArAct`] - only `Model121VArAct` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VArAct` distinct from another model's point of the same name.
+pub type VArAct = Model121VArAct;
 
 #[repr(C)]
 pub struct Model121CallbackAdapter {
@@ -1116,19 +1125,19 @@ pub struct Model121CallbackAdapter {
     /// VArAct (VArAct)
     ///
     /// VAR action on change between charging and discharging: 1=switch 2=maintain VAR characterization.
-    v_ar_act_callback: Option<extern "C" fn(*const c_void) -> VArAct>,
+    v_ar_act_callback: Option<extern "C" fn(*const c_void) -> Model121VArAct>,
     /// VArAct (VArAct)
     ///
     /// VAR action on change between charging and discharging: 1=switch 2=maintain VAR characterization.
-    set_v_ar_act_callback: Option<extern "C" fn(VArAct, *mut c_void)>,
+    set_v_ar_act_callback: Option<extern "C" fn(Model121VArAct, *mut c_void)>,
     /// ClcTotVA (ClcTotVA)
     ///
     /// Calculation method for total apparent power. 1=vector 2=arithmetic.
-    clc_tot_va_callback: Option<extern "C" fn(*const c_void) -> ClcTotVa>,
+    clc_tot_va_callback: Option<extern "C" fn(*const c_void) -> Model121ClcTotVa>,
     /// ClcTotVA (ClcTotVA)
     ///
     /// Calculation method for total apparent power. 1=vector 2=arithmetic.
-    set_clc_tot_va_callback: Option<extern "C" fn(ClcTotVa, *mut c_void)>,
+    set_clc_tot_va_callback: Option<extern "C" fn(Model121ClcTotVa, *mut c_void)>,
     /// MaxRmpRte (MaxRmpRte)
     ///
     /// Setpoint for maximum ramp rate as percentage of nominal maximum ramp rate. This setting will limit the rate that watts delivery to the grid can increase or decrease in response to intermittent PV generation.
@@ -1148,11 +1157,11 @@ pub struct Model121CallbackAdapter {
     /// ConnPh (ConnPh)
     ///
     /// Identity of connected phase for single phase inverters. A=1 B=2 C=3.
-    conn_ph_callback: Option<extern "C" fn(*const c_void) -> ConnPh>,
+    conn_ph_callback: Option<extern "C" fn(*const c_void) -> Model121ConnPh>,
     /// ConnPh (ConnPh)
     ///
     /// Identity of connected phase for single phase inverters. A=1 B=2 C=3.
-    set_conn_ph_callback: Option<extern "C" fn(ConnPh, *mut c_void)>,
+    set_conn_ph_callback: Option<extern "C" fn(Model121ConnPh, *mut c_void)>,
     /// WMax_SF (WMax_SF)
     ///
     /// Scale factor for real power.
@@ -1595,11 +1604,11 @@ pub struct Model121StatefulAdapter {
     /// VArAct (VArAct)
     ///
     /// VAR action on change between charging and discharging: 1=switch 2=maintain VAR characterization.
-    pub v_ar_act: VArAct,
+    pub v_ar_act: Model121VArAct,
     /// ClcTotVA (ClcTotVA)
     ///
     /// Calculation method for total apparent power. 1=vector 2=arithmetic.
-    pub clc_tot_va: ClcTotVa,
+    pub clc_tot_va: Model121ClcTotVa,
     /// MaxRmpRte (MaxRmpRte)
     ///
     /// Setpoint for maximum ramp rate as percentage of nominal maximum ramp rate. This setting will limit the rate that watts delivery to the grid can increase or decrease in response to intermittent PV generation.
@@ -1611,7 +1620,7 @@ pub struct Model121StatefulAdapter {
     /// ConnPh (ConnPh)
     ///
     /// Identity of connected phase for single phase inverters. A=1 B=2 C=3.
-    pub conn_ph: ConnPh,
+    pub conn_ph: Model121ConnPh,
     /// WMax_SF (WMax_SF)
     ///
     /// Scale factor for real power.

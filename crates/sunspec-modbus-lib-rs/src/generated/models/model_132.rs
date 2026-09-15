@@ -1740,37 +1740,43 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DeptRef {
+pub enum Model132DeptRef {
     WMax = 1,
     WAval = 2,
 }
 
-impl DeptRef {
-    pub fn from_repr(repr: u16) -> Option<DeptRef> {
+impl Model132DeptRef {
+    pub fn from_repr(repr: u16) -> Option<Model132DeptRef> {
         match repr {
-            1 => Some(DeptRef::WMax),
-            2 => Some(DeptRef::WAval),
+            1 => Some(Model132DeptRef::WMax),
+            2 => Some(Model132DeptRef::WAval),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model132DeptRef`] - only `Model132DeptRef` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DeptRef` distinct from another model's point of the same name.
+pub type DeptRef = Model132DeptRef;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model132ReadOnly {
     Readwrite = 0,
     Readonly = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model132ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model132ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Readwrite),
-            1 => Some(ReadOnly::Readonly),
+            0 => Some(Model132ReadOnly::Readwrite),
+            1 => Some(Model132ReadOnly::Readonly),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model132ReadOnly`] - only `Model132ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model132ReadOnly;
 
 #[repr(C)]
 pub struct Model132CallbackAdapter {
@@ -1846,11 +1852,11 @@ pub struct Model132CallbackAdapter {
     /// DeptRef (DeptRef)
     ///
     /// Defines the meaning of the Watts DeptRef. 1=% WMax 2=% WAvail
-    curve_dept_ref_callback: extern "C" fn(*const c_void) -> DeptRef,
+    curve_dept_ref_callback: extern "C" fn(*const c_void) -> Model132DeptRef,
     /// DeptRef (DeptRef)
     ///
     /// Defines the meaning of the Watts DeptRef. 1=% WMax 2=% WAvail
-    set_curve_dept_ref_callback: extern "C" fn(DeptRef, *mut c_void),
+    set_curve_dept_ref_callback: extern "C" fn(Model132DeptRef, *mut c_void),
     /// V1 (V1)
     ///
     /// Point 1 Volts.
@@ -2206,7 +2212,7 @@ pub struct Model132CallbackAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Curve is read-only or can be modified.
-    curve_read_only_callback: extern "C" fn(*const c_void) -> ReadOnly,
+    curve_read_only_callback: extern "C" fn(*const c_void) -> Model132ReadOnly,
 }
 
 impl ReadAdapter for Model132CallbackAdapter {
@@ -2983,7 +2989,7 @@ pub struct Model132StatefulAdapter {
     /// DeptRef (DeptRef)
     ///
     /// Defines the meaning of the Watts DeptRef. 1=% WMax 2=% WAvail
-    pub curve_dept_ref: DeptRef,
+    pub curve_dept_ref: Model132DeptRef,
     /// V1 (V1)
     ///
     /// Point 1 Volts.
@@ -3163,7 +3169,7 @@ pub struct Model132StatefulAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Curve is read-only or can be modified.
-    pub curve_read_only: ReadOnly,
+    pub curve_read_only: Model132ReadOnly,
 }
 
 impl ReadAdapter for Model132StatefulAdapter {

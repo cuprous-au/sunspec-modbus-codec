@@ -170,13 +170,10 @@ int16_t tmp_sf_callback(const void *context)
     return 0;
 }
 
-St operating_state_callback(const void *context)
+Model103St operating_state_callback(const void *context)
 {
     (void)context;
-    // model_103::St::Standby (discriminant 8). The header's generic `St` typedef is shared
-    // with unrelated models' narrower variant sets, so there's no `St_Standby` constant to
-    // name here.
-    return 8;
+    return Model103St_Standby;
 }
 
 uint32_t event1_callback(const void *context)
@@ -199,7 +196,7 @@ uint32_t event_bitfield_2_callback(const void *context)
 #define CURVE_COUNT 2
 #define POINT_COUNT 3
 
-static atomic_uint_least16_t MODULE_ENABLED = Ena_Enabled;
+static atomic_uint_least16_t MODULE_ENABLED = Model708Ena_Enabled;
 static atomic_uint_least16_t ADOPT_CURVE_REQUEST = 0;
 
 /// A (voltage, time) point on a synthetic curve, decreasing in voltage and increasing in trip
@@ -215,13 +212,13 @@ static void curve_point(uint16_t base_voltage_pct,
     *time = base_time_tenths + (uint32_t)crv_index * 5 + (uint32_t)pt_index * 20;
 }
 
-Ena der_trip_hv_module_enable_callback(const void *context)
+Model708Ena der_trip_hv_module_enable_callback(const void *context)
 {
     (void)context;
-    return (Ena)atomic_load(&MODULE_ENABLED);
+    return (Model708Ena)atomic_load(&MODULE_ENABLED);
 }
 
-void set_der_trip_hv_module_enable_callback(Ena value, void *context)
+void set_der_trip_hv_module_enable_callback(Model708Ena value, void *context)
 {
     (void)context;
     atomic_store(&MODULE_ENABLED, (uint_least16_t)value);
@@ -239,10 +236,10 @@ void set_adopt_curve_request_callback(uint16_t value, void *context)
     atomic_store(&ADOPT_CURVE_REQUEST, value);
 }
 
-AdptCrvRslt adopt_curve_result_callback(const void *context)
+Model708AdptCrvRslt adopt_curve_result_callback(const void *context)
 {
     (void)context;
-    return AdptCrvRslt_Completed;
+    return Model708AdptCrvRslt_Completed;
 }
 
 uint16_t number_of_points_callback(const void *context)
@@ -269,11 +266,11 @@ int16_t time_point_scale_factor_callback(const void *context)
     return -1;
 }
 
-ReadOnly crv_curve_access_callback(const void *context, uint16_t crv_index)
+Model708ReadOnly crv_curve_access_callback(const void *context, uint16_t crv_index)
 {
     (void)context;
     (void)crv_index;
-    return ReadOnly_Readwrite;
+    return Model708ReadOnly_Rw;
 }
 
 uint16_t must_trip_curve_crv_number_of_active_points_callback(const void *context, uint16_t crv_index)

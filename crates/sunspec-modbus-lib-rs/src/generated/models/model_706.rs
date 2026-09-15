@@ -587,7 +587,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AdptCrvRslt {
+pub enum Model706AdptCrvRslt {
     /// Update In Progress
     ///
     /// Curve update in progress.
@@ -602,37 +602,43 @@ pub enum AdptCrvRslt {
     Failed = 2,
 }
 
-impl AdptCrvRslt {
-    pub fn from_repr(repr: u16) -> Option<AdptCrvRslt> {
+impl Model706AdptCrvRslt {
+    pub fn from_repr(repr: u16) -> Option<Model706AdptCrvRslt> {
         match repr {
-            0 => Some(AdptCrvRslt::InProgress),
-            1 => Some(AdptCrvRslt::Completed),
-            2 => Some(AdptCrvRslt::Failed),
+            0 => Some(Model706AdptCrvRslt::InProgress),
+            1 => Some(Model706AdptCrvRslt::Completed),
+            2 => Some(Model706AdptCrvRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model706AdptCrvRslt`] - only `Model706AdptCrvRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AdptCrvRslt` distinct from another model's point of the same name.
+pub type AdptCrvRslt = Model706AdptCrvRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DeptRef {
+pub enum Model706DeptRef {
     WMaxPct = 0,
     WAvalPct = 1,
 }
 
-impl DeptRef {
-    pub fn from_repr(repr: u16) -> Option<DeptRef> {
+impl Model706DeptRef {
+    pub fn from_repr(repr: u16) -> Option<Model706DeptRef> {
         match repr {
-            0 => Some(DeptRef::WMaxPct),
-            1 => Some(DeptRef::WAvalPct),
+            0 => Some(Model706DeptRef::WMaxPct),
+            1 => Some(Model706DeptRef::WAvalPct),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model706DeptRef`] - only `Model706DeptRef` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DeptRef` distinct from another model's point of the same name.
+pub type DeptRef = Model706DeptRef;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ena {
+pub enum Model706Ena {
     /// Disabled
     ///
     /// Function is disabled.
@@ -643,19 +649,22 @@ pub enum Ena {
     Enabled = 1,
 }
 
-impl Ena {
-    pub fn from_repr(repr: u16) -> Option<Ena> {
+impl Model706Ena {
+    pub fn from_repr(repr: u16) -> Option<Model706Ena> {
         match repr {
-            0 => Some(Ena::Disabled),
-            1 => Some(Ena::Enabled),
+            0 => Some(Model706Ena::Disabled),
+            1 => Some(Model706Ena::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model706Ena`] - only `Model706Ena` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ena` distinct from another model's point of the same name.
+pub type Ena = Model706Ena;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model706ReadOnly {
     /// Read-Write Access
     ///
     /// Curve has read-write access.
@@ -666,15 +675,18 @@ pub enum ReadOnly {
     R = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model706ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model706ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Rw),
-            1 => Some(ReadOnly::R),
+            0 => Some(Model706ReadOnly::Rw),
+            1 => Some(Model706ReadOnly::R),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model706ReadOnly`] - only `Model706ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model706ReadOnly;
 
 #[repr(C)]
 pub struct Model706CallbackAdapter {
@@ -682,11 +694,11 @@ pub struct Model706CallbackAdapter {
     /// DER Volt-Watt Module Enable (Ena)
     ///
     /// Volt-Watt control enable.
-    der_volt_watt_module_enable_callback: extern "C" fn(*const c_void) -> Ena,
+    der_volt_watt_module_enable_callback: extern "C" fn(*const c_void) -> Model706Ena,
     /// DER Volt-Watt Module Enable (Ena)
     ///
     /// Volt-Watt control enable.
-    set_der_volt_watt_module_enable_callback: extern "C" fn(Ena, *mut c_void),
+    set_der_volt_watt_module_enable_callback: extern "C" fn(Model706Ena, *mut c_void),
     /// Adopt Curve Request (AdptCrvReq)
     ///
     /// Index of curve points to adopt. First curve index is 1.
@@ -698,7 +710,7 @@ pub struct Model706CallbackAdapter {
     /// Adopt Curve Result (AdptCrvRslt)
     ///
     /// Result of last adopt curve operation.
-    adopt_curve_result_callback: extern "C" fn(*const c_void) -> AdptCrvRslt,
+    adopt_curve_result_callback: extern "C" fn(*const c_void) -> Model706AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -750,11 +762,11 @@ pub struct Model706CallbackAdapter {
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> DeptRef,
+    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> Model706DeptRef,
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    set_crv_dependent_reference_callback: extern "C" fn(DeptRef, *mut c_void, u16),
+    set_crv_dependent_reference_callback: extern "C" fn(Model706DeptRef, *mut c_void, u16),
     /// Open Loop Response Time (RspTms)
     ///
     /// Open loop response time.
@@ -766,7 +778,7 @@ pub struct Model706CallbackAdapter {
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> Model706ReadOnly,
     /// Voltage Point (V)
     ///
     /// Curve voltage point as percentage.
@@ -953,7 +965,7 @@ pub struct Model706StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// DER Volt-Watt Module Enable (Ena)
     ///
     /// Volt-Watt control enable.
-    pub der_volt_watt_module_enable: Ena,
+    pub der_volt_watt_module_enable: Model706Ena,
     /// Adopt Curve Request (AdptCrvReq)
     ///
     /// Index of curve points to adopt. First curve index is 1.
@@ -961,7 +973,7 @@ pub struct Model706StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// Adopt Curve Result (AdptCrvRslt)
     ///
     /// Result of last adopt curve operation.
-    pub adopt_curve_result: AdptCrvRslt,
+    pub adopt_curve_result: Model706AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -1006,7 +1018,7 @@ pub struct Model706StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    pub crv_dependent_reference: DeptRef,
+    pub crv_dependent_reference: Model706DeptRef,
     /// Open Loop Response Time (RspTms)
     ///
     /// Open loop response time.
@@ -1014,7 +1026,7 @@ pub struct Model706StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    pub crv_curve_access: ReadOnly,
+    pub crv_curve_access: Model706ReadOnly,
     pub stored_curve_points: [Model706StoredCurvePoints; NUMBER_OF_POINTS],
 }
 

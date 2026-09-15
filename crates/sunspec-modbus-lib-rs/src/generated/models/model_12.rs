@@ -549,60 +549,69 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Cfg {
+pub enum Model12Cfg {
     Static = 0,
     Dhcp = 1,
     Bootp = 2,
     Zeroconf = 3,
 }
 
-impl Cfg {
-    pub fn from_repr(repr: u16) -> Option<Cfg> {
+impl Model12Cfg {
+    pub fn from_repr(repr: u16) -> Option<Model12Cfg> {
         match repr {
-            0 => Some(Cfg::Static),
-            1 => Some(Cfg::Dhcp),
-            2 => Some(Cfg::Bootp),
-            3 => Some(Cfg::Zeroconf),
+            0 => Some(Model12Cfg::Static),
+            1 => Some(Model12Cfg::Dhcp),
+            2 => Some(Model12Cfg::Bootp),
+            3 => Some(Model12Cfg::Zeroconf),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model12Cfg`] - only `Model12Cfg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Cfg` distinct from another model's point of the same name.
+pub type Cfg = Model12Cfg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CfgSt {
+pub enum Model12CfgSt {
     NotConfigured = 0,
     ValidSetting = 1,
     ValidHw = 2,
 }
 
-impl CfgSt {
-    pub fn from_repr(repr: u16) -> Option<CfgSt> {
+impl Model12CfgSt {
+    pub fn from_repr(repr: u16) -> Option<Model12CfgSt> {
         match repr {
-            0 => Some(CfgSt::NotConfigured),
-            1 => Some(CfgSt::ValidSetting),
-            2 => Some(CfgSt::ValidHw),
+            0 => Some(Model12CfgSt::NotConfigured),
+            1 => Some(Model12CfgSt::ValidSetting),
+            2 => Some(Model12CfgSt::ValidHw),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model12CfgSt`] - only `Model12CfgSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CfgSt` distinct from another model's point of the same name.
+pub type CfgSt = Model12CfgSt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ctl {
+pub enum Model12Ctl {
     EnableDns = 0,
     EnableNtp = 1,
 }
 
-impl Ctl {
-    pub fn from_repr(repr: u16) -> Option<Ctl> {
+impl Model12Ctl {
+    pub fn from_repr(repr: u16) -> Option<Model12Ctl> {
         match repr {
-            0 => Some(Ctl::EnableDns),
-            1 => Some(Ctl::EnableNtp),
+            0 => Some(Model12Ctl::EnableDns),
+            1 => Some(Model12Ctl::EnableNtp),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model12Ctl`] - only `Model12Ctl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ctl` distinct from another model's point of the same name.
+pub type Ctl = Model12Ctl;
 
 #[repr(C)]
 pub struct Model12CallbackAdapter {
@@ -618,7 +627,7 @@ pub struct Model12CallbackAdapter {
     /// Config Status (CfgSt)
     ///
     /// Configuration status
-    config_status_callback: extern "C" fn(*const c_void) -> CfgSt,
+    config_status_callback: extern "C" fn(*const c_void) -> Model12CfgSt,
     /// Change Status (ChgSt)
     ///
     /// A configuration change is pending
@@ -630,19 +639,19 @@ pub struct Model12CallbackAdapter {
     /// IPv4 Config (Cfg)
     ///
     /// Configuration method used.
-    i_pv4_config_callback: extern "C" fn(*const c_void) -> Cfg,
+    i_pv4_config_callback: extern "C" fn(*const c_void) -> Model12Cfg,
     /// IPv4 Config (Cfg)
     ///
     /// Configuration method used.
-    set_i_pv4_config_callback: extern "C" fn(Cfg, *mut c_void),
+    set_i_pv4_config_callback: extern "C" fn(Model12Cfg, *mut c_void),
     /// Control (Ctl)
     ///
     /// Configure use of services
-    control_callback: extern "C" fn(*const c_void) -> Ctl,
+    control_callback: extern "C" fn(*const c_void) -> Model12Ctl,
     /// Control (Ctl)
     ///
     /// Configure use of services
-    set_control_callback: extern "C" fn(Ctl, *mut c_void),
+    set_control_callback: extern "C" fn(Model12Ctl, *mut c_void),
     /// IP (Addr)
     ///
     /// IPv4 numeric address as a dotted string xxx.xxx.xxx.xxx
@@ -898,7 +907,7 @@ pub struct Model12StatefulAdapter {
     /// Config Status (CfgSt)
     ///
     /// Configuration status
-    pub config_status: CfgSt,
+    pub config_status: Model12CfgSt,
     /// Change Status (ChgSt)
     ///
     /// A configuration change is pending
@@ -910,11 +919,11 @@ pub struct Model12StatefulAdapter {
     /// IPv4 Config (Cfg)
     ///
     /// Configuration method used.
-    pub i_pv4_config: Cfg,
+    pub i_pv4_config: Model12Cfg,
     /// Control (Ctl)
     ///
     /// Configure use of services
-    pub control: Ctl,
+    pub control: Model12Ctl,
     /// IP (Addr)
     ///
     /// IPv4 numeric address as a dotted string xxx.xxx.xxx.xxx

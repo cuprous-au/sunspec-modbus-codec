@@ -441,20 +441,23 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Es {
+pub enum Model703Es {
     Disabled = 0,
     Enabled = 1,
 }
 
-impl Es {
-    pub fn from_repr(repr: u16) -> Option<Es> {
+impl Model703Es {
+    pub fn from_repr(repr: u16) -> Option<Model703Es> {
         match repr {
-            0 => Some(Es::Disabled),
-            1 => Some(Es::Enabled),
+            0 => Some(Model703Es::Disabled),
+            1 => Some(Model703Es::Enabled),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model703Es`] - only `Model703Es` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Es` distinct from another model's point of the same name.
+pub type Es = Model703Es;
 
 #[repr(C)]
 pub struct Model703CallbackAdapter {
@@ -462,11 +465,11 @@ pub struct Model703CallbackAdapter {
     /// Permit Enter Service (ES)
     ///
     /// Permit enter service.
-    permit_enter_service_callback: Option<extern "C" fn(*const c_void) -> Es>,
+    permit_enter_service_callback: Option<extern "C" fn(*const c_void) -> Model703Es>,
     /// Permit Enter Service (ES)
     ///
     /// Permit enter service.
-    set_permit_enter_service_callback: Option<extern "C" fn(Es, *mut c_void)>,
+    set_permit_enter_service_callback: Option<extern "C" fn(Model703Es, *mut c_void)>,
     /// Enter Service Voltage High (ESVHi)
     ///
     /// Enter service voltage high threshold as percent of normal voltage.
@@ -673,7 +676,7 @@ pub struct Model703StatefulAdapter {
     /// Permit Enter Service (ES)
     ///
     /// Permit enter service.
-    pub permit_enter_service: Es,
+    pub permit_enter_service: Model703Es,
     /// Enter Service Voltage High (ESVHi)
     ///
     /// Enter service voltage high threshold as percent of normal voltage.

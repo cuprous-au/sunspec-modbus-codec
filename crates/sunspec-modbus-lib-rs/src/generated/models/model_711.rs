@@ -527,7 +527,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AdptCtlRslt {
+pub enum Model711AdptCtlRslt {
     /// Update In Progress
     ///
     /// Control update in progress.
@@ -542,20 +542,23 @@ pub enum AdptCtlRslt {
     Failed = 2,
 }
 
-impl AdptCtlRslt {
-    pub fn from_repr(repr: u16) -> Option<AdptCtlRslt> {
+impl Model711AdptCtlRslt {
+    pub fn from_repr(repr: u16) -> Option<Model711AdptCtlRslt> {
         match repr {
-            0 => Some(AdptCtlRslt::InProgress),
-            1 => Some(AdptCtlRslt::Completed),
-            2 => Some(AdptCtlRslt::Failed),
+            0 => Some(Model711AdptCtlRslt::InProgress),
+            1 => Some(Model711AdptCtlRslt::Completed),
+            2 => Some(Model711AdptCtlRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model711AdptCtlRslt`] - only `Model711AdptCtlRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AdptCtlRslt` distinct from another model's point of the same name.
+pub type AdptCtlRslt = Model711AdptCtlRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ena {
+pub enum Model711Ena {
     /// Disabled
     ///
     /// Function is disabled.
@@ -566,19 +569,22 @@ pub enum Ena {
     Enabled = 1,
 }
 
-impl Ena {
-    pub fn from_repr(repr: u16) -> Option<Ena> {
+impl Model711Ena {
+    pub fn from_repr(repr: u16) -> Option<Model711Ena> {
         match repr {
-            0 => Some(Ena::Disabled),
-            1 => Some(Ena::Enabled),
+            0 => Some(Model711Ena::Disabled),
+            1 => Some(Model711Ena::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model711Ena`] - only `Model711Ena` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ena` distinct from another model's point of the same name.
+pub type Ena = Model711Ena;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model711ReadOnly {
     /// Read-Write Access
     ///
     /// Control has read-write access.
@@ -589,15 +595,18 @@ pub enum ReadOnly {
     R = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model711ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model711ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Rw),
-            1 => Some(ReadOnly::R),
+            0 => Some(Model711ReadOnly::Rw),
+            1 => Some(Model711ReadOnly::R),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model711ReadOnly`] - only `Model711ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model711ReadOnly;
 
 #[repr(C)]
 pub struct Model711CallbackAdapter {
@@ -605,11 +614,11 @@ pub struct Model711CallbackAdapter {
     /// DER Frequency Droop Module Enable (Ena)
     ///
     /// DER Frequency-Watt (Frequency-Droop) control enable.
-    der_frequency_droop_module_enable_callback: extern "C" fn(*const c_void) -> Ena,
+    der_frequency_droop_module_enable_callback: extern "C" fn(*const c_void) -> Model711Ena,
     /// DER Frequency Droop Module Enable (Ena)
     ///
     /// DER Frequency-Watt (Frequency-Droop) control enable.
-    set_der_frequency_droop_module_enable_callback: extern "C" fn(Ena, *mut c_void),
+    set_der_frequency_droop_module_enable_callback: extern "C" fn(Model711Ena, *mut c_void),
     /// Set Active Control Request (AdptCtlReq)
     ///
     /// Set active control. 0 = No active control.
@@ -621,7 +630,7 @@ pub struct Model711CallbackAdapter {
     /// Set Active Control Result (AdptCtlRslt)
     ///
     /// Result of last set active control operation.
-    set_active_control_result_callback: extern "C" fn(*const c_void) -> AdptCtlRslt,
+    set_active_control_result_callback: extern "C" fn(*const c_void) -> Model711AdptCtlRslt,
     /// Stored Control Count (NCtl)
     ///
     /// Number of stored controls supported.
@@ -709,7 +718,7 @@ pub struct Model711CallbackAdapter {
     /// Control Access (ReadOnly)
     ///
     /// Control read-write access.
-    ctl_control_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    ctl_control_access_callback: extern "C" fn(*const c_void, u16) -> Model711ReadOnly,
 }
 
 impl ReadAdapter for Model711CallbackAdapter {
@@ -869,7 +878,7 @@ pub struct Model711StatefulAdapter<const STORED_CONTROL_COUNT: usize> {
     /// DER Frequency Droop Module Enable (Ena)
     ///
     /// DER Frequency-Watt (Frequency-Droop) control enable.
-    pub der_frequency_droop_module_enable: Ena,
+    pub der_frequency_droop_module_enable: Model711Ena,
     /// Set Active Control Request (AdptCtlReq)
     ///
     /// Set active control. 0 = No active control.
@@ -877,7 +886,7 @@ pub struct Model711StatefulAdapter<const STORED_CONTROL_COUNT: usize> {
     /// Set Active Control Result (AdptCtlRslt)
     ///
     /// Result of last set active control operation.
-    pub set_active_control_result: AdptCtlRslt,
+    pub set_active_control_result: Model711AdptCtlRslt,
     /// Stored Control Count (NCtl)
     ///
     /// Number of stored controls supported.
@@ -938,7 +947,7 @@ pub struct Model711StoredControls {
     /// Control Access (ReadOnly)
     ///
     /// Control read-write access.
-    pub ctl_control_access: ReadOnly,
+    pub ctl_control_access: Model711ReadOnly,
 }
 
 impl<const STORED_CONTROL_COUNT: usize> ReadAdapter

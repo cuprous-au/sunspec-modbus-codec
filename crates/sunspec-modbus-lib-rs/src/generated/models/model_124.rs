@@ -702,24 +702,27 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ChaGriSet {
+pub enum Model124ChaGriSet {
     Pv = 0,
     Grid = 1,
 }
 
-impl ChaGriSet {
-    pub fn from_repr(repr: u16) -> Option<ChaGriSet> {
+impl Model124ChaGriSet {
+    pub fn from_repr(repr: u16) -> Option<Model124ChaGriSet> {
         match repr {
-            0 => Some(ChaGriSet::Pv),
-            1 => Some(ChaGriSet::Grid),
+            0 => Some(Model124ChaGriSet::Pv),
+            1 => Some(Model124ChaGriSet::Grid),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model124ChaGriSet`] - only `Model124ChaGriSet` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ChaGriSet` distinct from another model's point of the same name.
+pub type ChaGriSet = Model124ChaGriSet;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ChaSt {
+pub enum Model124ChaSt {
     Off = 1,
     Empty = 2,
     Discharging = 3,
@@ -729,20 +732,23 @@ pub enum ChaSt {
     Testing = 7,
 }
 
-impl ChaSt {
-    pub fn from_repr(repr: u16) -> Option<ChaSt> {
+impl Model124ChaSt {
+    pub fn from_repr(repr: u16) -> Option<Model124ChaSt> {
         match repr {
-            1 => Some(ChaSt::Off),
-            2 => Some(ChaSt::Empty),
-            3 => Some(ChaSt::Discharging),
-            4 => Some(ChaSt::Charging),
-            5 => Some(ChaSt::Full),
-            6 => Some(ChaSt::Holding),
-            7 => Some(ChaSt::Testing),
+            1 => Some(Model124ChaSt::Off),
+            2 => Some(Model124ChaSt::Empty),
+            3 => Some(Model124ChaSt::Discharging),
+            4 => Some(Model124ChaSt::Charging),
+            5 => Some(Model124ChaSt::Full),
+            6 => Some(Model124ChaSt::Holding),
+            7 => Some(Model124ChaSt::Testing),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model124ChaSt`] - only `Model124ChaSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ChaSt` distinct from another model's point of the same name.
+pub type ChaSt = Model124ChaSt;
 
 #[repr(C)]
 pub struct Model124CallbackAdapter {
@@ -810,7 +816,7 @@ pub struct Model124CallbackAdapter {
     /// ChaSt (ChaSt)
     ///
     /// Charge status of storage device.
-    cha_st_callback: Option<extern "C" fn(*const c_void) -> ChaSt>,
+    cha_st_callback: Option<extern "C" fn(*const c_void) -> Model124ChaSt>,
     /// OutWRte (OutWRte)
     ///
     /// Percent of max discharge rate.
@@ -852,9 +858,9 @@ pub struct Model124CallbackAdapter {
     /// Ramp time for moving from current setpoint to new setpoint.
     set_in_out_w_rte_rmp_tms_callback: Option<extern "C" fn(u16, *mut c_void)>,
     /// ChaGriSet
-    cha_gri_set_callback: Option<extern "C" fn(*const c_void) -> ChaGriSet>,
+    cha_gri_set_callback: Option<extern "C" fn(*const c_void) -> Model124ChaGriSet>,
     /// ChaGriSet
-    set_cha_gri_set_callback: Option<extern "C" fn(ChaGriSet, *mut c_void)>,
+    set_cha_gri_set_callback: Option<extern "C" fn(Model124ChaGriSet, *mut c_void)>,
     /// WChaMax_SF (WChaMax_SF)
     ///
     /// Scale factor for maximum charge.
@@ -1146,7 +1152,7 @@ pub struct Model124StatefulAdapter {
     /// ChaSt (ChaSt)
     ///
     /// Charge status of storage device.
-    pub cha_st: ChaSt,
+    pub cha_st: Model124ChaSt,
     /// OutWRte (OutWRte)
     ///
     /// Percent of max discharge rate.
@@ -1168,7 +1174,7 @@ pub struct Model124StatefulAdapter {
     /// Ramp time for moving from current setpoint to new setpoint.
     pub in_out_w_rte_rmp_tms: u16,
     /// ChaGriSet
-    pub cha_gri_set: ChaGriSet,
+    pub cha_gri_set: Model124ChaGriSet,
     /// WChaMax_SF (WChaMax_SF)
     ///
     /// Scale factor for maximum charge.

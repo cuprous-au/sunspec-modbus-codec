@@ -1340,7 +1340,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AbnOpCatRtg {
+pub enum Model702AbnOpCatRtg {
     /// Category I
     Cat1 = 0,
     /// Category II
@@ -1349,35 +1349,41 @@ pub enum AbnOpCatRtg {
     Cat3 = 2,
 }
 
-impl AbnOpCatRtg {
-    pub fn from_repr(repr: u16) -> Option<AbnOpCatRtg> {
+impl Model702AbnOpCatRtg {
+    pub fn from_repr(repr: u16) -> Option<Model702AbnOpCatRtg> {
         match repr {
-            0 => Some(AbnOpCatRtg::Cat1),
-            1 => Some(AbnOpCatRtg::Cat2),
-            2 => Some(AbnOpCatRtg::Cat3),
+            0 => Some(Model702AbnOpCatRtg::Cat1),
+            1 => Some(Model702AbnOpCatRtg::Cat2),
+            2 => Some(Model702AbnOpCatRtg::Cat3),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model702AbnOpCatRtg`] - only `Model702AbnOpCatRtg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AbnOpCatRtg` distinct from another model's point of the same name.
+pub type AbnOpCatRtg = Model702AbnOpCatRtg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum NorOpCatRtg {
+pub enum Model702NorOpCatRtg {
     /// Category A
     CatA = 0,
     /// Category B
     CatB = 1,
 }
 
-impl NorOpCatRtg {
-    pub fn from_repr(repr: u16) -> Option<NorOpCatRtg> {
+impl Model702NorOpCatRtg {
+    pub fn from_repr(repr: u16) -> Option<Model702NorOpCatRtg> {
         match repr {
-            0 => Some(NorOpCatRtg::CatA),
-            1 => Some(NorOpCatRtg::CatB),
+            0 => Some(Model702NorOpCatRtg::CatA),
+            1 => Some(Model702NorOpCatRtg::CatB),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model702NorOpCatRtg`] - only `Model702NorOpCatRtg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `NorOpCatRtg` distinct from another model's point of the same name.
+pub type NorOpCatRtg = Model702NorOpCatRtg;
 
 #[repr(C)]
 pub struct Model702CallbackAdapter {
@@ -1471,11 +1477,12 @@ pub struct Model702CallbackAdapter {
     /// Normal Operating Category (NorOpCatRtg)
     ///
     /// Normal operating performance category as specified in IEEE 1547-2018.
-    normal_operating_category_callback: Option<extern "C" fn(*const c_void) -> NorOpCatRtg>,
+    normal_operating_category_callback: Option<extern "C" fn(*const c_void) -> Model702NorOpCatRtg>,
     /// Abnormal Operating Category (AbnOpCatRtg)
     ///
     /// Abnormal operating performance category as specified in IEEE 1547-2018.
-    abnormal_operating_category_callback: Option<extern "C" fn(*const c_void) -> AbnOpCatRtg>,
+    abnormal_operating_category_callback:
+        Option<extern "C" fn(*const c_void) -> Model702AbnOpCatRtg>,
     /// Supported Control Modes (CtrlModes)
     ///
     /// Supported control mode functions.
@@ -2207,11 +2214,11 @@ pub struct Model702StatefulAdapter {
     /// Normal Operating Category (NorOpCatRtg)
     ///
     /// Normal operating performance category as specified in IEEE 1547-2018.
-    pub normal_operating_category: NorOpCatRtg,
+    pub normal_operating_category: Model702NorOpCatRtg,
     /// Abnormal Operating Category (AbnOpCatRtg)
     ///
     /// Abnormal operating performance category as specified in IEEE 1547-2018.
-    pub abnormal_operating_category: AbnOpCatRtg,
+    pub abnormal_operating_category: Model702AbnOpCatRtg,
     /// Supported Control Modes (CtrlModes)
     ///
     /// Supported control mode functions.

@@ -901,45 +901,51 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Alg {
+pub enum Model4Alg {
     /// For test purposes only
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
 }
 
-impl Alg {
-    pub fn from_repr(repr: u16) -> Option<Alg> {
+impl Model4Alg {
+    pub fn from_repr(repr: u16) -> Option<Model4Alg> {
         match repr {
-            0 => Some(Alg::None),
-            1 => Some(Alg::AesGmac64),
-            2 => Some(Alg::Ecc256),
+            0 => Some(Model4Alg::None),
+            1 => Some(Model4Alg::AesGmac64),
+            2 => Some(Model4Alg::Ecc256),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model4Alg`] - only `Model4Alg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Alg` distinct from another model's point of the same name.
+pub type Alg = Model4Alg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Alm {
+pub enum Model4Alm {
     None = 0,
     /// Tampered
     Alm = 1,
 }
 
-impl Alm {
-    pub fn from_repr(repr: u16) -> Option<Alm> {
+impl Model4Alm {
+    pub fn from_repr(repr: u16) -> Option<Model4Alm> {
         match repr {
-            0 => Some(Alm::None),
-            1 => Some(Alm::Alm),
+            0 => Some(Model4Alm::None),
+            1 => Some(Model4Alm::Alm),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model4Alm`] - only `Model4Alm` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Alm` distinct from another model's point of the same name.
+pub type Alm = Model4Alm;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Sts {
+pub enum Model4Sts {
     Success = 0,
     Ds = 1,
     /// One or more registers were not writable by this role
@@ -948,17 +954,20 @@ pub enum Sts {
     Off = 3,
 }
 
-impl Sts {
-    pub fn from_repr(repr: u16) -> Option<Sts> {
+impl Model4Sts {
+    pub fn from_repr(repr: u16) -> Option<Model4Sts> {
         match repr {
-            0 => Some(Sts::Success),
-            1 => Some(Sts::Ds),
-            2 => Some(Sts::Acl),
-            3 => Some(Sts::Off),
+            0 => Some(Model4Sts::Success),
+            1 => Some(Model4Sts::Ds),
+            2 => Some(Model4Sts::Acl),
+            3 => Some(Model4Sts::Off),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model4Sts`] - only `Model4Sts` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Sts` distinct from another model's point of the same name.
+pub type Sts = Model4Sts;
 
 #[repr(C)]
 pub struct Model4CallbackAdapter {
@@ -970,7 +979,7 @@ pub struct Model4CallbackAdapter {
     /// Status (Sts)
     ///
     /// Status of last read operation
-    status_callback: extern "C" fn(*const c_void) -> Sts,
+    status_callback: extern "C" fn(*const c_void) -> Model4Sts,
     /// X (X)
     ///
     /// Number of values from the request
@@ -1098,13 +1107,13 @@ pub struct Model4CallbackAdapter {
     /// Alarm (Alm)
     ///
     /// Bitmask alarm code
-    alarm_callback: extern "C" fn(*const c_void) -> Alm,
+    alarm_callback: extern "C" fn(*const c_void) -> Model4Alm,
     /// Algorithm (Alg)
     ///
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    algorithm_callback: extern "C" fn(*const c_void) -> Alg,
+    algorithm_callback: extern "C" fn(*const c_void) -> Model4Alg,
     /// N (N)
     ///
     /// Number of registers comprising the digital signature.
@@ -1368,7 +1377,7 @@ pub struct Model4StatefulAdapter {
     /// Status (Sts)
     ///
     /// Status of last read operation
-    pub status: Sts,
+    pub status: Model4Sts,
     /// X (X)
     ///
     /// Number of values from the request
@@ -1496,13 +1505,13 @@ pub struct Model4StatefulAdapter {
     /// Alarm (Alm)
     ///
     /// Bitmask alarm code
-    pub alarm: Alm,
+    pub alarm: Model4Alm,
     /// Algorithm (Alg)
     ///
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    pub algorithm: Alg,
+    pub algorithm: Model4Alg,
     /// N (N)
     ///
     /// Number of registers comprising the digital signature.

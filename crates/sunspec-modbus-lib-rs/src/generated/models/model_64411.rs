@@ -1639,7 +1639,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum EnaProf {
+pub enum Model64411EnaProf {
     /// Stop Profile
     Stop = 0,
     /// Start Profile Immediately
@@ -1648,39 +1648,45 @@ pub enum EnaProf {
     Trigger = 2,
 }
 
-impl EnaProf {
-    pub fn from_repr(repr: u16) -> Option<EnaProf> {
+impl Model64411EnaProf {
+    pub fn from_repr(repr: u16) -> Option<Model64411EnaProf> {
         match repr {
-            0 => Some(EnaProf::Stop),
-            1 => Some(EnaProf::Start),
-            2 => Some(EnaProf::Trigger),
+            0 => Some(Model64411EnaProf::Stop),
+            1 => Some(Model64411EnaProf::Start),
+            2 => Some(Model64411EnaProf::Trigger),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64411EnaProf`] - only `Model64411EnaProf` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `EnaProf` distinct from another model's point of the same name.
+pub type EnaProf = Model64411EnaProf;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Output {
+pub enum Model64411Output {
     /// Output Off
     Off = 0,
     /// Output On
     On = 1,
 }
 
-impl Output {
-    pub fn from_repr(repr: u16) -> Option<Output> {
+impl Model64411Output {
+    pub fn from_repr(repr: u16) -> Option<Model64411Output> {
         match repr {
-            0 => Some(Output::Off),
-            1 => Some(Output::On),
+            0 => Some(Model64411Output::Off),
+            1 => Some(Model64411Output::On),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64411Output`] - only `Model64411Output` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Output` distinct from another model's point of the same name.
+pub type Output = Model64411Output;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ProfRslt {
+pub enum Model64411ProfRslt {
     /// Profile update in progress.
     InProgress = 0,
     /// Profile update completed successfully.
@@ -1689,54 +1695,63 @@ pub enum ProfRslt {
     Failed = 2,
 }
 
-impl ProfRslt {
-    pub fn from_repr(repr: u16) -> Option<ProfRslt> {
+impl Model64411ProfRslt {
+    pub fn from_repr(repr: u16) -> Option<Model64411ProfRslt> {
         match repr {
-            0 => Some(ProfRslt::InProgress),
-            1 => Some(ProfRslt::Completed),
-            2 => Some(ProfRslt::Failed),
+            0 => Some(Model64411ProfRslt::InProgress),
+            1 => Some(Model64411ProfRslt::Completed),
+            2 => Some(Model64411ProfRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64411ProfRslt`] - only `Model64411ProfRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ProfRslt` distinct from another model's point of the same name.
+pub type ProfRslt = Model64411ProfRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Regen {
+pub enum Model64411Regen {
     /// Regen Off
     Off = 0,
     /// Regen On
     On = 1,
 }
 
-impl Regen {
-    pub fn from_repr(repr: u16) -> Option<Regen> {
+impl Model64411Regen {
+    pub fn from_repr(repr: u16) -> Option<Model64411Regen> {
         match repr {
-            0 => Some(Regen::Off),
-            1 => Some(Regen::On),
+            0 => Some(Model64411Regen::Off),
+            1 => Some(Model64411Regen::On),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64411Regen`] - only `Model64411Regen` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Regen` distinct from another model's point of the same name.
+pub type Regen = Model64411Regen;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Relay {
+pub enum Model64411Relay {
     /// Relay Open
     Open = 0,
     /// Relay Closed
     Closed = 1,
 }
 
-impl Relay {
-    pub fn from_repr(repr: u16) -> Option<Relay> {
+impl Model64411Relay {
+    pub fn from_repr(repr: u16) -> Option<Model64411Relay> {
         match repr {
-            0 => Some(Relay::Open),
-            1 => Some(Relay::Closed),
+            0 => Some(Model64411Relay::Open),
+            1 => Some(Model64411Relay::Closed),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64411Relay`] - only `Model64411Relay` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Relay` distinct from another model's point of the same name.
+pub type Relay = Model64411Relay;
 
 #[repr(C)]
 pub struct Model64411CallbackAdapter {
@@ -1792,27 +1807,27 @@ pub struct Model64411CallbackAdapter {
     /// Output State (Output)
     ///
     /// AC Output State
-    output_state_callback: Option<extern "C" fn(*const c_void) -> Output>,
+    output_state_callback: Option<extern "C" fn(*const c_void) -> Model64411Output>,
     /// Output State (Output)
     ///
     /// AC Output State
-    set_output_state_callback: Option<extern "C" fn(Output, *mut c_void)>,
+    set_output_state_callback: Option<extern "C" fn(Model64411Output, *mut c_void)>,
     /// Relay State (Relay)
     ///
     /// AC Relay State
-    relay_state_callback: Option<extern "C" fn(*const c_void) -> Relay>,
+    relay_state_callback: Option<extern "C" fn(*const c_void) -> Model64411Relay>,
     /// Relay State (Relay)
     ///
     /// AC Relay State
-    set_relay_state_callback: Option<extern "C" fn(Relay, *mut c_void)>,
+    set_relay_state_callback: Option<extern "C" fn(Model64411Relay, *mut c_void)>,
     /// Regeneration State (Regen)
     ///
     /// Regeneration State
-    regeneration_state_callback: Option<extern "C" fn(*const c_void) -> Regen>,
+    regeneration_state_callback: Option<extern "C" fn(*const c_void) -> Model64411Regen>,
     /// Regeneration State (Regen)
     ///
     /// Regeneration State
-    set_regeneration_state_callback: Option<extern "C" fn(Regen, *mut c_void)>,
+    set_regeneration_state_callback: Option<extern "C" fn(Model64411Regen, *mut c_void)>,
     /// Voltage Setpoint (VSet)
     ///
     /// Voltage Setpoint (all phases)
@@ -1952,15 +1967,15 @@ pub struct Model64411CallbackAdapter {
     /// Enable Profile (EnaProf)
     ///
     /// Start/Stop the AC Profile
-    enable_profile_callback: Option<extern "C" fn(*const c_void) -> EnaProf>,
+    enable_profile_callback: Option<extern "C" fn(*const c_void) -> Model64411EnaProf>,
     /// Enable Profile (EnaProf)
     ///
     /// Start/Stop the AC Profile
-    set_enable_profile_callback: Option<extern "C" fn(EnaProf, *mut c_void)>,
+    set_enable_profile_callback: Option<extern "C" fn(Model64411EnaProf, *mut c_void)>,
     /// Profile Result (ProfRslt)
     ///
     /// Result of last profile operation.
-    profile_result_callback: extern "C" fn(*const c_void) -> ProfRslt,
+    profile_result_callback: extern "C" fn(*const c_void) -> Model64411ProfRslt,
     /// Stored Profile Count (NProf)
     ///
     /// Number of stored profiles supported.
@@ -2626,15 +2641,15 @@ pub struct Model64411StatefulAdapter<
     /// Output State (Output)
     ///
     /// AC Output State
-    pub output_state: Output,
+    pub output_state: Model64411Output,
     /// Relay State (Relay)
     ///
     /// AC Relay State
-    pub relay_state: Relay,
+    pub relay_state: Model64411Relay,
     /// Regeneration State (Regen)
     ///
     /// Regeneration State
-    pub regeneration_state: Regen,
+    pub regeneration_state: Model64411Regen,
     /// Voltage Setpoint (VSet)
     ///
     /// Voltage Setpoint (all phases)
@@ -2750,11 +2765,11 @@ pub struct Model64411StatefulAdapter<
     /// Enable Profile (EnaProf)
     ///
     /// Start/Stop the AC Profile
-    pub enable_profile: EnaProf,
+    pub enable_profile: Model64411EnaProf,
     /// Profile Result (ProfRslt)
     ///
     /// Result of last profile operation.
-    pub profile_result: ProfRslt,
+    pub profile_result: Model64411ProfRslt,
     /// Stored Profile Count (NProf)
     ///
     /// Number of stored profiles supported.

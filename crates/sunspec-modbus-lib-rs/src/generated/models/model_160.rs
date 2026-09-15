@@ -457,7 +457,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DcSt {
+pub enum Model160DcSt {
     Off = 1,
     Sleeping = 2,
     Starting = 3,
@@ -470,23 +470,26 @@ pub enum DcSt {
     Reserved10 = 10,
 }
 
-impl DcSt {
-    pub fn from_repr(repr: u16) -> Option<DcSt> {
+impl Model160DcSt {
+    pub fn from_repr(repr: u16) -> Option<Model160DcSt> {
         match repr {
-            1 => Some(DcSt::Off),
-            2 => Some(DcSt::Sleeping),
-            3 => Some(DcSt::Starting),
-            4 => Some(DcSt::Mppt),
-            5 => Some(DcSt::Throttled),
-            6 => Some(DcSt::ShuttingDown),
-            7 => Some(DcSt::Fault),
-            8 => Some(DcSt::Standby),
-            9 => Some(DcSt::Test),
-            10 => Some(DcSt::Reserved10),
+            1 => Some(Model160DcSt::Off),
+            2 => Some(Model160DcSt::Sleeping),
+            3 => Some(Model160DcSt::Starting),
+            4 => Some(Model160DcSt::Mppt),
+            5 => Some(Model160DcSt::Throttled),
+            6 => Some(Model160DcSt::ShuttingDown),
+            7 => Some(Model160DcSt::Fault),
+            8 => Some(Model160DcSt::Standby),
+            9 => Some(Model160DcSt::Test),
+            10 => Some(Model160DcSt::Reserved10),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model160DcSt`] - only `Model160DcSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DcSt` distinct from another model's point of the same name.
+pub type DcSt = Model160DcSt;
 
 #[repr(C)]
 pub struct Model160CallbackAdapter {
@@ -522,7 +525,7 @@ pub struct Model160CallbackAdapter {
     /// Temperature (Tmp)
     module_temperature_callback: Option<extern "C" fn(*const c_void) -> i16>,
     /// Operating State (DCSt)
-    module_operating_state_callback: Option<extern "C" fn(*const c_void) -> DcSt>,
+    module_operating_state_callback: Option<extern "C" fn(*const c_void) -> Model160DcSt>,
     /// Module Events (DCEvt)
     module_module_events_callback: Option<extern "C" fn(*const c_void) -> u32>,
 }
@@ -647,7 +650,7 @@ pub struct Model160StatefulAdapter {
     /// Temperature (Tmp)
     pub module_temperature: i16,
     /// Operating State (DCSt)
-    pub module_operating_state: DcSt,
+    pub module_operating_state: Model160DcSt,
     /// Module Events (DCEvt)
     pub module_module_events: u32,
 }

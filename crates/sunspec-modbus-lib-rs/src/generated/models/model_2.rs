@@ -308,7 +308,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ctl {
+pub enum Model2Ctl {
     None = 0,
     Automatic = 1,
     ForceOff = 2,
@@ -316,39 +316,45 @@ pub enum Ctl {
     Throttle = 4,
 }
 
-impl Ctl {
-    pub fn from_repr(repr: u16) -> Option<Ctl> {
+impl Model2Ctl {
+    pub fn from_repr(repr: u16) -> Option<Model2Ctl> {
         match repr {
-            0 => Some(Ctl::None),
-            1 => Some(Ctl::Automatic),
-            2 => Some(Ctl::ForceOff),
-            3 => Some(Ctl::Test),
-            4 => Some(Ctl::Throttle),
+            0 => Some(Model2Ctl::None),
+            1 => Some(Model2Ctl::Automatic),
+            2 => Some(Model2Ctl::ForceOff),
+            3 => Some(Model2Ctl::Test),
+            4 => Some(Model2Ctl::Throttle),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model2Ctl`] - only `Model2Ctl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ctl` distinct from another model's point of the same name.
+pub type Ctl = Model2Ctl;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum St {
+pub enum Model2St {
     Off = 1,
     On = 2,
     Full = 3,
     Fault = 4,
 }
 
-impl St {
-    pub fn from_repr(repr: u16) -> Option<St> {
+impl Model2St {
+    pub fn from_repr(repr: u16) -> Option<Model2St> {
         match repr {
-            1 => Some(St::Off),
-            2 => Some(St::On),
-            3 => Some(St::Full),
-            4 => Some(St::Fault),
+            1 => Some(Model2St::Off),
+            2 => Some(Model2St::On),
+            3 => Some(Model2St::Full),
+            4 => Some(Model2St::Fault),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model2St`] - only `Model2St` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `St` distinct from another model's point of the same name.
+pub type St = Model2St;
 
 #[repr(C)]
 pub struct Model2CallbackAdapter {
@@ -368,7 +374,7 @@ pub struct Model2CallbackAdapter {
     /// Status (St)
     ///
     /// Enumerated status code
-    status_callback: extern "C" fn(*const c_void) -> St,
+    status_callback: extern "C" fn(*const c_void) -> Model2St,
     /// Vendor Status (StVnd)
     ///
     /// Vendor specific status code
@@ -384,7 +390,7 @@ pub struct Model2CallbackAdapter {
     /// Control (Ctl)
     ///
     /// Control register for all aggregated devices
-    control_callback: Option<extern "C" fn(*const c_void) -> Ctl>,
+    control_callback: Option<extern "C" fn(*const c_void) -> Model2Ctl>,
     /// Vendor Control (CtlVnd)
     ///
     /// Vendor control register for all aggregated devices
@@ -459,7 +465,7 @@ pub struct Model2StatefulAdapter {
     /// Status (St)
     ///
     /// Enumerated status code
-    pub status: St,
+    pub status: Model2St,
     /// Vendor Status (StVnd)
     ///
     /// Vendor specific status code
@@ -475,7 +481,7 @@ pub struct Model2StatefulAdapter {
     /// Control (Ctl)
     ///
     /// Control register for all aggregated devices
-    pub control: Ctl,
+    pub control: Model2Ctl,
     /// Vendor Control (CtlVnd)
     ///
     /// Vendor control register for all aggregated devices

@@ -574,7 +574,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AdptCrvRslt {
+pub enum Model712AdptCrvRslt {
     /// Update In Progress
     ///
     /// Curve update in progress.
@@ -589,20 +589,23 @@ pub enum AdptCrvRslt {
     Failed = 2,
 }
 
-impl AdptCrvRslt {
-    pub fn from_repr(repr: u16) -> Option<AdptCrvRslt> {
+impl Model712AdptCrvRslt {
+    pub fn from_repr(repr: u16) -> Option<Model712AdptCrvRslt> {
         match repr {
-            0 => Some(AdptCrvRslt::InProgress),
-            1 => Some(AdptCrvRslt::Completed),
-            2 => Some(AdptCrvRslt::Failed),
+            0 => Some(Model712AdptCrvRslt::InProgress),
+            1 => Some(Model712AdptCrvRslt::Completed),
+            2 => Some(Model712AdptCrvRslt::Failed),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model712AdptCrvRslt`] - only `Model712AdptCrvRslt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AdptCrvRslt` distinct from another model's point of the same name.
+pub type AdptCrvRslt = Model712AdptCrvRslt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DeptRef {
+pub enum Model712DeptRef {
     /// Percent Max Watts
     WMaxPct = 0,
     /// Percent Max Vars
@@ -613,21 +616,24 @@ pub enum DeptRef {
     VaMaxPct = 3,
 }
 
-impl DeptRef {
-    pub fn from_repr(repr: u16) -> Option<DeptRef> {
+impl Model712DeptRef {
+    pub fn from_repr(repr: u16) -> Option<Model712DeptRef> {
         match repr {
-            0 => Some(DeptRef::WMaxPct),
-            1 => Some(DeptRef::VarMaxPct),
-            2 => Some(DeptRef::VarAvalPct),
-            3 => Some(DeptRef::VaMaxPct),
+            0 => Some(Model712DeptRef::WMaxPct),
+            1 => Some(Model712DeptRef::VarMaxPct),
+            2 => Some(Model712DeptRef::VarAvalPct),
+            3 => Some(Model712DeptRef::VaMaxPct),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model712DeptRef`] - only `Model712DeptRef` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DeptRef` distinct from another model's point of the same name.
+pub type DeptRef = Model712DeptRef;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ena {
+pub enum Model712Ena {
     /// Disabled
     ///
     /// Function is disabled.
@@ -638,19 +644,22 @@ pub enum Ena {
     Enabled = 1,
 }
 
-impl Ena {
-    pub fn from_repr(repr: u16) -> Option<Ena> {
+impl Model712Ena {
+    pub fn from_repr(repr: u16) -> Option<Model712Ena> {
         match repr {
-            0 => Some(Ena::Disabled),
-            1 => Some(Ena::Enabled),
+            0 => Some(Model712Ena::Disabled),
+            1 => Some(Model712Ena::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model712Ena`] - only `Model712Ena` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ena` distinct from another model's point of the same name.
+pub type Ena = Model712Ena;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Pri {
+pub enum Model712Pri {
     /// Active Power Priority
     ///
     /// Active power priority.
@@ -661,19 +670,22 @@ pub enum Pri {
     Reactive = 1,
 }
 
-impl Pri {
-    pub fn from_repr(repr: u16) -> Option<Pri> {
+impl Model712Pri {
+    pub fn from_repr(repr: u16) -> Option<Model712Pri> {
         match repr {
-            0 => Some(Pri::Active),
-            1 => Some(Pri::Reactive),
+            0 => Some(Model712Pri::Active),
+            1 => Some(Model712Pri::Reactive),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model712Pri`] - only `Model712Pri` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Pri` distinct from another model's point of the same name.
+pub type Pri = Model712Pri;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model712ReadOnly {
     /// Read-Write Access
     ///
     /// Curve has read-write access.
@@ -684,15 +696,18 @@ pub enum ReadOnly {
     R = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model712ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model712ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Rw),
-            1 => Some(ReadOnly::R),
+            0 => Some(Model712ReadOnly::Rw),
+            1 => Some(Model712ReadOnly::R),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model712ReadOnly`] - only `Model712ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model712ReadOnly;
 
 #[repr(C)]
 pub struct Model712CallbackAdapter {
@@ -700,11 +715,11 @@ pub struct Model712CallbackAdapter {
     /// DER Watt-Var Module Enable (Ena)
     ///
     /// DER Watt-Var control enable.
-    der_watt_var_module_enable_callback: extern "C" fn(*const c_void) -> Ena,
+    der_watt_var_module_enable_callback: extern "C" fn(*const c_void) -> Model712Ena,
     /// DER Watt-Var Module Enable (Ena)
     ///
     /// DER Watt-Var control enable.
-    set_der_watt_var_module_enable_callback: extern "C" fn(Ena, *mut c_void),
+    set_der_watt_var_module_enable_callback: extern "C" fn(Model712Ena, *mut c_void),
     /// Set Active Curve Request (AdptCrvReq)
     ///
     /// Set active curve. 0 = No active curve.
@@ -716,7 +731,7 @@ pub struct Model712CallbackAdapter {
     /// Set Active Curve Result (AdptCrvRslt)
     ///
     /// Result of last set active curve operation.
-    set_active_curve_result_callback: extern "C" fn(*const c_void) -> AdptCrvRslt,
+    set_active_curve_result_callback: extern "C" fn(*const c_void) -> Model712AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -764,23 +779,23 @@ pub struct Model712CallbackAdapter {
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> DeptRef,
+    crv_dependent_reference_callback: extern "C" fn(*const c_void, u16) -> Model712DeptRef,
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    set_crv_dependent_reference_callback: extern "C" fn(DeptRef, *mut c_void, u16),
+    set_crv_dependent_reference_callback: extern "C" fn(Model712DeptRef, *mut c_void, u16),
     /// Power Priority (Pri)
     ///
     /// Power priority.
-    crv_power_priority_callback: Option<extern "C" fn(*const c_void, u16) -> Pri>,
+    crv_power_priority_callback: Option<extern "C" fn(*const c_void, u16) -> Model712Pri>,
     /// Power Priority (Pri)
     ///
     /// Power priority.
-    set_crv_power_priority_callback: Option<extern "C" fn(Pri, *mut c_void, u16)>,
+    set_crv_power_priority_callback: Option<extern "C" fn(Model712Pri, *mut c_void, u16)>,
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> ReadOnly,
+    crv_curve_access_callback: extern "C" fn(*const c_void, u16) -> Model712ReadOnly,
     /// Active Power Point (W)
     ///
     /// Curve active power point as percentage.
@@ -963,7 +978,7 @@ pub struct Model712StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// DER Watt-Var Module Enable (Ena)
     ///
     /// DER Watt-Var control enable.
-    pub der_watt_var_module_enable: Ena,
+    pub der_watt_var_module_enable: Model712Ena,
     /// Set Active Curve Request (AdptCrvReq)
     ///
     /// Set active curve. 0 = No active curve.
@@ -971,7 +986,7 @@ pub struct Model712StatefulAdapter<const STORED_CURVE_COUNT: usize, const NUMBER
     /// Set Active Curve Result (AdptCrvRslt)
     ///
     /// Result of last set active curve operation.
-    pub set_active_curve_result: AdptCrvRslt,
+    pub set_active_curve_result: Model712AdptCrvRslt,
     /// Number Of Points (NPt)
     ///
     /// Number of curve points supported.
@@ -1012,15 +1027,15 @@ pub struct Model712StoredCurves<const NUMBER_OF_POINTS: usize> {
     /// Dependent Reference (DeptRef)
     ///
     /// Curve dependent reference.
-    pub crv_dependent_reference: DeptRef,
+    pub crv_dependent_reference: Model712DeptRef,
     /// Power Priority (Pri)
     ///
     /// Power priority.
-    pub crv_power_priority: Pri,
+    pub crv_power_priority: Model712Pri,
     /// Curve Access (ReadOnly)
     ///
     /// Curve read-write access.
-    pub crv_curve_access: ReadOnly,
+    pub crv_curve_access: Model712ReadOnly,
     pub stored_curve_points: [Model712StoredCurvePoints; NUMBER_OF_POINTS],
 }
 

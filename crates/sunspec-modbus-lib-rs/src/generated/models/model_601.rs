@@ -603,45 +603,51 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ctl {
+pub enum Model601Ctl {
     Automatic = 0,
     Manual = 1,
     Calibrate = 2,
 }
 
-impl Ctl {
-    pub fn from_repr(repr: u16) -> Option<Ctl> {
+impl Model601Ctl {
+    pub fn from_repr(repr: u16) -> Option<Model601Ctl> {
         match repr {
-            0 => Some(Ctl::Automatic),
-            1 => Some(Ctl::Manual),
-            2 => Some(Ctl::Calibrate),
+            0 => Some(Model601Ctl::Automatic),
+            1 => Some(Model601Ctl::Manual),
+            2 => Some(Model601Ctl::Calibrate),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model601Ctl`] - only `Model601Ctl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ctl` distinct from another model's point of the same name.
+pub type Ctl = Model601Ctl;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum GlblCtl {
+pub enum Model601GlblCtl {
     Automatic = 0,
     Manual = 1,
     Calibrate = 2,
 }
 
-impl GlblCtl {
-    pub fn from_repr(repr: u16) -> Option<GlblCtl> {
+impl Model601GlblCtl {
+    pub fn from_repr(repr: u16) -> Option<Model601GlblCtl> {
         match repr {
-            0 => Some(GlblCtl::Automatic),
-            1 => Some(GlblCtl::Manual),
-            2 => Some(GlblCtl::Calibrate),
+            0 => Some(Model601GlblCtl::Automatic),
+            1 => Some(Model601GlblCtl::Manual),
+            2 => Some(Model601GlblCtl::Calibrate),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model601GlblCtl`] - only `Model601GlblCtl` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `GlblCtl` distinct from another model's point of the same name.
+pub type GlblCtl = Model601GlblCtl;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Typ {
+pub enum Model601Typ {
     Unknown = 0,
     Fixed = 1,
     Horizontal = 2,
@@ -651,20 +657,23 @@ pub enum Typ {
     Other = 99,
 }
 
-impl Typ {
-    pub fn from_repr(repr: u16) -> Option<Typ> {
+impl Model601Typ {
+    pub fn from_repr(repr: u16) -> Option<Model601Typ> {
         match repr {
-            0 => Some(Typ::Unknown),
-            1 => Some(Typ::Fixed),
-            2 => Some(Typ::Horizontal),
-            3 => Some(Typ::Tilted),
-            4 => Some(Typ::Azimuth),
-            5 => Some(Typ::Dual),
-            99 => Some(Typ::Other),
+            0 => Some(Model601Typ::Unknown),
+            1 => Some(Model601Typ::Fixed),
+            2 => Some(Model601Typ::Horizontal),
+            3 => Some(Model601Typ::Tilted),
+            4 => Some(Model601Typ::Azimuth),
+            5 => Some(Model601Typ::Dual),
+            99 => Some(Model601Typ::Other),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model601Typ`] - only `Model601Typ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Typ` distinct from another model's point of the same name.
+pub type Typ = Model601Typ;
 
 #[repr(C)]
 pub struct Model601CallbackAdapter {
@@ -676,7 +685,7 @@ pub struct Model601CallbackAdapter {
     /// Type (Typ)
     ///
     /// Type of tracker
-    typ_callback: extern "C" fn(*const c_void) -> Typ,
+    typ_callback: extern "C" fn(*const c_void) -> Model601Typ,
     /// Date (DtLoc)
     ///
     /// Local date in YYYYMMDD format
@@ -710,13 +719,13 @@ pub struct Model601CallbackAdapter {
     /// Global Control register operates on all trackers. Normal operation is automatic. Operator can override the position by setting the ElCtl, AzCtl and enabling Manual operation. Entering calibration mode will revert to automatic operation after calibration is complete.
     ///
     /// The global controls all trackers
-    global_mode_callback: Option<extern "C" fn(*const c_void) -> GlblCtl>,
+    global_mode_callback: Option<extern "C" fn(*const c_void) -> Model601GlblCtl>,
     /// Global Mode (GlblCtl)
     ///
     /// Global Control register operates on all trackers. Normal operation is automatic. Operator can override the position by setting the ElCtl, AzCtl and enabling Manual operation. Entering calibration mode will revert to automatic operation after calibration is complete.
     ///
     /// The global controls all trackers
-    set_global_mode_callback: Option<extern "C" fn(GlblCtl, *mut c_void)>,
+    set_global_mode_callback: Option<extern "C" fn(Model601GlblCtl, *mut c_void)>,
     /// Global Alarm (GlblAlm)
     ///
     /// Global tracker alarm conditions
@@ -770,11 +779,11 @@ pub struct Model601CallbackAdapter {
     /// Mode (Ctl)
     ///
     /// Control register. Normal operation is automatic. Operator can override the position by setting the ElCtl, AzCtl and enabling Manual operation. Entering calibration mode will revert to automatic operation after calibration is complete.
-    tracker_mode_callback: Option<extern "C" fn(*const c_void) -> Ctl>,
+    tracker_mode_callback: Option<extern "C" fn(*const c_void) -> Model601Ctl>,
     /// Mode (Ctl)
     ///
     /// Control register. Normal operation is automatic. Operator can override the position by setting the ElCtl, AzCtl and enabling Manual operation. Entering calibration mode will revert to automatic operation after calibration is complete.
-    set_tracker_mode_callback: Option<extern "C" fn(Ctl, *mut c_void)>,
+    set_tracker_mode_callback: Option<extern "C" fn(Model601Ctl, *mut c_void)>,
     /// Alarm (Alm)
     ///
     /// Tracker alarm conditions
@@ -946,7 +955,7 @@ pub struct Model601StatefulAdapter {
     /// Type (Typ)
     ///
     /// Type of tracker
-    pub typ: Typ,
+    pub typ: Model601Typ,
     /// Date (DtLoc)
     ///
     /// Local date in YYYYMMDD format
@@ -972,7 +981,7 @@ pub struct Model601StatefulAdapter {
     /// Global Control register operates on all trackers. Normal operation is automatic. Operator can override the position by setting the ElCtl, AzCtl and enabling Manual operation. Entering calibration mode will revert to automatic operation after calibration is complete.
     ///
     /// The global controls all trackers
-    pub global_mode: GlblCtl,
+    pub global_mode: Model601GlblCtl,
     /// Global Alarm (GlblAlm)
     ///
     /// Global tracker alarm conditions
@@ -1018,7 +1027,7 @@ pub struct Model601StatefulAdapter {
     /// Mode (Ctl)
     ///
     /// Control register. Normal operation is automatic. Operator can override the position by setting the ElCtl, AzCtl and enabling Manual operation. Entering calibration mode will revert to automatic operation after calibration is complete.
-    pub tracker_mode: Ctl,
+    pub tracker_mode: Model601Ctl,
     /// Alarm (Alm)
     ///
     /// Tracker alarm conditions

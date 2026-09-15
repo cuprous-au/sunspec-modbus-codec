@@ -299,7 +299,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Comm004Cert {
+pub enum Model64415Comm004Cert {
     /// DEFAULT
     ///
     /// Default Certificate
@@ -334,25 +334,28 @@ pub enum Comm004Cert {
     Comm004g = 7,
 }
 
-impl Comm004Cert {
-    pub fn from_repr(repr: u16) -> Option<Comm004Cert> {
+impl Model64415Comm004Cert {
+    pub fn from_repr(repr: u16) -> Option<Model64415Comm004Cert> {
         match repr {
-            0 => Some(Comm004Cert::DefaultCertificate),
-            1 => Some(Comm004Cert::Comm004a),
-            2 => Some(Comm004Cert::Comm004b),
-            3 => Some(Comm004Cert::Comm004c),
-            4 => Some(Comm004Cert::Comm004d),
-            5 => Some(Comm004Cert::Comm004e),
-            6 => Some(Comm004Cert::Comm004f),
-            7 => Some(Comm004Cert::Comm004g),
+            0 => Some(Model64415Comm004Cert::DefaultCertificate),
+            1 => Some(Model64415Comm004Cert::Comm004a),
+            2 => Some(Model64415Comm004Cert::Comm004b),
+            3 => Some(Model64415Comm004Cert::Comm004c),
+            4 => Some(Model64415Comm004Cert::Comm004d),
+            5 => Some(Model64415Comm004Cert::Comm004e),
+            6 => Some(Model64415Comm004Cert::Comm004f),
+            7 => Some(Model64415Comm004Cert::Comm004g),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64415Comm004Cert`] - only `Model64415Comm004Cert` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Comm004Cert` distinct from another model's point of the same name.
+pub type Comm004Cert = Model64415Comm004Cert;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum HttpMsg {
+pub enum Model64415HttpMsg {
     /// Disabled
     ///
     /// HTTP Message Mode Disabled
@@ -363,19 +366,22 @@ pub enum HttpMsg {
     Enabled = 1,
 }
 
-impl HttpMsg {
-    pub fn from_repr(repr: u16) -> Option<HttpMsg> {
+impl Model64415HttpMsg {
+    pub fn from_repr(repr: u16) -> Option<Model64415HttpMsg> {
         match repr {
-            0 => Some(HttpMsg::Disabled),
-            1 => Some(HttpMsg::Enabled),
+            0 => Some(Model64415HttpMsg::Disabled),
+            1 => Some(Model64415HttpMsg::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64415HttpMsg`] - only `Model64415HttpMsg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `HttpMsg` distinct from another model's point of the same name.
+pub type HttpMsg = Model64415HttpMsg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum LogEventEna {
+pub enum Model64415LogEventEna {
     /// Disabled
     ///
     /// LogEvent Mode Disabled
@@ -386,19 +392,22 @@ pub enum LogEventEna {
     Enabled = 1,
 }
 
-impl LogEventEna {
-    pub fn from_repr(repr: u16) -> Option<LogEventEna> {
+impl Model64415LogEventEna {
+    pub fn from_repr(repr: u16) -> Option<Model64415LogEventEna> {
         match repr {
-            0 => Some(LogEventEna::Disabled),
-            1 => Some(LogEventEna::Enabled),
+            0 => Some(Model64415LogEventEna::Disabled),
+            1 => Some(Model64415LogEventEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model64415LogEventEna`] - only `Model64415LogEventEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `LogEventEna` distinct from another model's point of the same name.
+pub type LogEventEna = Model64415LogEventEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum SubscriptionEna {
+pub enum Model64415SubscriptionEna {
     /// Disabled
     ///
     /// Subscription Mode Disabled
@@ -409,15 +418,18 @@ pub enum SubscriptionEna {
     Enabled = 1,
 }
 
-impl SubscriptionEna {
-    pub fn from_repr(repr: u16) -> Option<SubscriptionEna> {
+impl Model64415SubscriptionEna {
+    pub fn from_repr(repr: u16) -> Option<Model64415SubscriptionEna> {
         match repr {
-            0 => Some(SubscriptionEna::Disabled),
-            1 => Some(SubscriptionEna::Enabled),
+            0 => Some(Model64415SubscriptionEna::Disabled),
+            1 => Some(Model64415SubscriptionEna::Enabled),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64415SubscriptionEna`] - only `Model64415SubscriptionEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `SubscriptionEna` distinct from another model's point of the same name.
+pub type SubscriptionEna = Model64415SubscriptionEna;
 
 #[repr(C)]
 pub struct Model64415CallbackAdapter {
@@ -425,27 +437,27 @@ pub struct Model64415CallbackAdapter {
     /// LogEvent Mode Enable (LogEventEna)
     ///
     /// Enable or disable the LogEvent mode
-    log_event_mode_enable_callback: Option<extern "C" fn(*const c_void) -> LogEventEna>,
+    log_event_mode_enable_callback: Option<extern "C" fn(*const c_void) -> Model64415LogEventEna>,
     /// LogEvent Mode Enable (LogEventEna)
     ///
     /// Enable or disable the LogEvent mode
-    set_log_event_mode_enable_callback: Option<extern "C" fn(LogEventEna, *mut c_void)>,
+    set_log_event_mode_enable_callback: Option<extern "C" fn(Model64415LogEventEna, *mut c_void)>,
     /// HTTP Message Mode Enable (HTTPMsg)
     ///
     /// Enable or disable the HTTP Message mode
-    http_message_mode_enable_callback: Option<extern "C" fn(*const c_void) -> HttpMsg>,
+    http_message_mode_enable_callback: Option<extern "C" fn(*const c_void) -> Model64415HttpMsg>,
     /// HTTP Message Mode Enable (HTTPMsg)
     ///
     /// Enable or disable the HTTP Message mode
-    set_http_message_mode_enable_callback: Option<extern "C" fn(HttpMsg, *mut c_void)>,
+    set_http_message_mode_enable_callback: Option<extern "C" fn(Model64415HttpMsg, *mut c_void)>,
     /// COMM-004 Certificate (COMM004Cert)
     ///
     /// Select COMM-004 certificate type
-    comm_004_certificate_callback: Option<extern "C" fn(*const c_void) -> Comm004Cert>,
+    comm_004_certificate_callback: Option<extern "C" fn(*const c_void) -> Model64415Comm004Cert>,
     /// COMM-004 Certificate (COMM004Cert)
     ///
     /// Select COMM-004 certificate type
-    set_comm_004_certificate_callback: Option<extern "C" fn(Comm004Cert, *mut c_void)>,
+    set_comm_004_certificate_callback: Option<extern "C" fn(Model64415Comm004Cert, *mut c_void)>,
     /// Subscribed Resource URL (SubscribedResource)
     ///
     /// The URL of the resource to subscribe to
@@ -457,11 +469,11 @@ pub struct Model64415CallbackAdapter {
     /// Subscribtion Enable (SubscriptionEna)
     ///
     /// Enable or disable the Subscription mode
-    subscribtion_enable_callback: Option<extern "C" fn(*const c_void) -> SubscriptionEna>,
+    subscribtion_enable_callback: Option<extern "C" fn(*const c_void) -> Model64415SubscriptionEna>,
     /// Subscribtion Enable (SubscriptionEna)
     ///
     /// Enable or disable the Subscription mode
-    set_subscribtion_enable_callback: Option<extern "C" fn(SubscriptionEna, *mut c_void)>,
+    set_subscribtion_enable_callback: Option<extern "C" fn(Model64415SubscriptionEna, *mut c_void)>,
 }
 
 impl ReadAdapter for Model64415CallbackAdapter {
@@ -543,15 +555,15 @@ pub struct Model64415StatefulAdapter {
     /// LogEvent Mode Enable (LogEventEna)
     ///
     /// Enable or disable the LogEvent mode
-    pub log_event_mode_enable: LogEventEna,
+    pub log_event_mode_enable: Model64415LogEventEna,
     /// HTTP Message Mode Enable (HTTPMsg)
     ///
     /// Enable or disable the HTTP Message mode
-    pub http_message_mode_enable: HttpMsg,
+    pub http_message_mode_enable: Model64415HttpMsg,
     /// COMM-004 Certificate (COMM004Cert)
     ///
     /// Select COMM-004 certificate type
-    pub comm_004_certificate: Comm004Cert,
+    pub comm_004_certificate: Model64415Comm004Cert,
     /// Subscribed Resource URL (SubscribedResource)
     ///
     /// The URL of the resource to subscribe to
@@ -559,7 +571,7 @@ pub struct Model64415StatefulAdapter {
     /// Subscribtion Enable (SubscriptionEna)
     ///
     /// Enable or disable the Subscription mode
-    pub subscribtion_enable: SubscriptionEna,
+    pub subscribtion_enable: Model64415SubscriptionEna,
 }
 
 impl ReadAdapter for Model64415StatefulAdapter {

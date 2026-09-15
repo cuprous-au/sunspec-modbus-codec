@@ -1116,7 +1116,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum StrConFail {
+pub enum Model803StrConFail {
     NoFailure = 0,
     ButtonPushed = 1,
     StrGroundFault = 2,
@@ -1128,26 +1128,29 @@ pub enum StrConFail {
     StringFault = 8,
 }
 
-impl StrConFail {
-    pub fn from_repr(repr: u16) -> Option<StrConFail> {
+impl Model803StrConFail {
+    pub fn from_repr(repr: u16) -> Option<Model803StrConFail> {
         match repr {
-            0 => Some(StrConFail::NoFailure),
-            1 => Some(StrConFail::ButtonPushed),
-            2 => Some(StrConFail::StrGroundFault),
-            3 => Some(StrConFail::OutsideVoltageRange),
-            4 => Some(StrConFail::StringNotEnabled),
-            5 => Some(StrConFail::FuseOpen),
-            6 => Some(StrConFail::ContactorFailure),
-            7 => Some(StrConFail::PrechargeFailure),
-            8 => Some(StrConFail::StringFault),
+            0 => Some(Model803StrConFail::NoFailure),
+            1 => Some(Model803StrConFail::ButtonPushed),
+            2 => Some(Model803StrConFail::StrGroundFault),
+            3 => Some(Model803StrConFail::OutsideVoltageRange),
+            4 => Some(Model803StrConFail::StringNotEnabled),
+            5 => Some(Model803StrConFail::FuseOpen),
+            6 => Some(Model803StrConFail::ContactorFailure),
+            7 => Some(Model803StrConFail::PrechargeFailure),
+            8 => Some(Model803StrConFail::StringFault),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model803StrConFail`] - only `Model803StrConFail` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `StrConFail` distinct from another model's point of the same name.
+pub type StrConFail = Model803StrConFail;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum StrDisRsn {
+pub enum Model803StrDisRsn {
     None = 0,
     Fault = 1,
     Maintenance = 2,
@@ -1155,52 +1158,61 @@ pub enum StrDisRsn {
     Other = 4,
 }
 
-impl StrDisRsn {
-    pub fn from_repr(repr: u16) -> Option<StrDisRsn> {
+impl Model803StrDisRsn {
+    pub fn from_repr(repr: u16) -> Option<Model803StrDisRsn> {
         match repr {
-            0 => Some(StrDisRsn::None),
-            1 => Some(StrDisRsn::Fault),
-            2 => Some(StrDisRsn::Maintenance),
-            3 => Some(StrDisRsn::External),
-            4 => Some(StrDisRsn::Other),
+            0 => Some(Model803StrDisRsn::None),
+            1 => Some(Model803StrDisRsn::Fault),
+            2 => Some(Model803StrDisRsn::Maintenance),
+            3 => Some(Model803StrDisRsn::External),
+            4 => Some(Model803StrDisRsn::Other),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model803StrDisRsn`] - only `Model803StrDisRsn` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `StrDisRsn` distinct from another model's point of the same name.
+pub type StrDisRsn = Model803StrDisRsn;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum StrSetCon {
+pub enum Model803StrSetCon {
     ConnectString = 1,
     DisconnectString = 2,
 }
 
-impl StrSetCon {
-    pub fn from_repr(repr: u16) -> Option<StrSetCon> {
+impl Model803StrSetCon {
+    pub fn from_repr(repr: u16) -> Option<Model803StrSetCon> {
         match repr {
-            1 => Some(StrSetCon::ConnectString),
-            2 => Some(StrSetCon::DisconnectString),
+            1 => Some(Model803StrSetCon::ConnectString),
+            2 => Some(Model803StrSetCon::DisconnectString),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model803StrSetCon`] - only `Model803StrSetCon` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `StrSetCon` distinct from another model's point of the same name.
+pub type StrSetCon = Model803StrSetCon;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum StrSetEna {
+pub enum Model803StrSetEna {
     EnableString = 1,
     DisableString = 2,
 }
 
-impl StrSetEna {
-    pub fn from_repr(repr: u16) -> Option<StrSetEna> {
+impl Model803StrSetEna {
+    pub fn from_repr(repr: u16) -> Option<Model803StrSetEna> {
         match repr {
-            1 => Some(StrSetEna::EnableString),
-            2 => Some(StrSetEna::DisableString),
+            1 => Some(Model803StrSetEna::EnableString),
+            2 => Some(Model803StrSetEna::DisableString),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model803StrSetEna`] - only `Model803StrSetEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `StrSetEna` distinct from another model's point of the same name.
+pub type StrSetEna = Model803StrSetEna;
 
 #[repr(C)]
 pub struct Model803CallbackAdapter {
@@ -1337,7 +1349,7 @@ pub struct Model803CallbackAdapter {
     string_string_status_callback: extern "C" fn(*const c_void, u16) -> u32,
     /// Connection Failure Reason (StrConFail)
     string_connection_failure_reason_callback:
-        Option<extern "C" fn(*const c_void, u16) -> StrConFail>,
+        Option<extern "C" fn(*const c_void, u16) -> Model803StrConFail>,
     /// String State of Charge (StrSoC)
     ///
     /// Battery string state of charge, expressed as a percentage.
@@ -1393,7 +1405,7 @@ pub struct Model803CallbackAdapter {
     /// Disabled Reason (StrDisRsn)
     ///
     /// Reason why the string is currently disabled.
-    string_disabled_reason_callback: Option<extern "C" fn(*const c_void, u16) -> StrDisRsn>,
+    string_disabled_reason_callback: Option<extern "C" fn(*const c_void, u16) -> Model803StrDisRsn>,
     /// Contactor Status (StrConSt)
     ///
     /// Status of the contactor(s) for the string.
@@ -1419,21 +1431,23 @@ pub struct Model803CallbackAdapter {
     /// Enable/Disable String (StrSetEna)
     ///
     /// Enables and disables the string.
-    string_enable_disable_string_callback: Option<extern "C" fn(*const c_void, u16) -> StrSetEna>,
+    string_enable_disable_string_callback:
+        Option<extern "C" fn(*const c_void, u16) -> Model803StrSetEna>,
     /// Enable/Disable String (StrSetEna)
     ///
     /// Enables and disables the string.
-    set_string_enable_disable_string_callback: Option<extern "C" fn(StrSetEna, *mut c_void, u16)>,
+    set_string_enable_disable_string_callback:
+        Option<extern "C" fn(Model803StrSetEna, *mut c_void, u16)>,
     /// Connect/Disconnect String (StrSetCon)
     ///
     /// Connects and disconnects the string.
     string_connect_disconnect_string_callback:
-        Option<extern "C" fn(*const c_void, u16) -> StrSetCon>,
+        Option<extern "C" fn(*const c_void, u16) -> Model803StrSetCon>,
     /// Connect/Disconnect String (StrSetCon)
     ///
     /// Connects and disconnects the string.
     set_string_connect_disconnect_string_callback:
-        Option<extern "C" fn(StrSetCon, *mut c_void, u16)>,
+        Option<extern "C" fn(Model803StrSetCon, *mut c_void, u16)>,
 }
 
 impl ReadAdapter for Model803CallbackAdapter {
@@ -1826,7 +1840,7 @@ pub struct Model803String {
     /// Current status of the string.
     pub string_string_status: u32,
     /// Connection Failure Reason (StrConFail)
-    pub string_connection_failure_reason: StrConFail,
+    pub string_connection_failure_reason: Model803StrConFail,
     /// String State of Charge (StrSoC)
     ///
     /// Battery string state of charge, expressed as a percentage.
@@ -1882,7 +1896,7 @@ pub struct Model803String {
     /// Disabled Reason (StrDisRsn)
     ///
     /// Reason why the string is currently disabled.
-    pub string_disabled_reason: StrDisRsn,
+    pub string_disabled_reason: Model803StrDisRsn,
     /// Contactor Status (StrConSt)
     ///
     /// Status of the contactor(s) for the string.
@@ -1906,11 +1920,11 @@ pub struct Model803String {
     /// Enable/Disable String (StrSetEna)
     ///
     /// Enables and disables the string.
-    pub string_enable_disable_string: StrSetEna,
+    pub string_enable_disable_string: Model803StrSetEna,
     /// Connect/Disconnect String (StrSetCon)
     ///
     /// Connects and disconnects the string.
-    pub string_connect_disconnect_string: StrSetCon,
+    pub string_connect_disconnect_string: Model803StrSetCon,
 }
 
 impl<const STRING_COUNT: usize> ReadAdapter for Model803StatefulAdapter<STRING_COUNT> {

@@ -1738,39 +1738,45 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DeptRef {
+pub enum Model126DeptRef {
     WMax = 1,
     VArMax = 2,
     VArAval = 3,
 }
 
-impl DeptRef {
-    pub fn from_repr(repr: u16) -> Option<DeptRef> {
+impl Model126DeptRef {
+    pub fn from_repr(repr: u16) -> Option<Model126DeptRef> {
         match repr {
-            1 => Some(DeptRef::WMax),
-            2 => Some(DeptRef::VArMax),
-            3 => Some(DeptRef::VArAval),
+            1 => Some(Model126DeptRef::WMax),
+            2 => Some(Model126DeptRef::VArMax),
+            3 => Some(Model126DeptRef::VArAval),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model126DeptRef`] - only `Model126DeptRef` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DeptRef` distinct from another model's point of the same name.
+pub type DeptRef = Model126DeptRef;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model126ReadOnly {
     Readwrite = 0,
     Readonly = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model126ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model126ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Readwrite),
-            1 => Some(ReadOnly::Readonly),
+            0 => Some(Model126ReadOnly::Readwrite),
+            1 => Some(Model126ReadOnly::Readonly),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model126ReadOnly`] - only `Model126ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model126ReadOnly;
 
 #[repr(C)]
 pub struct Model126CallbackAdapter {
@@ -1844,11 +1850,11 @@ pub struct Model126CallbackAdapter {
     /// DeptRef (DeptRef)
     ///
     /// Meaning of dependent variable: 1=%WMax 2=%VArMax 3=%VArAval.
-    curve_dept_ref_callback: extern "C" fn(*const c_void) -> DeptRef,
+    curve_dept_ref_callback: extern "C" fn(*const c_void) -> Model126DeptRef,
     /// DeptRef (DeptRef)
     ///
     /// Meaning of dependent variable: 1=%WMax 2=%VArMax 3=%VArAval.
-    set_curve_dept_ref_callback: extern "C" fn(DeptRef, *mut c_void),
+    set_curve_dept_ref_callback: extern "C" fn(Model126DeptRef, *mut c_void),
     /// V1 (V1)
     ///
     /// Point 1 Volts.
@@ -2204,7 +2210,7 @@ pub struct Model126CallbackAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Boolean flag indicates if curve is read-only or can be modified.
-    curve_read_only_callback: extern "C" fn(*const c_void) -> ReadOnly,
+    curve_read_only_callback: extern "C" fn(*const c_void) -> Model126ReadOnly,
 }
 
 impl ReadAdapter for Model126CallbackAdapter {
@@ -2979,7 +2985,7 @@ pub struct Model126StatefulAdapter {
     /// DeptRef (DeptRef)
     ///
     /// Meaning of dependent variable: 1=%WMax 2=%VArMax 3=%VArAval.
-    pub curve_dept_ref: DeptRef,
+    pub curve_dept_ref: Model126DeptRef,
     /// V1 (V1)
     ///
     /// Point 1 Volts.
@@ -3159,7 +3165,7 @@ pub struct Model126StatefulAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Boolean flag indicates if curve is read-only or can be modified.
-    pub curve_read_only: ReadOnly,
+    pub curve_read_only: Model126ReadOnly,
 }
 
 impl ReadAdapter for Model126StatefulAdapter {

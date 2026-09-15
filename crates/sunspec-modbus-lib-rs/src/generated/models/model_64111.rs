@@ -414,7 +414,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ChargerSt {
+pub enum Model64111ChargerSt {
     Off = 0,
     Float = 1,
     Bulk = 2,
@@ -422,18 +422,21 @@ pub enum ChargerSt {
     Eq = 4,
 }
 
-impl ChargerSt {
-    pub fn from_repr(repr: u16) -> Option<ChargerSt> {
+impl Model64111ChargerSt {
+    pub fn from_repr(repr: u16) -> Option<Model64111ChargerSt> {
         match repr {
-            0 => Some(ChargerSt::Off),
-            1 => Some(ChargerSt::Float),
-            2 => Some(ChargerSt::Bulk),
-            3 => Some(ChargerSt::Absorb),
-            4 => Some(ChargerSt::Eq),
+            0 => Some(Model64111ChargerSt::Off),
+            1 => Some(Model64111ChargerSt::Float),
+            2 => Some(Model64111ChargerSt::Bulk),
+            3 => Some(Model64111ChargerSt::Absorb),
+            4 => Some(Model64111ChargerSt::Eq),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model64111ChargerSt`] - only `Model64111ChargerSt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ChargerSt` distinct from another model's point of the same name.
+pub type ChargerSt = Model64111ChargerSt;
 
 #[repr(C)]
 pub struct Model64111CallbackAdapter {
@@ -459,7 +462,7 @@ pub struct Model64111CallbackAdapter {
     /// Array Current (InputA)
     array_current_callback: extern "C" fn(*const c_void) -> u16,
     /// Operating State (ChargerSt)
-    operating_state_callback: extern "C" fn(*const c_void) -> ChargerSt,
+    operating_state_callback: extern "C" fn(*const c_void) -> Model64111ChargerSt,
     /// Output Wattage (OutputW)
     output_wattage_callback: extern "C" fn(*const c_void) -> u16,
     /// Today's Minimum Battery Voltage (TodayMinBatV)
@@ -603,7 +606,7 @@ pub struct Model64111StatefulAdapter {
     /// Array Current (InputA)
     pub array_current: u16,
     /// Operating State (ChargerSt)
-    pub operating_state: ChargerSt,
+    pub operating_state: Model64111ChargerSt,
     /// Output Wattage (OutputW)
     pub output_wattage: u16,
     /// Today's Minimum Battery Voltage (TodayMinBatV)

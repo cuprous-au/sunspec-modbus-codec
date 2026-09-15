@@ -347,96 +347,111 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Dup {
+pub enum Model17Dup {
     Full = 0,
     Half = 1,
 }
 
-impl Dup {
-    pub fn from_repr(repr: u16) -> Option<Dup> {
+impl Model17Dup {
+    pub fn from_repr(repr: u16) -> Option<Model17Dup> {
         match repr {
-            0 => Some(Dup::Full),
-            1 => Some(Dup::Half),
+            0 => Some(Model17Dup::Full),
+            1 => Some(Model17Dup::Half),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model17Dup`] - only `Model17Dup` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Dup` distinct from another model's point of the same name.
+pub type Dup = Model17Dup;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Flw {
+pub enum Model17Flw {
     None = 0,
     Hw = 1,
     Xonxoff = 2,
 }
 
-impl Flw {
-    pub fn from_repr(repr: u16) -> Option<Flw> {
+impl Model17Flw {
+    pub fn from_repr(repr: u16) -> Option<Model17Flw> {
         match repr {
-            0 => Some(Flw::None),
-            1 => Some(Flw::Hw),
-            2 => Some(Flw::Xonxoff),
+            0 => Some(Model17Flw::None),
+            1 => Some(Model17Flw::Hw),
+            2 => Some(Model17Flw::Xonxoff),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model17Flw`] - only `Model17Flw` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Flw` distinct from another model's point of the same name.
+pub type Flw = Model17Flw;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Pcol {
+pub enum Model17Pcol {
     Unknown = 0,
     Modbus = 1,
     Vendor = 2,
 }
 
-impl Pcol {
-    pub fn from_repr(repr: u16) -> Option<Pcol> {
+impl Model17Pcol {
+    pub fn from_repr(repr: u16) -> Option<Model17Pcol> {
         match repr {
-            0 => Some(Pcol::Unknown),
-            1 => Some(Pcol::Modbus),
-            2 => Some(Pcol::Vendor),
+            0 => Some(Model17Pcol::Unknown),
+            1 => Some(Model17Pcol::Modbus),
+            2 => Some(Model17Pcol::Vendor),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model17Pcol`] - only `Model17Pcol` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Pcol` distinct from another model's point of the same name.
+pub type Pcol = Model17Pcol;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Pty {
+pub enum Model17Pty {
     None = 0,
     Odd = 1,
     Even = 2,
 }
 
-impl Pty {
-    pub fn from_repr(repr: u16) -> Option<Pty> {
+impl Model17Pty {
+    pub fn from_repr(repr: u16) -> Option<Model17Pty> {
         match repr {
-            0 => Some(Pty::None),
-            1 => Some(Pty::Odd),
-            2 => Some(Pty::Even),
+            0 => Some(Model17Pty::None),
+            1 => Some(Model17Pty::Odd),
+            2 => Some(Model17Pty::Even),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model17Pty`] - only `Model17Pty` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Pty` distinct from another model's point of the same name.
+pub type Pty = Model17Pty;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Typ {
+pub enum Model17Typ {
     Unknown = 0,
     Rs232 = 1,
     Rs485 = 2,
 }
 
-impl Typ {
-    pub fn from_repr(repr: u16) -> Option<Typ> {
+impl Model17Typ {
+    pub fn from_repr(repr: u16) -> Option<Model17Typ> {
         match repr {
-            0 => Some(Typ::Unknown),
-            1 => Some(Typ::Rs232),
-            2 => Some(Typ::Rs485),
+            0 => Some(Model17Typ::Unknown),
+            1 => Some(Model17Typ::Rs232),
+            2 => Some(Model17Typ::Rs485),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model17Typ`] - only `Model17Typ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Typ` distinct from another model's point of the same name.
+pub type Typ = Model17Typ;
 
 #[repr(C)]
 pub struct Model17CallbackAdapter {
@@ -468,35 +483,35 @@ pub struct Model17CallbackAdapter {
     /// Parity (Pty)
     ///
     /// Parity setting
-    parity_callback: extern "C" fn(*const c_void) -> Pty,
+    parity_callback: extern "C" fn(*const c_void) -> Model17Pty,
     /// Parity (Pty)
     ///
     /// Parity setting
-    set_parity_callback: extern "C" fn(Pty, *mut c_void),
+    set_parity_callback: extern "C" fn(Model17Pty, *mut c_void),
     /// Duplex (Dup)
     ///
     /// Duplex mode
-    duplex_callback: Option<extern "C" fn(*const c_void) -> Dup>,
+    duplex_callback: Option<extern "C" fn(*const c_void) -> Model17Dup>,
     /// Duplex (Dup)
     ///
     /// Duplex mode
-    set_duplex_callback: Option<extern "C" fn(Dup, *mut c_void)>,
+    set_duplex_callback: Option<extern "C" fn(Model17Dup, *mut c_void)>,
     /// Flow Control (Flw)
     ///
     /// Flow Control Method
-    flow_control_callback: Option<extern "C" fn(*const c_void) -> Flw>,
+    flow_control_callback: Option<extern "C" fn(*const c_void) -> Model17Flw>,
     /// Flow Control (Flw)
     ///
     /// Flow Control Method
-    set_flow_control_callback: Option<extern "C" fn(Flw, *mut c_void)>,
+    set_flow_control_callback: Option<extern "C" fn(Model17Flw, *mut c_void)>,
     /// Interface Type (Typ)
     ///
     /// Interface type
-    interface_type_callback: Option<extern "C" fn(*const c_void) -> Typ>,
+    interface_type_callback: Option<extern "C" fn(*const c_void) -> Model17Typ>,
     /// Protocol (Pcol)
     ///
     /// Serial protocol selection
-    protocol_callback: Option<extern "C" fn(*const c_void) -> Pcol>,
+    protocol_callback: Option<extern "C" fn(*const c_void) -> Model17Pcol>,
 }
 
 impl ReadAdapter for Model17CallbackAdapter {
@@ -605,23 +620,23 @@ pub struct Model17StatefulAdapter {
     /// Parity (Pty)
     ///
     /// Parity setting
-    pub parity: Pty,
+    pub parity: Model17Pty,
     /// Duplex (Dup)
     ///
     /// Duplex mode
-    pub duplex: Dup,
+    pub duplex: Model17Dup,
     /// Flow Control (Flw)
     ///
     /// Flow Control Method
-    pub flow_control: Flw,
+    pub flow_control: Model17Flw,
     /// Interface Type (Typ)
     ///
     /// Interface type
-    pub interface_type: Typ,
+    pub interface_type: Model17Typ,
     /// Protocol (Pcol)
     ///
     /// Serial protocol selection
-    pub protocol: Pcol,
+    pub protocol: Model17Pcol,
 }
 
 impl ReadAdapter for Model17StatefulAdapter {

@@ -280,7 +280,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Sta {
+pub enum Model713Sta {
     /// OK
     ///
     /// No warnings or errors pending.
@@ -295,16 +295,19 @@ pub enum Sta {
     Error = 2,
 }
 
-impl Sta {
-    pub fn from_repr(repr: u16) -> Option<Sta> {
+impl Model713Sta {
+    pub fn from_repr(repr: u16) -> Option<Model713Sta> {
         match repr {
-            0 => Some(Sta::Ok),
-            1 => Some(Sta::Warning),
-            2 => Some(Sta::Error),
+            0 => Some(Model713Sta::Ok),
+            1 => Some(Model713Sta::Warning),
+            2 => Some(Model713Sta::Error),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model713Sta`] - only `Model713Sta` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Sta` distinct from another model's point of the same name.
+pub type Sta = Model713Sta;
 
 #[repr(C)]
 pub struct Model713CallbackAdapter {
@@ -330,7 +333,7 @@ pub struct Model713CallbackAdapter {
     /// Status (Sta)
     ///
     /// Storage status.
-    status_callback: Option<extern "C" fn(*const c_void) -> Sta>,
+    status_callback: Option<extern "C" fn(*const c_void) -> Model713Sta>,
     /// Energy Scale Factor (WH_SF)
     ///
     /// Scale factor for energy capacity.
@@ -401,7 +404,7 @@ pub struct Model713StatefulAdapter {
     /// Status (Sta)
     ///
     /// Storage status.
-    pub status: Sta,
+    pub status: Model713Sta,
     /// Energy Scale Factor (WH_SF)
     ///
     /// Scale factor for energy capacity.

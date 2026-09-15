@@ -314,45 +314,51 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Alg {
+pub enum Model7Alg {
     /// For test purposes only
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
 }
 
-impl Alg {
-    pub fn from_repr(repr: u16) -> Option<Alg> {
+impl Model7Alg {
+    pub fn from_repr(repr: u16) -> Option<Model7Alg> {
         match repr {
-            0 => Some(Alg::None),
-            1 => Some(Alg::AesGmac64),
-            2 => Some(Alg::Ecc256),
+            0 => Some(Model7Alg::None),
+            1 => Some(Model7Alg::AesGmac64),
+            2 => Some(Model7Alg::Ecc256),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model7Alg`] - only `Model7Alg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Alg` distinct from another model's point of the same name.
+pub type Alg = Model7Alg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Alm {
+pub enum Model7Alm {
     None = 0,
     /// Tampered
     Alm = 1,
 }
 
-impl Alm {
-    pub fn from_repr(repr: u16) -> Option<Alm> {
+impl Model7Alm {
+    pub fn from_repr(repr: u16) -> Option<Model7Alm> {
         match repr {
-            0 => Some(Alm::None),
-            1 => Some(Alm::Alm),
+            0 => Some(Model7Alm::None),
+            1 => Some(Model7Alm::Alm),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model7Alm`] - only `Model7Alm` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Alm` distinct from another model's point of the same name.
+pub type Alm = Model7Alm;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Sts {
+pub enum Model7Sts {
     Success = 0,
     /// The signature was not valid
     Ds = 1,
@@ -364,18 +370,21 @@ pub enum Sts {
     Val = 4,
 }
 
-impl Sts {
-    pub fn from_repr(repr: u16) -> Option<Sts> {
+impl Model7Sts {
+    pub fn from_repr(repr: u16) -> Option<Model7Sts> {
         match repr {
-            0 => Some(Sts::Success),
-            1 => Some(Sts::Ds),
-            2 => Some(Sts::Acl),
-            3 => Some(Sts::Off),
-            4 => Some(Sts::Val),
+            0 => Some(Model7Sts::Success),
+            1 => Some(Model7Sts::Ds),
+            2 => Some(Model7Sts::Acl),
+            3 => Some(Model7Sts::Off),
+            4 => Some(Model7Sts::Val),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model7Sts`] - only `Model7Sts` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Sts` distinct from another model's point of the same name.
+pub type Sts = Model7Sts;
 
 #[repr(C)]
 pub struct Model7CallbackAdapter {
@@ -387,7 +396,7 @@ pub struct Model7CallbackAdapter {
     /// Status (Sts)
     ///
     /// Status of last write operation
-    status_callback: extern "C" fn(*const c_void) -> Sts,
+    status_callback: extern "C" fn(*const c_void) -> Model7Sts,
     /// Timestamp (Ts)
     ///
     /// Timestamp value is the number of seconds since January 1, 2000
@@ -405,13 +414,13 @@ pub struct Model7CallbackAdapter {
     /// Alarm (Alm)
     ///
     /// Bitmask alarm code
-    alarm_callback: extern "C" fn(*const c_void) -> Alm,
+    alarm_callback: extern "C" fn(*const c_void) -> Model7Alm,
     /// Algorithm (Alg)
     ///
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    algorithm_callback: extern "C" fn(*const c_void) -> Alg,
+    algorithm_callback: extern "C" fn(*const c_void) -> Model7Alg,
     /// N (N)
     ///
     /// Number of registers comprising the digital signature.
@@ -499,7 +508,7 @@ pub struct Model7StatefulAdapter {
     /// Status (Sts)
     ///
     /// Status of last write operation
-    pub status: Sts,
+    pub status: Model7Sts,
     /// Timestamp (Ts)
     ///
     /// Timestamp value is the number of seconds since January 1, 2000
@@ -517,13 +526,13 @@ pub struct Model7StatefulAdapter {
     /// Alarm (Alm)
     ///
     /// Bitmask alarm code
-    pub alarm: Alm,
+    pub alarm: Model7Alm,
     /// Algorithm (Alg)
     ///
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    pub algorithm: Alg,
+    pub algorithm: Model7Alg,
     /// N (N)
     ///
     /// Number of registers comprising the digital signature.

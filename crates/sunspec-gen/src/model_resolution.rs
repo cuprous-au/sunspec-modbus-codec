@@ -61,6 +61,11 @@ pub struct BlockIndex {
 #[derive(Clone)]
 pub struct ResolvedEnum {
     pub name: NameRef,
+    /// This enum's bare SunSpec type name (e.g. `St`), before the model prefix baked into
+    /// [`Self::name`] to keep it globally unique for the generated C header. `generate_enum`
+    /// re-exposes it as a `pub type` alias to `name`, so Rust code - which doesn't share C's
+    /// flat, single-namespace problem - can still use the short, spec-matching name.
+    pub short_name_pascal_case: String,
     pub discriminant_type: String,
     pub values: Vec<EnumValue>,
 }
@@ -184,7 +189,11 @@ fn cast_ipv6_from_c(value: &str) -> String {
     format!("unsafe {{ &*({} as *const [u16; 8]) }}", value)
 }
 
-fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> ResolvedType {
+fn resolve_point_type(
+    point: &Point,
+    features: &mut HashSet<CodegenFeature>,
+    model_file_name: &str,
+) -> ResolvedType {
     let base_type = match point.type_ {
         PointType::Uint16
         | PointType::Raw16
@@ -218,15 +227,31 @@ fn resolve_point_type(point: &Point, features: &mut HashSet<CodegenFeature>) -> 
         PointType::String => "&CStr".to_string(),
         PointType::Eui48 => "&[u8; 6]".to_string(),
         PointType::Ipv6addr => "&[u16; 8]".to_string(),
+        // The bare, spec-matching name (e.g. `St`) - safe here since this is only used in
+        // Rust-facing signatures (getters/setters/trait methods), which cbindgen never sees and
+        // which Rust's own module system already keeps distinct model-to-model. It's a `pub
+        // type` alias to the model-prefixed declaration `c_type` names below - see
+        // `generate_enum`.
         _ if is_enum => point.name.to_pascal_case(),
         _ => base_type.clone(),
     };
 
+    // Enum type names are prefixed with their model (e.g. `Model2St`, not `St`) here because
+    // cbindgen flattens every model's types into one C namespace by their bare Rust name -
+    // unprefixed, the many models that happen to reuse a short SunSpec type name like `St` or
+    // `Ena` for their own, distinct enum would collide when more than one is compiled into the
+    // same header. This is the type FFI-facing (`#[repr(C)]`) struct fields reference, so it
+    // must be the actual declaration's name, not the `rust_type` alias above. See `resolve_enum`,
+    // which names the enum declaration itself the same way.
     let c_type = match point.type_ {
         PointType::String => "c_char".to_string(),
         PointType::Eui48 => "u8".to_string(),
         PointType::Ipv6addr => "u16".to_string(),
-        _ if is_enum => point.name.to_pascal_case(),
+        _ if is_enum => format!(
+            "{}{}",
+            model_file_name.to_pascal_case(),
+            point.name.to_pascal_case()
+        ),
         _ => base_type.clone(),
     };
 
@@ -276,8 +301,9 @@ pub(crate) fn resolve_point(
     identifier_text: &str,
     name_prefix: Option<String>,
     block_indices: Vec<BlockIndex>,
+    model_file_name: &str,
 ) -> Option<ResolvedPoint> {
-    let point_type = resolve_point_type(point, features);
+    let point_type = resolve_point_type(point, features, model_file_name);
 
     let main_name = point
         .label
@@ -330,7 +356,7 @@ pub(crate) fn resolve_point(
     })
 }
 
-pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
+pub fn resolve_enum(point: &Point, model_file_name: &str) -> Option<ResolvedEnum> {
     if point.type_ == PointType::Enum16 || point.type_ == PointType::Enum32 {
         let values: Vec<EnumValue> = point
             .symbols
@@ -353,7 +379,21 @@ pub fn resolve_enum(point: &Point) -> Option<ResolvedEnum> {
             None
         } else {
             Some(ResolvedEnum {
-                name: Name::new(point.name.to_snake_case(), point.name.to_pascal_case()),
+                // Prefixed with the model, matching `resolve_point_type`'s `enum_name` above -
+                // this is the declaration the FFI-facing (`c_type`) field types reference.
+                name: Name::new(
+                    format!(
+                        "{}_{}",
+                        model_file_name.to_snake_case(),
+                        point.name.to_snake_case()
+                    ),
+                    format!(
+                        "{}{}",
+                        model_file_name.to_pascal_case(),
+                        point.name.to_pascal_case()
+                    ),
+                ),
+                short_name_pascal_case: point.name.to_pascal_case(),
                 discriminant_type: match point.type_ {
                     PointType::Enum16 => "u16".to_string(),
                     PointType::Enum32 => "u32".to_string(),
@@ -391,6 +431,7 @@ pub(crate) fn resolve_group(
     short_text: &str,
     name_prefix: Option<String>,
     block_indices: Vec<BlockIndex>,
+    model_file_name: &str,
 ) -> ResolvedGroup {
     let (name_snake, name_pascal, local_name_short) = group_identity(group, identifier_text);
 
@@ -404,6 +445,7 @@ pub(crate) fn resolve_group(
                 identifier_text,
                 name_prefix.clone(),
                 block_indices.clone(),
+                model_file_name,
             )
         })
         .collect();
@@ -450,6 +492,7 @@ pub(crate) fn resolve_group(
                         child_short_text,
                         name_prefix.clone(),
                         block_indices.clone(),
+                        model_file_name,
                     )),
                 })
             }
@@ -475,6 +518,7 @@ pub(crate) fn resolve_group(
                         child_short_text,
                         Some(child.name.clone()),
                         child_block_indices,
+                        model_file_name,
                     )),
                 })
             }
@@ -486,7 +530,7 @@ pub(crate) fn resolve_group(
     let mut enums: Vec<ResolvedEnum> = group
         .points
         .iter()
-        .flat_map(resolve_enum)
+        .flat_map(|point| resolve_enum(point, model_file_name))
         .chain(
             subgroups
                 .iter()
@@ -577,7 +621,16 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
         "Unable to extract model number from name (expected name in structure model_X.json)",
     );
     let mut features: HashSet<CodegenFeature> = HashSet::new();
-    let group = resolve_group(&model.group, None, &mut features, "", "", None, vec![]);
+    let group = resolve_group(
+        &model.group,
+        None,
+        &mut features,
+        "",
+        "",
+        None,
+        vec![],
+        &file_name,
+    );
 
     let mut point_names = NameTable::default();
     let mut group_names = NameTable::default();

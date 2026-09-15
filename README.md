@@ -65,6 +65,16 @@ This crate is responsible for generating the content of the `src/generated` dire
 described below, and C-safe wrappers for this (`src/generated.rs`) of `sunspec-modbus-lib-static`. It sources the latest 
 SunSpec MODBUS model definitions from https://github.com/sunspec/models, and generates adapter definitions for each model.
 
+It also defines a Cargo feature per generated model (e.g. `model_1`, `model_103`), gating that model's generated code in
+both `sunspec-modbus-lib-rs` and `sunspec-modbus-lib-static`, plus an `all-models` feature aggregating all of them - see the
+`[features]` section of either crate's `Cargo.toml`. `all-models` is enabled by default; build with `--no-default-features
+--features model_1,model_103,...` (optionally adding `std` for `sunspec-modbus-lib-static`) to compile in only a subset. In
+the generated C header, each model's declarations are wrapped in `#if defined(SUNSPEC_MODEL_<id>_ENABLED)` guards - see
+`[defines]` in `sunspec-modbus-lib-static/cbindgen.toml` - so a C caller must define the matching macro for exactly the
+models the linked static library was built with. Every model's macro is defined by default (matching `all-models`) via
+`after_includes` in that same file; define `SUNSPEC_NO_DEFAULT_MODELS` before `#include`ing the header to opt out and name
+an explicit subset instead.
+
 Generated files are committed to the repository rather than produced by `cargo build` - every file it writes starts with an
 `@generated` comment pointing back here. Regenerate them after changing this crate or updating the `models` submodule with:
 ```sh
@@ -95,7 +105,7 @@ LIBMODBUS_PREFIX=/opt/homebrew/opt/libmodbus
 
 An example can be compiled and executed using the following steps (you will need a Sunspec MODBUS client to drive it):
 ```sh
-cargo build --release -p sunspec-modbus-lib-static --no-default-features
+cargo build --release -p sunspec-modbus-lib-static --no-default-features --features all-models
 cc crates/sunspec-modbus-lib-static/examples/libmodbus.c \
   -I"$LIBMODBUS_PREFIX/include" \
   -L"$LIBMODBUS_PREFIX/lib" \

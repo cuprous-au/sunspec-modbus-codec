@@ -1649,7 +1649,7 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum AntiIslEna {
+pub enum Model704AntiIslEna {
     /// Disabled
     ///
     /// Anti-islanding is disabled.
@@ -1660,19 +1660,22 @@ pub enum AntiIslEna {
     Enabled = 1,
 }
 
-impl AntiIslEna {
-    pub fn from_repr(repr: u16) -> Option<AntiIslEna> {
+impl Model704AntiIslEna {
+    pub fn from_repr(repr: u16) -> Option<Model704AntiIslEna> {
         match repr {
-            0 => Some(AntiIslEna::Disabled),
-            1 => Some(AntiIslEna::Enabled),
+            0 => Some(Model704AntiIslEna::Disabled),
+            1 => Some(Model704AntiIslEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704AntiIslEna`] - only `Model704AntiIslEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `AntiIslEna` distinct from another model's point of the same name.
+pub type AntiIslEna = Model704AntiIslEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Ext {
+pub enum Model704Ext {
     /// Over-Excited
     ///
     /// Power factor over-excited excitation.
@@ -1683,19 +1686,22 @@ pub enum Ext {
     UnderExcited = 1,
 }
 
-impl Ext {
-    pub fn from_repr(repr: u16) -> Option<Ext> {
+impl Model704Ext {
+    pub fn from_repr(repr: u16) -> Option<Model704Ext> {
         match repr {
-            0 => Some(Ext::OverExcited),
-            1 => Some(Ext::UnderExcited),
+            0 => Some(Model704Ext::OverExcited),
+            1 => Some(Model704Ext::UnderExcited),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704Ext`] - only `Model704Ext` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Ext` distinct from another model's point of the same name.
+pub type Ext = Model704Ext;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum PfwAbsEna {
+pub enum Model704PfwAbsEna {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1706,19 +1712,22 @@ pub enum PfwAbsEna {
     Enabled = 1,
 }
 
-impl PfwAbsEna {
-    pub fn from_repr(repr: u16) -> Option<PfwAbsEna> {
+impl Model704PfwAbsEna {
+    pub fn from_repr(repr: u16) -> Option<Model704PfwAbsEna> {
         match repr {
-            0 => Some(PfwAbsEna::Disabled),
-            1 => Some(PfwAbsEna::Enabled),
+            0 => Some(Model704PfwAbsEna::Disabled),
+            1 => Some(Model704PfwAbsEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704PfwAbsEna`] - only `Model704PfwAbsEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `PfwAbsEna` distinct from another model's point of the same name.
+pub type PfwAbsEna = Model704PfwAbsEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum PfwAbsEnaRvrt {
+pub enum Model704PfwAbsEnaRvrt {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1729,19 +1738,22 @@ pub enum PfwAbsEnaRvrt {
     Enabled = 1,
 }
 
-impl PfwAbsEnaRvrt {
-    pub fn from_repr(repr: u16) -> Option<PfwAbsEnaRvrt> {
+impl Model704PfwAbsEnaRvrt {
+    pub fn from_repr(repr: u16) -> Option<Model704PfwAbsEnaRvrt> {
         match repr {
-            0 => Some(PfwAbsEnaRvrt::Disabled),
-            1 => Some(PfwAbsEnaRvrt::Enabled),
+            0 => Some(Model704PfwAbsEnaRvrt::Disabled),
+            1 => Some(Model704PfwAbsEnaRvrt::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704PfwAbsEnaRvrt`] - only `Model704PfwAbsEnaRvrt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `PfwAbsEnaRvrt` distinct from another model's point of the same name.
+pub type PfwAbsEnaRvrt = Model704PfwAbsEnaRvrt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum PfwInjEna {
+pub enum Model704PfwInjEna {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1752,19 +1764,22 @@ pub enum PfwInjEna {
     Enabled = 1,
 }
 
-impl PfwInjEna {
-    pub fn from_repr(repr: u16) -> Option<PfwInjEna> {
+impl Model704PfwInjEna {
+    pub fn from_repr(repr: u16) -> Option<Model704PfwInjEna> {
         match repr {
-            0 => Some(PfwInjEna::Disabled),
-            1 => Some(PfwInjEna::Enabled),
+            0 => Some(Model704PfwInjEna::Disabled),
+            1 => Some(Model704PfwInjEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704PfwInjEna`] - only `Model704PfwInjEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `PfwInjEna` distinct from another model's point of the same name.
+pub type PfwInjEna = Model704PfwInjEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum PfwInjEnaRvrt {
+pub enum Model704PfwInjEnaRvrt {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1775,19 +1790,22 @@ pub enum PfwInjEnaRvrt {
     Enabled = 1,
 }
 
-impl PfwInjEnaRvrt {
-    pub fn from_repr(repr: u16) -> Option<PfwInjEnaRvrt> {
+impl Model704PfwInjEnaRvrt {
+    pub fn from_repr(repr: u16) -> Option<Model704PfwInjEnaRvrt> {
         match repr {
-            0 => Some(PfwInjEnaRvrt::Disabled),
-            1 => Some(PfwInjEnaRvrt::Enabled),
+            0 => Some(Model704PfwInjEnaRvrt::Disabled),
+            1 => Some(Model704PfwInjEnaRvrt::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704PfwInjEnaRvrt`] - only `Model704PfwInjEnaRvrt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `PfwInjEnaRvrt` distinct from another model's point of the same name.
+pub type PfwInjEnaRvrt = Model704PfwInjEnaRvrt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VarSetEna {
+pub enum Model704VarSetEna {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1798,19 +1816,22 @@ pub enum VarSetEna {
     Enabled = 1,
 }
 
-impl VarSetEna {
-    pub fn from_repr(repr: u16) -> Option<VarSetEna> {
+impl Model704VarSetEna {
+    pub fn from_repr(repr: u16) -> Option<Model704VarSetEna> {
         match repr {
-            0 => Some(VarSetEna::Disabled),
-            1 => Some(VarSetEna::Enabled),
+            0 => Some(Model704VarSetEna::Disabled),
+            1 => Some(Model704VarSetEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704VarSetEna`] - only `Model704VarSetEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VarSetEna` distinct from another model's point of the same name.
+pub type VarSetEna = Model704VarSetEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VarSetEnaRvrt {
+pub enum Model704VarSetEnaRvrt {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1821,19 +1842,22 @@ pub enum VarSetEnaRvrt {
     Enabled = 1,
 }
 
-impl VarSetEnaRvrt {
-    pub fn from_repr(repr: u16) -> Option<VarSetEnaRvrt> {
+impl Model704VarSetEnaRvrt {
+    pub fn from_repr(repr: u16) -> Option<Model704VarSetEnaRvrt> {
         match repr {
-            0 => Some(VarSetEnaRvrt::Disabled),
-            1 => Some(VarSetEnaRvrt::Enabled),
+            0 => Some(Model704VarSetEnaRvrt::Disabled),
+            1 => Some(Model704VarSetEnaRvrt::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704VarSetEnaRvrt`] - only `Model704VarSetEnaRvrt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VarSetEnaRvrt` distinct from another model's point of the same name.
+pub type VarSetEnaRvrt = Model704VarSetEnaRvrt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VarSetMod {
+pub enum Model704VarSetMod {
     /// Reactive Power As Watt Max Pct
     ///
     /// Reactive power setting is percent of maximum active power.
@@ -1856,22 +1880,25 @@ pub enum VarSetMod {
     Vars = 4,
 }
 
-impl VarSetMod {
-    pub fn from_repr(repr: u16) -> Option<VarSetMod> {
+impl Model704VarSetMod {
+    pub fn from_repr(repr: u16) -> Option<Model704VarSetMod> {
         match repr {
-            0 => Some(VarSetMod::WMaxPct),
-            1 => Some(VarSetMod::VarMaxPct),
-            2 => Some(VarSetMod::VarAvailPct),
-            3 => Some(VarSetMod::VaMaxPct),
-            4 => Some(VarSetMod::Vars),
+            0 => Some(Model704VarSetMod::WMaxPct),
+            1 => Some(Model704VarSetMod::VarMaxPct),
+            2 => Some(Model704VarSetMod::VarAvailPct),
+            3 => Some(Model704VarSetMod::VaMaxPct),
+            4 => Some(Model704VarSetMod::Vars),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704VarSetMod`] - only `Model704VarSetMod` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VarSetMod` distinct from another model's point of the same name.
+pub type VarSetMod = Model704VarSetMod;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum VarSetPri {
+pub enum Model704VarSetPri {
     /// Active Power Priority
     ///
     /// Active power priority.
@@ -1886,20 +1913,23 @@ pub enum VarSetPri {
     Vendor = 2,
 }
 
-impl VarSetPri {
-    pub fn from_repr(repr: u16) -> Option<VarSetPri> {
+impl Model704VarSetPri {
+    pub fn from_repr(repr: u16) -> Option<Model704VarSetPri> {
         match repr {
-            0 => Some(VarSetPri::Active),
-            1 => Some(VarSetPri::Reactive),
-            2 => Some(VarSetPri::Vendor),
+            0 => Some(Model704VarSetPri::Active),
+            1 => Some(Model704VarSetPri::Reactive),
+            2 => Some(Model704VarSetPri::Vendor),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704VarSetPri`] - only `Model704VarSetPri` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `VarSetPri` distinct from another model's point of the same name.
+pub type VarSetPri = Model704VarSetPri;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WMaxLimPctEna {
+pub enum Model704WMaxLimPctEna {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1910,19 +1940,22 @@ pub enum WMaxLimPctEna {
     Enabled = 1,
 }
 
-impl WMaxLimPctEna {
-    pub fn from_repr(repr: u16) -> Option<WMaxLimPctEna> {
+impl Model704WMaxLimPctEna {
+    pub fn from_repr(repr: u16) -> Option<Model704WMaxLimPctEna> {
         match repr {
-            0 => Some(WMaxLimPctEna::Disabled),
-            1 => Some(WMaxLimPctEna::Enabled),
+            0 => Some(Model704WMaxLimPctEna::Disabled),
+            1 => Some(Model704WMaxLimPctEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704WMaxLimPctEna`] - only `Model704WMaxLimPctEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WMaxLimPctEna` distinct from another model's point of the same name.
+pub type WMaxLimPctEna = Model704WMaxLimPctEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WMaxLimPctEnaRvrt {
+pub enum Model704WMaxLimPctEnaRvrt {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1933,19 +1966,22 @@ pub enum WMaxLimPctEnaRvrt {
     Enabled = 1,
 }
 
-impl WMaxLimPctEnaRvrt {
-    pub fn from_repr(repr: u16) -> Option<WMaxLimPctEnaRvrt> {
+impl Model704WMaxLimPctEnaRvrt {
+    pub fn from_repr(repr: u16) -> Option<Model704WMaxLimPctEnaRvrt> {
         match repr {
-            0 => Some(WMaxLimPctEnaRvrt::Disabled),
-            1 => Some(WMaxLimPctEnaRvrt::Enabled),
+            0 => Some(Model704WMaxLimPctEnaRvrt::Disabled),
+            1 => Some(Model704WMaxLimPctEnaRvrt::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704WMaxLimPctEnaRvrt`] - only `Model704WMaxLimPctEnaRvrt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WMaxLimPctEnaRvrt` distinct from another model's point of the same name.
+pub type WMaxLimPctEnaRvrt = Model704WMaxLimPctEnaRvrt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WRmpRef {
+pub enum Model704WRmpRef {
     /// Max Current Ramp
     ///
     /// Ramp based on percent of max current per second.
@@ -1956,19 +1992,22 @@ pub enum WRmpRef {
     WMax = 1,
 }
 
-impl WRmpRef {
-    pub fn from_repr(repr: u16) -> Option<WRmpRef> {
+impl Model704WRmpRef {
+    pub fn from_repr(repr: u16) -> Option<Model704WRmpRef> {
         match repr {
-            0 => Some(WRmpRef::AMax),
-            1 => Some(WRmpRef::WMax),
+            0 => Some(Model704WRmpRef::AMax),
+            1 => Some(Model704WRmpRef::WMax),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704WRmpRef`] - only `Model704WRmpRef` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WRmpRef` distinct from another model's point of the same name.
+pub type WRmpRef = Model704WRmpRef;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WSetEna {
+pub enum Model704WSetEna {
     /// Disabled
     ///
     /// Function is disabled.
@@ -1979,19 +2018,22 @@ pub enum WSetEna {
     Enabled = 1,
 }
 
-impl WSetEna {
-    pub fn from_repr(repr: u16) -> Option<WSetEna> {
+impl Model704WSetEna {
+    pub fn from_repr(repr: u16) -> Option<Model704WSetEna> {
         match repr {
-            0 => Some(WSetEna::Disabled),
-            1 => Some(WSetEna::Enabled),
+            0 => Some(Model704WSetEna::Disabled),
+            1 => Some(Model704WSetEna::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704WSetEna`] - only `Model704WSetEna` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WSetEna` distinct from another model's point of the same name.
+pub type WSetEna = Model704WSetEna;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WSetEnaRvrt {
+pub enum Model704WSetEnaRvrt {
     /// Disabled
     ///
     /// Function is disabled.
@@ -2002,19 +2044,22 @@ pub enum WSetEnaRvrt {
     Enabled = 1,
 }
 
-impl WSetEnaRvrt {
-    pub fn from_repr(repr: u16) -> Option<WSetEnaRvrt> {
+impl Model704WSetEnaRvrt {
+    pub fn from_repr(repr: u16) -> Option<Model704WSetEnaRvrt> {
         match repr {
-            0 => Some(WSetEnaRvrt::Disabled),
-            1 => Some(WSetEnaRvrt::Enabled),
+            0 => Some(Model704WSetEnaRvrt::Disabled),
+            1 => Some(Model704WSetEnaRvrt::Enabled),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model704WSetEnaRvrt`] - only `Model704WSetEnaRvrt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WSetEnaRvrt` distinct from another model's point of the same name.
+pub type WSetEnaRvrt = Model704WSetEnaRvrt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum WSetMod {
+pub enum Model704WSetMod {
     /// Active Power As Max Percent
     ///
     /// Active power setting is percentage of maximum active power.
@@ -2025,15 +2070,18 @@ pub enum WSetMod {
     Watts = 1,
 }
 
-impl WSetMod {
-    pub fn from_repr(repr: u16) -> Option<WSetMod> {
+impl Model704WSetMod {
+    pub fn from_repr(repr: u16) -> Option<Model704WSetMod> {
         match repr {
-            0 => Some(WSetMod::WMaxPct),
-            1 => Some(WSetMod::Watts),
+            0 => Some(Model704WSetMod::WMaxPct),
+            1 => Some(Model704WSetMod::Watts),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model704WSetMod`] - only `Model704WSetMod` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `WSetMod` distinct from another model's point of the same name.
+pub type WSetMod = Model704WSetMod;
 
 #[repr(C)]
 pub struct Model704CallbackAdapter {
@@ -2041,21 +2089,23 @@ pub struct Model704CallbackAdapter {
     /// Power Factor Enable (W Inj) Enable (PFWInjEna)
     ///
     /// Power factor enable when injecting active power.
-    power_factor_enable_w_inj_enable_callback: Option<extern "C" fn(*const c_void) -> PfwInjEna>,
+    power_factor_enable_w_inj_enable_callback:
+        Option<extern "C" fn(*const c_void) -> Model704PfwInjEna>,
     /// Power Factor Enable (W Inj) Enable (PFWInjEna)
     ///
     /// Power factor enable when injecting active power.
-    set_power_factor_enable_w_inj_enable_callback: Option<extern "C" fn(PfwInjEna, *mut c_void)>,
+    set_power_factor_enable_w_inj_enable_callback:
+        Option<extern "C" fn(Model704PfwInjEna, *mut c_void)>,
     /// Power Factor Reversion Enable (W Inj) (PFWInjEnaRvrt)
     ///
     /// Power factor reversion timer when injecting active power enable.
     power_factor_reversion_enable_w_inj_callback:
-        Option<extern "C" fn(*const c_void) -> PfwInjEnaRvrt>,
+        Option<extern "C" fn(*const c_void) -> Model704PfwInjEnaRvrt>,
     /// Power Factor Reversion Enable (W Inj) (PFWInjEnaRvrt)
     ///
     /// Power factor reversion timer when injecting active power enable.
     set_power_factor_reversion_enable_w_inj_callback:
-        Option<extern "C" fn(PfwInjEnaRvrt, *mut c_void)>,
+        Option<extern "C" fn(Model704PfwInjEnaRvrt, *mut c_void)>,
     /// PF Reversion Time (W Inj) (PFWInjRvrtTms)
     ///
     /// Power factor reversion timer when injecting active power.
@@ -2071,21 +2121,23 @@ pub struct Model704CallbackAdapter {
     /// Power Factor Enable (W Abs) Enable (PFWAbsEna)
     ///
     /// Power factor enable when absorbing active power.
-    power_factor_enable_w_abs_enable_callback: Option<extern "C" fn(*const c_void) -> PfwAbsEna>,
+    power_factor_enable_w_abs_enable_callback:
+        Option<extern "C" fn(*const c_void) -> Model704PfwAbsEna>,
     /// Power Factor Enable (W Abs) Enable (PFWAbsEna)
     ///
     /// Power factor enable when absorbing active power.
-    set_power_factor_enable_w_abs_enable_callback: Option<extern "C" fn(PfwAbsEna, *mut c_void)>,
+    set_power_factor_enable_w_abs_enable_callback:
+        Option<extern "C" fn(Model704PfwAbsEna, *mut c_void)>,
     /// Power Factor Reversion Enable (W Abs) (PFWAbsEnaRvrt)
     ///
     /// Power factor reversion timer when absorbing active power enable.
     power_factor_reversion_enable_w_abs_callback:
-        Option<extern "C" fn(*const c_void) -> PfwAbsEnaRvrt>,
+        Option<extern "C" fn(*const c_void) -> Model704PfwAbsEnaRvrt>,
     /// Power Factor Reversion Enable (W Abs) (PFWAbsEnaRvrt)
     ///
     /// Power factor reversion timer when absorbing active power enable.
     set_power_factor_reversion_enable_w_abs_callback:
-        Option<extern "C" fn(PfwAbsEnaRvrt, *mut c_void)>,
+        Option<extern "C" fn(Model704PfwAbsEnaRvrt, *mut c_void)>,
     /// PF Reversion Time (W Abs) (PFWAbsRvrtTms)
     ///
     /// Power factor reversion timer when absorbing active power.
@@ -2101,11 +2153,13 @@ pub struct Model704CallbackAdapter {
     /// Limit Max Power Pct Enable (WMaxLimPctEna)
     ///
     /// Limit maximum active power percent enable.
-    limit_max_power_pct_enable_callback: Option<extern "C" fn(*const c_void) -> WMaxLimPctEna>,
+    limit_max_power_pct_enable_callback:
+        Option<extern "C" fn(*const c_void) -> Model704WMaxLimPctEna>,
     /// Limit Max Power Pct Enable (WMaxLimPctEna)
     ///
     /// Limit maximum active power percent enable.
-    set_limit_max_power_pct_enable_callback: Option<extern "C" fn(WMaxLimPctEna, *mut c_void)>,
+    set_limit_max_power_pct_enable_callback:
+        Option<extern "C" fn(Model704WMaxLimPctEna, *mut c_void)>,
     /// Limit Max Power Pct Setpoint (WMaxLimPct)
     ///
     /// Limit maximum active power percent value.
@@ -2126,12 +2180,12 @@ pub struct Model704CallbackAdapter {
     ///
     /// Reversion limit maximum active power percent value enable.
     reversion_limit_max_power_pct_enable_callback:
-        Option<extern "C" fn(*const c_void) -> WMaxLimPctEnaRvrt>,
+        Option<extern "C" fn(*const c_void) -> Model704WMaxLimPctEnaRvrt>,
     /// Reversion Limit Max Power Pct Enable (WMaxLimPctEnaRvrt)
     ///
     /// Reversion limit maximum active power percent value enable.
     set_reversion_limit_max_power_pct_enable_callback:
-        Option<extern "C" fn(WMaxLimPctEnaRvrt, *mut c_void)>,
+        Option<extern "C" fn(Model704WMaxLimPctEnaRvrt, *mut c_void)>,
     /// Limit Max Power Pct Reversion Time (WMaxLimPctRvrtTms)
     ///
     /// Limit maximum active power percent reversion time.
@@ -2147,19 +2201,19 @@ pub struct Model704CallbackAdapter {
     /// Set Active Power Enable (WSetEna)
     ///
     /// Set active power enable.
-    active_power_enable_callback: Option<extern "C" fn(*const c_void) -> WSetEna>,
+    active_power_enable_callback: Option<extern "C" fn(*const c_void) -> Model704WSetEna>,
     /// Set Active Power Enable (WSetEna)
     ///
     /// Set active power enable.
-    set_active_power_enable_callback: Option<extern "C" fn(WSetEna, *mut c_void)>,
+    set_active_power_enable_callback: Option<extern "C" fn(Model704WSetEna, *mut c_void)>,
     /// Set Active Power Mode (WSetMod)
     ///
     /// Set active power mode.
-    active_power_mode_callback: Option<extern "C" fn(*const c_void) -> WSetMod>,
+    active_power_mode_callback: Option<extern "C" fn(*const c_void) -> Model704WSetMod>,
     /// Set Active Power Mode (WSetMod)
     ///
     /// Set active power mode.
-    set_active_power_mode_callback: Option<extern "C" fn(WSetMod, *mut c_void)>,
+    set_active_power_mode_callback: Option<extern "C" fn(Model704WSetMod, *mut c_void)>,
     /// Active Power Setpoint (W) (WSet)
     ///
     /// Active power setting value in watts.
@@ -2195,11 +2249,13 @@ pub struct Model704CallbackAdapter {
     /// Reversion Active Power Enable (WSetEnaRvrt)
     ///
     /// Reversion active power function enable.
-    reversion_active_power_enable_callback: Option<extern "C" fn(*const c_void) -> WSetEnaRvrt>,
+    reversion_active_power_enable_callback:
+        Option<extern "C" fn(*const c_void) -> Model704WSetEnaRvrt>,
     /// Reversion Active Power Enable (WSetEnaRvrt)
     ///
     /// Reversion active power function enable.
-    set_reversion_active_power_enable_callback: Option<extern "C" fn(WSetEnaRvrt, *mut c_void)>,
+    set_reversion_active_power_enable_callback:
+        Option<extern "C" fn(Model704WSetEnaRvrt, *mut c_void)>,
     /// Active Power Reversion Time (WSetRvrtTms)
     ///
     /// Set active power reversion time.
@@ -2215,27 +2271,27 @@ pub struct Model704CallbackAdapter {
     /// Set Reactive Power Enable (VarSetEna)
     ///
     /// Set reactive power enable.
-    reactive_power_enable_callback: Option<extern "C" fn(*const c_void) -> VarSetEna>,
+    reactive_power_enable_callback: Option<extern "C" fn(*const c_void) -> Model704VarSetEna>,
     /// Set Reactive Power Enable (VarSetEna)
     ///
     /// Set reactive power enable.
-    set_reactive_power_enable_callback: Option<extern "C" fn(VarSetEna, *mut c_void)>,
+    set_reactive_power_enable_callback: Option<extern "C" fn(Model704VarSetEna, *mut c_void)>,
     /// Set Reactive Power Mode (VarSetMod)
     ///
     /// Set reactive power mode.
-    reactive_power_mode_callback: Option<extern "C" fn(*const c_void) -> VarSetMod>,
+    reactive_power_mode_callback: Option<extern "C" fn(*const c_void) -> Model704VarSetMod>,
     /// Set Reactive Power Mode (VarSetMod)
     ///
     /// Set reactive power mode.
-    set_reactive_power_mode_callback: Option<extern "C" fn(VarSetMod, *mut c_void)>,
+    set_reactive_power_mode_callback: Option<extern "C" fn(Model704VarSetMod, *mut c_void)>,
     /// Reactive Power Priority (VarSetPri)
     ///
     /// Reactive power priority.
-    reactive_power_priority_callback: Option<extern "C" fn(*const c_void) -> VarSetPri>,
+    reactive_power_priority_callback: Option<extern "C" fn(*const c_void) -> Model704VarSetPri>,
     /// Reactive Power Priority (VarSetPri)
     ///
     /// Reactive power priority.
-    set_reactive_power_priority_callback: Option<extern "C" fn(VarSetPri, *mut c_void)>,
+    set_reactive_power_priority_callback: Option<extern "C" fn(Model704VarSetPri, *mut c_void)>,
     /// Reactive Power Setpoint (Vars) (VarSet)
     ///
     /// Reactive power setting value in vars.
@@ -2271,11 +2327,13 @@ pub struct Model704CallbackAdapter {
     /// Reversion Reactive Power Enable (VarSetEnaRvrt)
     ///
     /// Reversion reactive power function enable.
-    reversion_reactive_power_enable_callback: Option<extern "C" fn(*const c_void) -> VarSetEnaRvrt>,
+    reversion_reactive_power_enable_callback:
+        Option<extern "C" fn(*const c_void) -> Model704VarSetEnaRvrt>,
     /// Reversion Reactive Power Enable (VarSetEnaRvrt)
     ///
     /// Reversion reactive power function enable.
-    set_reversion_reactive_power_enable_callback: Option<extern "C" fn(VarSetEnaRvrt, *mut c_void)>,
+    set_reversion_reactive_power_enable_callback:
+        Option<extern "C" fn(Model704VarSetEnaRvrt, *mut c_void)>,
     /// Reactive Power Reversion Time (VarSetRvrtTms)
     ///
     /// Set reactive power reversion time.
@@ -2299,11 +2357,11 @@ pub struct Model704CallbackAdapter {
     /// Normal Ramp Rate Reference (WRmpRef)
     ///
     /// Ramp rate reference unit for increases in active power or current during normal generation.
-    normal_ramp_rate_reference_callback: Option<extern "C" fn(*const c_void) -> WRmpRef>,
+    normal_ramp_rate_reference_callback: Option<extern "C" fn(*const c_void) -> Model704WRmpRef>,
     /// Normal Ramp Rate Reference (WRmpRef)
     ///
     /// Ramp rate reference unit for increases in active power or current during normal generation.
-    set_normal_ramp_rate_reference_callback: Option<extern "C" fn(WRmpRef, *mut c_void)>,
+    set_normal_ramp_rate_reference_callback: Option<extern "C" fn(Model704WRmpRef, *mut c_void)>,
     /// Reactive Power Ramp Rate (VarRmp)
     ///
     /// Ramp rate based on max reactive power per second.
@@ -2315,11 +2373,11 @@ pub struct Model704CallbackAdapter {
     /// Anti-Islanding Enable (AntiIslEna)
     ///
     /// Anti-islanding enable.
-    anti_islanding_enable_callback: Option<extern "C" fn(*const c_void) -> AntiIslEna>,
+    anti_islanding_enable_callback: Option<extern "C" fn(*const c_void) -> Model704AntiIslEna>,
     /// Anti-Islanding Enable (AntiIslEna)
     ///
     /// Anti-islanding enable.
-    set_anti_islanding_enable_callback: Option<extern "C" fn(AntiIslEna, *mut c_void)>,
+    set_anti_islanding_enable_callback: Option<extern "C" fn(Model704AntiIslEna, *mut c_void)>,
     /// Power Factor Scale Factor (PF_SF)
     ///
     /// Power factor scale factor.
@@ -2356,12 +2414,12 @@ pub struct Model704CallbackAdapter {
     ///
     /// Power factor excitation setpoint when injecting active power.
     power_factor_w_inj_power_factor_excitation_w_inj_callback:
-        Option<extern "C" fn(*const c_void) -> Ext>,
+        Option<extern "C" fn(*const c_void) -> Model704Ext>,
     /// Power Factor Excitation (W Inj) (Ext)
     ///
     /// Power factor excitation setpoint when injecting active power.
     set_power_factor_w_inj_power_factor_excitation_w_inj_callback:
-        Option<extern "C" fn(Ext, *mut c_void)>,
+        Option<extern "C" fn(Model704Ext, *mut c_void)>,
     /// Reversion Power Factor (W Inj)  (PF)
     ///
     /// Reversion power factor setpoint when injecting active power.
@@ -2376,12 +2434,12 @@ pub struct Model704CallbackAdapter {
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
     reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback:
-        Option<extern "C" fn(*const c_void) -> Ext>,
+        Option<extern "C" fn(*const c_void) -> Model704Ext>,
     /// Reversion PF Excitation (W Inj) (Ext)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
     set_reversion_power_factor_w_inj_reversion_pf_excitation_w_inj_callback:
-        Option<extern "C" fn(Ext, *mut c_void)>,
+        Option<extern "C" fn(Model704Ext, *mut c_void)>,
     /// Power Factor (W Abs)  (PF)
     ///
     /// Power factor setpoint when absorbing active power.
@@ -2394,12 +2452,12 @@ pub struct Model704CallbackAdapter {
     ///
     /// Power factor excitation setpoint when absorbing active power.
     power_factor_w_abs_power_factor_excitation_w_abs_callback:
-        Option<extern "C" fn(*const c_void) -> Ext>,
+        Option<extern "C" fn(*const c_void) -> Model704Ext>,
     /// Power Factor Excitation (W Abs) (Ext)
     ///
     /// Power factor excitation setpoint when absorbing active power.
     set_power_factor_w_abs_power_factor_excitation_w_abs_callback:
-        Option<extern "C" fn(Ext, *mut c_void)>,
+        Option<extern "C" fn(Model704Ext, *mut c_void)>,
     /// Reversion Power Factor (W Abs)  (PF)
     ///
     /// Reversion power factor setpoint when absorbing active power.
@@ -2414,12 +2472,12 @@ pub struct Model704CallbackAdapter {
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
     reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback:
-        Option<extern "C" fn(*const c_void) -> Ext>,
+        Option<extern "C" fn(*const c_void) -> Model704Ext>,
     /// Reversion PF Excitation (W Abs) (Ext)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
     set_reversion_power_factor_w_abs_reversion_pf_excitation_w_abs_callback:
-        Option<extern "C" fn(Ext, *mut c_void)>,
+        Option<extern "C" fn(Model704Ext, *mut c_void)>,
 }
 
 impl ReadAdapter for Model704CallbackAdapter {
@@ -3054,11 +3112,11 @@ pub struct Model704StatefulAdapter {
     /// Power Factor Enable (W Inj) Enable (PFWInjEna)
     ///
     /// Power factor enable when injecting active power.
-    pub power_factor_enable_w_inj_enable: PfwInjEna,
+    pub power_factor_enable_w_inj_enable: Model704PfwInjEna,
     /// Power Factor Reversion Enable (W Inj) (PFWInjEnaRvrt)
     ///
     /// Power factor reversion timer when injecting active power enable.
-    pub power_factor_reversion_enable_w_inj: PfwInjEnaRvrt,
+    pub power_factor_reversion_enable_w_inj: Model704PfwInjEnaRvrt,
     /// PF Reversion Time (W Inj) (PFWInjRvrtTms)
     ///
     /// Power factor reversion timer when injecting active power.
@@ -3070,11 +3128,11 @@ pub struct Model704StatefulAdapter {
     /// Power Factor Enable (W Abs) Enable (PFWAbsEna)
     ///
     /// Power factor enable when absorbing active power.
-    pub power_factor_enable_w_abs_enable: PfwAbsEna,
+    pub power_factor_enable_w_abs_enable: Model704PfwAbsEna,
     /// Power Factor Reversion Enable (W Abs) (PFWAbsEnaRvrt)
     ///
     /// Power factor reversion timer when absorbing active power enable.
-    pub power_factor_reversion_enable_w_abs: PfwAbsEnaRvrt,
+    pub power_factor_reversion_enable_w_abs: Model704PfwAbsEnaRvrt,
     /// PF Reversion Time (W Abs) (PFWAbsRvrtTms)
     ///
     /// Power factor reversion timer when absorbing active power.
@@ -3086,7 +3144,7 @@ pub struct Model704StatefulAdapter {
     /// Limit Max Power Pct Enable (WMaxLimPctEna)
     ///
     /// Limit maximum active power percent enable.
-    pub limit_max_power_pct_enable: WMaxLimPctEna,
+    pub limit_max_power_pct_enable: Model704WMaxLimPctEna,
     /// Limit Max Power Pct Setpoint (WMaxLimPct)
     ///
     /// Limit maximum active power percent value.
@@ -3098,7 +3156,7 @@ pub struct Model704StatefulAdapter {
     /// Reversion Limit Max Power Pct Enable (WMaxLimPctEnaRvrt)
     ///
     /// Reversion limit maximum active power percent value enable.
-    pub reversion_limit_max_power_pct_enable: WMaxLimPctEnaRvrt,
+    pub reversion_limit_max_power_pct_enable: Model704WMaxLimPctEnaRvrt,
     /// Limit Max Power Pct Reversion Time (WMaxLimPctRvrtTms)
     ///
     /// Limit maximum active power percent reversion time.
@@ -3110,11 +3168,11 @@ pub struct Model704StatefulAdapter {
     /// Set Active Power Enable (WSetEna)
     ///
     /// Set active power enable.
-    pub active_power_enable: WSetEna,
+    pub active_power_enable: Model704WSetEna,
     /// Set Active Power Mode (WSetMod)
     ///
     /// Set active power mode.
-    pub active_power_mode: WSetMod,
+    pub active_power_mode: Model704WSetMod,
     /// Active Power Setpoint (W) (WSet)
     ///
     /// Active power setting value in watts.
@@ -3134,7 +3192,7 @@ pub struct Model704StatefulAdapter {
     /// Reversion Active Power Enable (WSetEnaRvrt)
     ///
     /// Reversion active power function enable.
-    pub reversion_active_power_enable: WSetEnaRvrt,
+    pub reversion_active_power_enable: Model704WSetEnaRvrt,
     /// Active Power Reversion Time (WSetRvrtTms)
     ///
     /// Set active power reversion time.
@@ -3146,15 +3204,15 @@ pub struct Model704StatefulAdapter {
     /// Set Reactive Power Enable (VarSetEna)
     ///
     /// Set reactive power enable.
-    pub reactive_power_enable: VarSetEna,
+    pub reactive_power_enable: Model704VarSetEna,
     /// Set Reactive Power Mode (VarSetMod)
     ///
     /// Set reactive power mode.
-    pub reactive_power_mode: VarSetMod,
+    pub reactive_power_mode: Model704VarSetMod,
     /// Reactive Power Priority (VarSetPri)
     ///
     /// Reactive power priority.
-    pub reactive_power_priority: VarSetPri,
+    pub reactive_power_priority: Model704VarSetPri,
     /// Reactive Power Setpoint (Vars) (VarSet)
     ///
     /// Reactive power setting value in vars.
@@ -3174,7 +3232,7 @@ pub struct Model704StatefulAdapter {
     /// Reversion Reactive Power Enable (VarSetEnaRvrt)
     ///
     /// Reversion reactive power function enable.
-    pub reversion_reactive_power_enable: VarSetEnaRvrt,
+    pub reversion_reactive_power_enable: Model704VarSetEnaRvrt,
     /// Reactive Power Reversion Time (VarSetRvrtTms)
     ///
     /// Set reactive power reversion time.
@@ -3190,7 +3248,7 @@ pub struct Model704StatefulAdapter {
     /// Normal Ramp Rate Reference (WRmpRef)
     ///
     /// Ramp rate reference unit for increases in active power or current during normal generation.
-    pub normal_ramp_rate_reference: WRmpRef,
+    pub normal_ramp_rate_reference: Model704WRmpRef,
     /// Reactive Power Ramp Rate (VarRmp)
     ///
     /// Ramp rate based on max reactive power per second.
@@ -3198,7 +3256,7 @@ pub struct Model704StatefulAdapter {
     /// Anti-Islanding Enable (AntiIslEna)
     ///
     /// Anti-islanding enable.
-    pub anti_islanding_enable: AntiIslEna,
+    pub anti_islanding_enable: Model704AntiIslEna,
     /// Power Factor Scale Factor (PF_SF)
     ///
     /// Power factor scale factor.
@@ -3230,7 +3288,7 @@ pub struct Model704StatefulAdapter {
     /// Power Factor Excitation (W Inj) (Ext)
     ///
     /// Power factor excitation setpoint when injecting active power.
-    pub power_factor_w_inj_power_factor_excitation_w_inj: Ext,
+    pub power_factor_w_inj_power_factor_excitation_w_inj: Model704Ext,
     /// Reversion Power Factor (W Inj)  (PF)
     ///
     /// Reversion power factor setpoint when injecting active power.
@@ -3238,7 +3296,7 @@ pub struct Model704StatefulAdapter {
     /// Reversion PF Excitation (W Inj) (Ext)
     ///
     /// Reversion power factor excitation setpoint when injecting active power.
-    pub reversion_power_factor_w_inj_reversion_pf_excitation_w_inj: Ext,
+    pub reversion_power_factor_w_inj_reversion_pf_excitation_w_inj: Model704Ext,
     /// Power Factor (W Abs)  (PF)
     ///
     /// Power factor setpoint when absorbing active power.
@@ -3246,7 +3304,7 @@ pub struct Model704StatefulAdapter {
     /// Power Factor Excitation (W Abs) (Ext)
     ///
     /// Power factor excitation setpoint when absorbing active power.
-    pub power_factor_w_abs_power_factor_excitation_w_abs: Ext,
+    pub power_factor_w_abs_power_factor_excitation_w_abs: Model704Ext,
     /// Reversion Power Factor (W Abs)  (PF)
     ///
     /// Reversion power factor setpoint when absorbing active power.
@@ -3254,7 +3312,7 @@ pub struct Model704StatefulAdapter {
     /// Reversion PF Excitation (W Abs) (Ext)
     ///
     /// Reversion power factor excitation setpoint when absorbing active power.
-    pub reversion_power_factor_w_abs_reversion_pf_excitation_w_abs: Ext,
+    pub reversion_power_factor_w_abs_reversion_pf_excitation_w_abs: Model704Ext,
 }
 
 impl ReadAdapter for Model704StatefulAdapter {

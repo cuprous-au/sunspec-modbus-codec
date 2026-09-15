@@ -1629,35 +1629,41 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum CrvType {
+pub enum Model144CrvType {
     CeaseToEnergize = 1,
 }
 
-impl CrvType {
-    pub fn from_repr(repr: u16) -> Option<CrvType> {
+impl Model144CrvType {
+    pub fn from_repr(repr: u16) -> Option<Model144CrvType> {
         match repr {
-            1 => Some(CrvType::CeaseToEnergize),
+            1 => Some(Model144CrvType::CeaseToEnergize),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model144CrvType`] - only `Model144CrvType` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `CrvType` distinct from another model's point of the same name.
+pub type CrvType = Model144CrvType;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model144ReadOnly {
     Readwrite = 0,
     Readonly = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model144ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model144ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Readwrite),
-            1 => Some(ReadOnly::Readonly),
+            0 => Some(Model144ReadOnly::Readwrite),
+            1 => Some(Model144ReadOnly::Readonly),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model144ReadOnly`] - only `Model144ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model144ReadOnly;
 
 #[repr(C)]
 pub struct Model144CallbackAdapter {
@@ -1731,7 +1737,7 @@ pub struct Model144CallbackAdapter {
     /// Scale factor for frequency.
     hz_sf_callback: extern "C" fn(*const c_void) -> i16,
     /// CrvType
-    crv_type_callback: extern "C" fn(*const c_void) -> CrvType,
+    crv_type_callback: extern "C" fn(*const c_void) -> Model144CrvType,
     /// ActPt (ActPt)
     ///
     /// Number of active points in array.
@@ -2071,7 +2077,7 @@ pub struct Model144CallbackAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Curve is read-only or can be modified.
-    curve_read_only_callback: extern "C" fn(*const c_void) -> ReadOnly,
+    curve_read_only_callback: extern "C" fn(*const c_void) -> Model144ReadOnly,
 }
 
 impl ReadAdapter for Model144CallbackAdapter {
@@ -2796,7 +2802,7 @@ pub struct Model144StatefulAdapter {
     /// Scale factor for frequency.
     pub hz_sf: i16,
     /// CrvType
-    pub crv_type: CrvType,
+    pub crv_type: Model144CrvType,
     /// ActPt (ActPt)
     ///
     /// Number of active points in array.
@@ -2968,7 +2974,7 @@ pub struct Model144StatefulAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Curve is read-only or can be modified.
-    pub curve_read_only: ReadOnly,
+    pub curve_read_only: Model144ReadOnly,
 }
 
 impl ReadAdapter for Model144StatefulAdapter {

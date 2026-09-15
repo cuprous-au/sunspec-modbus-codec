@@ -2074,46 +2074,52 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Alg {
+pub enum Model9Alg {
     /// For test purposes only
     None = 0,
     AesGmac64 = 1,
     Ecc256 = 2,
 }
 
-impl Alg {
-    pub fn from_repr(repr: u16) -> Option<Alg> {
+impl Model9Alg {
+    pub fn from_repr(repr: u16) -> Option<Model9Alg> {
         match repr {
-            0 => Some(Alg::None),
-            1 => Some(Alg::AesGmac64),
-            2 => Some(Alg::Ecc256),
+            0 => Some(Model9Alg::None),
+            1 => Some(Model9Alg::AesGmac64),
+            2 => Some(Model9Alg::Ecc256),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model9Alg`] - only `Model9Alg` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Alg` distinct from another model's point of the same name.
+pub type Alg = Model9Alg;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Fmt {
+pub enum Model9Fmt {
     None = 0,
     X509Pem = 1,
     X509Der = 2,
 }
 
-impl Fmt {
-    pub fn from_repr(repr: u16) -> Option<Fmt> {
+impl Model9Fmt {
+    pub fn from_repr(repr: u16) -> Option<Model9Fmt> {
         match repr {
-            0 => Some(Fmt::None),
-            1 => Some(Fmt::X509Pem),
-            2 => Some(Fmt::X509Der),
+            0 => Some(Model9Fmt::None),
+            1 => Some(Model9Fmt::X509Pem),
+            2 => Some(Model9Fmt::X509Der),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model9Fmt`] - only `Model9Fmt` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Fmt` distinct from another model's point of the same name.
+pub type Fmt = Model9Fmt;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum Typ {
+pub enum Model9Typ {
     DevKeyPair = 0,
     DevSharedKey = 1,
     OperatorPub = 2,
@@ -2121,18 +2127,21 @@ pub enum Typ {
     CaPub = 4,
 }
 
-impl Typ {
-    pub fn from_repr(repr: u16) -> Option<Typ> {
+impl Model9Typ {
+    pub fn from_repr(repr: u16) -> Option<Model9Typ> {
         match repr {
-            0 => Some(Typ::DevKeyPair),
-            1 => Some(Typ::DevSharedKey),
-            2 => Some(Typ::OperatorPub),
-            3 => Some(Typ::OperatorShared),
-            4 => Some(Typ::CaPub),
+            0 => Some(Model9Typ::DevKeyPair),
+            1 => Some(Model9Typ::DevSharedKey),
+            2 => Some(Model9Typ::OperatorPub),
+            3 => Some(Model9Typ::OperatorShared),
+            4 => Some(Model9Typ::CaPub),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model9Typ`] - only `Model9Typ` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `Typ` distinct from another model's point of the same name.
+pub type Typ = Model9Typ;
 
 #[repr(C)]
 pub struct Model9CallbackAdapter {
@@ -2156,19 +2165,19 @@ pub struct Model9CallbackAdapter {
     /// Format (Fmt)
     ///
     /// Format of this certificate
-    format_callback: extern "C" fn(*const c_void) -> Fmt,
+    format_callback: extern "C" fn(*const c_void) -> Model9Fmt,
     /// Format (Fmt)
     ///
     /// Format of this certificate
-    set_format_callback: extern "C" fn(Fmt, *mut c_void),
+    set_format_callback: extern "C" fn(Model9Fmt, *mut c_void),
     /// Type (Typ)
     ///
     /// Type of this certificate
-    typ_callback: extern "C" fn(*const c_void) -> Typ,
+    typ_callback: extern "C" fn(*const c_void) -> Model9Typ,
     /// Type (Typ)
     ///
     /// Type of this certificate
-    set_typ_callback: extern "C" fn(Typ, *mut c_void),
+    set_typ_callback: extern "C" fn(Model9Typ, *mut c_void),
     /// Total Length (TotLn)
     ///
     /// Total Length of the Certificate
@@ -2566,13 +2575,13 @@ pub struct Model9CallbackAdapter {
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    algorithm_callback: extern "C" fn(*const c_void) -> Alg,
+    algorithm_callback: extern "C" fn(*const c_void) -> Model9Alg,
     /// Algorithm (Alg)
     ///
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    set_algorithm_callback: extern "C" fn(Alg, *mut c_void),
+    set_algorithm_callback: extern "C" fn(Model9Alg, *mut c_void),
     /// N (N)
     ///
     /// Number of registers to follow for the certificate
@@ -3472,11 +3481,11 @@ pub struct Model9StatefulAdapter {
     /// Format (Fmt)
     ///
     /// Format of this certificate
-    pub format: Fmt,
+    pub format: Model9Fmt,
     /// Type (Typ)
     ///
     /// Type of this certificate
-    pub typ: Typ,
+    pub typ: Model9Typ,
     /// Total Length (TotLn)
     ///
     /// Total Length of the Certificate
@@ -3678,7 +3687,7 @@ pub struct Model9StatefulAdapter {
     /// Algorithm used to compute the digital signature
     ///
     /// For future proof
-    pub algorithm: Alg,
+    pub algorithm: Model9Alg,
     /// N (N)
     ///
     /// Number of registers to follow for the certificate

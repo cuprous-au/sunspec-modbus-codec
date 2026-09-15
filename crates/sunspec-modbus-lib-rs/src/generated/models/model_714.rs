@@ -602,7 +602,7 @@ pub trait WriteAdapter {}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum DcSta {
+pub enum Model714DcSta {
     /// Off
     Off = 0,
     /// On
@@ -613,21 +613,24 @@ pub enum DcSta {
     Error = 3,
 }
 
-impl DcSta {
-    pub fn from_repr(repr: u16) -> Option<DcSta> {
+impl Model714DcSta {
+    pub fn from_repr(repr: u16) -> Option<Model714DcSta> {
         match repr {
-            0 => Some(DcSta::Off),
-            1 => Some(DcSta::On),
-            2 => Some(DcSta::Warning),
-            3 => Some(DcSta::Error),
+            0 => Some(Model714DcSta::Off),
+            1 => Some(Model714DcSta::On),
+            2 => Some(Model714DcSta::Warning),
+            3 => Some(Model714DcSta::Error),
             _ => None,
         }
     }
 }
 
+/// Short, spec-matching alias for [`Model714DcSta`] - only `Model714DcSta` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `DcSta` distinct from another model's point of the same name.
+pub type DcSta = Model714DcSta;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum PrtTyp {
+pub enum Model714PrtTyp {
     /// Photovoltaic
     Pv = 0,
     /// Energy Storage System
@@ -644,20 +647,23 @@ pub enum PrtTyp {
     DcDc = 6,
 }
 
-impl PrtTyp {
-    pub fn from_repr(repr: u16) -> Option<PrtTyp> {
+impl Model714PrtTyp {
+    pub fn from_repr(repr: u16) -> Option<Model714PrtTyp> {
         match repr {
-            0 => Some(PrtTyp::Pv),
-            1 => Some(PrtTyp::Ess),
-            2 => Some(PrtTyp::Ev),
-            3 => Some(PrtTyp::Inj),
-            4 => Some(PrtTyp::Abs),
-            5 => Some(PrtTyp::Bidir),
-            6 => Some(PrtTyp::DcDc),
+            0 => Some(Model714PrtTyp::Pv),
+            1 => Some(Model714PrtTyp::Ess),
+            2 => Some(Model714PrtTyp::Ev),
+            3 => Some(Model714PrtTyp::Inj),
+            4 => Some(Model714PrtTyp::Abs),
+            5 => Some(Model714PrtTyp::Bidir),
+            6 => Some(Model714PrtTyp::DcDc),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model714PrtTyp`] - only `Model714PrtTyp` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `PrtTyp` distinct from another model's point of the same name.
+pub type PrtTyp = Model714PrtTyp;
 
 #[repr(C)]
 pub struct Model714CallbackAdapter {
@@ -709,7 +715,7 @@ pub struct Model714CallbackAdapter {
     /// Port Type (PrtTyp)
     ///
     /// Port type.
-    prt_port_type_callback: Option<extern "C" fn(*const c_void, u16) -> PrtTyp>,
+    prt_port_type_callback: Option<extern "C" fn(*const c_void, u16) -> Model714PrtTyp>,
     /// Port ID (ID)
     ///
     /// Port ID.
@@ -745,7 +751,7 @@ pub struct Model714CallbackAdapter {
     /// DC Port Status (DCSta)
     ///
     /// DC port status.
-    prt_dc_port_status_callback: Option<extern "C" fn(*const c_void, u16) -> DcSta>,
+    prt_dc_port_status_callback: Option<extern "C" fn(*const c_void, u16) -> Model714DcSta>,
     /// DC Port Alarm (DCAlrm)
     ///
     /// DC port alarm.
@@ -918,7 +924,7 @@ pub struct Model714Prt {
     /// Port Type (PrtTyp)
     ///
     /// Port type.
-    pub prt_port_type: PrtTyp,
+    pub prt_port_type: Model714PrtTyp,
     /// Port ID (ID)
     ///
     /// Port ID.
@@ -954,7 +960,7 @@ pub struct Model714Prt {
     /// DC Port Status (DCSta)
     ///
     /// DC port status.
-    pub prt_dc_port_status: DcSta,
+    pub prt_dc_port_status: Model714DcSta,
     /// DC Port Alarm (DCAlrm)
     ///
     /// DC port alarm.

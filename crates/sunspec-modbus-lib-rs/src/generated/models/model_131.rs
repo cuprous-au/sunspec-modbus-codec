@@ -1724,20 +1724,23 @@ pub trait WriteAdapter {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u16)]
-pub enum ReadOnly {
+pub enum Model131ReadOnly {
     Readwrite = 0,
     Readonly = 1,
 }
 
-impl ReadOnly {
-    pub fn from_repr(repr: u16) -> Option<ReadOnly> {
+impl Model131ReadOnly {
+    pub fn from_repr(repr: u16) -> Option<Model131ReadOnly> {
         match repr {
-            0 => Some(ReadOnly::Readwrite),
-            1 => Some(ReadOnly::Readonly),
+            0 => Some(Model131ReadOnly::Readwrite),
+            1 => Some(Model131ReadOnly::Readonly),
             _ => None,
         }
     }
 }
+
+/// Short, spec-matching alias for [`Model131ReadOnly`] - only `Model131ReadOnly` (unique per model) reaches the generated C header, since cbindgen has no module system to keep `ReadOnly` distinct from another model's point of the same name.
+pub type ReadOnly = Model131ReadOnly;
 
 #[repr(C)]
 pub struct Model131CallbackAdapter {
@@ -2165,7 +2168,7 @@ pub struct Model131CallbackAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Curve is read-only or can be modified.
-    curve_read_only_callback: extern "C" fn(*const c_void) -> ReadOnly,
+    curve_read_only_callback: extern "C" fn(*const c_void) -> Model131ReadOnly,
 }
 
 impl ReadAdapter for Model131CallbackAdapter {
@@ -3107,7 +3110,7 @@ pub struct Model131StatefulAdapter {
     /// ReadOnly (ReadOnly)
     ///
     /// Curve is read-only or can be modified.
-    pub curve_read_only: ReadOnly,
+    pub curve_read_only: Model131ReadOnly,
 }
 
 impl ReadAdapter for Model131StatefulAdapter {
