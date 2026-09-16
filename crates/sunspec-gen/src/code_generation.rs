@@ -198,7 +198,7 @@ pub fn generate_models_mod(models: &[ResolvedModel]) -> Scope {
 /// variant against the cursor directly, and forward an `Extern` variant through the vtable.
 pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
     let mut scope = Scope::new();
-    scope.import("crate::generated::models", "*");
+    scope.import("crate::sunspec::models", "*");
     scope.import("core::ffi", "c_void");
     scope.import("crate", "ModbusException");
     scope.import("crate", "ModelSpec");
@@ -214,7 +214,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         .r#macro("#[non_exhaustive]")
         .doc(
             "One model's read side: a statically known model paired with a shared borrow of\n\
-             its per-model [`ReadAdapter`](crate::generated::models) trait, or an\n\
+             its per-model [`ReadAdapter`](crate::sunspec::models) trait, or an\n\
              [`Extern`](ReadBinding::Extern) block dispatched through a C [`StaticModelSpec`] vtable.",
         );
     for model in models {
@@ -250,7 +250,7 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
         .r#macro("#[non_exhaustive]")
         .doc(
             "One model's write side: a statically known model, carrying a uniquely borrowed\n\
-             reference to its per-model [`WriteAdapter`](crate::generated::models) trait when the\n\
+             reference to its per-model [`WriteAdapter`](crate::sunspec::models) trait when the\n\
              model has writable points, or an [`Extern`](WriteBinding::Extern) block dispatched\n\
              through a C [`StaticModelSpec`] vtable. A variant with no adapter rejects every\n\
              write in its block.",

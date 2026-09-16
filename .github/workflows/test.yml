@@ -21,6 +21,10 @@ jobs:
         run: |
           rustup toolchain install stable --profile minimal
       - uses: Swatinem/rust-cache@v2
+      - name: Ensure generated code is up to date and aligned with the current implementation of sunspec-gen
+        run: |
+          cargo run -p sunspec-gen
+          git diff --exit-code
       - name: Format, lint and test
         run: |
           cargo build

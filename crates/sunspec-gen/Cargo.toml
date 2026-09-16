@@ -8,7 +8,6 @@ publish = false
 crate-type = ["lib"]
 
 [dependencies]
-cbindgen = { workspace = true }
 codegen = { workspace = true }
 glob = { workspace = true }
 heck = { workspace = true }

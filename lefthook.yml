@@ -1,9 +1,17 @@
+# This configuration is available if a developer chooses to use lefthook purely for convenience.
+# For each of these hooks, we also have tests in GitHub Actions to ensure quality/consistency.
 pre-commit:
   commands:
+    cargo-fmt:
+      # To ensure properly formatted code, this will fail if there are any outstanding formatting issues.
+      run: >-
+        cargo fmt -- --check
     sunspec-codegen:
+      # In order to ensure generated code is kept in sync with sunspec-gen implementation, this command reruns generation
+      # and adds the generated files as part of a pre-commit hook.
       # Unconditional rather than glob-scoped to the sunspec-gen crate: the models submodule
       # (crates/sunspec-gen/models) can also move without touching any ordinary file inside it,
       # and a glob wouldn't reliably catch that. Regeneration itself is a few seconds.
       run: >-
         cargo run --quiet -p sunspec-gen &&
-        git add crates/sunspec-modbus-lib-rs/src/generated crates/sunspec-modbus-lib-static/src/generated.rs
+        git add crates/sunspec-modbus-lib-rs/src/sunspec crates/sunspec-modbus-lib-static/src/generated.rs

@@ -3,8 +3,8 @@ pub mod buffer;
 pub mod cursor;
 #[macro_use]
 pub mod macros;
-pub mod generated;
 pub mod model;
+pub mod sunspec;
 
 pub use crate::model::{ModelList, ModelSpec, STARTING_REGISTER_OFFSET, StaticModelSpec, Sunspec};
 
@@ -25,7 +25,7 @@ pub enum ModbusException {
 mod tests {
     use core::ffi::CStr;
 
-    use crate::generated::{
+    use crate::sunspec::{
         adapters::{ReadBinding, WriteBinding},
         models::{
             model_1::{self, Model1StatefulAdapter},

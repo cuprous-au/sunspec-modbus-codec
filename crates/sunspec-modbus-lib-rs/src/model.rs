@@ -3,7 +3,7 @@ use core::ffi::c_void;
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
 use crate::cursor::{Cursor, CursorResult};
-use crate::generated::adapters::{ReadBinding, WriteBinding, read_model, write_model};
+use crate::sunspec::adapters::{ReadBinding, WriteBinding, read_model, write_model};
 
 /// SunSpec register maps begin at this Modbus holding-register address.
 pub const STARTING_REGISTER_OFFSET: u16 = 40000;
