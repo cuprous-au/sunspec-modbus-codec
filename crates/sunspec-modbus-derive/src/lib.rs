@@ -111,7 +111,14 @@ pub fn derive_model_list(input: TokenStream) -> TokenStream {
         Err(error) => return error.to_compile_error().into(),
     };
 
-    if fields.is_empty() || fields[0].name != "model_1" {
+    if fields.is_empty() {
+        return syn::Error::new_spanned(
+            struct_name,
+            "ModelList must include at least an instance of Model 1",
+        )
+        .to_compile_error()
+        .into();
+    } else if fields[0].name != "model_1" {
         return syn::Error::new_spanned(
             &field_nodes[0],
             "First model in a ModelList must be an instance of Model 1",
