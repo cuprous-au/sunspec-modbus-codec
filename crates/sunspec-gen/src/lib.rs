@@ -18,7 +18,7 @@ mod naming;
 mod sunspec_schema;
 
 /// Renders a `//`-commented block to include at the top of generated Rust sources.
-/// Includes a clear instructions on how to regenerate the file, and a reference to the specific SunSpec model tag
+/// Includes clear instructions on how to regenerate the file, and a reference to the specific SunSpec model tag
 /// that was the source for generation.
 /// `@generated` is the conventional marker various tools (GitHub Linguist, diff/review UIs) look for to treat a file
 ///  as generated rather than hand-written.
