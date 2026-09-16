@@ -13,7 +13,7 @@ pre-commit:
       # (crates/sunspec-gen/models) can also move without touching any ordinary file inside it,
       # and a glob wouldn't reliably catch that. Regeneration itself is a few seconds.
       run: >-
-        cargo run --quiet -p sunspec-gen
+        cargo run --quiet -p sunspec-gen &&
         git add \
           crates/sunspec-modbus-lib-rs/src/sunspec \
           crates/sunspec-modbus-lib-static/src/generated.rs \

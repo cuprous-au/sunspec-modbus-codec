@@ -14,6 +14,7 @@ use syn::{Data, DeriveInput, Fields, Ident, Index, Member, Path, parse_macro_inp
 mod model_registry;
 
 struct ModelField {
+    name: String,
     /// How this field is accessed on `self` - its name for a named struct, its position for a
     /// tuple struct. Every field also appears in the generated `ReadAdapters` in the same order
     /// (and, for a named struct, under the same name), so this doubles as the read-side adapter
@@ -68,6 +69,7 @@ fn resolve_field(index: usize, field: &syn::Field) -> syn::Result<ModelField> {
     let writable = model_registry::WRITABLE_MODELS.contains(&module_name.as_str());
 
     Ok(ModelField {
+        name: module_name,
         self_member,
         module,
         variant,
@@ -86,7 +88,7 @@ pub fn derive_model_list(input: TokenStream) -> TokenStream {
             .to_compile_error()
             .into();
     };
-    let (fields, tuple) = match &data.fields {
+    let (field_nodes, tuple) = match &data.fields {
         Fields::Named(fields) => (&fields.named, false),
         Fields::Unnamed(fields) => (&fields.unnamed, true),
         Fields::Unit => {
@@ -99,7 +101,7 @@ pub fn derive_model_list(input: TokenStream) -> TokenStream {
         }
     };
 
-    let fields = match fields
+    let fields = match field_nodes
         .iter()
         .enumerate()
         .map(|(index, field)| resolve_field(index, field))
@@ -108,6 +110,15 @@ pub fn derive_model_list(input: TokenStream) -> TokenStream {
         Ok(fields) => fields,
         Err(error) => return error.to_compile_error().into(),
     };
+
+    if fields.is_empty() || fields[0].name != "model_1" {
+        return syn::Error::new_spanned(
+            &field_nodes[0],
+            "First model in a ModelList must be an instance of Model 1",
+        )
+        .to_compile_error()
+        .into();
+    }
 
     let base_name = struct_name
         .to_string()
