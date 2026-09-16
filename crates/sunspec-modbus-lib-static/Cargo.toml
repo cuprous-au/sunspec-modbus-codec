@@ -243,7 +243,7 @@ model_64415 = ["sunspec-modbus-lib-rs/model_64415"]
 # @generated:end
 
 [dependencies]
-sunspec-modbus-lib-rs = { path = "../sunspec-modbus-lib-rs" }
+sunspec-modbus-lib-rs = { path = "../sunspec-modbus-lib-rs", default-features = false }
 
 [build-dependencies]
 cbindgen = { workspace = true }
