@@ -189,10 +189,40 @@ fn cast_ipv6_from_c(value: &str) -> String {
     format!("unsafe {{ &*({} as *const [u16; 8]) }}", value)
 }
 
+/// Everything needed to name a group or point relative to its ancestors, threaded down through
+/// `resolve_group`'s recursion. Three of the four fields are rebuilt at each level (see each
+/// one); `model_file_name` alone stays constant for the whole model.
+#[derive(Clone)]
+pub(crate) struct NamingContext {
+    /// Chain of ancestor labels, prepended by each fixed subgroup as resolution descends; reset
+    /// to `""` on entering a repeating group (or the top-level model group), since that gets its
+    /// own generated scope and so needs no ancestor qualification. Example: descending into
+    /// model 708's `MustTrip` then `Crv` builds `"Crv MustTrip"`, keeping its points distinct
+    /// from `MayTrip`'s own identically-named `Crv`.
+    identifier_text: String,
+    /// The short-form counterpart to `identifier_text`, used for compact names like a fixed
+    /// group's array-constant prefix. Inherits the parent's own `name_short` through nested
+    /// fixed groups, but resets to `""` on entering a repeating group or the top-level group.
+    /// Example: `"must_trip"`, naming model 708's `MUST_TRIP_POINTS` constant.
+    short_text: String,
+    /// Set only when directly inside a repeating group, to that group's own bare schema name -
+    /// disambiguates its points from another repeating group's same-named ones, since
+    /// `identifier_text` resets instead of accumulating for repeating groups. Example:
+    /// `Some("Pt")` for model 708's `Crv`'s point array, giving point names like `"Crv Pt
+    /// DeptRef"`.
+    name_prefix: Option<String>,
+    /// The SunSpec model JSON file's own name (e.g. `"model_708"`) - unlike the other three
+    /// fields, never changes as this descends into subgroups. Used only to build the
+    /// model-prefixed FFI name (e.g. `Model708Ena`) that keeps the generated C header's flat
+    /// namespace collision-free; irrelevant to Rust-side naming, which is already unique per
+    /// model without it.
+    model_file_name: String,
+}
+
 fn resolve_point_type(
     point: &Point,
     features: &mut HashSet<CodegenFeature>,
-    model_file_name: &str,
+    naming: &NamingContext,
 ) -> ResolvedType {
     let base_type = match point.type_ {
         PointType::Uint16
@@ -249,7 +279,7 @@ fn resolve_point_type(
         PointType::Ipv6addr => "u16".to_string(),
         _ if is_enum => format!(
             "{}{}",
-            model_file_name.to_pascal_case(),
+            naming.model_file_name.to_pascal_case(),
             point.name.to_pascal_case()
         ),
         _ => base_type.clone(),
@@ -298,12 +328,10 @@ fn resolve_point_type(
 pub(crate) fn resolve_point(
     point: &Point,
     features: &mut HashSet<CodegenFeature>,
-    identifier_text: &str,
-    name_prefix: Option<String>,
+    naming: &NamingContext,
     block_indices: Vec<BlockIndex>,
-    model_file_name: &str,
 ) -> Option<ResolvedPoint> {
-    let point_type = resolve_point_type(point, features, model_file_name);
+    let point_type = resolve_point_type(point, features, naming);
 
     let main_name = point
         .label
@@ -318,8 +346,9 @@ pub(crate) fn resolve_point(
         .unwrap_or(point.name.clone());
 
     let name = format!(
-        "{identifier_text} {} {main_name}",
-        name_prefix.clone().get_or_insert_default(),
+        "{} {} {main_name}",
+        naming.identifier_text,
+        naming.name_prefix.clone().get_or_insert_default(),
     );
 
     let label = if let Some(label) = &point.label {
@@ -356,7 +385,7 @@ pub(crate) fn resolve_point(
     })
 }
 
-pub fn resolve_enum(point: &Point, model_file_name: &str) -> Option<ResolvedEnum> {
+pub fn resolve_enum(point: &Point, naming: &NamingContext) -> Option<ResolvedEnum> {
     if point.type_ == PointType::Enum16 || point.type_ == PointType::Enum32 {
         let values: Vec<EnumValue> = point
             .symbols
@@ -384,12 +413,12 @@ pub fn resolve_enum(point: &Point, model_file_name: &str) -> Option<ResolvedEnum
                 name: Name::new(
                     format!(
                         "{}_{}",
-                        model_file_name.to_snake_case(),
+                        naming.model_file_name.to_snake_case(),
                         point.name.to_snake_case()
                     ),
                     format!(
                         "{}{}",
-                        model_file_name.to_pascal_case(),
+                        naming.model_file_name.to_pascal_case(),
                         point.name.to_pascal_case()
                     ),
                 ),
@@ -427,32 +456,21 @@ pub(crate) fn resolve_group(
     group: &Group,
     top_level_points_opt: Option<&[ResolvedPoint]>,
     features: &mut HashSet<CodegenFeature>,
-    identifier_text: &str,
-    short_text: &str,
-    name_prefix: Option<String>,
+    naming: &NamingContext,
     block_indices: Vec<BlockIndex>,
-    model_file_name: &str,
 ) -> ResolvedGroup {
-    let (name_snake, name_pascal, local_name_short) = group_identity(group, identifier_text);
+    let (name_snake, name_pascal, local_name_short) =
+        group_identity(group, &naming.identifier_text);
 
     let static_points: Vec<ResolvedPoint> = group
         .points
         .iter()
-        .flat_map(|point| {
-            resolve_point(
-                point,
-                features,
-                identifier_text,
-                name_prefix.clone(),
-                block_indices.clone(),
-                model_file_name,
-            )
-        })
+        .flat_map(|point| resolve_point(point, features, naming, block_indices.clone()))
         .collect();
 
     let top_level_points = top_level_points_opt.unwrap_or(&static_points);
 
-    let name_short = format!("{short_text} {}", group.name).to_snake_case();
+    let name_short = format!("{} {}", naming.short_text, group.name).to_snake_case();
 
     // A repeating group (or the top-level model group, detected by `top_level_points_opt` being
     // `None`) gets its own generated struct/array scope, so its subgroups don't need any
@@ -488,11 +506,12 @@ pub(crate) fn resolve_group(
                         child,
                         Some(top_level_points),
                         features,
-                        &format!("{child_label} {identifier_text}"),
-                        child_short_text,
-                        name_prefix.clone(),
+                        &NamingContext {
+                            identifier_text: format!("{child_label} {}", naming.identifier_text),
+                            short_text: child_short_text.to_string(),
+                            ..naming.clone()
+                        },
                         block_indices.clone(),
-                        model_file_name,
                     )),
                 })
             }
@@ -501,7 +520,7 @@ pub(crate) fn resolve_group(
                     .iter()
                     .find(|p| p.internal_name == *count_name)?;
 
-                let (group_name, _, index_prefix) = group_identity(child, identifier_text);
+                let (group_name, _, index_prefix) = group_identity(child, &naming.identifier_text);
                 let mut child_block_indices = block_indices.clone();
                 child_block_indices.push(BlockIndex {
                     group_name,
@@ -514,11 +533,12 @@ pub(crate) fn resolve_group(
                         child,
                         Some(top_level_points),
                         features,
-                        identifier_text,
-                        child_short_text,
-                        Some(child.name.clone()),
+                        &NamingContext {
+                            short_text: child_short_text.to_string(),
+                            name_prefix: Some(child.name.clone()),
+                            ..naming.clone()
+                        },
                         child_block_indices,
-                        model_file_name,
                     )),
                 })
             }
@@ -530,7 +550,7 @@ pub(crate) fn resolve_group(
     let mut enums: Vec<ResolvedEnum> = group
         .points
         .iter()
-        .flat_map(|point| resolve_enum(point, model_file_name))
+        .flat_map(|point| resolve_enum(point, naming))
         .chain(
             subgroups
                 .iter()
@@ -625,11 +645,13 @@ pub fn resolve_model(model: &SunspecModel, file_name: String) -> ResolvedModel {
         &model.group,
         None,
         &mut features,
-        "",
-        "",
-        None,
+        &NamingContext {
+            identifier_text: String::new(),
+            short_text: String::new(),
+            name_prefix: None,
+            model_file_name: file_name.clone(),
+        },
         vec![],
-        &file_name,
     );
 
     let mut point_names = NameTable::default();
