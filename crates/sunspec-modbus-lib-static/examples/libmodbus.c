@@ -7,8 +7,13 @@
 #include <time.h>
 #include <unistd.h>
 
+#ifndef SUNSPEC_MODEL_103_ENABLED
 #define SUNSPEC_MODEL_103_ENABLED
+#endif
+
+#ifndef SUNSPEC_MODEL_708_ENABLED
 #define SUNSPEC_MODEL_708_ENABLED
+#endif
 #include "../libsunspecmodbus.h"
 
 
