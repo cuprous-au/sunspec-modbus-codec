@@ -4,10 +4,8 @@
 
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
-use crate::cursor::Cursor;
-use crate::model::{ModelSpec, StaticModelSpec};
+use crate::model::ModelSpec;
 use core::cmp::min;
-use core::ffi::c_void;
 
 static POINTS: [PointDetails<()>; 3] = [
     PointDetails {
@@ -149,93 +147,3 @@ pub trait ReadAdapter {
 }
 
 pub trait WriteAdapter {}
-
-#[repr(C)]
-pub struct Model801CallbackAdapter {
-    context: *mut c_void,
-    /// Deprecated Model (DEPRECATED)
-    ///
-    /// This model has been deprecated.
-    deprecated_model_callback: extern "C" fn(*const c_void) -> u16,
-}
-
-impl ReadAdapter for Model801CallbackAdapter {
-    fn deprecated_model(&self) -> u16 {
-        (self.deprecated_model_callback)(self.context)
-    }
-}
-
-#[repr(C)]
-pub struct Model801StatefulAdapter {
-    /// Deprecated Model (DEPRECATED)
-    ///
-    /// This model has been deprecated.
-    pub deprecated_model: u16,
-}
-
-impl ReadAdapter for Model801StatefulAdapter {
-    fn deprecated_model(&self) -> u16 {
-        self.deprecated_model
-    }
-}
-
-/// C-FFI dispatch descriptor for SunSpec model 801. A C `SunspecModelBinding` points
-/// at this static, so the service functions dispatch with no model-id lookup.
-#[unsafe(no_mangle)]
-pub static SUNSPEC_MODEL_801: StaticModelSpec = StaticModelSpec {
-    id: 801,
-    length: model_801_c_length,
-    writable: false,
-    visit_read: model_801_c_visit_read,
-    visit_write: model_801_c_visit_write,
-};
-
-fn model_801_c_length(_repeat_count_0: u16, _repeat_count_1: u16) -> u16 {
-    (Model801).model_length()
-}
-
-/// # Safety
-/// For `kind` 1 or 2, `adapter` must point to a live `Model801{Stateful,Callback}Adapter`,
-/// valid for the duration of the call.
-unsafe fn model_801_c_visit_read(
-    kind: u8,
-    adapter: *const c_void,
-    _repeat_count_0: u16,
-    _repeat_count_1: u16,
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &mut WritableRegisterBuffer<'_>,
-) {
-    let model = Model801;
-    let adapter: Option<&dyn ReadAdapter> = match kind {
-        1 => Some(unsafe { &*(adapter as *const Model801StatefulAdapter) } as &dyn ReadAdapter),
-        2 => Some(unsafe { &*(adapter as *const Model801CallbackAdapter) } as &dyn ReadAdapter),
-        _ => None,
-    };
-    cursor.visit_source_block(model.model_length(), |offset, from, len| {
-        let mut block = buffer.slice(from, len);
-        match adapter {
-            Some(adapter) => model.traverse_points_read(adapter, &mut block, offset),
-            None => {
-                block.fill(&[0xff, 0xff]);
-                Ok(())
-            }
-        }
-    });
-}
-
-/// # Safety
-/// As for [`model_801_c_visit_read`], and `adapter` must be uniquely borrowable for the call.
-unsafe fn model_801_c_visit_write(
-    kind: u8,
-    adapter: *mut c_void,
-    _repeat_count_0: u16,
-    _repeat_count_1: u16,
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &ReadableRegisterBuffer<'_>,
-) {
-    let _ = (kind, adapter, buffer);
-    let model = Model801;
-    cursor.visit_source_block(model.model_length(), |_, _, _| {
-        Err(ModbusException::IllegalDataAddress)
-    });
-}

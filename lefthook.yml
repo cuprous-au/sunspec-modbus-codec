@@ -16,5 +16,5 @@ pre-commit:
         cargo run --quiet -p sunspec-gen &&
         git add \
           crates/sunspec-modbus-lib-rs/src/sunspec \
-          crates/sunspec-modbus-lib-static/src/generated.rs \
+          crates/sunspec-modbus-lib-static/src/sunspec \
           crates/sunspec-modbus-derive/src/model_registry.rs

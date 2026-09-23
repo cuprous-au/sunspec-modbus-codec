@@ -82,11 +82,11 @@ pub trait ModelList {
 /// C-FFI dispatch descriptor for one SunSpec model.
 ///
 /// One `#[unsafe(no_mangle)] pub static SUNSPEC_MODEL_<id>: StaticModelSpec` is generated per
-/// model into that model's module. A C `SunspecModelBinding` holds a `*const StaticModelSpec`
-/// pointing at that static, so the `sunspec-modbus-lib-static` service functions dispatch
-/// straight through these function pointers with no model-id lookup.
+/// model into `sunspec-modbus-lib-static`'s mirrored module. A C `SunspecModelBinding` holds a
+/// `*const StaticModelSpec` pointing at that static, so the service functions dispatch straight
+/// through these function pointers with no model-id lookup.
 ///
-/// The `dyn` adapters never cross the C boundary; the concrete `Model<id>{Stateful,Callback}Adapter`
+/// The `dyn` adapters never cross the C boundary; the concrete `Model<id>CallbackAdapter`
 /// pointer is cast back to a reference inside `visit_read` / `visit_write`.
 pub struct StaticModelSpec {
     /// The SunSpec model id this descriptor dispatches, for diagnostics and wire cross-checks.
@@ -101,15 +101,13 @@ pub struct StaticModelSpec {
     /// `write_adapters` array covering only the writable models.
     pub writable: bool,
 
-    /// Decode one model block on a read. `kind`: `1` = stateful adapter pointer, `2` =
-    /// callback adapter pointer, anything else = no adapter (the block reads as `0xffff`).
-    /// Repeating-group models accept only `kind` `2`.
+    /// Decode one model block on a read. A null `adapter` means no adapter for this block (the
+    /// block reads as `0xffff`).
     ///
     /// # Safety
-    /// For `kind` `1` or `2`, `adapter` must point to a live `Model<id>{Stateful,Callback}Adapter`
-    /// for this model, valid for the duration of the call.
+    /// `adapter` must be null or point to a live `Model<id>CallbackAdapter` for this model,
+    /// valid for the duration of the call.
     pub visit_read: unsafe fn(
-        kind: u8,
         adapter: *const c_void,
         repeat_count_0: u16,
         repeat_count_1: u16,
@@ -117,15 +115,13 @@ pub struct StaticModelSpec {
         buffer: &mut WritableRegisterBuffer<'_>,
     ),
 
-    /// Encode one model block on a write. `kind` is as for [`visit_read`](StaticModelSpec::visit_read).
-    /// A non-writable model, or a `kind` with no adapter, rejects the write with
-    /// [`ModbusException::IllegalDataAddress`].
+    /// Encode one model block on a write. A non-writable model, or a null `adapter`, rejects
+    /// the write with [`ModbusException::IllegalDataAddress`].
     ///
     /// # Safety
-    /// As for [`visit_read`](StaticModelSpec::visit_read), and `adapter` must be uniquely
-    /// borrowable for the duration of the call.
+    /// As for [`visit_read`](StaticModelSpec::visit_read), and `adapter` must be null or
+    /// uniquely borrowable for the duration of the call.
     pub visit_write: unsafe fn(
-        kind: u8,
         adapter: *mut c_void,
         repeat_count_0: u16,
         repeat_count_1: u16,
@@ -185,7 +181,7 @@ impl<L: ModelList> Sunspec<L> {
             read_model(model, &mut cursor, &mut buffer);
         }
 
-        let _ = cursor.visit_source_block(2, |offset, from, len| {
+        let _ = cursor.visit_source_block(SUNS_END_MODEL_WORDS, |offset, from, len| {
             buffer.slice(from, len).write_bytes(&SUNS_END_MODEL, offset);
             Ok(())
         });

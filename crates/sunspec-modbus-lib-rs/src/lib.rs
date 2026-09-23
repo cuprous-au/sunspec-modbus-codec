@@ -37,29 +37,75 @@ mod tests {
     use crate::sunspec::models::{model_701, model_704};
     use crate::sunspec::{
         adapters::{ReadBinding, WriteBinding},
-        models::model_1::{self, Model1StatefulAdapter},
+        models::model_1,
     };
 
     use super::*;
+
+    /// A plain-Rust stand-in for the common model (1) adapter, implementing
+    /// [`model_1::ReadAdapter`]/[`model_1::WriteAdapter`] directly rather than through any
+    /// library-provided helper - which is exactly how a Rust consumer of this crate is expected
+    /// to back a model: `Model<id>CallbackAdapter`, the library's one concrete adapter, is
+    /// `sunspec-modbus-lib-static`'s C-FFI type, not for Rust use.
+    struct CommonModelAdapter {
+        manufacturer: &'static CStr,
+        model: &'static CStr,
+        options: &'static CStr,
+        version: &'static CStr,
+        serial_number: &'static CStr,
+        device_address: u16,
+    }
+
+    impl model_1::ReadAdapter for CommonModelAdapter {
+        fn manufacturer(&self) -> &CStr {
+            self.manufacturer
+        }
+
+        fn model(&self) -> &CStr {
+            self.model
+        }
+
+        fn options(&self) -> Option<&CStr> {
+            Some(self.options)
+        }
+
+        fn version(&self) -> Option<&CStr> {
+            Some(self.version)
+        }
+
+        fn serial_number(&self) -> &CStr {
+            self.serial_number
+        }
+
+        fn device_address(&self) -> Option<u16> {
+            Some(self.device_address)
+        }
+    }
+
+    impl model_1::WriteAdapter for CommonModelAdapter {
+        fn set_device_address(&mut self, value: u16) {
+            self.device_address = value;
+        }
+    }
 
     #[test]
     fn simple_common_adapter() -> Result<(), ModbusException> {
         struct SunspecModel {
             model: model_1::Model1,
         }
-        let mut adapter = Model1StatefulAdapter {
-            manufacturer: c_char_array!("Cuprous"),
-            model: c_char_array!("Inverter 1"),
-            options: c_char_array!("opt_a_b_c"),
-            version: c_char_array!("v0.1"),
-            serial_number: c_char_array!("I-1"),
+        let mut adapter = CommonModelAdapter {
+            manufacturer: c"Cuprous",
+            model: c"Inverter 1",
+            options: c"opt_a_b_c",
+            version: c"v0.1",
+            serial_number: c"I-1",
             device_address: 0,
         };
 
         impl ModelList for SunspecModel {
-            type ReadAdapters<'a> = &'a Model1StatefulAdapter;
+            type ReadAdapters<'a> = &'a CommonModelAdapter;
 
-            type WriteAdapters<'a> = &'a mut Model1StatefulAdapter;
+            type WriteAdapters<'a> = &'a mut CommonModelAdapter;
 
             fn read_iter<'a>(
                 &'a self,
@@ -153,12 +199,12 @@ mod tests {
             model_704: model_704::Model704,
         }
 
-        let mut common_model = Model1StatefulAdapter {
-            manufacturer: c_char_array!("Cuprous"),
-            model: c_char_array!("Inverter 1"),
-            options: c_char_array!("opt_a_b_c"),
-            version: c_char_array!("v0.1"),
-            serial_number: c_char_array!("I-1"),
+        let mut common_model = CommonModelAdapter {
+            manufacturer: c"Cuprous",
+            model: c"Inverter 1",
+            options: c"opt_a_b_c",
+            version: c"v0.1",
+            serial_number: c"I-1",
             device_address: 0,
         };
 
@@ -210,12 +256,12 @@ mod tests {
 
         let model_list = Trio(model_1::Model1, model_701::Model701, model_704::Model704);
 
-        let mut common_model = Model1StatefulAdapter {
-            manufacturer: c_char_array!("Cuprous"),
-            model: c_char_array!("Inverter 1"),
-            options: c_char_array!("opt_a_b_c"),
-            version: c_char_array!("v0.1"),
-            serial_number: c_char_array!("I-1"),
+        let mut common_model = CommonModelAdapter {
+            manufacturer: c"Cuprous",
+            model: c"Inverter 1",
+            options: c"opt_a_b_c",
+            version: c"v0.1",
+            serial_number: c"I-1",
             device_address: 0,
         };
 
@@ -262,12 +308,12 @@ mod tests {
 
         let model_list = Trio(model_1::Model1, model_701::Model701, model_704::Model704);
 
-        let mut common_model = Model1StatefulAdapter {
-            manufacturer: c_char_array!("Cuprous"),
-            model: c_char_array!("Inverter 1"),
-            options: c_char_array!("opt_a_b_c"),
-            version: c_char_array!("v0.1"),
-            serial_number: c_char_array!("I-1"),
+        let mut common_model = CommonModelAdapter {
+            manufacturer: c"Cuprous",
+            model: c"Inverter 1",
+            options: c"opt_a_b_c",
+            version: c"v0.1",
+            serial_number: c"I-1",
             device_address: 0,
         };
 

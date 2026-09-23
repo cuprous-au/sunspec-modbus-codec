@@ -42,12 +42,11 @@ an iterator over each of its included models bound to an appropriate adapter for
 An implementation that can provide a value or handle an update for each point in a specific model. To handle
 an operation for a given model list, one such adapter must be provided for each specification as defined above.
 
-These are provided as traits, and a Rust consumer of the library can implement them in any way they choose. For convenience and compatibility
-with the interface for C or other programming languages, two standard implementations of the adapters are provided:
- - The Stateful adapter holds a representation of each point in a struct, and directly gets and sets these values according
-   to requests
- - The Callback adapter holds function pointers for each method that are directly invoked, allowing more complex custom
-   behaviour in non-Rust languages
+These are provided as traits, and a Rust consumer of the library implements them directly on whatever type suits their
+device - there is no standard Rust-facing implementation, since a plain struct or an enum-backed state machine is just
+as easy to write by hand as it would be to configure through one. `sunspec-modbus-lib-static`, which wraps the library
+for C and other non-Rust languages, does provide one standard implementation: the Callback adapter holds function
+pointers for each method, invoked directly, so a non-Rust caller can back a model without ever touching Rust.
 
 ### Adapter binding
 An adapter binding represents the pairing of a model specification with an adapter implementation. This is represented by the
@@ -99,7 +98,7 @@ cc crates/sunspec-modbus-lib-static/examples/libmodbus.c \
 > This is excluded from the default crates - as generated files are committed to the repository, this crate doesn't need 
 > to be built unless changes are being made directly to it, or the source models have been updated.
 This crate is responsible for generating the content of the `src/sunspec` directory of the `sunspec-modbus-lib-rs` crate
-described below, and C-safe wrappers for this (`src/generated.rs`) of `sunspec-modbus-lib-static`. It sources the latest 
+described below, and C-safe wrappers for this (`src/sunspec`) of `sunspec-modbus-lib-static`. It sources the latest 
 SunSpec MODBUS model definitions from https://github.com/sunspec/models, and generates adapter definitions for each model.
 
 These models are made available via a git submodule - before building this crate, the submodule must be resolved:

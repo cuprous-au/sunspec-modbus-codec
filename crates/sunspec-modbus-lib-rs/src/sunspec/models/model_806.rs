@@ -4,10 +4,8 @@
 
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
-use crate::cursor::Cursor;
-use crate::model::{ModelSpec, StaticModelSpec};
+use crate::model::ModelSpec;
 use core::cmp::min;
-use core::ffi::c_void;
 
 static POINTS: [PointDetails<()>; 3] = [
     PointDetails {
@@ -170,102 +168,3 @@ pub trait ReadAdapter {
 }
 
 pub trait WriteAdapter {}
-
-#[repr(C)]
-pub struct Model806CallbackAdapter {
-    context: *mut c_void,
-    /// Battery Points To Be Determined (BatTBD)
-    battery_points_to_be_determined_callback: extern "C" fn(*const c_void) -> u16,
-    /// Battery String Points To Be Determined (BatStTBD)
-    battery_string_battery_string_points_to_be_determined_callback:
-        extern "C" fn(*const c_void) -> u16,
-}
-
-impl ReadAdapter for Model806CallbackAdapter {
-    fn battery_points_to_be_determined(&self) -> u16 {
-        (self.battery_points_to_be_determined_callback)(self.context)
-    }
-
-    fn battery_string_battery_string_points_to_be_determined(&self) -> u16 {
-        (self.battery_string_battery_string_points_to_be_determined_callback)(self.context)
-    }
-}
-
-#[repr(C)]
-pub struct Model806StatefulAdapter {
-    /// Battery Points To Be Determined (BatTBD)
-    pub battery_points_to_be_determined: u16,
-    /// Battery String Points To Be Determined (BatStTBD)
-    pub battery_string_battery_string_points_to_be_determined: u16,
-}
-
-impl ReadAdapter for Model806StatefulAdapter {
-    fn battery_points_to_be_determined(&self) -> u16 {
-        self.battery_points_to_be_determined
-    }
-
-    fn battery_string_battery_string_points_to_be_determined(&self) -> u16 {
-        self.battery_string_battery_string_points_to_be_determined
-    }
-}
-
-/// C-FFI dispatch descriptor for SunSpec model 806. A C `SunspecModelBinding` points
-/// at this static, so the service functions dispatch with no model-id lookup.
-#[unsafe(no_mangle)]
-pub static SUNSPEC_MODEL_806: StaticModelSpec = StaticModelSpec {
-    id: 806,
-    length: model_806_c_length,
-    writable: false,
-    visit_read: model_806_c_visit_read,
-    visit_write: model_806_c_visit_write,
-};
-
-fn model_806_c_length(_repeat_count_0: u16, _repeat_count_1: u16) -> u16 {
-    (Model806).model_length()
-}
-
-/// # Safety
-/// For `kind` 1 or 2, `adapter` must point to a live `Model806{Stateful,Callback}Adapter`,
-/// valid for the duration of the call.
-unsafe fn model_806_c_visit_read(
-    kind: u8,
-    adapter: *const c_void,
-    _repeat_count_0: u16,
-    _repeat_count_1: u16,
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &mut WritableRegisterBuffer<'_>,
-) {
-    let model = Model806;
-    let adapter: Option<&dyn ReadAdapter> = match kind {
-        1 => Some(unsafe { &*(adapter as *const Model806StatefulAdapter) } as &dyn ReadAdapter),
-        2 => Some(unsafe { &*(adapter as *const Model806CallbackAdapter) } as &dyn ReadAdapter),
-        _ => None,
-    };
-    cursor.visit_source_block(model.model_length(), |offset, from, len| {
-        let mut block = buffer.slice(from, len);
-        match adapter {
-            Some(adapter) => model.traverse_points_read(adapter, &mut block, offset),
-            None => {
-                block.fill(&[0xff, 0xff]);
-                Ok(())
-            }
-        }
-    });
-}
-
-/// # Safety
-/// As for [`model_806_c_visit_read`], and `adapter` must be uniquely borrowable for the call.
-unsafe fn model_806_c_visit_write(
-    kind: u8,
-    adapter: *mut c_void,
-    _repeat_count_0: u16,
-    _repeat_count_1: u16,
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &ReadableRegisterBuffer<'_>,
-) {
-    let _ = (kind, adapter, buffer);
-    let model = Model806;
-    cursor.visit_source_block(model.model_length(), |_, _, _| {
-        Err(ModbusException::IllegalDataAddress)
-    });
-}

@@ -54,7 +54,6 @@ impl Named for ResolvedPoint {
 
 #[derive(Clone)]
 pub struct BlockIndex {
-    pub group_name: String,
     pub index_name: String,
 }
 
@@ -520,10 +519,9 @@ pub(crate) fn resolve_group(
                     .iter()
                     .find(|p| p.internal_name == *count_name)?;
 
-                let (group_name, _, index_prefix) = group_identity(child, &naming.identifier_text);
+                let (_, _, index_prefix) = group_identity(child, &naming.identifier_text);
                 let mut child_block_indices = block_indices.clone();
                 child_block_indices.push(BlockIndex {
-                    group_name,
                     index_name: format!("{index_prefix}_index"),
                 });
 

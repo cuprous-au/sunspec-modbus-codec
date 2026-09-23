@@ -5,8 +5,8 @@ use std::process::Command;
 use std::{ffi::OsStr, fs, path::Path};
 
 use crate::code_generation::{
-    generate_adapters_mod, generate_model, generate_models_mod, model_c_expressible,
-    model_cfg_attribute, model_feature_name, model_is_repeating, model_is_writable,
+    generate_adapters_mod, generate_model, generate_models_mod, generate_static_model,
+    generate_static_models_mod, model_feature_name, model_is_writable,
 };
 use crate::model_resolution::{ResolvedModel, resolve_model};
 use crate::naming::{NameTable, Named};
@@ -171,6 +171,42 @@ pub fn generate() {
     );
 }
 
+/// Regenerates `sunspec-modbus-lib-static`'s mirrored `src/sunspec/models` tree: the C-FFI
+/// counterpart - [`Model<id>CallbackAdapter`] and its `StaticModelSpec` dispatch - to each model
+/// in `sunspec-modbus-lib-rs`'s `src/sunspec/models`, one file per model, kept out of that crate
+/// entirely so a pure-Rust consumer never sees C-FFI types.
+pub fn generate_static_models() {
+    let project_root = env!("CARGO_MANIFEST_DIR");
+    let model_dir = format!("{project_root}/models");
+    let model_glob = format!("{model_dir}/json/model_*.json");
+    let src_path = format!("{project_root}/../sunspec-modbus-lib-static/src/sunspec");
+    let generated_src_dir = Path::new(&src_path);
+    let submodule_tag = get_submodule_tag(&model_dir);
+
+    fs::create_dir_all(generated_src_dir.join("models"))
+        .expect("Failed to create generated source directories");
+
+    let models = collect_models(&model_glob);
+
+    for model in &models {
+        if let Some(scope) = generate_static_model(model) {
+            format_and_write(
+                &generated_src_dir
+                    .join("models")
+                    .join(format!("{}.rs", model.name_snake_case())),
+                &scope,
+                &submodule_tag,
+            );
+        }
+    }
+
+    format_and_write(
+        &generated_src_dir.join("models.rs"),
+        &generate_static_models_mod(&models),
+        &submodule_tag,
+    );
+}
+
 /// Regenerates `sunspec-modbus-derive`'s model writability registry (`src/model_registry.rs`):
 /// the one piece of per-model knowledge the `#[derive(ModelList)]` macro can't get from the
 /// annotated struct's own tokens - which models have any writable points at all, and so need a
@@ -212,24 +248,6 @@ fn generate_model_registry_source(models: &[ResolvedModel]) -> Scope {
     ));
 
     scope
-}
-
-/// Regenerates `sunspec-modbus-lib-static`'s typed `SunspecAdapter` constructors
-/// (`src/generated.rs`).
-pub fn generate_static_lib() {
-    let project_root = env!("CARGO_MANIFEST_DIR");
-    let model_dir = format!("{project_root}/models");
-    let model_glob = format!("{model_dir}/json/model_*.json");
-    let submodule_tag = get_submodule_tag(&model_dir);
-
-    let output_path = Path::new(project_root).join("../sunspec-modbus-lib-static/src/generated.rs");
-
-    let models = collect_models(&model_glob);
-    format_and_write(
-        &output_path,
-        &generate_static_lib_adapter_ctors(&models),
-        &submodule_tag,
-    );
 }
 
 /// Replaces the text between a `{marker_prefix} @generated:start` / `{marker_prefix}
@@ -345,69 +363,4 @@ pub fn generate_model_features() {
         "//",
         &render_cbindgen_default_models(&models),
     );
-}
-
-/// Typed `SunspecAdapter` constructors, one set per C-expressible model.
-///
-/// `sunspec_model_<id>_callback(*mut Model<id>CallbackAdapter)` /
-/// `sunspec_model_<id>_stateful(*mut Model<id>StatefulAdapter)`
-/// build a `SunspecAdapter` with the matching `model_spec`, `kind` and adapter pointer, so a C
-/// caller cannot pair the wrong adapter type with a model (the C compiler rejects a mismatched
-/// pointer) or leave the `model_spec`/`kind`/`adapter` triple inconsistent. `_stateful` is
-/// generated only for non-repeating models, matching the dispatch code (repeating models have
-/// no C-usable stateful adapter).
-///
-/// These are real `#[unsafe(no_mangle)] pub extern "C" fn`s, generated directly into
-/// `sunspec-modbus-lib-static` rather than spliced into the header as C text: cbindgen exports
-/// them itself, and naming `Model<id>{Stateful,Callback}Adapter` in their signatures is what
-/// makes cbindgen carry those structs' field layout — no force-listing needed.
-fn generate_static_lib_adapter_ctors(models: &[ResolvedModel]) -> Scope {
-    let mut scope = Scope::new();
-    scope.raw("#![allow(unused_imports)]");
-    scope.raw("use core::ffi::c_void;");
-    scope.raw(
-        "use crate::{SunspecAdapter, SUNSPEC_ADAPTER_CALLBACK, SUNSPEC_ADAPTER_NONE, SUNSPEC_ADAPTER_STATEFUL};",
-    );
-
-    for model in models.iter().filter(|model| model_c_expressible(model)) {
-        let n = model.model_number;
-        let sc = &model.name_snake_case();
-        let pc = &model.name_pascal_case();
-        let module = format!("sunspec_modbus_lib_rs::sunspec::models::{sc}");
-        let cfg = model_cfg_attribute(model);
-
-        scope.raw(format!(
-            "/// Build a [`SunspecAdapter`] for model {n} backed by a callback adapter.\n\
-             {cfg}\n\
-             #[unsafe(no_mangle)]\n\
-             pub extern \"C\" fn sunspec_model_{n}_callback(\n\
-             \x20   adapter: *mut {module}::{pc}CallbackAdapter,\n\
-             ) -> SunspecAdapter {{\n\
-             \x20   SunspecAdapter {{\n\
-             \x20       model_spec: &{module}::SUNSPEC_MODEL_{n},\n\
-             \x20       kind: SUNSPEC_ADAPTER_CALLBACK,\n\
-             \x20       adapter: adapter as *mut c_void,\n\
-             \x20   }}\n\
-             }}\n"
-        ));
-
-        if !model_is_repeating(model) {
-            scope.raw(format!(
-                "/// Build a [`SunspecAdapter`] for model {n} backed by a stateful adapter.\n\
-                 {cfg}\n\
-                 #[unsafe(no_mangle)]\n\
-                 pub extern \"C\" fn sunspec_model_{n}_stateful(\n\
-                 \x20   adapter: *mut {module}::{pc}StatefulAdapter,\n\
-                 ) -> SunspecAdapter {{\n\
-                 \x20   SunspecAdapter {{\n\
-                 \x20       model_spec: &{module}::SUNSPEC_MODEL_{n},\n\
-                 \x20       kind: SUNSPEC_ADAPTER_STATEFUL,\n\
-                 \x20       adapter: adapter as *mut c_void,\n\
-                 \x20   }}\n\
-                 }}\n"
-            ));
-        }
-    }
-
-    scope
 }

@@ -1,6 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-mod generated;
+mod sunspec;
 
 use core::ffi::c_void;
 use core::slice;
@@ -41,14 +41,6 @@ fn panic(panic_info: &PanicInfo) -> ! {
     unsafe { handle_panic(c_str.as_ptr()) }
 }
 
-/// [`SunspecAdapter::kind`]: no adapter for this direction; the block reads as `0xffff` and
-/// rejects writes.
-pub const SUNSPEC_ADAPTER_NONE: u8 = 0;
-/// [`SunspecAdapter::kind`]: `adapter` points to a `Model<id>StatefulAdapter`.
-pub const SUNSPEC_ADAPTER_STATEFUL: u8 = 1;
-/// [`SunspecAdapter::kind`]: `adapter` points to a `Model<id>CallbackAdapter`.
-pub const SUNSPEC_ADAPTER_CALLBACK: u8 = 2;
-
 /// `sunspec_service_*` return code: success.
 pub const SUNSPEC_RC_OK: i32 = 0;
 /// `sunspec_service_*` return code: a required pointer argument was null.
@@ -86,11 +78,9 @@ pub struct SunspecAdapter {
     /// guard: a mismatch (misordered or short adapter array) fails the request with
     /// [`SUNSPEC_RC_ADAPTER_MODEL_MISMATCH`] before any registers are touched.
     pub model_spec: *const StaticModelSpec,
-    /// `SUNSPEC_ADAPTER_NONE` / `_STATEFUL` / `_CALLBACK`. Repeating-group models support only
-    /// `_CALLBACK`.
-    pub kind: u8,
-    /// Pointer to the `Model<id>{Stateful,Callback}Adapter` selected by `kind`, or null when
-    /// `kind` is `SUNSPEC_ADAPTER_NONE`.
+    /// Pointer to the model's `Model<id>CallbackAdapter`, built by that model's
+    /// `sunspec_model_<id>_callback` constructor, or null for no adapter - the block then
+    /// reads as `0xffff` and rejects writes.
     pub adapter: *mut c_void,
 }
 
@@ -171,7 +161,7 @@ impl ModelList for CModelList<'_> {
 
     /// One [`ReadBinding::Extern`] per model, in map order — the codec drives each through
     /// its `StaticModelSpec` vtable. `adapters` is index-aligned with the models (checked by
-    /// [`check_read_alignment`]), so each `kind` / pointer passes straight through.
+    /// [`check_read_alignment`]), so each pointer passes straight through.
     fn read_iter<'a>(
         &'a self,
         adapters: Self::ReadAdapters<'a>,
@@ -183,7 +173,6 @@ impl ModelList for CModelList<'_> {
                 // SAFETY: `check_read_alignment` rejected every null `model` before the
                 // service function built this `CModelList`.
                 descriptor: unsafe { Self::descriptor(model) },
-                kind: adapter.kind,
                 adapter: adapter.adapter,
                 repeat_count_0: model.repeat_count_0,
                 repeat_count_1: model.repeat_count_1,
@@ -193,7 +182,7 @@ impl ModelList for CModelList<'_> {
     /// One [`WriteBinding::Extern`] per model, in map order. `adapters` carries an entry
     /// only for the writable models (see [`check_write_alignment`]); it is consumed in order
     /// for those, and every other block — plus any writable block past the end of a short
-    /// array — gets `SUNSPEC_ADAPTER_NONE` and rejects the write.
+    /// array — gets a null adapter and rejects the write.
     fn write_iter<'a>(
         &'a self,
         adapters: Self::WriteAdapters<'a>,
@@ -207,13 +196,12 @@ impl ModelList for CModelList<'_> {
             } else {
                 None
             };
-            let (kind, adapter) = match entry {
-                Some(entry) => (entry.kind, entry.adapter),
-                None => (SUNSPEC_ADAPTER_NONE, core::ptr::null_mut()),
+            let adapter = match entry {
+                Some(entry) => entry.adapter,
+                None => core::ptr::null_mut(),
             };
             WriteBinding::Extern {
                 descriptor,
-                kind,
                 adapter,
                 repeat_count_0: model.repeat_count_0,
                 repeat_count_1: model.repeat_count_1,
@@ -233,7 +221,8 @@ impl ModelList for CModelList<'_> {
 /// - `models` must point to `model_count` valid, live [`CModelSpec`]s, each
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `read_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, index-aligned
-///   with `models`, each `adapter` pointer matching its `kind`.
+///   with `models`, each `adapter` pointer either null or pointing to a live
+///   `Model<id>CallbackAdapter` for its model.
 /// - `response_buffer` must be a valid, writable buffer of at least `buffer_length * 2` bytes.
 /// - All pointers must remain valid for the duration of the call.
 pub unsafe extern "C" fn sunspec_read_registers(
@@ -267,8 +256,8 @@ pub unsafe extern "C" fn sunspec_read_registers(
 
 #[unsafe(no_mangle)]
 /// Handle a SunSpec Modbus write of multiple holding registers, decoding into the relevant
-/// models. A write that touches a block whose `kind` is `SUNSPEC_ADAPTER_NONE`, or a model
-/// with no writable points, is rejected with `IllegalDataAddress`. Return codes as for
+/// models. A write that touches a block whose `adapter` is null, or a model with no writable
+/// points, is rejected with `IllegalDataAddress`. Return codes as for
 /// [`sunspec_read_registers`].
 ///
 /// # Safety
@@ -276,8 +265,9 @@ pub unsafe extern "C" fn sunspec_read_registers(
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `write_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, one per
 ///   **writable** model (a model whose `StaticModelSpec::writable` is set), index-aligned with the
-///   writable subsequence of `models` and in the same order; each `adapter` pointer must
-///   match its `kind`. Non-writable models take no entry.
+///   writable subsequence of `models` and in the same order; each `adapter` pointer must be
+///   either null or point to a live, uniquely borrowable `Model<id>CallbackAdapter` for its
+///   model. Non-writable models take no entry.
 /// - `request_buffer` must be a valid buffer of at least `buffer_length * 2` bytes.
 /// - All pointers must remain valid for the duration of the call.
 pub unsafe extern "C" fn sunspec_write_multiple_registers(
@@ -310,8 +300,8 @@ pub unsafe extern "C" fn sunspec_write_multiple_registers(
 
 #[unsafe(no_mangle)]
 /// Handle a SunSpec Modbus write to a single holding register, decoding into the relevant
-/// models. A write that touches a block whose `kind` is `SUNSPEC_ADAPTER_NONE`, or a model
-/// with no writable points, is rejected with `IllegalDataAddress`. Return codes as for
+/// models. A write that touches a block whose `adapter` is null, or a model with no writable
+/// points, is rejected with `IllegalDataAddress`. Return codes as for
 /// [`sunspec_read_registers`].
 ///
 /// # Safety
@@ -319,8 +309,9 @@ pub unsafe extern "C" fn sunspec_write_multiple_registers(
 ///   `model` pointing at a codec `SUNSPEC_MODEL_<id>` static.
 /// - `write_adapters` must point to `adapter_count` valid [`SunspecAdapter`]s, one per
 ///   **writable** model (a model whose `StaticModelSpec::writable` is set), index-aligned with the
-///   writable subsequence of `models` and in the same order; each `adapter` pointer must
-///   match its `kind`. Non-writable models take no entry.
+///   writable subsequence of `models` and in the same order; each `adapter` pointer must be
+///   either null or point to a live, uniquely borrowable `Model<id>CallbackAdapter` for its
+///   model. Non-writable models take no entry.
 /// - All pointers must remain valid for the duration of the call.
 pub unsafe extern "C" fn sunspec_write_single_register(
     models: *const CModelSpec,

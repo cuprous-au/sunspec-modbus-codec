@@ -282,11 +282,10 @@ pub enum ReadBinding<'a> {
     ///
     /// # Safety
     /// Building this variant asserts `descriptor` and `adapter` uphold
-    /// [`StaticModelSpec::visit_read`]'s contract: for `kind` 1 or 2, `adapter` points to
-    /// a live `Model<id>{Stateful,Callback}Adapter` valid for the traversal.
+    /// [`StaticModelSpec::visit_read`]'s contract: `adapter` is either null or points to
+    /// a live `Model<id>CallbackAdapter` valid for the traversal.
     Extern {
         descriptor: &'a StaticModelSpec,
-        kind: u8,
         adapter: *const c_void,
         repeat_count_0: u16,
         repeat_count_1: u16,
@@ -553,12 +552,11 @@ pub enum WriteBinding<'a> {
     ///
     /// # Safety
     /// Building this variant asserts `descriptor` and `adapter` uphold
-    /// [`StaticModelSpec::visit_write`]'s contract: for `kind` 1 or 2, `adapter` is
-    /// uniquely borrowable and points to a live `Model<id>{Stateful,Callback}Adapter`
-    /// valid for the traversal.
+    /// [`StaticModelSpec::visit_write`]'s contract: `adapter` is either null or
+    /// uniquely borrowable, pointing to a live `Model<id>CallbackAdapter` valid for the
+    /// traversal.
     Extern {
         descriptor: &'a StaticModelSpec,
-        kind: u8,
         adapter: *mut c_void,
         repeat_count_0: u16,
         repeat_count_1: u16,
@@ -1247,21 +1245,13 @@ pub fn read_model<'a>(
         }
         ReadBinding::Extern {
             descriptor,
-            kind,
             adapter,
             repeat_count_0,
             repeat_count_1,
         } => {
             // SAFETY: `ReadBinding::Extern` upholds `StaticModelSpec::visit_read`'s contract by construction.
             unsafe {
-                (descriptor.visit_read)(
-                    kind,
-                    adapter,
-                    repeat_count_0,
-                    repeat_count_1,
-                    cursor,
-                    buffer,
-                );
+                (descriptor.visit_read)(adapter, repeat_count_0, repeat_count_1, cursor, buffer);
             }
         }
     }
@@ -1950,21 +1940,13 @@ pub fn write_model<'a>(
         }
         WriteBinding::Extern {
             descriptor,
-            kind,
             adapter,
             repeat_count_0,
             repeat_count_1,
         } => {
             // SAFETY: `WriteBinding::Extern` upholds `StaticModelSpec::visit_write`'s contract by construction.
             unsafe {
-                (descriptor.visit_write)(
-                    kind,
-                    adapter,
-                    repeat_count_0,
-                    repeat_count_1,
-                    cursor,
-                    buffer,
-                );
+                (descriptor.visit_write)(adapter, repeat_count_0, repeat_count_1, cursor, buffer);
             }
         }
     }

@@ -4,10 +4,8 @@
 
 use crate::ModbusException;
 use crate::buffer::{ReadableRegisterBuffer, WritableRegisterBuffer};
-use crate::cursor::Cursor;
-use crate::model::{ModelSpec, StaticModelSpec};
+use crate::model::ModelSpec;
 use core::cmp::min;
-use core::ffi::c_void;
 
 static POINTS: [PointDetails<()>; 3] = [
     PointDetails {
@@ -170,101 +168,3 @@ pub trait ReadAdapter {
 }
 
 pub trait WriteAdapter {}
-
-#[repr(C)]
-pub struct Model808CallbackAdapter {
-    context: *mut c_void,
-    /// Module Points To Be Determined (ModuleTBD)
-    module_points_to_be_determined_callback: extern "C" fn(*const c_void) -> u16,
-    /// Stack Points To Be Determined (StackTBD)
-    stack_stack_points_to_be_determined_callback: extern "C" fn(*const c_void) -> u16,
-}
-
-impl ReadAdapter for Model808CallbackAdapter {
-    fn module_points_to_be_determined(&self) -> u16 {
-        (self.module_points_to_be_determined_callback)(self.context)
-    }
-
-    fn stack_stack_points_to_be_determined(&self) -> u16 {
-        (self.stack_stack_points_to_be_determined_callback)(self.context)
-    }
-}
-
-#[repr(C)]
-pub struct Model808StatefulAdapter {
-    /// Module Points To Be Determined (ModuleTBD)
-    pub module_points_to_be_determined: u16,
-    /// Stack Points To Be Determined (StackTBD)
-    pub stack_stack_points_to_be_determined: u16,
-}
-
-impl ReadAdapter for Model808StatefulAdapter {
-    fn module_points_to_be_determined(&self) -> u16 {
-        self.module_points_to_be_determined
-    }
-
-    fn stack_stack_points_to_be_determined(&self) -> u16 {
-        self.stack_stack_points_to_be_determined
-    }
-}
-
-/// C-FFI dispatch descriptor for SunSpec model 808. A C `SunspecModelBinding` points
-/// at this static, so the service functions dispatch with no model-id lookup.
-#[unsafe(no_mangle)]
-pub static SUNSPEC_MODEL_808: StaticModelSpec = StaticModelSpec {
-    id: 808,
-    length: model_808_c_length,
-    writable: false,
-    visit_read: model_808_c_visit_read,
-    visit_write: model_808_c_visit_write,
-};
-
-fn model_808_c_length(_repeat_count_0: u16, _repeat_count_1: u16) -> u16 {
-    (Model808).model_length()
-}
-
-/// # Safety
-/// For `kind` 1 or 2, `adapter` must point to a live `Model808{Stateful,Callback}Adapter`,
-/// valid for the duration of the call.
-unsafe fn model_808_c_visit_read(
-    kind: u8,
-    adapter: *const c_void,
-    _repeat_count_0: u16,
-    _repeat_count_1: u16,
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &mut WritableRegisterBuffer<'_>,
-) {
-    let model = Model808;
-    let adapter: Option<&dyn ReadAdapter> = match kind {
-        1 => Some(unsafe { &*(adapter as *const Model808StatefulAdapter) } as &dyn ReadAdapter),
-        2 => Some(unsafe { &*(adapter as *const Model808CallbackAdapter) } as &dyn ReadAdapter),
-        _ => None,
-    };
-    cursor.visit_source_block(model.model_length(), |offset, from, len| {
-        let mut block = buffer.slice(from, len);
-        match adapter {
-            Some(adapter) => model.traverse_points_read(adapter, &mut block, offset),
-            None => {
-                block.fill(&[0xff, 0xff]);
-                Ok(())
-            }
-        }
-    });
-}
-
-/// # Safety
-/// As for [`model_808_c_visit_read`], and `adapter` must be uniquely borrowable for the call.
-unsafe fn model_808_c_visit_write(
-    kind: u8,
-    adapter: *mut c_void,
-    _repeat_count_0: u16,
-    _repeat_count_1: u16,
-    cursor: &mut Cursor<ModbusException>,
-    buffer: &ReadableRegisterBuffer<'_>,
-) {
-    let _ = (kind, adapter, buffer);
-    let model = Model808;
-    cursor.visit_source_block(model.model_length(), |_, _, _| {
-        Err(ModbusException::IllegalDataAddress)
-    });
-}
