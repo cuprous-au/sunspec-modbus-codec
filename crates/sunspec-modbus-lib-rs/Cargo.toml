@@ -1,7 +1,12 @@
 [package]
 name = "sunspec-modbus-lib-rs"
-version = "0.1.0"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 edition = "2024"
+description = "A SunSpec Modbus codec written in Rust with C bindings for fast, reliable serialisation and deserialisation of wire-compatible models."
+publish = true
 
 [lib]
 crate-type = ["lib"]

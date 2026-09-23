@@ -1201,7 +1201,7 @@ dependencies = [
 
 [[package]]
 name = "sunspec-modbus-derive"
-version = "0.1.0"
+version = "1.0.0-SNAPSHOT"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1210,7 +1210,7 @@ dependencies = [
 
 [[package]]
 name = "sunspec-modbus-lib-rs"
-version = "0.1.0"
+version = "1.0.0-SNAPSHOT"
 dependencies = [
  "bytemuck",
  "embassy-executor",

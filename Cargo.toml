@@ -26,9 +26,19 @@ debug = false
 strip = true
 panic = "abort"
 
+[workspace.package]
+version = "1.0.0-SNAPSHOT"
+license = "Apache-2.0"
+repository = "https://github.com/cuprous-au/sunspec-modbus-codec"
+readme = "README.md"
+
 [workspace.dependencies]
+# Internal workspace dependencies
+sunspec-modbus-derive = { path = "crates/sunspec-modbus-derive", version = "1.0.0-SNAPSHOT" }
+
+# External dependencies
 bytemuck = "1.25.2"
-cbindgen = "0.29.4"
+cbindgen = "0.29.4" # only used as a build dependency
 codegen = "0.3.0"
 embassy-executor = { version = "0.10.0", features = ["platform-std", "executor-thread"]}
 embassy-net = "0.9.1"
@@ -48,7 +58,6 @@ schemars = "0.8"
 serde = "1.0.228"
 serde_json = "1.0.150"
 static_cell = "2.1.1"
-sunspec-modbus-derive = { path = "crates/sunspec-modbus-derive" }
 syn = "2.0.119"
 tokio = { version = "1.52.3", features = ["time"] }
 tokio-modbus = { version = "0.17.0", default-features = false, features = ["tcp-server"] }

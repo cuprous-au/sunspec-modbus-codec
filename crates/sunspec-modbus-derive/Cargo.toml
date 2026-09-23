@@ -1,8 +1,11 @@
 [package]
 name = "sunspec-modbus-derive"
-version = "0.1.0"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
 edition = "2024"
-publish = false
+description = "Provides a derive macro for convenience declaratively defining a ModelList for use in the sunspec-modbus-lib-rs library"
+publish = true
 
 [lib]
 proc-macro = true
