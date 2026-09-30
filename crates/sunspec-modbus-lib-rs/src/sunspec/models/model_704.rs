@@ -476,367 +476,394 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(65);
         }
         Point::PowerFactorEnableWInjEnable => {
-            if let Some(value) = adapter.power_factor_enable_w_inj_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_enable_w_inj_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PowerFactorReversionEnableWInj => {
-            if let Some(value) = adapter.power_factor_reversion_enable_w_inj() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_reversion_enable_w_inj()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PfReversionTimeWInj => {
-            if let Some(value) = adapter.pf_reversion_time_w_inj() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .pf_reversion_time_w_inj()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::PfReversionTimeRemWInj => {
-            if let Some(value) = adapter.pf_reversion_time_rem_w_inj() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .pf_reversion_time_rem_w_inj()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::PowerFactorEnableWAbsEnable => {
-            if let Some(value) = adapter.power_factor_enable_w_abs_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_enable_w_abs_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PowerFactorReversionEnableWAbs => {
-            if let Some(value) = adapter.power_factor_reversion_enable_w_abs() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_reversion_enable_w_abs()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PfReversionTimeWAbs => {
-            if let Some(value) = adapter.pf_reversion_time_w_abs() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .pf_reversion_time_w_abs()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::PfReversionTimeRemWAbs => {
-            if let Some(value) = adapter.pf_reversion_time_rem_w_abs() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .pf_reversion_time_rem_w_abs()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::LimitMaxPowerPctEnable => {
-            if let Some(value) = adapter.limit_max_power_pct_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .limit_max_power_pct_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::LimitMaxPowerPctSetpoint => {
-            if let Some(value) = adapter.limit_max_power_pct_setpoint() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .limit_max_power_pct_setpoint()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ReversionLimitMaxPowerPct => {
-            if let Some(value) = adapter.reversion_limit_max_power_pct() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_limit_max_power_pct()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ReversionLimitMaxPowerPctEnable => {
-            if let Some(value) = adapter.reversion_limit_max_power_pct_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_limit_max_power_pct_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::LimitMaxPowerPctReversionTime => {
-            if let Some(value) = adapter.limit_max_power_pct_reversion_time() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .limit_max_power_pct_reversion_time()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::LimitMaxPowerPctRevTimeRem => {
-            if let Some(value) = adapter.limit_max_power_pct_rev_time_rem() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .limit_max_power_pct_rev_time_rem()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ActivePowerEnable => {
-            if let Some(value) = adapter.active_power_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .active_power_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ActivePowerMode => {
-            if let Some(value) = adapter.active_power_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .active_power_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ActivePowerSetpointW => {
-            if let Some(value) = adapter.active_power_setpoint_w() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .active_power_setpoint_w()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::ReversionActivePowerW => {
-            if let Some(value) = adapter.reversion_active_power_w() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .reversion_active_power_w()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::ActivePowerSetpointPct => {
-            if let Some(value) = adapter.active_power_setpoint_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .active_power_setpoint_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::ReversionActivePowerPct => {
-            if let Some(value) = adapter.reversion_active_power_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .reversion_active_power_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::ReversionActivePowerEnable => {
-            if let Some(value) = adapter.reversion_active_power_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_active_power_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ActivePowerReversionTime => {
-            if let Some(value) = adapter.active_power_reversion_time() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .active_power_reversion_time()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ActivePowerRevTimeRem => {
-            if let Some(value) = adapter.active_power_rev_time_rem() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .active_power_rev_time_rem()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ReactivePowerEnable => {
-            if let Some(value) = adapter.reactive_power_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reactive_power_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReactivePowerMode => {
-            if let Some(value) = adapter.reactive_power_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reactive_power_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReactivePowerPriority => {
-            if let Some(value) = adapter.reactive_power_priority() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reactive_power_priority()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReactivePowerSetpointVars => {
-            if let Some(value) = adapter.reactive_power_setpoint_vars() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .reactive_power_setpoint_vars()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::ReversionReactivePowerVars => {
-            if let Some(value) = adapter.reversion_reactive_power_vars() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .reversion_reactive_power_vars()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::ReactivePowerSetpointPct => {
-            if let Some(value) = adapter.reactive_power_setpoint_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .reactive_power_setpoint_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::ReversionReactivePowerPct => {
-            if let Some(value) = adapter.reversion_reactive_power_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .reversion_reactive_power_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::ReversionReactivePowerEnable => {
-            if let Some(value) = adapter.reversion_reactive_power_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_reactive_power_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReactivePowerReversionTime => {
-            if let Some(value) = adapter.reactive_power_reversion_time() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .reactive_power_reversion_time()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ReactivePowerRevTimeRem => {
-            if let Some(value) = adapter.reactive_power_rev_time_rem() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .reactive_power_rev_time_rem()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::NormalRampRate => {
-            if let Some(value) = adapter.normal_ramp_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .normal_ramp_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::NormalRampRateReference => {
-            if let Some(value) = adapter.normal_ramp_rate_reference() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .normal_ramp_rate_reference()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReactivePowerRampRate => {
-            if let Some(value) = adapter.reactive_power_ramp_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reactive_power_ramp_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::AntiIslandingEnable => {
-            if let Some(value) = adapter.anti_islanding_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .anti_islanding_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PowerFactorScaleFactor => {
-            if let Some(value) = adapter.power_factor_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .power_factor_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::LimitMaxPowerScaleFactor => {
-            if let Some(value) = adapter.limit_max_power_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .limit_max_power_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::ActivePowerScaleFactor => {
-            if let Some(value) = adapter.active_power_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .active_power_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::ActivePowerPctScaleFactor => {
-            if let Some(value) = adapter.active_power_pct_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .active_power_pct_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::ReactivePowerScaleFactor => {
-            if let Some(value) = adapter.reactive_power_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .reactive_power_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::ReactivePowerPctScaleFactor => {
-            if let Some(value) = adapter.reactive_power_pct_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .reactive_power_pct_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::PowerFactorWInjPowerFactorWInj => {
-            if let Some(value) = adapter.power_factor_w_inj_power_factor_w_inj() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_w_inj_power_factor_w_inj()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PowerFactorWInjPowerFactorExcitationWInj => {
-            if let Some(value) = adapter.power_factor_w_inj_power_factor_excitation_w_inj() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_w_inj_power_factor_excitation_w_inj()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReversionPowerFactorWInjReversionPowerFactorWInj => {
-            if let Some(value) = adapter.reversion_power_factor_w_inj_reversion_power_factor_w_inj()
-            {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_power_factor_w_inj_reversion_power_factor_w_inj()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ReversionPowerFactorWInjReversionPfExcitationWInj => {
-            if let Some(value) =
-                adapter.reversion_power_factor_w_inj_reversion_pf_excitation_w_inj()
-            {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_power_factor_w_inj_reversion_pf_excitation_w_inj()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PowerFactorWAbsPowerFactorWAbs => {
-            if let Some(value) = adapter.power_factor_w_abs_power_factor_w_abs() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_w_abs_power_factor_w_abs()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PowerFactorWAbsPowerFactorExcitationWAbs => {
-            if let Some(value) = adapter.power_factor_w_abs_power_factor_excitation_w_abs() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_factor_w_abs_power_factor_excitation_w_abs()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ReversionPowerFactorWAbsReversionPowerFactorWAbs => {
-            if let Some(value) = adapter.reversion_power_factor_w_abs_reversion_power_factor_w_abs()
-            {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_power_factor_w_abs_reversion_power_factor_w_abs()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ReversionPowerFactorWAbsReversionPfExcitationWAbs => {
-            if let Some(value) =
-                adapter.reversion_power_factor_w_abs_reversion_pf_excitation_w_abs()
-            {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_power_factor_w_abs_reversion_pf_excitation_w_abs()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
     }
 }

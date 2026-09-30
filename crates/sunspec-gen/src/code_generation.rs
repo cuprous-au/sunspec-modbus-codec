@@ -253,8 +253,8 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
              \n\
              # Safety\n\
              Building this variant asserts `descriptor` and `adapter` uphold\n\
-             [`StaticModelSpec::visit_read`]'s contract: `adapter` is either null or points to\n\
-             a live `Model<id>CallbackAdapter` valid for the traversal.",
+             [`StaticModelSpec::visit_read`]'s contract: `adapter` points to a live\n\
+             `Model<id>CallbackAdapter` valid for the traversal.",
         )
         .named("descriptor", "&'a StaticModelSpec")
         .named("adapter", "*const c_void")
@@ -292,9 +292,9 @@ pub fn generate_adapters_mod(models: &[ResolvedModel]) -> Scope {
              \n\
              # Safety\n\
              Building this variant asserts `descriptor` and `adapter` uphold\n\
-             [`StaticModelSpec::visit_write`]'s contract: `adapter` is either null or\n\
-             uniquely borrowable, pointing to a live `Model<id>CallbackAdapter` valid for the\n\
-             traversal.",
+             [`StaticModelSpec::visit_write`]'s contract: `adapter` is null if\n\
+             `descriptor.writable` is `false`, and otherwise uniquely borrowable, pointing to a\n\
+             live `Model<id>CallbackAdapter` valid for the traversal.",
         )
         .named("descriptor", "&'a StaticModelSpec")
         .named("adapter", "*mut c_void")
@@ -497,13 +497,12 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
         .ret("u16")
         .line(format!("({ctor}).model_length()"));
 
-    // A null `adapter` means no adapter for this block; a single `visit_source_block` consumes
-    // the model's words either way, encoding the block from a present adapter or filling it with
-    // the SunSpec "not implemented" value for an absent one.
+    // `sunspec-modbus-lib-static` rejects null adapters before dispatching, so a null here is a
+    // broken caller: fail the request - only if it touches this block - rather than dereference.
     scope.raw(format!(
         "/// # Safety\n\
-         /// `adapter` must be null or point to a live `Model{n}CallbackAdapter`, valid for the\n\
-         /// duration of the call.\n\
+         /// `adapter` must point to a live `Model{n}CallbackAdapter`, valid for the duration of\n\
+         /// the call.\n\
          unsafe fn {sc}_c_visit_read(\n\
          \x20   adapter: *const c_void,\n\
          \x20   {count_arg_0}: u16,\n\
@@ -514,15 +513,9 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
          \x20   let model = {ctor};\n\
          \x20   // SAFETY: as required by this function's own contract.\n\
          \x20   let adapter = unsafe {{ (adapter as *const {pc}CallbackAdapter).as_ref() }};\n\
-         \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| {{\n\
-         \x20       let mut block = buffer.slice(from, len);\n\
-         \x20       match adapter {{\n\
-         \x20           Some(adapter) => model.traverse_points_read(adapter, &mut block, offset),\n\
-         \x20           None => {{\n\
-         \x20               block.fill(&[0xff, 0xff]);\n\
-         \x20               Ok(())\n\
-         \x20           }}\n\
-         \x20       }}\n\
+         \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| match adapter {{\n\
+         \x20       Some(adapter) => model.traverse_points_read(adapter, &mut buffer.slice(from, len), offset),\n\
+         \x20       None => Err(ModbusException::ServerDeviceFailure),\n\
          \x20   }});\n\
          }}\n\n"
     ));
@@ -534,7 +527,7 @@ fn generate_c_model_dispatch(model: &ResolvedModel, scope: &mut Scope) {
              \x20   let adapter = unsafe {{ (adapter as *mut {pc}CallbackAdapter).as_mut() }};\n\
              \x20   cursor.visit_source_block(model.model_length(), |offset, from, len| match adapter {{\n\
              \x20       Some(adapter) => model.traverse_points_write(adapter, &buffer.slice(from, len), offset),\n\
-             \x20       None => Err(ModbusException::IllegalDataAddress),\n\
+             \x20       None => Err(ModbusException::ServerDeviceFailure),\n\
              \x20   }});\n"
         )
     } else {
@@ -835,34 +828,32 @@ fn populate_model_writer(group: &ResolvedGroup, writer_block: &mut Block) {
                     ""
                 };
 
-                let value_cast = point
+                let value = point
                     .point_type
                     .enum_repr
                     .as_ref()
-                    .map(|ty| format!(" as {ty}"))
-                    .clone()
-                    .unwrap_or_default();
+                    .map(|ty| {
+                        if point.mandatory == PointMandatory::M {
+                            format!("{value_reader} as {ty}")
+                        } else {
+                            format!("{value_reader}.map(|enum_value| enum_value as {ty})",)
+                        }
+                    })
+                    .unwrap_or(value_reader);
+
+                let value_fallback = if point.mandatory == PointMandatory::M {
+                    "".to_string()
+                } else {
+                    format!(".unwrap_or({})", point.point_type.not_implemented_writer,)
+                };
 
                 let mut match_block = Block::new(match_arm);
-                if point.mandatory == PointMandatory::M {
-                    match_block
-                        .line(format!(
-                            "buffer.{}({value_reader}{value_cast}{rest_args});",
-                            point.point_type.writer_function_name
-                        ))
-                        .after(",");
-                } else {
-                    let mut some_block = Block::new(format!("if let Some(value) = {value_reader}"));
-                    some_block.line(format!(
-                        "buffer.{}(value{value_cast}{rest_args});",
+                match_block
+                    .line(format!(
+                        "buffer.{}({value}{value_fallback}{rest_args});",
                         point.point_type.writer_function_name
-                    ));
-                    let mut else_block = Block::new("else");
-                    else_block.line("buffer.zero();");
-
-                    match_block.push_block(some_block);
-                    match_block.push_block(else_block);
-                };
+                    ))
+                    .after(",");
                 writer_block.push_block(match_block);
             }
             PointValueType::ModelLength => {

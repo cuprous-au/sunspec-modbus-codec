@@ -160,53 +160,53 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::EltekCountryCode => {
-            if let Some(value) = adapter.eltek_country_code() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .eltek_country_code()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EltekFeedingPhase => {
-            if let Some(value) = adapter.eltek_feeding_phase() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .eltek_feeding_phase()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EltekApdMethod => {
-            if let Some(value) = adapter.eltek_apd_method() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .eltek_apd_method()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EltekApdPowerRef => {
-            if let Some(value) = adapter.eltek_apd_power_ref() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .eltek_apd_power_ref()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EltekRpsMethod => {
-            if let Some(value) = adapter.eltek_rps_method() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .eltek_rps_method()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EltekRpsQRef => {
-            if let Some(value) = adapter.eltek_rps_q_ref() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .eltek_rps_q_ref()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EltekRpsCosPhiRef => {
-            if let Some(value) = adapter.eltek_rps_cos_phi_ref() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .eltek_rps_cos_phi_ref()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
     }
 }

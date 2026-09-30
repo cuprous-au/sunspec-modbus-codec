@@ -12,7 +12,7 @@ use std::{
     time::Duration,
 };
 use sunspec_modbus_lib_rs::{
-    ModelList, Sunspec,
+    ModelList, Sunspec, SunspecConfig,
     sunspec::models::{model_1, model_103, model_708},
 };
 use tokio::net::TcpListener;
@@ -41,14 +41,17 @@ struct SunspecModels {
 
 /// The device's register map: the common model, an inverter model, and a DER high-voltage-trip
 /// curve model. The same list backs both reads and writes.
-const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(SunspecModels {
-    model_1: model_1::Model1,
-    model_103: model_103::Model103,
-    model_708: model_708::Model708 {
-        stored_curve_count: CURVE_COUNT,
-        number_of_points: POINT_COUNT,
+const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(
+    SunspecModels {
+        model_1: model_1::Model1,
+        model_103: model_103::Model103,
+        model_708: model_708::Model708 {
+            stored_curve_count: CURVE_COUNT,
+            number_of_points: POINT_COUNT,
+        },
     },
-});
+    SunspecConfig::DEFAULT,
+);
 
 /// Stateless: every request reads and writes the global atomics directly, so there's
 /// nothing to hold per connection.

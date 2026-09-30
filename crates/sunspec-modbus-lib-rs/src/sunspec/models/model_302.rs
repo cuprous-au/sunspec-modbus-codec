@@ -161,39 +161,39 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::RepeatingGhi => {
-            if let Some(value) = adapter.repeating_ghi() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_ghi()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::RepeatingPoai => {
-            if let Some(value) = adapter.repeating_poai() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_poai()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::RepeatingDfi => {
-            if let Some(value) = adapter.repeating_dfi() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_dfi()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::RepeatingDni => {
-            if let Some(value) = adapter.repeating_dni() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_dni()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::RepeatingOti => {
-            if let Some(value) = adapter.repeating_oti() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_oti()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
     }
 }

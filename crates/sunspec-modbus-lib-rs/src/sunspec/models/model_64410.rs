@@ -447,161 +447,168 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::MaximumVoltage => {
-            if let Some(value) = adapter.maximum_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .maximum_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaximumPower => {
-            if let Some(value) = adapter.maximum_power() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .maximum_power()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaximumCurrent => {
-            if let Some(value) = adapter.maximum_current() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .maximum_current()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CvOrCcMode => {
-            if let Some(value) = adapter.cv_or_cc_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .cv_or_cc_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::PowerOnOff => {
-            if let Some(value) = adapter.power_on_off() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_on_off()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ResetDevice => {
-            if let Some(value) = adapter.reset_device() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reset_device()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::VoltageSetpoint => {
-            if let Some(value) = adapter.voltage_setpoint() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_setpoint()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PowerSetpoint => {
-            if let Some(value) = adapter.power_setpoint() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_setpoint()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurrentSetpoint => {
-            if let Some(value) = adapter.current_setpoint() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .current_setpoint()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::En50530Mode => {
-            if let Some(value) = adapter.en50530_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .en50530_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::En50530MppVoltage => {
-            if let Some(value) = adapter.en50530_mpp_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .en50530_mpp_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::En50530MppPower => {
-            if let Some(value) = adapter.en50530_mpp_power() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .en50530_mpp_power()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::IrradianceSetpoint => {
-            if let Some(value) = adapter.irradiance_setpoint() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .irradiance_setpoint()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageSlewRate => {
-            if let Some(value) = adapter.voltage_slew_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_slew_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PowerSlewRate => {
-            if let Some(value) = adapter.power_slew_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .power_slew_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurrentSlewRate => {
-            if let Some(value) = adapter.current_slew_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .current_slew_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EnableProfile => {
-            if let Some(value) = adapter.enable_profile() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .enable_profile()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ProfileAdoptionRequest => {
-            if let Some(value) = adapter.profile_adoption_request() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .profile_adoption_request()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::AdoptProfileResult => {
             buffer.write_u16(adapter.adopt_profile_result() as u16);
         }
         Point::MeasuredVoltage => {
-            if let Some(value) = adapter.measured_voltage() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_voltage()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredPower => {
-            if let Some(value) = adapter.measured_power() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_power()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredCurrent => {
-            if let Some(value) = adapter.measured_current() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_current()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::Errors => {
-            if let Some(value) = adapter.errors() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.errors().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::NumberOfPoints => {
             buffer.write_u16(adapter.number_of_points());
@@ -646,51 +653,51 @@ pub(crate) fn write_point_to_buffer<'a>(
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_profile_time(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_profile_time(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtVoltagePoint {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_voltage_point(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_voltage_point(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtPowerPoint {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_power_point(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_power_point(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtCurrentPoint {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_current_point(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_current_point(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtIrradiancePoint {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_irradiance_point(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_irradiance_point(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
     }
 }

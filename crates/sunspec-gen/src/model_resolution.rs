@@ -24,6 +24,9 @@ pub struct ResolvedType {
     pub enum_repr: Option<String>,
     pub array_length: Option<i64>,
     pub cast_from_c: Option<fn(&str) -> String>,
+    /// Statement encoding this type's SunSpec "not implemented" value into `buffer`, for a
+    /// point the device doesn't provide.
+    pub not_implemented_writer: String,
 }
 
 #[derive(Clone, PartialEq)]
@@ -311,6 +314,50 @@ fn resolve_point_type(
         _ => None,
     };
 
+    // Section 6.4 of the SunSpec Device Information Model Specification - see
+    // `sunspec_modbus_lib_rs::not_implemented`.
+    let not_implemented_constant = match point.type_ {
+        PointType::Int16 => Some("INT16"),
+        PointType::Uint16 => Some("UINT16"),
+        PointType::Count => Some("COUNT"),
+        PointType::Enum16 => Some("ENUM16"),
+        PointType::Bitfield16 => Some("BITFIELD16"),
+        PointType::Sunssf => Some("SUNSSF"),
+        PointType::Int32 => Some("INT32"),
+        PointType::Uint32 => Some("UINT32"),
+        PointType::Enum32 => Some("ENUM32"),
+        PointType::Bitfield32 => Some("BITFIELD32"),
+        PointType::Int64 => Some("INT64"),
+        PointType::Uint64 => Some("UINT64"),
+        PointType::Bitfield64 => Some("BITFIELD64"),
+        PointType::Float32 => Some("FLOAT32"),
+        PointType::Float64 => Some("FLOAT64"),
+        PointType::Eui48 => Some("EUI48"),
+        PointType::Ipv6addr => Some("IPV6ADDR"),
+        PointType::String => Some("STRING"),
+        // All-zero is "not implemented" for these. `raw16` has no defined value (and no model
+        // uses it); `pad` is always its static not-implemented value, never adapter-backed -
+        // see `resolve_point`.
+        PointType::Acc16
+        | PointType::Acc32
+        | PointType::Acc64
+        | PointType::Ipaddr
+        | PointType::Raw16
+        | PointType::Pad => None,
+    };
+    let not_implemented_writer = match not_implemented_constant {
+        Some(constant) => {
+            let reference = if point.type_ == PointType::Eui48 || point.type_ == PointType::Ipv6addr
+            {
+                "&"
+            } else {
+                ""
+            };
+            format!("{reference}crate::not_implemented::{constant}")
+        }
+        None => "0".to_string(),
+    };
+
     ResolvedType {
         rust_type,
         c_type,
@@ -321,6 +368,7 @@ fn resolve_point_type(
         writer_allow_offset,
         enum_repr,
         cast_from_c,
+        not_implemented_writer,
     }
 }
 
@@ -362,7 +410,7 @@ pub(crate) fn resolve_point(
         .collect();
 
     let value_type = if point.type_ == PointType::Pad {
-        PointValueType::StaticValue("0".to_string())
+        PointValueType::StaticValue("crate::not_implemented::PAD".to_string())
     } else if let Some(value) = &point.value {
         PointValueType::StaticValue(value.to_string())
     } else if point.name == "L" {

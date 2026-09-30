@@ -207,7 +207,7 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.alarm() as u16);
         }
         Point::Rsrvd => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
         Point::Algorithm => {
             buffer.write_u16(adapter.algorithm() as u16);

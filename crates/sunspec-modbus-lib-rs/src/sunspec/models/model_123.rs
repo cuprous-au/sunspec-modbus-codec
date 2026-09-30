@@ -262,18 +262,18 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::ConnWinTms => {
-            if let Some(value) = adapter.conn_win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .conn_win_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ConnRvrtTms => {
-            if let Some(value) = adapter.conn_rvrt_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .conn_rvrt_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::Conn => {
             buffer.write_u16(adapter.conn() as u16);
@@ -282,25 +282,25 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.w_max_lim_pct());
         }
         Point::WMaxLimPctWinTms => {
-            if let Some(value) = adapter.w_max_lim_pct_win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .w_max_lim_pct_win_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::WMaxLimPctRvrtTms => {
-            if let Some(value) = adapter.w_max_lim_pct_rvrt_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .w_max_lim_pct_rvrt_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::WMaxLimPctRmpTms => {
-            if let Some(value) = adapter.w_max_lim_pct_rmp_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .w_max_lim_pct_rmp_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::WMaxLimEna => {
             buffer.write_u16(adapter.w_max_lim_ena() as u16);
@@ -309,77 +309,78 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.out_pf_set());
         }
         Point::OutPfSetWinTms => {
-            if let Some(value) = adapter.out_pf_set_win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .out_pf_set_win_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::OutPfSetRvrtTms => {
-            if let Some(value) = adapter.out_pf_set_rvrt_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .out_pf_set_rvrt_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::OutPfSetRmpTms => {
-            if let Some(value) = adapter.out_pf_set_rmp_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .out_pf_set_rmp_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::OutPfSetEna => {
             buffer.write_u16(adapter.out_pf_set_ena() as u16);
         }
         Point::VArWMaxPct => {
-            if let Some(value) = adapter.v_ar_w_max_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_w_max_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::VArMaxPct => {
-            if let Some(value) = adapter.v_ar_max_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_max_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::VArAvalPct => {
-            if let Some(value) = adapter.v_ar_aval_pct() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_aval_pct()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::VArPctWinTms => {
-            if let Some(value) = adapter.v_ar_pct_win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .v_ar_pct_win_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VArPctRvrtTms => {
-            if let Some(value) = adapter.v_ar_pct_rvrt_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .v_ar_pct_rvrt_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VArPctRmpTms => {
-            if let Some(value) = adapter.v_ar_pct_rmp_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .v_ar_pct_rmp_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VArPctMod => {
-            if let Some(value) = adapter.v_ar_pct_mod() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .v_ar_pct_mod()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::VArPctEna => {
             buffer.write_u16(adapter.v_ar_pct_ena() as u16);
@@ -391,11 +392,11 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.out_pf_set_sf());
         }
         Point::VArPctSf => {
-            if let Some(value) = adapter.v_ar_pct_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_pct_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
     }
 }

@@ -152,18 +152,16 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i32(adapter.incl_x(), offset);
         }
         Point::InclY => {
-            if let Some(value) = adapter.incl_y() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter.incl_y().unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::InclZ => {
-            if let Some(value) = adapter.incl_z() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter.incl_z().unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
     }
 }

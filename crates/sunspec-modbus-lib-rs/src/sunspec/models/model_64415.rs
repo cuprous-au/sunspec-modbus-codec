@@ -149,39 +149,44 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::LogEventModeEnable => {
-            if let Some(value) = adapter.log_event_mode_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .log_event_mode_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::HttpMessageModeEnable => {
-            if let Some(value) = adapter.http_message_mode_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .http_message_mode_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::Comm004Certificate => {
-            if let Some(value) = adapter.comm_004_certificate() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .comm_004_certificate()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::SubscribedResourceUrl => {
-            if let Some(value) = adapter.subscribed_resource_url() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .subscribed_resource_url()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::SubscribtionEnable => {
-            if let Some(value) = adapter.subscribtion_enable() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .subscribtion_enable()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
     }
 }

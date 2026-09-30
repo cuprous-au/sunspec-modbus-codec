@@ -190,42 +190,46 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.status() as u16);
         }
         Point::VendorStatus => {
-            if let Some(value) = adapter.vendor_status() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .vendor_status()
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::EventCode => {
             buffer.write_u32(adapter.event_code(), offset);
         }
         Point::VendorEventCode => {
-            if let Some(value) = adapter.vendor_event_code() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .vendor_event_code()
+                    .unwrap_or(crate::not_implemented::BITFIELD32),
+                offset,
+            );
         }
         Point::Control => {
-            if let Some(value) = adapter.control() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .control()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::VendorControl => {
-            if let Some(value) = adapter.vendor_control() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .vendor_control()
+                    .unwrap_or(crate::not_implemented::ENUM32),
+                offset,
+            );
         }
         Point::ControlValue => {
-            if let Some(value) = adapter.control_value() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .control_value()
+                    .unwrap_or(crate::not_implemented::ENUM32),
+                offset,
+            );
         }
     }
 }

@@ -178,46 +178,41 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::IvLength => {
-            if let Some(value) = adapter.iv_length() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.iv_length().unwrap_or(crate::not_implemented::COUNT));
         }
         Point::PoaIrradiance => {
-            if let Some(value) = adapter.poa_irradiance() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .poa_irradiance()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::IrrSf => {
-            if let Some(value) = adapter.irr_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.irr_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::IvPower { iv_index } => {
-            if let Some(value) = adapter.iv_power(*iv_index) {
-                buffer.write_f32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_f32(
+                adapter
+                    .iv_power(*iv_index)
+                    .unwrap_or(crate::not_implemented::FLOAT32),
+                offset,
+            );
         }
         Point::IvCurrent { iv_index } => {
-            if let Some(value) = adapter.iv_current(*iv_index) {
-                buffer.write_f32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_f32(
+                adapter
+                    .iv_current(*iv_index)
+                    .unwrap_or(crate::not_implemented::FLOAT32),
+                offset,
+            );
         }
         Point::IvVoltage { iv_index } => {
-            if let Some(value) = adapter.iv_voltage(*iv_index) {
-                buffer.write_f32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_f32(
+                adapter
+                    .iv_voltage(*iv_index)
+                    .unwrap_or(crate::not_implemented::FLOAT32),
+                offset,
+            );
         }
     }
 }

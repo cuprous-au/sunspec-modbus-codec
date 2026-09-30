@@ -184,81 +184,88 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(17);
         }
         Point::PermitEnterService => {
-            if let Some(value) = adapter.permit_enter_service() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .permit_enter_service()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::EnterServiceVoltageHigh => {
-            if let Some(value) = adapter.enter_service_voltage_high() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .enter_service_voltage_high()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EnterServiceVoltageLow => {
-            if let Some(value) = adapter.enter_service_voltage_low() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .enter_service_voltage_low()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EnterServiceFrequencyHigh => {
-            if let Some(value) = adapter.enter_service_frequency_high() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .enter_service_frequency_high()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::EnterServiceFrequencyLow => {
-            if let Some(value) = adapter.enter_service_frequency_low() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .enter_service_frequency_low()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::EnterServiceDelayTime => {
-            if let Some(value) = adapter.enter_service_delay_time() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .enter_service_delay_time()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::EnterServiceRandomDelay => {
-            if let Some(value) = adapter.enter_service_random_delay() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .enter_service_random_delay()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::EnterServiceRampTime => {
-            if let Some(value) = adapter.enter_service_ramp_time() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .enter_service_ramp_time()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::EnterServiceDelayRemaining => {
-            if let Some(value) = adapter.enter_service_delay_remaining() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .enter_service_delay_remaining()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::VoltageScaleFactor => {
-            if let Some(value) = adapter.voltage_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .voltage_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::FrequencyScaleFactor => {
-            if let Some(value) = adapter.frequency_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .frequency_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
     }
 }

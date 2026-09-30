@@ -193,35 +193,31 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.mod_ena());
         }
         Point::HzStopWGra => {
-            if let Some(value) = adapter.hz_stop_w_gra() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .hz_stop_w_gra()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::WGraSf => {
-            if let Some(value) = adapter.w_gra_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.w_gra_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::HzStrStopSf => {
-            if let Some(value) = adapter.hz_str_stop_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .hz_str_stop_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::RmpIncDecSf => {
-            if let Some(value) = adapter.rmp_inc_dec_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .rmp_inc_dec_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::Pad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
     }
 }

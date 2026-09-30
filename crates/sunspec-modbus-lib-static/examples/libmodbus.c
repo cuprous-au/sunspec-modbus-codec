@@ -468,6 +468,10 @@ int main(void)
     };
     size_t model_count = 3;
 
+    // Start from the defaults and override only what's needed. Passing NULL instead of
+    // &config also uses the defaults.
+    SunspecConfig config = SunspecConfig_DEFAULT;
+
     // Read adapters cover every model, in map order.
     SunspecAdapter read_adapters[] = {
         sunspec_model_1_callback(&common_adapter),
@@ -529,7 +533,7 @@ int main(void)
                 int bytes = length * 2;
 
                 int32_t status = sunspec_read_registers(
-                    model_list, model_count, address, &res[3], length, read_adapters, model_count);
+                    model_list, model_count, &config, address, &res[3], length, read_adapters, model_count);
                 if (status == SUNSPEC_RC_OK)
                 {
                     // Unit identifier
@@ -557,7 +561,7 @@ int main(void)
                 uint16_t length = second_field;
 
                 int32_t status = sunspec_write_multiple_registers(
-                    model_list, model_count, address, &req[13], length, write_adapters, write_adapter_count);
+                    model_list, model_count, &config, address, &req[13], length, write_adapters, write_adapter_count);
                 if (status == SUNSPEC_RC_OK)
                 {
                     modbus_send_raw_request_tid(ctx, &req[6], 6, tid);
@@ -577,7 +581,7 @@ int main(void)
             else if (function_code == MODBUS_FC_WRITE_SINGLE_REGISTER)
             {
                 int32_t status = sunspec_write_single_register(
-                    model_list, model_count, address, second_field, write_adapters, write_adapter_count);
+                    model_list, model_count, &config, address, second_field, write_adapters, write_adapter_count);
                 if (status == SUNSPEC_RC_OK)
                 {
                     // FC 0x06's response echoes the request unchanged.

@@ -252,63 +252,61 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::Controller => {
-            if let Some(value) = adapter.controller() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .controller()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Typ => {
             buffer.write_u16(adapter.typ() as u16);
         }
         Point::Date => {
-            if let Some(value) = adapter.date() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.date().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Time => {
-            if let Some(value) = adapter.time() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.time().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Day => {
-            if let Some(value) = adapter.day() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.day().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::ManualElevation => {
-            if let Some(value) = adapter.manual_elevation() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .manual_elevation()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::ManualAzimuth => {
-            if let Some(value) = adapter.manual_azimuth() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .manual_azimuth()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::GlobalMode => {
-            if let Some(value) = adapter.global_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .global_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::GlobalAlarm => {
-            if let Some(value) = adapter.global_alarm() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .global_alarm()
+                    .unwrap_or(crate::not_implemented::BITFIELD16),
+            );
         }
         Point::Sf => {
             buffer.write_i16(adapter.sf());
@@ -317,67 +315,75 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.trackers());
         }
         Point::TrackerTracker => {
-            if let Some(value) = adapter.tracker_tracker() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .tracker_tracker()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::TrackerTargetElevation => {
-            if let Some(value) = adapter.tracker_target_elevation() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .tracker_target_elevation()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::TrackerTargetAzimuth => {
-            if let Some(value) = adapter.tracker_target_azimuth() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .tracker_target_azimuth()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::TrackerElevation => {
-            if let Some(value) = adapter.tracker_elevation() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .tracker_elevation()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::TrackerAzimuth => {
-            if let Some(value) = adapter.tracker_azimuth() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .tracker_azimuth()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::TrackerManualElevation => {
-            if let Some(value) = adapter.tracker_manual_elevation() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .tracker_manual_elevation()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::TrackerManualAzimuth => {
-            if let Some(value) = adapter.tracker_manual_azimuth() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .tracker_manual_azimuth()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::TrackerMode => {
-            if let Some(value) = adapter.tracker_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .tracker_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::TrackerAlarm => {
-            if let Some(value) = adapter.tracker_alarm() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .tracker_alarm()
+                    .unwrap_or(crate::not_implemented::BITFIELD16),
+            );
         }
     }
 }

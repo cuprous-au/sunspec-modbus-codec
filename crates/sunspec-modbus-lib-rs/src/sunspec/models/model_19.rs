@@ -179,11 +179,10 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::Name => {
-            if let Some(value) = adapter.name() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.name().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Rate => {
             buffer.write_u32(adapter.rate(), offset);
@@ -195,42 +194,43 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.parity() as u16);
         }
         Point::Duplex => {
-            if let Some(value) = adapter.duplex() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .duplex()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::FlowControl => {
-            if let Some(value) = adapter.flow_control() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .flow_control()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::Authentication => {
-            if let Some(value) = adapter.authentication() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .authentication()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::Username => {
-            if let Some(value) = adapter.username() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.username().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Password => {
-            if let Some(value) = adapter.password() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.password().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Pad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
     }
 }

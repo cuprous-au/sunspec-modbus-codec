@@ -307,123 +307,94 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.v_ref_ofs());
         }
         Point::VMax => {
-            if let Some(value) = adapter.v_max() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.v_max().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::VMin => {
-            if let Some(value) = adapter.v_min() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.v_min().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::VaMax => {
-            if let Some(value) = adapter.va_max() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.va_max().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::VArMaxQ1 => {
-            if let Some(value) = adapter.v_ar_max_q1() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_max_q1()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::VArMaxQ2 => {
-            if let Some(value) = adapter.v_ar_max_q2() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_max_q2()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::VArMaxQ3 => {
-            if let Some(value) = adapter.v_ar_max_q3() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_max_q3()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::VArMaxQ4 => {
-            if let Some(value) = adapter.v_ar_max_q4() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_max_q4()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::WGra => {
-            if let Some(value) = adapter.w_gra() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.w_gra().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::PfMinQ1 => {
-            if let Some(value) = adapter.pf_min_q1() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.pf_min_q1().unwrap_or(crate::not_implemented::INT16));
         }
         Point::PfMinQ2 => {
-            if let Some(value) = adapter.pf_min_q2() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.pf_min_q2().unwrap_or(crate::not_implemented::INT16));
         }
         Point::PfMinQ3 => {
-            if let Some(value) = adapter.pf_min_q3() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.pf_min_q3().unwrap_or(crate::not_implemented::INT16));
         }
         Point::PfMinQ4 => {
-            if let Some(value) = adapter.pf_min_q4() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.pf_min_q4().unwrap_or(crate::not_implemented::INT16));
         }
         Point::VArAct => {
-            if let Some(value) = adapter.v_ar_act() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .v_ar_act()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ClcTotVa => {
-            if let Some(value) = adapter.clc_tot_va() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .clc_tot_va()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::MaxRmpRte => {
-            if let Some(value) = adapter.max_rmp_rte() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_rmp_rte()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EcpNomHz => {
-            if let Some(value) = adapter.ecp_nom_hz() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .ecp_nom_hz()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ConnPh => {
-            if let Some(value) = adapter.conn_ph() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .conn_ph()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::WMaxSf => {
             buffer.write_i16(adapter.w_max_sf());
@@ -435,53 +406,49 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.v_ref_ofs_sf());
         }
         Point::VMinMaxSf => {
-            if let Some(value) = adapter.v_min_max_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_min_max_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::VaMaxSf => {
-            if let Some(value) = adapter.va_max_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .va_max_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::VArMaxSf => {
-            if let Some(value) = adapter.v_ar_max_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ar_max_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::WGraSf => {
-            if let Some(value) = adapter.w_gra_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.w_gra_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::PfMinSf => {
-            if let Some(value) = adapter.pf_min_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .pf_min_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::MaxRmpRteSf => {
-            if let Some(value) = adapter.max_rmp_rte_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .max_rmp_rte_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::EcpNomHzSf => {
-            if let Some(value) = adapter.ecp_nom_hz_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .ecp_nom_hz_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
     }
 }

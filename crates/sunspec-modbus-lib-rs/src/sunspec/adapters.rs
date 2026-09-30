@@ -281,8 +281,8 @@ pub enum ReadBinding<'a> {
     ///
     /// # Safety
     /// Building this variant asserts `descriptor` and `adapter` uphold
-    /// [`StaticModelSpec::visit_read`]'s contract: `adapter` is either null or points to
-    /// a live `Model<id>CallbackAdapter` valid for the traversal.
+    /// [`StaticModelSpec::visit_read`]'s contract: `adapter` points to a live
+    /// `Model<id>CallbackAdapter` valid for the traversal.
     Extern {
         descriptor: &'a StaticModelSpec,
         adapter: *const c_void,
@@ -551,9 +551,9 @@ pub enum WriteBinding<'a> {
     ///
     /// # Safety
     /// Building this variant asserts `descriptor` and `adapter` uphold
-    /// [`StaticModelSpec::visit_write`]'s contract: `adapter` is either null or
-    /// uniquely borrowable, pointing to a live `Model<id>CallbackAdapter` valid for the
-    /// traversal.
+    /// [`StaticModelSpec::visit_write`]'s contract: `adapter` is null if
+    /// `descriptor.writable` is `false`, and otherwise uniquely borrowable, pointing to a
+    /// live `Model<id>CallbackAdapter` valid for the traversal.
     Extern {
         descriptor: &'a StaticModelSpec,
         adapter: *mut c_void,

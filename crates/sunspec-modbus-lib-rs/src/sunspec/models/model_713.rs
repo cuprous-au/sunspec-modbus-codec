@@ -160,53 +160,54 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(7);
         }
         Point::EnergyRating => {
-            if let Some(value) = adapter.energy_rating() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .energy_rating()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EnergyAvailable => {
-            if let Some(value) = adapter.energy_available() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .energy_available()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::StateOfCharge => {
-            if let Some(value) = adapter.state_of_charge() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .state_of_charge()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::StateOfHealth => {
-            if let Some(value) = adapter.state_of_health() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .state_of_health()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::Status => {
-            if let Some(value) = adapter.status() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .status()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::EnergyScaleFactor => {
-            if let Some(value) = adapter.energy_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .energy_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::PercentScaleFactor => {
-            if let Some(value) = adapter.percent_scale_factor() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .percent_scale_factor()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
     }
 }

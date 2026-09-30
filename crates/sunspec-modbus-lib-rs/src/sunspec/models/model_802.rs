@@ -466,87 +466,89 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.nameplate_max_discharge_rate());
         }
         Point::SelfDischargeRate => {
-            if let Some(value) = adapter.self_discharge_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .self_discharge_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::NameplateMaxSoC => {
-            if let Some(value) = adapter.nameplate_max_so_c() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .nameplate_max_so_c()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::NameplateMinSoC => {
-            if let Some(value) = adapter.nameplate_min_so_c() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .nameplate_min_so_c()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxReservePercent => {
-            if let Some(value) = adapter.max_reserve_percent() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_reserve_percent()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MinReservePercent => {
-            if let Some(value) = adapter.min_reserve_percent() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .min_reserve_percent()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::StateOfCharge => {
             buffer.write_u16(adapter.state_of_charge());
         }
         Point::DepthOfDischarge => {
-            if let Some(value) = adapter.depth_of_discharge() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .depth_of_discharge()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::StateOfHealth => {
-            if let Some(value) = adapter.state_of_health() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .state_of_health()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CycleCount => {
-            if let Some(value) = adapter.cycle_count() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .cycle_count()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ChargeStatus => {
-            if let Some(value) = adapter.charge_status() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .charge_status()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ControlMode => {
             buffer.write_u16(adapter.control_mode() as u16);
         }
         Point::BatteryHeartbeat => {
-            if let Some(value) = adapter.battery_heartbeat() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .battery_heartbeat()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ControllerHeartbeat => {
-            if let Some(value) = adapter.controller_heartbeat() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .controller_heartbeat()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::AlarmReset => {
             buffer.write_u16(adapter.alarm_reset());
@@ -558,18 +560,19 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.state_of_the_battery_bank() as u16);
         }
         Point::VendorBatteryBankState => {
-            if let Some(value) = adapter.vendor_battery_bank_state() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .vendor_battery_bank_state()
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::WarrantyDate => {
-            if let Some(value) = adapter.warranty_date() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .warranty_date()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::BatteryEvent1Bitfield => {
             buffer.write_u32(adapter.battery_event_1_bitfield(), offset);
@@ -587,101 +590,102 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.external_battery_voltage());
         }
         Point::MaxBatteryVoltage => {
-            if let Some(value) = adapter.max_battery_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_battery_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MinBatteryVoltage => {
-            if let Some(value) = adapter.min_battery_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .min_battery_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxCellVoltage => {
-            if let Some(value) = adapter.max_cell_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_cell_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxCellVoltageString => {
-            if let Some(value) = adapter.max_cell_voltage_string() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_cell_voltage_string()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxCellVoltageModule => {
-            if let Some(value) = adapter.max_cell_voltage_module() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_cell_voltage_module()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MinCellVoltage => {
-            if let Some(value) = adapter.min_cell_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .min_cell_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MinCellVoltageString => {
-            if let Some(value) = adapter.min_cell_voltage_string() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .min_cell_voltage_string()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MinCellVoltageModule => {
-            if let Some(value) = adapter.min_cell_voltage_module() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .min_cell_voltage_module()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::AverageCellVoltage => {
-            if let Some(value) = adapter.average_cell_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .average_cell_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::TotalDcCurrent => {
             buffer.write_i16(adapter.total_dc_current());
         }
         Point::MaxChargeCurrent => {
-            if let Some(value) = adapter.max_charge_current() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_charge_current()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxDischargeCurrent => {
-            if let Some(value) = adapter.max_discharge_current() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_discharge_current()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::TotalPower => {
             buffer.write_i16(adapter.total_power());
         }
         Point::InverterStateRequest => {
-            if let Some(value) = adapter.inverter_state_request() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .inverter_state_request()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::BatteryPowerRequest => {
-            if let Some(value) = adapter.battery_power_request() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .battery_power_request()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::Operation => {
             buffer.write_u16(adapter.operation() as u16);
@@ -699,28 +703,20 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.w_cha_dis_cha_max_sf());
         }
         Point::DisChaRteSf => {
-            if let Some(value) = adapter.dis_cha_rte_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .dis_cha_rte_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::SoCSf => {
             buffer.write_i16(adapter.so_c_sf());
         }
         Point::DoDSf => {
-            if let Some(value) = adapter.do_d_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.do_d_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::SoHSf => {
-            if let Some(value) = adapter.so_h_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.so_h_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::VSf => {
             buffer.write_i16(adapter.v_sf());
@@ -735,11 +731,7 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.a_max_sf());
         }
         Point::WSf => {
-            if let Some(value) = adapter.w_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.w_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
     }
 }

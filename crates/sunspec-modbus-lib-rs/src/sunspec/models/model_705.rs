@@ -326,25 +326,27 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.stored_curve_count());
         }
         Point::ReversionTimeout => {
-            if let Some(value) = adapter.reversion_timeout() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .reversion_timeout()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ReversionTimeRemaining => {
-            if let Some(value) = adapter.reversion_time_remaining() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .reversion_time_remaining()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ReversionCurve => {
-            if let Some(value) = adapter.reversion_curve() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_curve()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageScaleFactor => {
             buffer.write_i16(adapter.voltage_scale_factor());
@@ -362,46 +364,49 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.crv_dependent_reference(*crv_index) as u16);
         }
         Point::CrvPowerPriority { crv_index } => {
-            if let Some(value) = adapter.crv_power_priority(*crv_index) {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .crv_power_priority(*crv_index)
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::CrvVrefAdjustment { crv_index } => {
-            if let Some(value) = adapter.crv_vref_adjustment(*crv_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .crv_vref_adjustment(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CrvCurrentAutonomousVref { crv_index } => {
-            if let Some(value) = adapter.crv_current_autonomous_vref(*crv_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .crv_current_autonomous_vref(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CrvAutonomousVrefEnable { crv_index } => {
-            if let Some(value) = adapter.crv_autonomous_vref_enable(*crv_index) {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .crv_autonomous_vref_enable(*crv_index)
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::CrvAutoVrefTimeConstant { crv_index } => {
-            if let Some(value) = adapter.crv_auto_vref_time_constant(*crv_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .crv_auto_vref_time_constant(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CrvOpenLoopResponseTime { crv_index } => {
-            if let Some(value) = adapter.crv_open_loop_response_time(*crv_index) {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .crv_open_loop_response_time(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::CrvCurveAccess { crv_index } => {
             buffer.write_u16(adapter.crv_curve_access(*crv_index) as u16);
@@ -410,21 +415,21 @@ pub(crate) fn write_point_to_buffer<'a>(
             crv_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_voltage_point(*crv_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_voltage_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtReactivePowerPoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_reactive_power_point(*crv_index, *pt_index) {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .pt_reactive_power_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
     }
 }

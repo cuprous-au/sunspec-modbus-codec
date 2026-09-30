@@ -32,7 +32,7 @@ this is done by defining an implementation of the [ModelList] trait - most simpl
 
 ```rust
 use sunspec_modbus_lib_rs::{
-    ModelList, Sunspec,
+    ModelList, Sunspec, SunspecConfig,
     sunspec::models::{model_1, model_103, model_708},
 };
 
@@ -48,17 +48,25 @@ struct SunspecModels {
 
 /// The device's register map: the common model, an inverter model, and a DER high-voltage-trip
 /// curve model. The same list backs both reads and writes.
-const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(SunspecModels {
-    model_1: model_1::Model1,
-    model_103: model_103::Model103,
-    model_708: model_708::Model708 {
-        stored_curve_count: CURVE_COUNT,
-        number_of_points: POINT_COUNT,
+const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(
+    SunspecModels {
+        model_1: model_1::Model1,
+        model_103: model_103::Model103,
+        model_708: model_708::Model708 {
+            stored_curve_count: CURVE_COUNT,
+            number_of_points: POINT_COUNT,
+        },
     },
-});
+    SunspecConfig::DEFAULT,
+);
 ```
 
 This [ModelList] can be used to construct a `Sunspec` service, which exposes the required read and write operations.
+The second argument is a [SunspecConfig] - every setting is optional, so pass `SunspecConfig::DEFAULT` for standard behaviour,
+or override individual settings, e.g. `SunspecConfig::DEFAULT.with_base_address(50000)` to serve the map from register 50000
+rather than the default 40000. Strict mode is on by default: any request that reaches outside the register map is rejected with
+`IllegalDataAddress` before any adapter is called, as is any write to the read-only `SunS` identifier or end model. Use
+`.with_strict(false)` to instead fill reads past the end of the map with `0xffff` and ignore those writes.
 Read operations require the relevant ReadAdapter implementation to be provided for each model (e.g. [model_1::ReadAdapter](sunspec_modbus_lib_rs::sunspec::models::model_1::ReadAdapter)) . Similarly, write operations will require a WriteAdapter
 that has at least one writable point (e.g. [model_1::WriteAdapter](sunspec_modbus_lib_rs::sunspec::models::model_1::WriteAdapter)).
 

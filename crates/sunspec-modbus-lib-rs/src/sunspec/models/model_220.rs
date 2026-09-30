@@ -333,11 +333,7 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.a_sf());
         }
         Point::Voltage => {
-            if let Some(value) = adapter.voltage() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.voltage().unwrap_or(crate::not_implemented::INT16));
         }
         Point::VSf => {
             buffer.write_i16(adapter.v_sf());
@@ -346,11 +342,7 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.hz());
         }
         Point::HzSf => {
-            if let Some(value) = adapter.hz_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.hz_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::Watts => {
             buffer.write_i16(adapter.watts());
@@ -359,46 +351,22 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.w_sf());
         }
         Point::Va => {
-            if let Some(value) = adapter.va() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.va().unwrap_or(crate::not_implemented::INT16));
         }
         Point::VaSf => {
-            if let Some(value) = adapter.va_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.va_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::Var => {
-            if let Some(value) = adapter.var() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.var().unwrap_or(crate::not_implemented::INT16));
         }
         Point::VarSf => {
-            if let Some(value) = adapter.var_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.var_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::Pf => {
-            if let Some(value) = adapter.pf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.pf().unwrap_or(crate::not_implemented::INT16));
         }
         Point::PfSf => {
-            if let Some(value) = adapter.pf_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.pf_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::TotalWattHoursExported => {
             buffer.write_u32(adapter.total_watt_hours_exported(), offset);
@@ -410,66 +378,42 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.tot_wh_sf());
         }
         Point::TotalVaHoursExported => {
-            if let Some(value) = adapter.total_va_hours_exported() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.total_va_hours_exported().unwrap_or(0), offset);
         }
         Point::TotalVaHoursImported => {
-            if let Some(value) = adapter.total_va_hours_imported() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.total_va_hours_imported().unwrap_or(0), offset);
         }
         Point::TotVAhSf => {
-            if let Some(value) = adapter.tot_v_ah_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .tot_v_ah_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::TotalVarHoursImportedQ1 => {
-            if let Some(value) = adapter.total_var_hours_imported_q1() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.total_var_hours_imported_q1().unwrap_or(0), offset);
         }
         Point::TotalVArHoursImportedQ2 => {
-            if let Some(value) = adapter.total_v_ar_hours_imported_q2() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.total_v_ar_hours_imported_q2().unwrap_or(0), offset);
         }
         Point::TotalVArHoursExportedQ3 => {
-            if let Some(value) = adapter.total_v_ar_hours_exported_q3() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.total_v_ar_hours_exported_q3().unwrap_or(0), offset);
         }
         Point::TotalVArHoursExportedQ4 => {
-            if let Some(value) = adapter.total_v_ar_hours_exported_q4() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.total_v_ar_hours_exported_q4().unwrap_or(0), offset);
         }
         Point::TotVArhSf => {
-            if let Some(value) = adapter.tot_v_arh_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .tot_v_arh_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::Events => {
             buffer.write_u32(adapter.events(), offset);
         }
         Point::Rsrvd => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
         Point::Timestamp => {
             buffer.write_u32(adapter.timestamp(), offset);

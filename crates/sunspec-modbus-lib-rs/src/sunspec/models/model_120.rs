@@ -325,63 +325,55 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.pf_rtg_sf());
         }
         Point::WhRtg => {
-            if let Some(value) = adapter.wh_rtg() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.wh_rtg().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::WhRtgSf => {
-            if let Some(value) = adapter.wh_rtg_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .wh_rtg_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::AhrRtg => {
-            if let Some(value) = adapter.ahr_rtg() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.ahr_rtg().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::AhrRtgSf => {
-            if let Some(value) = adapter.ahr_rtg_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .ahr_rtg_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::MaxChaRte => {
-            if let Some(value) = adapter.max_cha_rte() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_cha_rte()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxChaRteSf => {
-            if let Some(value) = adapter.max_cha_rte_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .max_cha_rte_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::MaxDisChaRte => {
-            if let Some(value) = adapter.max_dis_cha_rte() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .max_dis_cha_rte()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaxDisChaRteSf => {
-            if let Some(value) = adapter.max_dis_cha_rte_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .max_dis_cha_rte_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::Pad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
     }
 }

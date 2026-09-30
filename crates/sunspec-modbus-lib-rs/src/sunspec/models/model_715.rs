@@ -148,39 +148,43 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(7);
         }
         Point::ControlMode => {
-            if let Some(value) = adapter.control_mode() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .control_mode()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::DerHeartbeat => {
-            if let Some(value) = adapter.der_heartbeat() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .der_heartbeat()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ControllerHeartbeat => {
-            if let Some(value) = adapter.controller_heartbeat() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .controller_heartbeat()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::AlarmReset => {
-            if let Some(value) = adapter.alarm_reset() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .alarm_reset()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::Operation => {
-            if let Some(value) = adapter.operation() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .operation()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
     }
 }

@@ -242,18 +242,14 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.dca_sf());
         }
         Point::DcAhrSf => {
-            if let Some(value) = adapter.dc_ahr_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .dc_ahr_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::DcvSf => {
-            if let Some(value) = adapter.dcv_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.dcv_sf().unwrap_or(crate::not_implemented::SUNSSF));
         }
         Point::Rating => {
             buffer.write_u16(adapter.rating());
@@ -265,49 +261,38 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u32(adapter.event(), offset);
         }
         Point::VendorEvent => {
-            if let Some(value) = adapter.vendor_event() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .vendor_event()
+                    .unwrap_or(crate::not_implemented::BITFIELD32),
+                offset,
+            );
         }
         Point::Amps => {
             buffer.write_i16(adapter.amps());
         }
         Point::AmpHours => {
-            if let Some(value) = adapter.amp_hours() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.amp_hours().unwrap_or(0), offset);
         }
         Point::Voltage => {
-            if let Some(value) = adapter.voltage() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.voltage().unwrap_or(crate::not_implemented::INT16));
         }
         Point::Temp => {
-            if let Some(value) = adapter.temp() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.temp().unwrap_or(crate::not_implemented::INT16));
         }
         Point::InDcaSf => {
-            if let Some(value) = adapter.in_dca_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .in_dca_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::InDcAhrSf => {
-            if let Some(value) = adapter.in_dc_ahr_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .in_dc_ahr_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::StringId => {
             buffer.write_u16(adapter.string_id());
@@ -316,21 +301,18 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u32(adapter.string_input_event(), offset);
         }
         Point::StringInputEventVendor => {
-            if let Some(value) = adapter.string_input_event_vendor() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .string_input_event_vendor()
+                    .unwrap_or(crate::not_implemented::BITFIELD32),
+                offset,
+            );
         }
         Point::StringAmps => {
             buffer.write_i16(adapter.string_amps());
         }
         Point::StringAmpHours => {
-            if let Some(value) = adapter.string_amp_hours() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(adapter.string_amp_hours().unwrap_or(0), offset);
         }
     }
 }

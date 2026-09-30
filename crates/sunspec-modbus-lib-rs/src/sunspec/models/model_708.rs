@@ -473,91 +473,88 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.crv_curve_access(*crv_index) as u16);
         }
         Point::MustTripCurveCrvNumberOfActivePoints { crv_index } => {
-            if let Some(value) = adapter.must_trip_curve_crv_number_of_active_points(*crv_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .must_trip_curve_crv_number_of_active_points(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MayTripCurveCrvNumberOfActivePoints { crv_index } => {
-            if let Some(value) = adapter.may_trip_curve_crv_number_of_active_points(*crv_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .may_trip_curve_crv_number_of_active_points(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MomentaryCessationCurveCrvNumberOfActivePoints { crv_index } => {
-            if let Some(value) =
-                adapter.momentary_cessation_curve_crv_number_of_active_points(*crv_index)
-            {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .momentary_cessation_curve_crv_number_of_active_points(*crv_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MustTripCurvePtVoltagePoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.must_trip_curve_pt_voltage_point(*crv_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .must_trip_curve_pt_voltage_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MustTripCurvePtTimePoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.must_trip_curve_pt_time_point(*crv_index, *pt_index) {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .must_trip_curve_pt_time_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::MayTripCurvePtVoltagePoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.may_trip_curve_pt_voltage_point(*crv_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .may_trip_curve_pt_voltage_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MayTripCurvePtTimePoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.may_trip_curve_pt_time_point(*crv_index, *pt_index) {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .may_trip_curve_pt_time_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::MomentaryCessationCurvePtVoltagePoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) =
-                adapter.momentary_cessation_curve_pt_voltage_point(*crv_index, *pt_index)
-            {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .momentary_cessation_curve_pt_voltage_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MomentaryCessationCurvePtTimePoint {
             crv_index,
             pt_index,
         } => {
-            if let Some(value) =
-                adapter.momentary_cessation_curve_pt_time_point(*crv_index, *pt_index)
-            {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .momentary_cessation_curve_pt_time_point(*crv_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
     }
 }

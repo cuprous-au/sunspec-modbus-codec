@@ -24,7 +24,7 @@ use rmodbus::{
 };
 use static_cell::StaticCell;
 use sunspec_modbus_lib_rs::{
-    ModbusException, ModelList, Sunspec,
+    ModbusException, ModelList, Sunspec, SunspecConfig,
     sunspec::models::{model_1, model_103, model_708},
 };
 
@@ -50,14 +50,17 @@ struct SunspecModels {
 
 /// The device's register map: the common model, an inverter model, and a DER high-voltage-trip
 /// curve model. The same list backs both reads and writes.
-const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(SunspecModels {
-    model_1: model_1::Model1,
-    model_103: model_103::Model103,
-    model_708: model_708::Model708 {
-        stored_curve_count: CURVE_COUNT,
-        number_of_points: POINT_COUNT,
+const SUNSPEC: Sunspec<SunspecModels> = Sunspec::new(
+    SunspecModels {
+        model_1: model_1::Model1,
+        model_103: model_103::Model103,
+        model_708: model_708::Model708 {
+            stored_curve_count: CURVE_COUNT,
+            number_of_points: POINT_COUNT,
+        },
     },
-});
+    SunspecConfig::DEFAULT,
+);
 
 /// Maps a SunSpec exception onto the equivalent `rmodbus` error, which
 /// [`ModbusFrame::process_external_read`]/[`process_external_write`](ModbusFrame::process_external_write)

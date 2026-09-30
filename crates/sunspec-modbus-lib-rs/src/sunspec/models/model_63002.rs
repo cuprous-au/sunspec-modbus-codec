@@ -155,32 +155,32 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::RepeatingSunssf1 => {
-            if let Some(value) = adapter.repeating_sunssf_1() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .repeating_sunssf_1()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::RepeatingInt161 => {
-            if let Some(value) = adapter.repeating_int16_1() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .repeating_int16_1()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::RepeatingInt162 => {
-            if let Some(value) = adapter.repeating_int16_2() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .repeating_int16_2()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::RepeatingSunssf2 => {
-            if let Some(value) = adapter.repeating_sunssf_2() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .repeating_sunssf_2()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
     }
 }

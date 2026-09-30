@@ -366,7 +366,7 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.n_pts());
         }
         Point::Pad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
         Point::RepeatingActPts => {
             buffer.write_u16(adapter.repeating_act_pts());
@@ -399,151 +399,170 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i32(adapter.repeating_y1(), offset);
         }
         Point::RepeatingX2 => {
-            if let Some(value) = adapter.repeating_x2() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x2()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY2 => {
-            if let Some(value) = adapter.repeating_y2() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y2()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX3 => {
-            if let Some(value) = adapter.repeating_x3() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x3()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY3 => {
-            if let Some(value) = adapter.repeating_y3() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y3()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX4 => {
-            if let Some(value) = adapter.repeating_x4() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x4()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY4 => {
-            if let Some(value) = adapter.repeating_y4() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y4()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX5 => {
-            if let Some(value) = adapter.repeating_x5() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x5()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY5 => {
-            if let Some(value) = adapter.repeating_y5() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y5()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX6 => {
-            if let Some(value) = adapter.repeating_x6() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x6()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY6 => {
-            if let Some(value) = adapter.repeating_y6() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y6()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX7 => {
-            if let Some(value) = adapter.repeating_x7() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x7()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY7 => {
-            if let Some(value) = adapter.repeating_y7() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y7()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX8 => {
-            if let Some(value) = adapter.repeating_x8() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x8()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY8 => {
-            if let Some(value) = adapter.repeating_y8() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y8()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX9 => {
-            if let Some(value) = adapter.repeating_x9() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x9()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY9 => {
-            if let Some(value) = adapter.repeating_y9() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y9()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingX10 => {
-            if let Some(value) = adapter.repeating_x10() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_x10()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingY10 => {
-            if let Some(value) = adapter.repeating_y10() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .repeating_y10()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::RepeatingNam => {
-            if let Some(value) = adapter.repeating_nam() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .repeating_nam()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::RepeatingWinTms => {
-            if let Some(value) = adapter.repeating_win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_win_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::RepeatingRmpTms => {
-            if let Some(value) = adapter.repeating_rmp_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .repeating_rmp_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::RepeatingActIndx => {
             buffer.write_u16(adapter.repeating_act_indx());

@@ -142,32 +142,20 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::Ghi => {
-            if let Some(value) = adapter.ghi() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.ghi().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::Amps => {
-            if let Some(value) = adapter.amps() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.amps().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::Voltage => {
-            if let Some(value) = adapter.voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.voltage().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::Temperature => {
-            if let Some(value) = adapter.temperature() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .temperature()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
     }
 }

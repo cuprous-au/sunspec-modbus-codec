@@ -256,25 +256,27 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.stored_control_count());
         }
         Point::ReversionTimeout => {
-            if let Some(value) = adapter.reversion_timeout() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .reversion_timeout()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ReversionTimeLeft => {
-            if let Some(value) = adapter.reversion_time_left() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter
+                    .reversion_time_left()
+                    .unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::ReversionControl => {
-            if let Some(value) = adapter.reversion_control() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .reversion_control()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::DeadbandScaleFactor => {
             buffer.write_i16(adapter.deadband_scale_factor());
@@ -301,11 +303,11 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u32(adapter.ctl_open_loop_response_time(*ctl_index), offset);
         }
         Point::CtlMinimumActivePower { ctl_index } => {
-            if let Some(value) = adapter.ctl_minimum_active_power(*ctl_index) {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .ctl_minimum_active_power(*ctl_index)
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CtlControlAccess { ctl_index } => {
             buffer.write_u16(adapter.ctl_control_access(*ctl_index) as u16);

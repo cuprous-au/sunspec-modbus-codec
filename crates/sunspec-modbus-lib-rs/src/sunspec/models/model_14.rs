@@ -167,11 +167,10 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::Name => {
-            if let Some(value) = adapter.name() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.name().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Capabilities => {
             buffer.write_u16(adapter.capabilities());
@@ -189,18 +188,16 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.port());
         }
         Point::Username => {
-            if let Some(value) = adapter.username() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.username().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Password => {
-            if let Some(value) = adapter.password() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.password().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
     }
 }

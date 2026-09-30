@@ -149,39 +149,34 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::Name => {
-            if let Some(value) = adapter.name() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.name().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Imei => {
-            if let Some(value) = adapter.imei() {
-                buffer.write_u32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u32(
+                adapter.imei().unwrap_or(crate::not_implemented::UINT32),
+                offset,
+            );
         }
         Point::Apn => {
-            if let Some(value) = adapter.apn() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.apn().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Number => {
-            if let Some(value) = adapter.number() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.number().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Pin => {
-            if let Some(value) = adapter.pin() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.pin().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
     }
 }

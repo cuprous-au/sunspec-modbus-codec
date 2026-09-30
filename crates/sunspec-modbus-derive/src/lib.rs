@@ -191,6 +191,13 @@ pub fn derive_model_list(input: TokenStream) -> TokenStream {
         }
     }).collect::<Vec<_>>();
 
+    let model_lengths = fields.iter().map(|field| {
+        let self_member = &field.self_member;
+        quote! {
+            ::sunspec_modbus_lib_rs::ModelSpec::model_length(&self.#self_member)
+        }
+    });
+
     let read_adapters_def = if tuple {
         quote! {
             #[doc(hidden)]
@@ -226,6 +233,10 @@ pub fn derive_model_list(input: TokenStream) -> TokenStream {
         impl ::sunspec_modbus_lib_rs::ModelList for #struct_name {
             type ReadAdapters<'a> = &'a #read_adapters_name<'a>;
             type WriteAdapters<'a> = &'a mut #write_adapters_name<'a>;
+
+            fn models_length(&self) -> u32 {
+                0u32 #(+ u32::from(#model_lengths))*
+            }
 
             fn read_iter<'a>(
                 &'a self,

@@ -558,270 +558,290 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::ActivePhases => {
-            if let Some(value) = adapter.active_phases() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .active_phases()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PhaseAngle => {
-            if let Some(value) = adapter.phase_angle() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .phase_angle()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::NominalVoltage => {
-            if let Some(value) = adapter.nominal_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .nominal_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaximumVoltage => {
-            if let Some(value) = adapter.maximum_voltage() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .maximum_voltage()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MaximumCurrent => {
-            if let Some(value) = adapter.maximum_current() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .maximum_current()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::Frequency => {
-            if let Some(value) = adapter.frequency() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .frequency()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::OutputState => {
-            if let Some(value) = adapter.output_state() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .output_state()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::RelayState => {
-            if let Some(value) = adapter.relay_state() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .relay_state()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::RegenerationState => {
-            if let Some(value) = adapter.regeneration_state() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .regeneration_state()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::VoltageSetpoint => {
-            if let Some(value) = adapter.voltage_setpoint() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_setpoint()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageSetpointPhaseA => {
-            if let Some(value) = adapter.voltage_setpoint_phase_a() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_setpoint_phase_a()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageSetpointPhaseB => {
-            if let Some(value) = adapter.voltage_setpoint_phase_b() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_setpoint_phase_b()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageSetpointPhaseC => {
-            if let Some(value) = adapter.voltage_setpoint_phase_c() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_setpoint_phase_c()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::FrequencySlewRate => {
-            if let Some(value) = adapter.frequency_slew_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .frequency_slew_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageSlewRate => {
-            if let Some(value) = adapter.voltage_slew_rate() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_slew_rate()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::MeasuredVoltagePhaseA => {
-            if let Some(value) = adapter.measured_voltage_phase_a() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_voltage_phase_a()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredVoltagePhaseB => {
-            if let Some(value) = adapter.measured_voltage_phase_b() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_voltage_phase_b()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredVoltagePhaseC => {
-            if let Some(value) = adapter.measured_voltage_phase_c() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_voltage_phase_c()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredFrequency => {
-            if let Some(value) = adapter.measured_frequency() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_frequency()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredCurrentPhaseA => {
-            if let Some(value) = adapter.measured_current_phase_a() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_current_phase_a()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredCurrentPhaseB => {
-            if let Some(value) = adapter.measured_current_phase_b() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_current_phase_b()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::MeasuredCurrentPhaseC => {
-            if let Some(value) = adapter.measured_current_phase_c() {
-                buffer.write_i32(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i32(
+                adapter
+                    .measured_current_phase_c()
+                    .unwrap_or(crate::not_implemented::INT32),
+                offset,
+            );
         }
         Point::VoltageHarmonicsPhaseA => {
-            if let Some(value) = adapter.voltage_harmonics_phase_a() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .voltage_harmonics_phase_a()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::VoltageHarmonicsPhaseB => {
-            if let Some(value) = adapter.voltage_harmonics_phase_b() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .voltage_harmonics_phase_b()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::VoltageHarmonicsPhaseC => {
-            if let Some(value) = adapter.voltage_harmonics_phase_c() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .voltage_harmonics_phase_c()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurrentHarmonicsPhaseA => {
-            if let Some(value) = adapter.current_harmonics_phase_a() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .current_harmonics_phase_a()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurrentHarmonicsPhaseB => {
-            if let Some(value) = adapter.current_harmonics_phase_b() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .current_harmonics_phase_b()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurrentHarmonicsPhaseC => {
-            if let Some(value) = adapter.current_harmonics_phase_c() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .current_harmonics_phase_c()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurrentInterharmonicsPhaseA => {
-            if let Some(value) = adapter.current_interharmonics_phase_a() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .current_interharmonics_phase_a()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurrentInterharmonicsPhaseB => {
-            if let Some(value) = adapter.current_interharmonics_phase_b() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .current_interharmonics_phase_b()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurrentInterharmonicsPhaseC => {
-            if let Some(value) = adapter.current_interharmonics_phase_c() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .current_interharmonics_phase_c()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::VoltageThdPhaseA => {
-            if let Some(value) = adapter.voltage_thd_phase_a() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_thd_phase_a()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageThdPhaseB => {
-            if let Some(value) = adapter.voltage_thd_phase_b() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_thd_phase_b()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::VoltageThdPhaseC => {
-            if let Some(value) = adapter.voltage_thd_phase_c() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .voltage_thd_phase_c()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurrentThdPhaseA => {
-            if let Some(value) = adapter.current_thd_phase_a() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .current_thd_phase_a()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurrentThdPhaseB => {
-            if let Some(value) = adapter.current_thd_phase_b() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .current_thd_phase_b()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurrentThdPhaseC => {
-            if let Some(value) = adapter.current_thd_phase_c() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .current_thd_phase_c()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::EnableProfile => {
-            if let Some(value) = adapter.enable_profile() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .enable_profile()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::ProfileResult => {
             buffer.write_u16(adapter.profile_result() as u16);
@@ -854,11 +874,12 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.thd_scale_factor());
         }
         Point::ProfProfileName { prof_index } => {
-            if let Some(value) = adapter.prof_profile_name(*prof_index) {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .prof_profile_name(*prof_index)
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::ProfActivePoints { prof_index } => {
             buffer.write_u16(adapter.prof_active_points(*prof_index));
@@ -867,81 +888,81 @@ pub(crate) fn write_point_to_buffer<'a>(
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_profile_time(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_profile_time(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtVoltagePoint {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_voltage_point(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_voltage_point(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtVoltagePointPhaseB {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_voltage_point_phase_b(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_voltage_point_phase_b(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtVoltagePointPhaseC {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_voltage_point_phase_c(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_voltage_point_phase_c(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtFrequencyPoint {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_frequency_point(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_frequency_point(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtPhaseAngleA {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_phase_angle_a(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_phase_angle_a(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtPhaseAngleB {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_phase_angle_b(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_phase_angle_b(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::PtPhaseAngleC {
             prof_index,
             pt_index,
         } => {
-            if let Some(value) = adapter.pt_phase_angle_c(*prof_index, *pt_index) {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .pt_phase_angle_c(*prof_index, *pt_index)
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
     }
 }

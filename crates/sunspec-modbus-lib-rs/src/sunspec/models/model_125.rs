@@ -169,41 +169,30 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.mod_ena());
         }
         Point::SigType => {
-            if let Some(value) = adapter.sig_type() {
-                buffer.write_u16(value as u16);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .sig_type()
+                    .map(|enum_value| enum_value as u16)
+                    .unwrap_or(crate::not_implemented::ENUM16),
+            );
         }
         Point::Sig => {
             buffer.write_i16(adapter.sig());
         }
         Point::WinTms => {
-            if let Some(value) = adapter.win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.win_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::RvtTms => {
-            if let Some(value) = adapter.rvt_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.rvt_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::RmpTms => {
-            if let Some(value) = adapter.rmp_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.rmp_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::SigSf => {
             buffer.write_i16(adapter.sig_sf());
         }
         Point::Pad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
     }
 }

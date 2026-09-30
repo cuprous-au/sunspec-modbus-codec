@@ -184,81 +184,77 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::AmbientTemperature => {
-            if let Some(value) = adapter.ambient_temperature() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .ambient_temperature()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::RelativeHumidity => {
-            if let Some(value) = adapter.relative_humidity() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .relative_humidity()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::BarometricPressure => {
-            if let Some(value) = adapter.barometric_pressure() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .barometric_pressure()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::WindSpeed => {
-            if let Some(value) = adapter.wind_speed() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .wind_speed()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::WindDirection => {
-            if let Some(value) = adapter.wind_direction() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .wind_direction()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::Rainfall => {
-            if let Some(value) = adapter.rainfall() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.rainfall().unwrap_or(crate::not_implemented::INT16));
         }
         Point::SnowDepth => {
-            if let Some(value) = adapter.snow_depth() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .snow_depth()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::PrecipitationType => {
-            if let Some(value) = adapter.precipitation_type() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .precipitation_type()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::ElectricField => {
-            if let Some(value) = adapter.electric_field() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .electric_field()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::SurfaceWetness => {
-            if let Some(value) = adapter.surface_wetness() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .surface_wetness()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::SoilWetness => {
-            if let Some(value) = adapter.soil_wetness() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .soil_wetness()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
     }
 }

@@ -214,66 +214,50 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.mod_ena());
         }
         Point::FilTms => {
-            if let Some(value) = adapter.fil_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.fil_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::DbVMin => {
-            if let Some(value) = adapter.db_v_min() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.db_v_min().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::DbVMax => {
-            if let Some(value) = adapter.db_v_max() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.db_v_max().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::BlkZnV => {
-            if let Some(value) = adapter.blk_zn_v() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.blk_zn_v().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::HysBlkZnV => {
-            if let Some(value) = adapter.hys_blk_zn_v() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .hys_blk_zn_v()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::BlkZnTmms => {
-            if let Some(value) = adapter.blk_zn_tmms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .blk_zn_tmms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::HoldTmms => {
-            if let Some(value) = adapter.hold_tmms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .hold_tmms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::ArGraSf => {
             buffer.write_i16(adapter.ar_gra_sf());
         }
         Point::VRefPctSf => {
-            if let Some(value) = adapter.v_ref_pct_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .v_ref_pct_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::Pad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
     }
 }

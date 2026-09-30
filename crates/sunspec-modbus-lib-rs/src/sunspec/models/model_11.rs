@@ -170,32 +170,30 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.link_state() as u16);
         }
         Point::Mac => {
-            if let Some(value) = adapter.mac() {
-                buffer.write_eui48(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_eui48(
+                adapter.mac().unwrap_or(&crate::not_implemented::EUI48),
+                offset,
+            );
         }
         Point::Name => {
-            if let Some(value) = adapter.name() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter.name().unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::Control => {
-            if let Some(value) = adapter.control() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .control()
+                    .unwrap_or(crate::not_implemented::BITFIELD16),
+            );
         }
         Point::ForcedSpeed => {
-            if let Some(value) = adapter.forced_speed() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .forced_speed()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
     }
 }

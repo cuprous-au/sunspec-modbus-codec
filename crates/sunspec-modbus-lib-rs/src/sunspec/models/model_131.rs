@@ -480,25 +480,13 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(adapter.mod_ena());
         }
         Point::WinTms => {
-            if let Some(value) = adapter.win_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.win_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::RvrtTms => {
-            if let Some(value) = adapter.rvrt_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.rvrt_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::RmpTms => {
-            if let Some(value) = adapter.rmp_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.rmp_tms().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::NCrv => {
             buffer.write_u16(adapter.n_crv());
@@ -513,11 +501,11 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.pf_sf());
         }
         Point::RmpIncDecSf => {
-            if let Some(value) = adapter.rmp_inc_dec_sf() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .rmp_inc_dec_sf()
+                    .unwrap_or(crate::not_implemented::SUNSSF),
+            );
         }
         Point::CurveActPt => {
             buffer.write_u16(adapter.curve_act_pt());
@@ -529,304 +517,197 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_i16(adapter.curve_pf1());
         }
         Point::CurveW2 => {
-            if let Some(value) = adapter.curve_w2() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w2().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf2 => {
-            if let Some(value) = adapter.curve_pf2() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf2().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW3 => {
-            if let Some(value) = adapter.curve_w3() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w3().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf3 => {
-            if let Some(value) = adapter.curve_pf3() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf3().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW4 => {
-            if let Some(value) = adapter.curve_w4() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w4().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf4 => {
-            if let Some(value) = adapter.curve_pf4() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf4().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW5 => {
-            if let Some(value) = adapter.curve_w5() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w5().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf5 => {
-            if let Some(value) = adapter.curve_pf5() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf5().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW6 => {
-            if let Some(value) = adapter.curve_w6() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w6().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf6 => {
-            if let Some(value) = adapter.curve_pf6() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf6().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW7 => {
-            if let Some(value) = adapter.curve_w7() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w7().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf7 => {
-            if let Some(value) = adapter.curve_pf7() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf7().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW8 => {
-            if let Some(value) = adapter.curve_w8() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w8().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf8 => {
-            if let Some(value) = adapter.curve_pf8() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf8().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW9 => {
-            if let Some(value) = adapter.curve_w9() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w9().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf9 => {
-            if let Some(value) = adapter.curve_pf9() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_pf9().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurveW10 => {
-            if let Some(value) = adapter.curve_w10() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w10().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf10 => {
-            if let Some(value) = adapter.curve_pf10() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf10()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW11 => {
-            if let Some(value) = adapter.curve_w11() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w11().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf11 => {
-            if let Some(value) = adapter.curve_pf11() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf11()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW12 => {
-            if let Some(value) = adapter.curve_w12() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w12().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf12 => {
-            if let Some(value) = adapter.curve_pf12() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf12()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW13 => {
-            if let Some(value) = adapter.curve_w13() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w13().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf13 => {
-            if let Some(value) = adapter.curve_pf13() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf13()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW14 => {
-            if let Some(value) = adapter.curve_w14() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w14().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf14 => {
-            if let Some(value) = adapter.curve_pf14() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf14()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW15 => {
-            if let Some(value) = adapter.curve_w15() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w15().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf15 => {
-            if let Some(value) = adapter.curve_pf15() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf15()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW16 => {
-            if let Some(value) = adapter.curve_w16() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w16().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf16 => {
-            if let Some(value) = adapter.curve_pf16() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf16()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW17 => {
-            if let Some(value) = adapter.curve_w17() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w17().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf17 => {
-            if let Some(value) = adapter.curve_pf17() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf17()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW18 => {
-            if let Some(value) = adapter.curve_w18() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w18().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf18 => {
-            if let Some(value) = adapter.curve_pf18() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf18()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW19 => {
-            if let Some(value) = adapter.curve_w19() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w19().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf19 => {
-            if let Some(value) = adapter.curve_pf19() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf19()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveW20 => {
-            if let Some(value) = adapter.curve_w20() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.curve_w20().unwrap_or(crate::not_implemented::INT16));
         }
         Point::CurvePf20 => {
-            if let Some(value) = adapter.curve_pf20() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .curve_pf20()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::CurveCrvNam => {
-            if let Some(value) = adapter.curve_crv_nam() {
-                buffer.write_string(value, offset);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_string(
+                adapter
+                    .curve_crv_nam()
+                    .unwrap_or(crate::not_implemented::STRING),
+                offset,
+            );
         }
         Point::CurveRmpPt1Tms => {
-            if let Some(value) = adapter.curve_rmp_pt1_tms() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .curve_rmp_pt1_tms()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurveRmpDecTmm => {
-            if let Some(value) = adapter.curve_rmp_dec_tmm() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .curve_rmp_dec_tmm()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurveRmpIncTmm => {
-            if let Some(value) = adapter.curve_rmp_inc_tmm() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .curve_rmp_inc_tmm()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
         Point::CurveReadOnly => {
             buffer.write_u16(adapter.curve_read_only() as u16);
         }
         Point::CurvePad => {
-            buffer.write_u16(0);
+            buffer.write_u16(crate::not_implemented::PAD);
         }
     }
 }

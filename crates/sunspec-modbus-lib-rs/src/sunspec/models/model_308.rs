@@ -142,32 +142,24 @@ pub(crate) fn write_point_to_buffer<'a>(
             buffer.write_u16(model.model_length() - 2);
         }
         Point::Ghi => {
-            if let Some(value) = adapter.ghi() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(adapter.ghi().unwrap_or(crate::not_implemented::UINT16));
         }
         Point::Temp => {
-            if let Some(value) = adapter.temp() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(adapter.temp().unwrap_or(crate::not_implemented::INT16));
         }
         Point::AmbientTemperature => {
-            if let Some(value) = adapter.ambient_temperature() {
-                buffer.write_i16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_i16(
+                adapter
+                    .ambient_temperature()
+                    .unwrap_or(crate::not_implemented::INT16),
+            );
         }
         Point::WindSpeed => {
-            if let Some(value) = adapter.wind_speed() {
-                buffer.write_u16(value);
-            } else {
-                buffer.zero();
-            }
+            buffer.write_u16(
+                adapter
+                    .wind_speed()
+                    .unwrap_or(crate::not_implemented::UINT16),
+            );
         }
     }
 }
